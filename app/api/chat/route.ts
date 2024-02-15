@@ -3,7 +3,7 @@ import { HuggingFaceStream, StreamingTextResponse } from 'ai'
 import { experimental_buildOpenAssistantPrompt } from 'ai/prompts'
 
 // Create a new HuggingFace Inference instance
-const Hf = new HfInference("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")
+const Hf = new HfInference('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')
 
 // IMPORTANT! Set the runtime to edge
 export const runtime = 'edge'

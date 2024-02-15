@@ -2,7 +2,7 @@ import { HfInference } from '@huggingface/inference';
 import { HuggingFaceStream, StreamingTextResponse } from 'ai';
 
 // Create a new Hugging Face Inference instance
-const Hf = new HfInference("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");
+const Hf = new HfInference('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');
 
 // IMPORTANT! Set the runtime to edge
 export const runtime = 'edge';
