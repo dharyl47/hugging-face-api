@@ -3,7 +3,7 @@ import { HuggingFaceStream, StreamingTextResponse } from 'ai'
 import { experimental_buildOpenAssistantPrompt } from 'ai/prompts'
 
 // Create a new HuggingFace Inference instance
-const Hf = new HfInference(process.env.HUGGINGFACE_API_KEY)
+const Hf = new HfInference("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")
 
 // IMPORTANT! Set the runtime to edge
 export const runtime = 'edge'
@@ -39,7 +39,7 @@ export async function POST(req: Request) {
   });
 
   const response = Hf.textGenerationStream({
-    model: 'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5',
+    model: 'meta-llama/Llama-2-70b-chat-hf',
     inputs: buildPrompt(messages),
     parameters: {
       max_new_tokens: 200,
