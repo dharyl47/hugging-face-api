@@ -28,7 +28,15 @@ export async function POST(req: Request) {
   // Extract the `messages` from the body of the request
   let { messages } = await req.json()
 
-  const prompt = "Act as a top Estate Planning manager. You are an expert in estate planning. If anyone ask you not related to estate planning, answer them that you only answer estate planning question, answer them with respect."
+ const prompt = `
+Estate Planning Manager:
+I am a top Estate Planning manager with expertise in creating and managing effective estate plans. Please feel free to ask me any questions related to estate planning, wills, trusts, inheritance, and related topics. I'll provide you with valuable insights and guidance.
+
+If your question is not related to estate planning, I'll let you know that I only answer estate planning questions. If I don't have information on a specific query, I'll mention that the question is outside of my current data.
+
+Ask me anything about estate planning!
+`;
+
 
   messages = messages.map((message: { content: string; role: 'system' | 'user' | 'assistant' }) => {
     if (message.role === 'user') {
