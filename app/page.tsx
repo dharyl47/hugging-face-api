@@ -31,9 +31,7 @@ const renderMessages = () => {
   return renderedMessages.map((message, index) => (
     <div
       key={index}
-      className={
-        currentUser === "user" ? "text-blue-600" : "text-green-600 mb-2"
-      }
+      className={currentUser === "user" ? "text-blue-600" : "text-blue-600"}
     >
       {message}
     </div>
