@@ -8,42 +8,33 @@ const Hf = new HfInference(process.env.HUGGINGFACE_API_KEY)
 // IMPORTANT! Set the runtime to edge
 export const runtime = 'edge'
 
-function buildPrompt(
-  messages: { content: string; role: 'system' | 'user' | 'assistant' }[]
-) {
-  return (
-    messages
-      .map(({ content, role }) => {
-        if (role === 'user') {
-          return `<|prompter|>${content}<|endoftext|>`
-        } else {
-          return `<|assistant|>${content}<|endoftext|>`
-        }
-      })
-      .join('') + '<|assistant|>'
-  )
+function buildPrompt(messages: { content: string; role: 'system' | 'user' | 'assistant' }[]) {
+  const lastUserMessage = messages
+    .filter(({ role }) => role === 'user') // Only consider user messages
+    .pop(); // Get the last user message
+
+  return lastUserMessage ? lastUserMessage.content : '';
 }
 
 export async function POST(req: Request) {
   // Extract the `messages` from the body of the request
   let { messages } = await req.json()
 
-//  const prompt = `
-// I am a top Estate Planning manager with expertise in creating and managing effective estate plans. 
-// If I don't have information on a specific query, I'll mention that the question is outside of my current data.
-// `;
+  const prompt = `
+    I am a top Estate Planning manager with expertise in creating and managing effective estate plans. 
+    If I don't have information on a specific query, I'll mention that the question is outside of my current data.
+  `;
 
-
-//   messages = messages.map((message: { content: string; role: 'system' | 'user' | 'assistant' }) => {
-//     if (message.role === 'user') {
-//       return { ...message, content: `${prompt} ${message.content}` };
-//     } else {
-//       return message;
-//     }
-//   });
+messages = messages.map((message: { content: string; role: 'system' | 'user' | 'assistant' }) => {
+  if (message.role === 'user') {
+    return { ...message, content: ` ${message.content}` };
+  } else {
+    return message;
+  }
+});
 
   const response = Hf.textGenerationStream({
-    model: 'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5',
+    model: 'meta-llama/Llama-2-13b-chat-hf',
     inputs: experimental_buildOpenAssistantPrompt(messages),
     parameters: {
       max_new_tokens: 200,
