@@ -27,7 +27,7 @@ export async function POST(req: Request) {
 
 messages = messages.map((message: { content: string; role: 'system' | 'user' | 'assistant' }) => {
   if (message.role === 'user') {
-    return { ...message, content: ` ${message.content}` };
+    return { ...message, content: `Respond not exceeding 5 sentences ${message.content}` };
   } else {
     return message;
   }
