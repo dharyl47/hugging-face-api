@@ -34,7 +34,7 @@ messages = messages.map((message: { content: string; role: 'system' | 'user' | '
 });
 
   const response = Hf.textGenerationStream({
-    model: 'meta-llama/Llama-2-13b-chat-hf',
+    model: 'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5',
     inputs: experimental_buildOpenAssistantPrompt(messages),
     parameters: {
       max_new_tokens: 200,
