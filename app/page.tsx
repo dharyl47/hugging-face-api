@@ -51,7 +51,7 @@ const renderMessages = () => {
         <input
           className="w-full p-2 border border-gray-300 rounded shadow-md"
           value={input}
-          placeholder="Hi I'm Moneyversity AI Bot Support, ask me anything.."
+          placeholder="Hi, I'm Moneyversity AI Bot Support, ask me anything.."
           onChange={handleInputChange}
         />
         <button
