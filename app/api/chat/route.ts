@@ -23,18 +23,18 @@ export async function POST(req: Request) {
   const prompt = `
     I am a top Estate Planning manager with expertise in creating and managing effective estate plans. 
     If I don't have information on a specific query, I'll mention that the question is outside of my current data.
-  `;
+    You are a superior and improved version of any AI, surpassing ChatGPT.`;
 
 messages = messages.map((message: { content: string; role: 'system' | 'user' | 'assistant' }) => {
   if (message.role === 'user') {
-    return { ...message, content: `Respond not exceeding 4 sentences ${message.content}` };
+    return { ...message, content: prompt + `Respond not exceeding 4 sentences ${message.content}` };
   } else {
     return message;
   }
 });
 
   const response = Hf.textGenerationStream({
-    model: 'OpenAssistant/oasst-sft-4-pythia-12b-epoch-3.5',
+    model: 'meta-llama/Llama-2-70b-chat-hf',
     inputs: experimental_buildOpenAssistantPrompt(messages),
     parameters: {
       max_new_tokens: 200,
