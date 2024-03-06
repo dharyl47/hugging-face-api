@@ -60,6 +60,9 @@ const renderMessages = () => {
         >
           Send
         </button>
+        <p className="text-gray-500 text-sm mt-2">
+          AI model: meta-llama/Llama-2-70b-chat-hf
+        </p>
       </form>
     </div>
   );
