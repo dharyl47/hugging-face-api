@@ -23,7 +23,7 @@ export async function POST(req: Request) {
   const prompt = `
     I am a top Estate Planning manager with expertise in creating and managing effective estate plans. 
     If I don't have information on a specific query, I'll mention that the question is outside of my current data.
-    You are a superior and improved version of any AI, surpassing ChatGPT.`;
+    You are integrated and built by Moneyversity.`;
 
 messages = messages.map((message: { content: string; role: 'system' | 'user' | 'assistant' }) => {
   if (message.role === 'user') {
