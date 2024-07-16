@@ -32,19 +32,19 @@ export default function Chat() {
             <div className="flex space-x-2 mt-2">
               <button
                 onClick={() => handleButtonClick("Absolutely")}
-                className="px-4 py-2 rounded-full border border-[#8DC63F] text-[#8DC63F]"
+                className="px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
               >
                 Absolutely
               </button>
               <button
                 onClick={() => handleButtonClick("Tell me more")}
-                className="px-4 py-2 rounded-full border border-[#8DC63F] text-[#8DC63F]"
+                className="px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
               >
                 Tell me more
               </button>
               <button
                 onClick={() => handleButtonClick("Not now")}
-                className="px-4 py-2 rounded-full border border-[#8DC63F] text-[#8DC63F]"
+                className="px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
               >
                 Not now
               </button>
