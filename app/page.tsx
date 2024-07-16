@@ -1,42 +1,61 @@
 'use client';
 import { useChat } from "ai/react";
+import { useEffect } from "react";
 
 export default function Chat() {
-  const { messages, input, handleInputChange, handleSubmit } = useChat();
+  const { messages, input, handleInputChange, handleSubmit, setMessages } = useChat();
+
+  useEffect(() => {
+    // Initialize messages with a welcome message from the assistant
+    setMessages([{
+      id: Date.now().toString(), // Adding a unique id
+      role: 'assistant',
+      content: "Hi there! 😊 Welcome to Moneyversity's Estate Planning Chatbot. 🤖 I'm here to secure your future and that of your loved ones. Ready to get started?"
+    }]);
+  }, [setMessages]);
+
+  const handleButtonClick = (message: string) => {
+    setMessages([...messages, {
+      id: Date.now().toString(),
+      role: 'user',
+      content: message
+    }]);
+  };
 
   // Function to render messages with proper formatting
-const renderMessages = () => {
-  let renderedMessages: string[] = [];
-  let currentUser: string | null = null;
-
-  for (const m of messages) {
-    if (currentUser === "user" && m.role === "user") {
-      // Concatenate consecutive user messages
-      renderedMessages[renderedMessages.length - 1] += m.content;
-    } else if (currentUser === "assistant" && m.role === "assistant") {
-      // Stop rendering once the assistant has responded
-      break;
-    } else {
-      // Start a new message
-     renderedMessages.push(
-       `${m.role === "user" ? "User" : "Moneyversity"}: ${m.content.replace(
-         /<\|endoftext\|>/g,
-         ""
-       )}`
-     );
-      currentUser = m.role === "user" ? "user" : "assistant";
-    }
-  }
-
-  return renderedMessages.map((message, index) => (
-    <div
-      key={index}
-      className={currentUser === "user" ? "text-blue-600" : "text-blue-600"}
-    >
-      {message}
-    </div>
-  ));
-};
+  const renderMessages = () => {
+    return messages.map((message, index) => (
+      <div key={message.id} className={message.role === "user" ? "text-blue-600" : "text-blue-600"}>
+        {message.role === "assistant" && index === 0 ? (
+          <>
+            <div>{`Moneyversity: ${message.content.replace(/<\|endoftext\|>/g, "")}`}</div>
+            <div className="flex space-x-2 mt-2">
+              <button
+                onClick={() => handleButtonClick("Absolutely")}
+                className="px-4 py-2 rounded-full border border-[#8DC63F] text-[#8DC63F]"
+              >
+                Absolutely
+              </button>
+              <button
+                onClick={() => handleButtonClick("Tell me more")}
+                className="px-4 py-2 rounded-full border border-[#8DC63F] text-[#8DC63F]"
+              >
+                Tell me more
+              </button>
+              <button
+                onClick={() => handleButtonClick("Not now")}
+                className="px-4 py-2 rounded-full border border-[#8DC63F] text-[#8DC63F]"
+              >
+                Not now
+              </button>
+            </div>
+          </>
+        ) : (
+          <div>{`${message.role === "user" ? "User" : "Moneyversity"}: ${message.content.replace(/<\|endoftext\|>/g, "")}`}</div>
+        )}
+      </div>
+    ));
+  };
 
   return (
     <div className="flex flex-col items-center justify-end min-h-screen bg-gray-100">
