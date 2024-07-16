@@ -1,9 +1,11 @@
 'use client';
 import { useChat } from "ai/react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function Chat() {
   const { messages, input, handleInputChange, handleSubmit, setMessages } = useChat();
+  const [inputValue, setInputValue] = useState(input);
+  const [submitOnNextUpdate, setSubmitOnNextUpdate] = useState(false);
 
   useEffect(() => {
     // Initialize messages with a welcome message from the assistant
@@ -14,12 +16,21 @@ export default function Chat() {
     }]);
   }, [setMessages]);
 
+  useEffect(() => {
+    if (submitOnNextUpdate) {
+      const formEvent = { preventDefault: () => {} };
+      handleSubmit(formEvent as React.FormEvent<HTMLFormElement>);
+      setSubmitOnNextUpdate(false); // Reset submit flag
+    }
+  }, [submitOnNextUpdate, handleSubmit]);
+
   const handleButtonClick = (message: string) => {
-    setMessages([...messages, {
-      id: Date.now().toString(),
-      role: 'user',
-      content: message
-    }]);
+    setInputValue(message); // Update the input value immediately
+    const syntheticEvent = {
+      target: { value: message }
+    };
+    handleInputChange(syntheticEvent as React.ChangeEvent<HTMLInputElement>);
+    setSubmitOnNextUpdate(true); // Set flag to submit form on next update
   };
 
   // Function to render messages with proper formatting
@@ -57,6 +68,11 @@ export default function Chat() {
     ));
   };
 
+  const handleInputChangeWrapper = (e: React.ChangeEvent<HTMLInputElement>) => {
+    handleInputChange(e);
+    setInputValue(e.target.value);
+  };
+
   return (
     <div className="flex flex-col items-center justify-end min-h-screen bg-gray-100">
       <div
@@ -66,12 +82,18 @@ export default function Chat() {
         {renderMessages()}
       </div>
 
-      <form className="w-full max-w-xl" onSubmit={handleSubmit}>
+      <form
+        className="w-full max-w-xl"
+        onSubmit={(e) => {
+          e.preventDefault(); // Prevent default form submission
+          handleSubmit(e); // Call handleSubmit directly
+        }}
+      >
         <input
           className="w-full p-2 border border-gray-300 rounded shadow-md"
-          value={input}
+          value={inputValue}
           placeholder="Hi, I'm Moneyversity AI Bot Support, ask me anything.."
-          onChange={handleInputChange}
+          onChange={handleInputChangeWrapper}
         />
         <button
           type="submit"
