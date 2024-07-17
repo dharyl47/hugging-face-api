@@ -96,7 +96,7 @@ export default function Chat() {
                 </div>
                 <form className="w-full max-w-xl" onSubmit={handleSubmit}>
                 <div className="p-4 border-t flex mt-10">
-                  <CustomInput className="send-input" id="user-input" value={input} placeholder="Type a message" onChange={handleInputChange} />
+                  <CustomInput className="send-input bg-[#212121] text-white border-none focus:outline-none" id="user-input" value={input} placeholder="Type a message" onChange={handleInputChange} />
                   <button id="send-button" type="submit" className="bg-[#8dc63f] text-white px-4 py-4 rounded-full hover:bg-blue-600 transition duration-300">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-6">
                       <path strokeLinecap="round" strokeLinejoin="round" d="m8.25 4.5 7.5 7.5-7.5 7.5" />
@@ -114,6 +114,7 @@ export default function Chat() {
                 </div>
           </div>
        </div>
+
           <button id="open-chat" className="bg-[#6ebc4b] text-white py-4 px-4 rounded-full hover:bg-blue-600 transition duration-300 flex items-center">
             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-10">
               <path strokeLinecap="round" strokeLinejoin="round" d="M7.5 8.25h9m-9 3H12m-9.75 1.51c0 1.6 1.123 2.994 2.707 3.227 1.129.166 2.27.293 3.423.379.35.026.67.21.865.501L12 21l2.755-4.133a1.14 1.14 0 0 1 .865-.501 48.172 48.172 0 0 0 3.423-.379c1.584-.233 2.707-1.626 2.707-3.228V6.741c0-1.602-1.123-2.995-2.707-3.228A48.394 48.394 0 0 0 12 3c-2.392 0-4.744.175-7.043.513C3.373 3.746 2.25 5.14 2.25 6.741v6.018Z" />
