@@ -6,6 +6,8 @@ import CustomInput from "@/app/components/CustomInput";
 
 export default function Chat() {
   const { messages, input, handleInputChange, handleSubmit, setMessages } = useChat();
+  const [inputValue, setInputValue] = useState(input);
+  const [submitOnNextUpdate, setSubmitOnNextUpdate] = useState(false);
 
   useEffect(() => {
     // Initialize messages with a welcome message from the assistant
@@ -16,12 +18,21 @@ export default function Chat() {
     }]);
   }, [setMessages]);
 
+  useEffect(() => {
+    if (submitOnNextUpdate) {
+      const formEvent = { preventDefault: () => {} };
+      handleSubmit(formEvent as React.FormEvent<HTMLFormElement>);
+      setSubmitOnNextUpdate(false); // Reset submit flag
+    }
+  }, [submitOnNextUpdate, handleSubmit]);
+
   const handleButtonClick = (message: string) => {
-    setMessages([...messages, {
-      id: Date.now().toString(),
-      role: 'user',
-      content: message
-    }]);
+    setInputValue(message); // Update the input value immediately
+    const syntheticEvent = {
+      target: { value: message }
+    };
+    handleInputChange(syntheticEvent as React.ChangeEvent<HTMLInputElement>);
+    setSubmitOnNextUpdate(true); // Set flag to submit form on next update
   };
 
   // Function to render messages with proper formatting
