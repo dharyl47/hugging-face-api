@@ -2,6 +2,7 @@
 import { useChat } from "ai/react";
 import { useState, useEffect, useRef } from "react";
 import CustomInput from "@/app/components/CustomInput";
+import Slider from "@/app/components/Slider";
 
 export default function Chat() {
   const { messages, input, handleInputChange, handleSubmit, setMessages } = useChat();
@@ -62,6 +63,9 @@ export default function Chat() {
                 Not now
               </button>
             </div>
+            <div className="relative mb-6">
+                <Slider/>
+            </div>
           </>
         ) : (
           <div className={message.role === "user" ? "mb-2 text-right mt-4" : "mb-2"}> 
@@ -91,7 +95,6 @@ export default function Chat() {
               <p className="text-lg font-semibold">Estate Planning Bot</p>
               <div className="ml-auto flex items-center">
                 <button
-                  onClick={() => setIsOpen(false)}
                   className="text-gray-300 hover:text-gray-400 focus:outline-none focus:text-gray-400"
                 >
                   <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" id="fullscreen" className="size-6">
@@ -111,6 +114,8 @@ export default function Chat() {
             </div>
             <div id="chatbox" className="p-4 h-96 overflow-y-auto">
               {renderMessages()}
+              {/* This is for the image */}
+              {/* <img src="http://mirrors.ctan.org/macros/latex/contrib/incgraph/example.jpg" alt="Description of image" className="object-cover h-48 w-96 rounded-md shadow-md mt-5"></img> */}
             </div>
             <form className="w-full max-w-xl" onSubmit={handleSubmit}>
               <div className="p-4 border-t flex mt-10">

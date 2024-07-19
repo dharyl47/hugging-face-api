@@ -1,6 +1,6 @@
 import React from 'react';
 
-const CustomInput = ({ id, placeholder, className, value, onChange }) => {
+const CustomInput = ({ id, placeholder, className, value, onChange}) => {
   return (
     <input
       id={id}
