@@ -3,12 +3,19 @@ import { useChat } from "ai/react";
 import { useState, useEffect, useRef } from "react";
 import CustomInput from "@/app/components/CustomInput";
 import Slider from "@/app/components/Slider";
+import CustomCheckBox from "@/app/components/CustomCheckBox";
 
 export default function Chat() {
   const { messages, input, handleInputChange, handleSubmit, setMessages } = useChat();
   const [inputValue, setInputValue] = useState(input);
   const [submitOnNextUpdate, setSubmitOnNextUpdate] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+
+  const [isChecked, setIsChecked] = useState(false);
+
+  const handleCheckboxChange = () => {
+    setIsChecked(!isChecked);
+  };
 
   useEffect(() => {
     // Initialize messages with a welcome message from the assistant
@@ -66,6 +73,24 @@ export default function Chat() {
             <div className="relative mb-6">
                 <Slider/>
             </div>
+            <div className={`${isChecked ? 'bg-[#8DC63F] ' : ''} flex items-center ps-4 border border-[#8DC63F] rounded mt-2 text-white`}>
+                <CustomCheckBox
+                  id="bordered-checkbox-1"
+                  name="bordered-checkbox"
+                  className="w-4 h-4 rounded"
+                  value=""
+                  checked={isChecked}
+                  onChange={handleCheckboxChange}
+                />
+                <label
+                  htmlFor="bordered-checkbox-1"
+                  className="w-full py-4 ms-2 text-sm font-medium text-white"
+                >
+                  Default radio
+                </label>
+            </div>
+
+          
           </>
         ) : (
           <div className={message.role === "user" ? "mb-2 text-right mt-4" : "mb-2"}> 
@@ -79,11 +104,11 @@ export default function Chat() {
   };
 
   return (
-    <div className="fixed bottom-0 right-0 mb-5 mr-5">
+    <div className="fixed bottom-0 right-0 mb-5 mr-5 ">
       {isOpen && (
         <div id="chat-container" className="fixed bottom-16 right-10">
           <div className="bg-[#212121] shadow-md rounded-lg max-w-lg w-full">
-            <div className="p-4 border-b bg-[#6ebc4b] text-white rounded-t-lg flex items-center">
+            <div className="p-4 border-b text-white rounded-t-lg flex items-center bg-gradient-to-b from-[#84c342] to-[#149d6e]">
             <p
               id="estate-icon"
               className="bg-[#8dc63f] text-white px-4 py-4 mr-2 rounded-full"
@@ -114,6 +139,7 @@ export default function Chat() {
             </div>
             <div id="chatbox" className="p-4 h-96 overflow-y-auto">
               {renderMessages()}
+             
               {/* This is for the image */}
               {/* <img src="http://mirrors.ctan.org/macros/latex/contrib/incgraph/example.jpg" alt="Description of image" className="object-cover h-48 w-96 rounded-md shadow-md mt-5"></img> */}
             </div>
