@@ -71,7 +71,7 @@ export default function Chat() {
                 Not now
               </button>
             </div>
-            <div className="relative mb-6">
+            {/* <div className="relative mb-6">
               <Slider />
             </div>
             <div className={`${isChecked ? 'bg-[#8DC63F]' : ''} flex items-center ps-4 border border-[#8DC63F] rounded mt-2 text-white`}>
@@ -89,7 +89,7 @@ export default function Chat() {
               >
                 Default radio
               </label>
-            </div>
+            </div> */}
           </>
         ) : (
           <div className={message.role === "user" ? "mb-2 text-right mt-4" : "mb-2"}>
