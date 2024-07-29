@@ -33,7 +33,7 @@ export default function Chat() {
     }
   }, [messages]);
 
-  const handleButtonClick = (message) => {
+  const handleButtonClick = (message : any) => {
     setInputStr(message);
     handleInputChange({ target: { value: message } } as React.ChangeEvent<HTMLInputElement>);
     setSubmitOnNextUpdate(true);
@@ -120,7 +120,7 @@ export default function Chat() {
                   className="send-input bg-[#212121] text-white border-none focus:outline-none mb-5"
                   id="user-input"
                   value={inputStr}
-                  onChange={(e) => {
+                  onChange={(e : any) => {
                     setInputStr(e.target.value);
                     handleInputChange(e);
                   }}
