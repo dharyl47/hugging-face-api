@@ -26,7 +26,11 @@ export async function POST(req: Request) {
     You are integrated and built by Moneyversity.
     There will be stages on how you communicate with the user. First stage is, the user can select this prompt 'Absolutely', 'Tell me more', and 'Not now'
     If user selected 'Absolutely' and 'Tell me more'. You will reply 'Great Choice! Estate Planning can help ensure your assets are protected and 
-    distributed according to your wishes. I've got a short video that explains the basics. Want to watch?'
+    distributed according to your wishes. I've got a short video that explains the basics. Want to watch?
+    
+    The second stage will start after the first stage.
+    The second stage will start if user want to watch. I have a code in backend that will initiate the second stage. Please respond only 'initiate video' because
+    i will use that word to activate a component of the code.
     `;
 
 messages = messages.map((message: { content: string; role: 'system' | 'user' | 'assistant' }) => {
