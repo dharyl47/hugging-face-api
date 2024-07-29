@@ -5,6 +5,7 @@ import CustomInput from "@/app/components/CustomInput";
 import Slider from "@/app/components/Slider";
 import CustomCheckBox from "@/app/components/CustomCheckBox";
 import EmojiPicker from 'emoji-picker-react';
+import EmbeddedVideo from '@/app/components/EmbeddedVideo';
 
 export default function Chat() {
   const { messages, input, handleInputChange, handleSubmit, setMessages } = useChat();
@@ -136,6 +137,7 @@ export default function Chat() {
             </div>
             <div id="chatbox" className="p-4 h-96 overflow-y-auto">
               {renderMessages()}
+              <EmbeddedVideo embedUrl="https://www.youtube.com/embed/dQw4w9WgXcQ" />
               {/* This is for the image */}
               {/* <img src="http://mirrors.ctan.org/macros/latex/contrib/incgraph/example.jpg" alt="Description of image" className="object-cover h-48 w-96 rounded-md shadow-md mt-5"></img> */}
             </div>
