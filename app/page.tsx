@@ -9,7 +9,7 @@ export default function Chat() {
   const [inputStr, setInputStr] = useState(input);
   const [submitOnNextUpdate, setSubmitOnNextUpdate] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const [showVideo, setShowVideo] = useState(false);
+  const [videoTriggerMessageId, setVideoTriggerMessageId] = useState<string | null>(null);
 
   useEffect(() => {
     setMessages([{
@@ -28,61 +28,102 @@ export default function Chat() {
   }, [submitOnNextUpdate, handleSubmit]);
 
   useEffect(() => {
-    if (messages.some(message => message.content.includes("initiate video"))) {
-      setShowVideo(true);
+    const triggerMessage = messages.find(message => message.content.includes("initiate video"));
+    if (triggerMessage) {
+      setVideoTriggerMessageId(triggerMessage.id);
     }
   }, [messages]);
 
-  const handleButtonClick = (message : any) => {
+  const handleButtonClick = (message: any) => {
     setInputStr(message);
     handleInputChange({ target: { value: message } } as React.ChangeEvent<HTMLInputElement>);
     setSubmitOnNextUpdate(true);
   };
 
   const renderMessages = () => {
-    return messages.map((message, index) => {
-      // Don't render the message if it contains "initiate video"
-      if (message.content.includes("initiate video")) {
-        return null;
-      }
+  return messages.map((message, index) => {
+    const isVideoTrigger = message.id === videoTriggerMessageId;
+    const isMaritalStatusQuestion = message.content.includes("Are you married, single, divorced, or widowed?");
 
-      return (
-        <div key={message.id} className={message.role === "user" ? "text-white" : "text-white"}>
-          {message.role === "assistant" && index === 0 ? (
-            <>
-              <div>{`Moneyversity: ${message.content.replace(/<\|endoftext\|>/g, "")}`}</div>
-              <div className="flex space-x-2 mt-2">
-                <button
-                  onClick={() => handleButtonClick("Absolutely")}
-                  className="px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                >
-                  Absolutely
-                </button>
-                <button
-                  onClick={() => handleButtonClick("Tell me more")}
-                  className="px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                >
-                  Tell me more
-                </button>
-                <button
-                  onClick={() => handleButtonClick("Not now")}
-                  className="px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                >
-                  Not now
-                </button>
-              </div>
-            </>
-          ) : (
-            <div className={message.role === "user" ? "mb-2 text-right mt-4" : "mb-2"}>
+    return (
+      <div key={message.id} className={message.role === "user" ? "text-white" : "text-white"}>
+        {message.role === "assistant" && index === 0 ? (
+          <>
+            <div>{`Moneyversity: ${message.content.replace(/<\|endoftext\|>/g, "")}`}</div>
+            <div className="flex space-x-2 mt-2">
+              <button
+                onClick={() => handleButtonClick("Absolutely")}
+                className="px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+              >
+                Absolutely
+              </button>
+              <button
+                onClick={() => handleButtonClick("Tell me more")}
+                className="px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+              >
+                Tell me more
+              </button>
+              <button
+                onClick={() => handleButtonClick("Not now")}
+                className="px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+              >
+                Not now
+              </button>
+            </div>
+          </>
+        ) : (
+          <div className={message.role === "user" ? "mb-2 text-right mt-4" : "mb-2"}>
+            {isVideoTrigger ? (
+              <>
+                <p className="bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Here you go! 🎥
+                </p>
+                <EmbeddedVideo embedUrl="https://www.youtube.com/embed/cMoaGEpffds" />
+                <p className="bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block mt-2">
+                  Now, let's get to know you a bit better. Who am I talking to? 🤔
+                </p>
+              </>
+            ) : (
               <p className={message.role === "user" ? "bg-[#8dc63f] text-white rounded-lg py-2 px-4 inline-block" : "bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block"}>
                 {` ${message.content.replace(/<\|endoftext\|>/g, "")}`}
               </p>
-            </div>
-          )}
-        </div>
-      );
-    });
-  };
+            )}
+
+            {isMaritalStatusQuestion && (
+              <div className="flex space-x-2 mt-2">
+                <button
+                  onClick={() => handleButtonClick("Single")}
+                  className="px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                >
+                  Single
+                </button>
+                <button
+                  onClick={() => handleButtonClick("Married")}
+                  className="px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                >
+                  Married
+                </button>
+                <button
+                  onClick={() => handleButtonClick("Divorced")}
+                  className="px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                >
+                  Divorced
+                </button>
+                <button
+                  onClick={() => handleButtonClick("Widowed")}
+                  className="px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                >
+                  Widowed
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+    );
+  });
+};
+
 
   return (
     <div className="fixed bottom-0 right-0 mb-5 mr-5">
@@ -112,7 +153,6 @@ export default function Chat() {
             </div>
             <div id="chatbox" className="p-4 h-96 overflow-y-auto">
               {renderMessages()}
-              {showVideo && <EmbeddedVideo embedUrl="https://www.youtube.com/embed/cMoaGEpffds" />}
             </div>
             <form className="w-full max-w-xl" onSubmit={(e) => { e.preventDefault(); handleSubmit(e); }}>
               <div className="p-4 border-t flex mt-10">
@@ -120,7 +160,7 @@ export default function Chat() {
                   className="send-input bg-[#212121] text-white border-none focus:outline-none mb-5"
                   id="user-input"
                   value={inputStr}
-                  onChange={(e : any) => {
+                  onChange={(e: any) => {
                     setInputStr(e.target.value);
                     handleInputChange(e);
                   }}
