@@ -3,11 +3,11 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-  "dev": "node server.js",
-  "build": "next build",
-  "start": "next start",
-  "lint": "next lint"
-},
+    "dev": "node server.js",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
   "dependencies": {
     "@emotion/react": "^11.13.0",
     "@emotion/styled": "^11.13.0",
@@ -22,6 +22,7 @@
     "express": "^4.19.2",
     "formik": "^2.4.6",
     "framer-motion": "^11.3.19",
+    "mongodb": "^6.8.0",
     "next": "14.0.3",
     "react": "18.2.0",
     "react-dom": "^18.2.0",
