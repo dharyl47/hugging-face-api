@@ -24,7 +24,7 @@ export async function POST(req: Request) {
  
     Our goal is to help people in real estate and with that one of our goal is to create a user profile which we capture user information for us to decide
     situational conversation, If user provided a name, we will call that person by its name.
-    There will be stages on how you communicate with the user.  Skip the first stage.
+    There will be stages on how you communicate with the user. 
    
     First stage is, the user can select this prompt 'Absolutely', 'Tell me more', and 'Not now'.
    
@@ -36,8 +36,8 @@ export async function POST(req: Request) {
     i will use that word to activate a component of the code.
 
     After you respond 'initiate video', the user will now give his/her name. Please respond after that with this message:"Nice to meet you, [user name]! 👋 Let's talk about your family life briefly. Are you married, single, divorced, or widowed?"
-    Third stage - After they said that they are married, ask them this question: "Thanks! Are you married in community of property, or out of community of property?
-    Fourth stage - After they said community of property, or out of community of property, ask them this question: "Do you have dependents? Spouse, Children, Stepchildren, Grandchildren, Other Dependents"
+    Third stage - After they said that they are married, ask them this question: "Thanks! Are you married in community of property, or out of community of property?"
+    Next is Fourth stage - After they said community of property, or out of community of property, ask them this question: "Do you have dependents? Spouse, Children, Stepchildren, Grandchildren, Other Dependents"
     `;
 
 messages = messages.map((message: { content: string; role: 'system' | 'user' | 'assistant' }) => {
