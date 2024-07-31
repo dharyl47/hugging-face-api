@@ -8,6 +8,23 @@ const nextConfig = {
       },
     ];
   },
+  async headers() {
+    return [
+      {
+        source: '/(.*)', // Apply to all routes
+        headers: [
+          {
+            key: 'X-Frame-Options',
+            value: 'DENY', // Prevents all framing
+          },
+          {
+            key: 'Content-Security-Policy',
+            value: "frame-ancestors 'none';", // Prevents framing
+          },
+        ],
+      },
+    ];
+  },
 };
 
 module.exports = nextConfig;

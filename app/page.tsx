@@ -2,6 +2,7 @@
 import { useChat } from "ai/react";
 import { useState, useEffect } from "react";
 import CustomInput from "@/app/components/CustomInput";
+import CustomCheckBox from "@/app/components/CustomCheckBox"; // Import the CustomCheckBox component
 import EmbeddedVideo from '@/app/components/EmbeddedVideo';
 
 export default function Chat() {
@@ -40,16 +41,36 @@ export default function Chat() {
     setSubmitOnNextUpdate(true);
   };
 
+    const [checkboxes, setCheckboxes] = useState({
+    spouse: false,
+    children: false,
+    stepchildren: false,
+    grandchildren: false,
+    other: false
+  });
+
+  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { id, checked } = e.target;
+    setCheckboxes(prevState => ({
+      ...prevState,
+      [id]: checked
+    }));
+  };
+
+
   const renderMessages = () => {
   return messages.map((message, index) => {
     const isVideoTrigger = message.id === videoTriggerMessageId;
     const isMaritalStatusQuestion = message.content.includes("Are you married, single, divorced, or widowed?");
+    const isDependentsQuestion = message.content.includes("Do you have dependents?");
+    // Split message content by "<prompt>" and take the first part
+    const filteredContent = message.content.split('<|prompter|>')[0];
 
     return (
       <div key={message.id} className={message.role === "user" ? "text-white" : "text-white"}>
         {message.role === "assistant" && index === 0 ? (
           <>
-            <div>{`Moneyversity: ${message.content.replace(/<\|endoftext\|>/g, "")}`}</div>
+            <div>{`Moneyversity: ${filteredContent.replace(/<\|endoftext\|>/g, "")}`}</div>
             <div className="flex space-x-2 mt-2">
               <button
                 onClick={() => handleButtonClick("Absolutely")}
@@ -85,7 +106,7 @@ export default function Chat() {
               </>
             ) : (
               <p className={message.role === "user" ? "bg-[#8dc63f] text-white rounded-lg py-2 px-4 inline-block" : "bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block"}>
-                {` ${message.content.replace(/<\|endoftext\|>/g, "")}`}
+                {` ${filteredContent.replace(/<\|endoftext\|>/g, "")}`}
               </p>
             )}
 
@@ -115,14 +136,73 @@ export default function Chat() {
                 >
                   Widowed
                 </button>
+                
               </div>
+              
             )}
+              {isDependentsQuestion && (
+                <div className="flex flex-col space-y-2 mt-2">
+                  <label className="text-white">Please select your dependents:</label>
+                  <div className="flex flex-col space-y-1">
+                    <CustomCheckBox
+                      id="spouse"
+                      name="dependents"
+                     
+                      value="Spouse"
+                      checked={checkboxes.spouse}
+                      onChange={handleCheckboxChange}
+                    />
+                    <label htmlFor="spouse" className="text-white">Spouse</label>
+
+                    <CustomCheckBox
+                      id="children"
+                      name="dependents"
+                     
+                      value="Children"
+                      checked={checkboxes.children}
+                      onChange={handleCheckboxChange}
+                    />
+                    <label htmlFor="children" className="text-white">Children</label>
+
+                    <CustomCheckBox
+                      id="stepchildren"
+                      name="dependents"
+                     
+                      value="Stepchildren"
+                      checked={checkboxes.stepchildren}
+                      onChange={handleCheckboxChange}
+                    />
+                    <label htmlFor="stepchildren" className="text-white">Stepchildren</label>
+
+                    <CustomCheckBox
+                      id="grandchildren"
+                      name="dependents"
+                      
+                      value="Grandchildren"
+                      checked={checkboxes.grandchildren}
+                      onChange={handleCheckboxChange}
+                    />
+                    <label htmlFor="grandchildren" className="text-white">Grandchildren</label>
+
+                    <CustomCheckBox
+                      id="other"
+                      name="dependents"
+                     
+                      value="Other Dependents"
+                      checked={checkboxes.other}
+                      onChange={handleCheckboxChange}
+                    />
+                    <label htmlFor="other" className="text-white">Other Dependents</label>
+                  </div>
+                </div>
+              )}
           </div>
         )}
       </div>
     );
   });
 };
+
 
 
   return (

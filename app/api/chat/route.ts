@@ -36,6 +36,8 @@ export async function POST(req: Request) {
     i will use that word to activate a component of the code.
 
     After you respond 'initiate video', the user will now give his/her name. Please respond after that with this message:"Nice to meet you, [user name]! 👋 Let's talk about your family life briefly. Are you married, single, divorced, or widowed?"
+    Third stage - After they said that they are married, ask them this question: "Thanks! Are you married in community of property, or out of community of property?
+    Fourth stage - After they said community of property, or out of community of property, ask them this question: "Do you have dependents? Spouse, Children, Stepchildren, Grandchildren, Other Dependents"
     `;
 
 messages = messages.map((message: { content: string; role: 'system' | 'user' | 'assistant' }) => {
