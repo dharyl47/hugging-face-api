@@ -12,6 +12,8 @@ export default function Chat() {
   const [isOpen, setIsOpen] = useState(false);
   const [videoTriggerMessageId, setVideoTriggerMessageId] = useState<string | null>(null);
 
+  const [isChecked, setIsChecked] = useState(false);
+
   useEffect(() => {
     setMessages([{
       id: Date.now().toString(),
@@ -50,6 +52,7 @@ export default function Chat() {
   });
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+
     const { id, checked } = e.target;
     setCheckboxes(prevState => ({
       ...prevState,
@@ -142,58 +145,25 @@ export default function Chat() {
             )}
               {isDependentsQuestion && (
                 <div className="flex flex-col space-y-2 mt-2">
-                  <label className="text-white">Please select your dependents:</label>
-                  <div className="flex flex-col space-y-1">
-                    <CustomCheckBox
-                      id="spouse"
-                      name="dependents"
-                      className="checkbox"
-                      value="Spouse"
-                      checked={checkboxes.spouse}
-                      onChange={handleCheckboxChange}
-                    />
-                    <label htmlFor="spouse" className="text-white">Spouse</label>
-
-                    <CustomCheckBox
-                      id="children"
-                      name="dependents"
-                      className="checkbox"
-                      value="Children"
-                      checked={checkboxes.children}
-                      onChange={handleCheckboxChange}
-                    />
-                    <label htmlFor="children" className="text-white">Children</label>
-
-                    <CustomCheckBox
-                      id="stepchildren"
-                      name="dependents"
-                      className="checkbox"
-                      value="Stepchildren"
-                      checked={checkboxes.stepchildren}
-                      onChange={handleCheckboxChange}
-                    />
-                    <label htmlFor="stepchildren" className="text-white">Stepchildren</label>
-
-                    <CustomCheckBox
-                      id="grandchildren"
-                      name="dependents"
-                      className="checkbox"
-                      value="Grandchildren"
-                      checked={checkboxes.grandchildren}
-                      onChange={handleCheckboxChange}
-                    />
-                    <label htmlFor="grandchildren" className="text-white">Grandchildren</label>
-
-                    <CustomCheckBox
-                      id="other"
-                      name="dependents"
-                      className="checkbox"
-                      value="Other Dependents"
-                      checked={checkboxes.other}
-                      onChange={handleCheckboxChange}
-                    />
-                    <label htmlFor="other" className="text-white">Other Dependents</label>
-                  </div>
+                   <label className="text-white">Please select your dependents:</label>
+                   {Object.entries(checkboxes).map(([key, value]) => (
+                    <div key={key} className={`${value ? 'bg-[#8DC63F]' : ''} flex items-center ps-4 border border-[#8DC63F] rounded mt-2 text-white`}>
+                      <CustomCheckBox
+                        id={key}
+                        name="dependents"
+                        className="w-4 h-4 rounded"
+                        value={key.charAt(0).toUpperCase() + key.slice(1)}
+                        checked={value}
+                        onChange={handleCheckboxChange}
+                      />
+                      <label
+                        htmlFor={key}
+                        className="w-full py-4 ms-2 text-sm font-medium text-white"
+                      >
+                        {key.charAt(0).toUpperCase() + key.slice(1)}
+                      </label>
+                    </div>
+                  ))}
                 </div>
               )}
           </div>
