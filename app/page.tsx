@@ -147,7 +147,7 @@ export default function Chat() {
                     <CustomCheckBox
                       id="spouse"
                       name="dependents"
-                     
+                      className="checkbox"
                       value="Spouse"
                       checked={checkboxes.spouse}
                       onChange={handleCheckboxChange}
@@ -157,7 +157,7 @@ export default function Chat() {
                     <CustomCheckBox
                       id="children"
                       name="dependents"
-                     
+                      className="checkbox"
                       value="Children"
                       checked={checkboxes.children}
                       onChange={handleCheckboxChange}
@@ -167,7 +167,7 @@ export default function Chat() {
                     <CustomCheckBox
                       id="stepchildren"
                       name="dependents"
-                     
+                      className="checkbox"
                       value="Stepchildren"
                       checked={checkboxes.stepchildren}
                       onChange={handleCheckboxChange}
@@ -177,7 +177,7 @@ export default function Chat() {
                     <CustomCheckBox
                       id="grandchildren"
                       name="dependents"
-                      
+                      className="checkbox"
                       value="Grandchildren"
                       checked={checkboxes.grandchildren}
                       onChange={handleCheckboxChange}
@@ -187,7 +187,7 @@ export default function Chat() {
                     <CustomCheckBox
                       id="other"
                       name="dependents"
-                     
+                      className="checkbox"
                       value="Other Dependents"
                       checked={checkboxes.other}
                       onChange={handleCheckboxChange}
