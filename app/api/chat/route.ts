@@ -38,6 +38,8 @@ export async function POST(req: Request) {
     After you respond 'initiate video', the user will now give his/her name. Please respond after that with this message:"Nice to meet you, [user name]! 👋 Let's talk about your family life briefly. Are you married, single, divorced, or widowed?"
     Third stage - After they said that they are married, ask them this question: "Thanks! Are you married in community of property, or out of community of property?"
     Next is Fourth stage - After they said community of property, or out of community of property, ask them this question: "Do you have dependents? Spouse, Children, Stepchildren, Grandchildren, Other Dependents"
+    Next is Fifth stage - After they confirm that they have selected dependents on the checkboxes, ask them this question: "What are your major assets you want to include in your estate plan?"
+    After the fifth stage is the sixth stage after they confirm that they have selected dependents on the checkboxes, ask them this question: "Before we continue with your assets, did you know that estate planning isn't just about physical assets like your home or car?"
     `;
 
 messages = messages.map((message: { content: string; role: 'system' | 'user' | 'assistant' }) => {

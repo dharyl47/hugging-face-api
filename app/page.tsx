@@ -38,7 +38,7 @@ export default function Chat() {
   }, [messages]);
 
   const handleButtonClick = (message: any) => {
-    setInputStr(message);
+   // setInputStr(message);
     handleInputChange({ target: { value: message } } as React.ChangeEvent<HTMLInputElement>);
     setSubmitOnNextUpdate(true);
   };
@@ -50,6 +50,34 @@ export default function Chat() {
     grandchildren: false,
     other: false
   });
+
+// Function to format camelCase keys into readable text
+const formatLabel = (key: string) => {
+  return key
+    .replace(/([a-z])([A-Z])/g, '$1 $2') // Add space between camelCase words
+    .replace(/([A-Z])([A-Z][a-z])/g, '$1 $2') // Add space between uppercase letters
+    .toLowerCase() // Convert all text to lowercase
+    .replace(/\b\w/g, char => char.toUpperCase()); // Capitalize the first letter of each word
+};
+
+   const [checkboxesAsset, setCheckboxesAsset ] = useState({
+    primaryResidents: false,
+    otherRealEstate: false,
+    bankAccounts: false,
+    investmentAccounts: false,
+    businessInterests: false,
+    personalProperty: false,
+    otherAsset: false
+  });
+
+    const handleCheckboxChangeAsset = (e: React.ChangeEvent<HTMLInputElement>) => {
+
+    const { id, checked } = e.target;
+    setCheckboxesAsset(prevState => ({
+      ...prevState,
+      [id]: checked
+    }));
+  };
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
 
@@ -66,6 +94,10 @@ export default function Chat() {
     const isVideoTrigger = message.id === videoTriggerMessageId;
     const isMaritalStatusQuestion = message.content.includes("Are you married, single, divorced, or widowed?");
     const isDependentsQuestion = message.content.includes("Do you have dependents?");
+    const isMajorAsset = message.content.includes("What are your major assets");
+    const funFact = message.content.includes("Before we continue with your assets");
+
+    
     // Split message content by "<prompt>" and take the first part
     const filteredContent = message.content.split('<|prompter|>')[0];
 
@@ -166,6 +198,67 @@ export default function Chat() {
                   ))}
                 </div>
               )}
+              {isMajorAsset && (
+                <div className="flex flex-col space-y-2 mt-2">
+                   <label className="text-white">(Select all that apply)</label>
+                   {Object.entries(checkboxesAsset).map(([key, value]) => (
+                    <div key={key} className={`${value ? 'bg-[#8DC63F]' : ''} flex items-center ps-4 border border-[#8DC63F] rounded mt-2 text-white`}>
+                      <CustomCheckBox
+                        id={key}
+                        name="dependents"
+                        className="w-4 h-4 rounded"
+                        value={key.charAt(0).toUpperCase() + key.slice(1)}
+                        checked={value}
+                        onChange={handleCheckboxChangeAsset}
+                      />
+                      <label
+                        htmlFor={key}
+                        className="w-full py-4 ms-2 text-sm font-medium text-white"
+                      >
+                       {formatLabel(key)}
+                      </label>
+                    </div>
+                  ))}
+                </div>
+              )}
+          {funFact && (
+  <>
+    <div className="flex flex-col space-y-2 mt-2">
+      <p className="bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+        <span className="bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block font-semibold">
+        Fun Fact
+        </span><br />
+        Modern wills often include digital assets 📱 like social media accounts, digital currencies 🌐💰, and
+        online business interests, reflecting our increasingly digital lives.
+      </p>
+      <img
+        src="https://i.ibb.co/MDvDj7Y/your-image.jpg"
+        alt="Fun Fact Image"
+        className="w-[270px] h-[210px] rounded-lg mt-2"
+      />
+    </div>
+    <div className="flex flex-col space-y-2 mt-2">
+      <p className="bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+        Pretty neat, right? Now, lets get back to securing your future! 😊
+      </p>
+    </div>
+    <div className="flex flex-col space-y-2 mt-2">
+      <p className="bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+        Please list the assets and people or organisations you want to leave them to. 
+        If you'd rather not type it all out, you can upload a document instead
+      </p>
+      <div className="flex space-x-2 mt-2">
+        <button className="bg-[#8DC63F] text-white rounded-lg py-2 px-4" style={{ borderRadius: '10px' }}>
+          Upload Document
+        </button>
+        <button className="border border-[#8DC63F] text-[#8DC63F] rounded-lg py-2 px-4 bg-transparent" style={{ borderRadius: '10px' }}>
+          Maybe Later
+        </button>
+      </div>
+    </div>
+  </>
+)}
+
           </div>
         )}
       </div>
@@ -204,7 +297,11 @@ export default function Chat() {
             <div id="chatbox" className="p-4 h-96 overflow-y-auto">
               {renderMessages()}
             </div>
-            <form className="w-full max-w-xl" onSubmit={(e) => { e.preventDefault(); handleSubmit(e); }}>
+            <form className="w-full max-w-xl" onSubmit={(e) => { e.preventDefault();  
+            if (inputStr.trim()) {
+            handleSubmit(e);
+            setInputStr(''); // Clear the input field after submit
+          } }}>
               <div className="p-4 border-t flex mt-10">
                 <CustomInput
                   className="send-input bg-[#212121] text-white border-none focus:outline-none mb-5"
