@@ -225,7 +225,7 @@ const formatLabel = (key: string) => {
   <>
     <div className="flex flex-col space-y-2 mt-2">
       <p className="bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-        <span className="bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block font-semibold">
+        <span className="bg-[#2f2f2f] text-white rounded-lg py-2 inline-block font-semibold">
         Fun Fact
         </span><br />
         Modern wills often include digital assets 📱 like social media accounts, digital currencies 🌐💰, and
