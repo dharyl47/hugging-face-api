@@ -416,7 +416,7 @@ const formatLabel = (key: string) => {
             handleSubmit(e);
            
             setAllCheckboxesFalse();
-            userProfile(inputStr); 
+            // userProfile(inputStr); 
             setInputStr(''); // Clear the input field after submit
           } }}>
               <div className="p-4 border-t flex mt-10">
