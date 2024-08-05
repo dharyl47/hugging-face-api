@@ -4,6 +4,34 @@ import { useState, useEffect } from "react";
 import CustomInput from "@/app/components/CustomInput";
 import CustomCheckBox from "@/app/components/CustomCheckBox"; // Import the CustomCheckBox component
 import EmbeddedVideo from '@/app/components/EmbeddedVideo';
+import axios from 'axios';
+import { v4 as uuidv4 } from 'uuid';
+import CryptoJS from 'crypto-js';
+
+interface Checkboxes {
+  spouse: boolean;
+  children: boolean;
+  stepchildren: boolean;
+  grandchildren: boolean;
+  other: boolean;
+}
+
+interface CheckboxesAsset {
+  primaryResidents: boolean;
+  otherRealEstate: boolean;
+  bankAccounts: boolean;
+  investmentAccounts: boolean;
+  businessInterests: boolean;
+  personalProperty: boolean;
+  otherAsset: boolean;
+}
+
+interface Message {
+  id: string;
+  content: string;
+  role: string;
+  encryptedName?: string; // Optional field for encrypted name
+}
 
 export default function Chat() {
   const { messages, input, handleInputChange, handleSubmit, setMessages } = useChat();
@@ -11,6 +39,7 @@ export default function Chat() {
   const [submitOnNextUpdate, setSubmitOnNextUpdate] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [videoTriggerMessageId, setVideoTriggerMessageId] = useState<string | null>(null);
+  const [userName, setUserName] = useState('');
 
   const [isChecked, setIsChecked] = useState(false);
 
@@ -43,7 +72,7 @@ export default function Chat() {
     setSubmitOnNextUpdate(true);
   };
 
-    const [checkboxes, setCheckboxes] = useState({
+   const [checkboxes, setCheckboxes] = useState<Checkboxes>({
     spouse: false,
     children: false,
     stepchildren: false,
@@ -60,7 +89,7 @@ const formatLabel = (key: string) => {
     .replace(/\b\w/g, char => char.toUpperCase()); // Capitalize the first letter of each word
 };
 
-   const [checkboxesAsset, setCheckboxesAsset ] = useState({
+     const [checkboxesAsset, setCheckboxesAsset ] = useState<CheckboxesAsset>({
     primaryResidents: false,
     otherRealEstate: false,
     bankAccounts: false,
@@ -70,24 +99,111 @@ const formatLabel = (key: string) => {
     otherAsset: false
   });
 
-    const handleCheckboxChangeAsset = (e: React.ChangeEvent<HTMLInputElement>) => {
+ const updateInputStr = (assetState: any, otherState: any) => {
+    const checkedItems = [
+      ...Object.keys(assetState).filter(key => assetState[key]),
+      ...Object.keys(otherState).filter(key => otherState[key])
+    ];
+    setInputStr(checkedItems.join(', '));
+  };
 
+  useEffect(() => {
+    handleInputChange({ target: { value: inputStr } } as React.ChangeEvent<HTMLInputElement>);
+  }, [inputStr]);
+
+  const handleCheckboxChangeAsset = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, checked } = e.target;
-    setCheckboxesAsset(prevState => ({
-      ...prevState,
-      [id]: checked
-    }));
+    setCheckboxesAsset(prevState => {
+      const newState = { ...prevState, [id]: checked };
+      updateInputStr(newState, checkboxes);
+      return newState;
+    });
   };
 
   const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-
     const { id, checked } = e.target;
-    setCheckboxes(prevState => ({
-      ...prevState,
-      [id]: checked
-    }));
+    setCheckboxes(prevState => {
+      const newState = { ...prevState, [id]: checked };
+      updateInputStr(checkboxesAsset, newState);
+      return newState;
+    });
+  };
+  
+ const setAllCheckboxesFalse = () => {
+    setCheckboxes(prevState => {
+      const newState: Checkboxes = {
+        spouse: false,
+        children: false,
+        stepchildren: false,
+        grandchildren: false,
+        other: false,
+      };
+     
+      return newState;
+    });
+
+    setCheckboxesAsset(prevState => {
+      const newState: CheckboxesAsset = {
+        primaryResidents: false,
+        otherRealEstate: false,
+        bankAccounts: false,
+        investmentAccounts: false,
+        businessInterests: false,
+        personalProperty: false,
+        otherAsset: false,
+      };
+     
+      return newState;
+    });
   };
 
+  async function userProfile(messageAI: any) {
+  try {
+    const response = await axios.post('http://localhost:3000/api/chat', {
+      messages: [{ 
+        content: "Analyze this data and extract the user name. Respond only with the user name, like 'john doe', and nothing else. " + messageAI, 
+        role: 'user',  
+        createdAt: new Date() 
+      }]
+    });
+
+    let newMessages: Message[] = [];
+    if (typeof response.data === 'string') {
+      const responseLines = response.data.split('\n').filter(line => line.trim() !== '');
+      newMessages = responseLines.map(content => ({
+        id: uuidv4(),
+        content,
+        role: 'assistant' // Ensure role is set if not in the response
+      }));
+    } else if (Array.isArray(response.data.messages)) {
+      newMessages = response.data.messages.map((msg: any) => ({
+        ...msg,
+        id: uuidv4()
+      }));
+    } else {
+      throw new Error('Invalid response format');
+    }
+
+    // Encrypt the user name
+    const userName = newMessages[0].content;
+    const secretKey = 'MLKN87y8VSH&Y*SF'; // Replace with your own secret key
+    const encryptedName = CryptoJS.AES.encrypt(userName, secretKey).toString();
+
+    // Add encrypted name to the message object
+    const updatedMessages = newMessages.map((msg: Message) => ({
+      ...msg,
+      encryptedName
+    }));
+
+    setUserName( newMessages[0].content);
+
+    // Log the name and encrypted name
+    console.log(`Name: ${userName}`);
+    console.log(`Encrypted Name: ${encryptedName}`);
+  } catch (error) {
+    console.error('Error:', error);
+  }
+}
 
   const renderMessages = () => {
   return messages.map((message, index) => {
@@ -266,8 +382,6 @@ const formatLabel = (key: string) => {
   });
 };
 
-
-
   return (
     <div className="fixed bottom-0 right-0 mb-5 mr-5">
       {isOpen && (
@@ -300,6 +414,9 @@ const formatLabel = (key: string) => {
             <form className="w-full max-w-xl" onSubmit={(e) => { e.preventDefault();  
             if (inputStr.trim()) {
             handleSubmit(e);
+           
+            setAllCheckboxesFalse();
+            userProfile(inputStr); 
             setInputStr(''); // Clear the input field after submit
           } }}>
               <div className="p-4 border-t flex mt-10">
