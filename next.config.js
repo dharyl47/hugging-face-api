@@ -25,6 +25,8 @@ const nextConfig = {
       },
     ];
   },
+  // Add the transpilePackages setting
+  transpilePackages: ['crypto-js'],
 };
 
 module.exports = nextConfig;
