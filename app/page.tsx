@@ -385,7 +385,7 @@ const formatLabel = (key: string) => {
   return (
     <div className="fixed bottom-0 right-0 mb-5 mr-5">
       {isOpen && (
-        <div id="chat-container" className="fixed bottom-16 right-10">
+        <div id="chat-container" className="fixed bottom-16 right-10 w-full max-w-full sm:w-11/12 md:w-3/4 lg:w-1/2 xl:w-1/3">
           <div className="bg-[#212121] shadow-md rounded-lg max-w-lg w-full">
             <div className="p-4 border-b text-white rounded-t-lg flex items-center bg-gradient-to-b from-[#84c342] to-[#149d6e]">
               <p

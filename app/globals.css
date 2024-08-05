@@ -5,6 +5,7 @@
 
 #chat-container{
     width: 30rem;
+    padding-left: 100px;
 }
 ::-webkit-scrollbar {
     width: 12px;
