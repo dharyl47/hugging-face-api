@@ -411,7 +411,7 @@ const formatLabel = (key: string) => {
             </button>
           </div>
         </div>
-        <div id="chatbox" className="p-4 h-[calc(100vh-210px)] overflow-y-auto">
+        <div id="chatbox" className="p-4 h-[calc(100vh-240px)] overflow-y-auto">
           {renderMessages()}
         </div>
         <form className="w-full" onSubmit={(e) => { e.preventDefault();  
