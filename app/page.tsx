@@ -59,12 +59,15 @@ export default function Chat() {
     }
   }, [submitOnNextUpdate, handleSubmit]);
 
-  useEffect(() => {
-    const triggerMessage = messages.find(message => message.content.includes("initiate video"));
-    if (triggerMessage) {
-      setVideoTriggerMessageId(triggerMessage.id);
-    }
-  }, [messages]);
+ useEffect(() => {
+  const triggerMessage = messages.find(message => 
+    message.content.includes("initiate video") || 
+    message.content.includes("Initiate video")
+  );
+  if (triggerMessage) {
+    setVideoTriggerMessageId(triggerMessage.id);
+  }
+}, [messages]);
 
   const handleButtonClick = (message: any) => {
    // setInputStr(message);
