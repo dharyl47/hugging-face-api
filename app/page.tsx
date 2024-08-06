@@ -469,7 +469,7 @@ const formatLabel = (key: string) => {
             className="send-input bg-[#303134] text-white border-none focus:outline-none w-full "
             id="user-input"
             value={inputStr}
-            onChange={(e) => {
+            onChange={(e: any) => {
               setInputStr(e.target.value);
               handleInputChange(e);
             }}
