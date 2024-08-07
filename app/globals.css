@@ -7,6 +7,17 @@
     width: 30rem;
     padding-left: 100px;
 } */
+@media (max-width: 767px) {
+    #chat-container-2 {
+      display: none;
+    }
+  }
+  
+  @media (min-width: 768px) {
+    #chat-container {
+      display: flex;
+    }
+  }
 ::-webkit-scrollbar {
     width: 12px;
 }

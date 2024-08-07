@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import CustomInput from "@/app/components/CustomInput";
 import CustomCheckBox from "@/app/components/CustomCheckBox"; // Import the CustomCheckBox component
 import EmbeddedVideo from '@/app/components/EmbeddedVideo';
+import Navbar from '@/app/components/Navbar';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import CryptoJS from 'crypto-js';
@@ -493,7 +494,7 @@ const handleButtonClickRegime = async (message: any) => {
 };
 
   return (
-    <div className="fixed inset-0">
+    <div className="fixed inset-0 bg-[#212121]">
   {isOpen && (
     <div id="chat-container" className="fixed inset-0 flex items-end sm:w-11/12 md:w-3/4 lg:w-1/2 xl:w-1/3 mx-auto">
       <div className="bg-[#212121] shadow-md rounded-lg w-full h-full">
@@ -518,7 +519,7 @@ const handleButtonClickRegime = async (message: any) => {
             </button>
           </div>
         </div>
-        <div id="chatbox" className="p-4 h-[calc(100vh-160px)] overflow-y-auto">
+        <div id="chatbox" className="p-4 h-[calc(100vh-240px)] overflow-y-auto">
           {renderMessages()}
         </div>
         <form className="w-full" onSubmit={(e) => { e.preventDefault();  
@@ -553,15 +554,61 @@ const handleButtonClickRegime = async (message: any) => {
     </div>
   )}
   {!isOpen && (
+    <div>
+       <div className="fixed inset-0">
+        {/* <Navbar /> */}
+  <div id="chat-container-2" className="fixed inset-0 flex items-end lg:w-1/2 xl:w-2/5 mx-auto ">
+    <div className="bg-[#212121] shadow-md rounded-lg w-full h-full">
+      <div className="p-4 text-white rounded-t-lg items-center mt-12">
+        <p className="text-lg font-semibold text-center text-4xl">Welcome to our Estate Planning Chat</p>
+      </div>
+      <div id="chatbox" className="p-4 h-[calc(100vh-220px)] overflow-y-auto">
+        {renderMessages()}
+      </div>
+      <form className="w-full" onSubmit={(e) => {
+        e.preventDefault();
+        if (inputStr.trim()) {
+          handleSubmit(e);
+          setAllCheckboxesFalse();
+          setInputStr(''); // Clear the input field after submit
+        }
+      }}>
+        <div className="p-4 flex rounded bg-[#303134]">
+          <CustomInput
+            className="send-input bg-[#303134] text-white border-none focus:outline-none w-full "
+            id="user-input"
+            value={inputStr}
+            onChange={(e: any) => {
+              setInputStr(e.target.value);
+              handleInputChange(e);
+            }}
+            placeholder="Type a message"
+          />
+          <button
+            id="send-button"
+            type="submit"
+            className="bg-[#8dc63f] text-white px-4 py-2 rounded-md ml-2"
+          >
+            Send
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+
     <button
       onClick={() => setIsOpen(true)}
-      className="fixed bottom-5 right-5 bg-[#84c342] p-4 text-white rounded-full shadow-md hover:bg-blue-500 transition duration-300"
+      className="fixed bottom-5 right-5 bg-[#84c342] p-4 text-white rounded-full shadow-md hover:bg-blue-500 transition duration-300 block md:hidden"
     >
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
         <path strokeLinecap="round" strokeLinejoin="round" d="m19.5 8.25-7.5 7.5-7.5-7.5" />
       </svg>
     </button>
+    </div>
   )}
 </div>
+
   );
 }
