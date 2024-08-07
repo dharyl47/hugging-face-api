@@ -8,6 +8,22 @@ const Hf = new HfInference(process.env.HUGGINGFACE_API_KEY)
 // IMPORTANT! Set the runtime to edge
 export const runtime = 'edge'
 
+async function fetchLearningMaterials() {
+  try {
+    const response = await fetch('http://localhost:3000/api/learningMaterials'); // Replace with the correct URL
+    const result = await response.json();
+    if (result.success) {
+      return result.data;
+    } else {
+      console.error('Error fetching learning materials:', result.error);
+      return [];
+    }
+  } catch (error) {
+    console.error('Error fetching learning materials:', error);
+    return [];
+  }
+}
+
 function buildPrompt(messages: { content: string; role: 'system' | 'user' | 'assistant' }[]) {
   const lastUserMessage = messages
     .filter(({ role }) => role === 'user') // Only consider user messages
@@ -20,7 +36,14 @@ export async function POST(req: Request) {
   // Extract the `messages` from the body of the request
   let { messages } = await req.json()
 
+  const learningMaterials = await fetchLearningMaterials();
+  const concatenatedPrompts = learningMaterials.map((material: { prompt: string }) => material.prompt).join('\n\n');
+
   const prompt = `
+    Below is the information if someone ask anything:
+    ${concatenatedPrompts}
+
+    Below is the stages:
  
     Our goal is to help people in real estate and with that one of our goal is to create a user profile which we capture user information for us to decide
     situational conversation, If user provided a name, we will call that person by its name.

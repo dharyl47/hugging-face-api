@@ -1,4 +1,4 @@
-'use client';
+"use client";
 import { useChat } from "ai/react";
 import { useState, useEffect } from "react";
 import CustomInput from "@/app/components/CustomInput";
@@ -39,9 +39,49 @@ export default function Chat() {
   const [submitOnNextUpdate, setSubmitOnNextUpdate] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [videoTriggerMessageId, setVideoTriggerMessageId] = useState<string | null>(null);
-  const [userName, setUserName] = useState('');
-
+  
   const [isChecked, setIsChecked] = useState(false);
+  const [userName, setUserName] = useState('');
+   const [maritalStatus, setMaritalStatus] = useState('');
+  const [encryptedName, setEncryptedName] = useState('');
+  const [isUserNameCollected, setIsUserNameCollected] = useState(false);
+  const [propertyRegime, setPropertyRegime] = useState('');
+
+  
+
+const saveUserProfile = async (update: any) => {
+  const profile = {
+    name: userName || '',
+     propertyRegime: propertyRegime || '',
+    encryptedName: encryptedName || '',
+    checkboxes: checkboxes || {},
+    checkboxesAsset: checkboxesAsset || {},
+    maritalStatus: maritalStatus || '',
+    ...update
+  };
+
+
+
+
+
+
+
+  const response = await fetch('http://localhost:3000/api/userProfiles', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(profile),
+  });
+
+  if (!response.ok) {
+    throw new Error('Failed to save user profile');
+  }
+
+  return await response.json(); // if you need to process the response
+};
+
+
 
   useEffect(() => {
     setMessages([{
@@ -69,11 +109,7 @@ export default function Chat() {
   }
 }, [messages]);
 
-  const handleButtonClick = (message: any) => {
-   // setInputStr(message);
-    handleInputChange({ target: { value: message } } as React.ChangeEvent<HTMLInputElement>);
-    setSubmitOnNextUpdate(true);
-  };
+
 
    const [checkboxes, setCheckboxes] = useState<Checkboxes>({
     spouse: false,
@@ -114,23 +150,48 @@ const formatLabel = (key: string) => {
     handleInputChange({ target: { value: inputStr } } as React.ChangeEvent<HTMLInputElement>);
   }, [inputStr]);
 
-  const handleCheckboxChangeAsset = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, checked } = e.target;
-    setCheckboxesAsset(prevState => {
-      const newState = { ...prevState, [id]: checked };
-      updateInputStr(newState, checkboxes);
-      return newState;
-    });
-  };
+ const handleCheckboxChangeAsset = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const { id, checked } = e.target;
+  const updatedCheckboxesAsset = { ...checkboxesAsset, [id]: checked };
+  
+  setCheckboxesAsset(updatedCheckboxesAsset);
+  updateInputStr(updatedCheckboxesAsset, checkboxes);
 
-  const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { id, checked } = e.target;
-    setCheckboxes(prevState => {
-      const newState = { ...prevState, [id]: checked };
-      updateInputStr(checkboxesAsset, newState);
-      return newState;
-    });
-  };
+  await saveUserProfile({ checkboxesAsset: updatedCheckboxesAsset });
+};
+
+const handleCheckboxChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const { id, checked } = e.target;
+  const updatedCheckboxes = { ...checkboxes, [id]: checked };
+
+  setCheckboxes(updatedCheckboxes);
+  updateInputStr(checkboxesAsset, updatedCheckboxes);
+
+  await saveUserProfile({ checkboxes: updatedCheckboxes });
+};
+
+const handleButtonClick = async (message: any) => {
+  const allowedStatuses = ['Single', 'Married', 'Divorced', 'Widowed'];
+  
+  if (allowedStatuses.includes(message)) {
+    setMaritalStatus(message);
+    await saveUserProfile({ maritalStatus: message });
+  }
+   handleInputChange({ target: { value: message } } as React.ChangeEvent<HTMLInputElement>);
+    setSubmitOnNextUpdate(true);
+};
+
+const handleButtonClickRegime = async (message: any) => {
+  const allowedStatuses =  ['Community of property', 'Out of community of property'];
+  
+  if (allowedStatuses.includes(message)) {
+    setPropertyRegime(message);
+    await saveUserProfile({ propertyRegime: message });
+    console.log("savedatahere", message)
+  }
+   handleInputChange({ target: { value: message } } as React.ChangeEvent<HTMLInputElement>);
+    setSubmitOnNextUpdate(true);
+};
   
  const setAllCheckboxesFalse = () => {
     setCheckboxes(prevState => {
@@ -160,13 +221,29 @@ const formatLabel = (key: string) => {
     });
   };
 
+// const savePropertyRegime = async (input: any) => {
+//   const validInputs = ['community of property', 'out of community of property'];
+
+//   if (validInputs.includes(input.toLowerCase())) {
+//     // Call saveUserProfile with the property regime
+//     setRegime(input);
+//     await saveUserProfile({ propertyRegime: input });
+//     console.log("data22", regime)
+//   } else {
+//     console.log('Invalid input.');
+//   }
+// };
   async function userProfile(messageAI: any) {
+  if (isUserNameCollected) {
+    return; // Exit the function if the username has already been collected
+  }
+
   try {
     const response = await axios.post('http://localhost:3000/api/chat', {
-      messages: [{ 
-        content: "Analyze this data and extract the user name. Respond only with the user name, like 'john doe', and nothing else. " + messageAI, 
-        role: 'user',  
-        createdAt: new Date() 
+      messages: [{
+        content: "Please analyze the provided data and extract the user name. Respond solely with the user name in the format '{name}'. If the data does not contain a name, respond only with '404'." + messageAI,
+        role: 'user',
+        createdAt: new Date()
       }]
     });
 
@@ -187,26 +264,40 @@ const formatLabel = (key: string) => {
       throw new Error('Invalid response format');
     }
 
-    // Encrypt the user name
     const userName = newMessages[0].content;
+
+    // Check if the response contains '404'
+    if (userName.includes('404')) {
+      return; // Exit the function if the response contains '404'
+    }
+
+    // Encrypt the user name
     const secretKey = 'MLKN87y8VSH&Y*SF'; // Replace with your own secret key
     const encryptedName = CryptoJS.AES.encrypt(userName, secretKey).toString();
 
-    // Add encrypted name to the message object
-    const updatedMessages = newMessages.map((msg: Message) => ({
-      ...msg,
-      encryptedName
-    }));
-
-    setUserName( newMessages[0].content);
+    // Update state variables
+    setUserName(userName);
+    setEncryptedName(encryptedName);
+    setIsUserNameCollected(true);
 
     // Log the name and encrypted name
     console.log(`Name: ${userName}`);
     console.log(`Encrypted Name: ${encryptedName}`);
+
+    // Save the username to the database with default values for other fields
+    await saveUserProfile({
+      name: userName,
+      propertyRegime: 'N/A',
+      encryptedName,
+      checkboxes: {},
+      checkboxesAsset: {},
+      maritalStatus: ''
+    });
   } catch (error) {
     console.error('Error:', error);
   }
 }
+
 
   const renderMessages = () => {
   return messages.map((message, index) => {
@@ -215,8 +306,7 @@ const formatLabel = (key: string) => {
     const isDependentsQuestion = message.content.includes("Do you have dependents?");
     const isMajorAsset = message.content.includes("What are your major assets");
     const funFact = message.content.includes("Before we continue with your assets");
-
-    
+    const reg = message.content.includes("Are you married in");
     // Split message content by "<prompt>" and take the first part
     const filteredContent = message.content.split('<|prompter|>')[0];
 
@@ -380,6 +470,23 @@ const formatLabel = (key: string) => {
 
           </div>
         )}
+         {reg && (
+              <div className="space-x-2 mt-2">
+                <button
+                  onClick={() => handleButtonClickRegime("Community of property")}
+                  className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                >
+                  Community of property
+                </button>
+                <button
+                  onClick={() => handleButtonClickRegime("Out of community of property")}
+                  className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                >
+                  Out of community of property
+                </button>
+              </div>
+              
+            )}
       </div>
     );
   });
@@ -418,6 +525,8 @@ const formatLabel = (key: string) => {
         if (inputStr.trim()) {
           handleSubmit(e);
           setAllCheckboxesFalse();
+          userProfile(inputStr);
+          // savePropertyRegime(inputStr);
           setInputStr(''); // Clear the input field after submit
         } }}>
           <div className="p-4 border-t flex">
