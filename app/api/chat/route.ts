@@ -119,7 +119,7 @@ messages = messages.map((message: { content: string; role: 'system' | 'user' | '
 });
 
   const response = Hf.textGenerationStream({
-    model: 'meta-llama/Meta-Llama-3.1-405B-Instruct',
+    model: 'meta-llama/Meta-Llama-3.1-8B-Instruct',
     inputs: experimental_buildOpenAssistantPrompt(messages),
     parameters: {
       max_new_tokens: 200,
