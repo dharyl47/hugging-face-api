@@ -26,7 +26,7 @@ async function fetchLearningMaterials() {
 
 async function fetchSettings() {
   try {
-    const response = await fetch('http://localhost:3000/api/settings');
+    const response = await fetch('https://moneyversity-ai-chat.vercel.app/api/settings');
     const result = await response.json();
     if (result.success) {
       return result.data;
