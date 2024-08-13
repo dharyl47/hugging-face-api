@@ -1,31 +1,21 @@
-/** @type {import('next').NextConfig} */
 const nextConfig = {
-  async rewrites() {
-    return [
-      {
-        source: '/api/:path*',
-        destination: 'http://localhost:3000/api/:path*', // Proxy to backend
-      },
-    ];
-  },
   async headers() {
     return [
       {
-        source: '/(.*)', // Apply to all routes
+        source: '/(.*)',
         headers: [
           {
             key: 'X-Frame-Options',
-            value: 'DENY', // Prevents all framing
+            value: 'DENY',
           },
           {
             key: 'Content-Security-Policy',
-            value: "frame-ancestors 'none';", // Prevents framing
+            value: "frame-ancestors 'none';",
           },
         ],
       },
     ];
   },
-  // Add the transpilePackages setting
   transpilePackages: ['crypto-js'],
 };
 
