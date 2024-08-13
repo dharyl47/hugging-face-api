@@ -67,7 +67,7 @@ const saveUserProfile = async (update: any) => {
 
 
 
-  const response = await fetch('/api/userProfiles', {
+  const response = await fetch('https://moneyversity-ai-chat.vercel.app/api/userProfiles', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -240,7 +240,7 @@ const handleButtonClickRegime = async (message: any) => {
   }
 
   try {
-    const response = await axios.post('/api/chat', {
+    const response = await axios.post('https://moneyversity-ai-chat.vercel.app/api/chat', {
       messages: [{
         content: "Please analyze the provided data and extract the user name. Respond solely with the user name in the format '{name}'. If the data does not contain a name, respond only with '404'." + messageAI,
         role: 'user',
@@ -302,7 +302,7 @@ const handleButtonClickRegime = async (message: any) => {
 const getImageUrl = (filename: string) => {
   try {
     // Create the URL with query parameters
-    const url = `/api/uploads?filename=${encodeURIComponent(filename)}`;
+    const url = `https://moneyversity-ai-chat.vercel.app/api/uploads?filename=${encodeURIComponent(filename)}`;
     console.log('Generated URL:', url);
     return url;
   } catch (error) {
