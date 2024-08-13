@@ -299,6 +299,28 @@ const handleButtonClickRegime = async (message: any) => {
   }
 }
 
+const getImageUrl = (filename: string) => {
+  try {
+    // Create the URL with query parameters
+    const url = `/api/uploads?filename=${encodeURIComponent(filename)}`;
+    console.log('Generated URL:', url);
+    return url;
+  } catch (error) {
+    console.error('Error generating image URL:', error);
+    return '';
+  }
+};
+ const [loading, setLoading] = useState(true);
+ const handleImageLoad = () => {
+    setLoading(false);
+  };
+
+  // Function to handle image load errors (optional)
+  const handleImageError = () => {
+    setLoading(false);
+  };
+
+
 
   const renderMessages = () => {
   return messages.map((message, index) => {
@@ -309,6 +331,14 @@ const handleButtonClickRegime = async (message: any) => {
     const funFact = message.content.includes("Before we continue with your assets");
     const reg = message.content.includes("Are you married in");
     // Split message content by "<prompt>" and take the first part
+
+    const videoUrlMatch = message.content.match(/(https:\/\/www\.youtube\.com\/embed\/[^\s]+)/);
+    const imageFilenameMatch = message.content.match(/([\w-]+\.(?:png|jpg|jpeg|gif))/);
+
+    const videoUrl = videoUrlMatch ? videoUrlMatch[0] : null;
+    const imageFilename = imageFilenameMatch ? imageFilenameMatch[0] : null;
+    console.log(imageFilename);
+
     const filteredContent = message.content.split('<|prompter|>')[0];
 
     return (
@@ -354,6 +384,39 @@ const handleButtonClickRegime = async (message: any) => {
                 {` ${filteredContent.replace(/<\|endoftext\|>/g, "")}`}
               </p>
             )}
+
+ {imageFilename && (
+              <div className="relative">
+                 {loading && (
+                  <>
+                  <br/><br/>
+        <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 text-white text-xl">
+          Loading image...
+        </div></>
+      )}
+                <img
+                  src={getImageUrl(imageFilename)}
+                  alt="Embedded"
+                  className="w-[270px] h-[210px] rounded-lg mt-2"
+                  onLoad={handleImageLoad}
+        onError={handleImageError}
+        style={{ display: loading ? 'none' : 'block' }}
+                />
+              </div>
+            )}
+            <br/>
+ {videoUrl && (
+                  <iframe
+                    width="560"
+                    height="315"
+                    src={videoUrl}
+                    title="Video"
+                    frameBorder="0"
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                    allowFullScreen
+                  ></iframe>
+                )}
+
 
             {isMaritalStatusQuestion && (
               <div className="space-x-2 mt-2">
@@ -520,7 +583,9 @@ const handleButtonClickRegime = async (message: any) => {
           </div>
         </div>
         <div id="chatbox" className="p-4 h-[calc(100vh-240px)] overflow-y-auto">
-          {renderMessages()}
+          {renderMessages() || (
+    <div className="italic">typing...</div>
+  )}
         </div>
         <form className="w-full" onSubmit={(e) => { e.preventDefault();  
         if (inputStr.trim()) {
@@ -563,7 +628,9 @@ const handleButtonClickRegime = async (message: any) => {
         <p className="text-lg font-semibold text-center text-4xl">Welcome to our Estate Planning Chat</p>
       </div>
       <div id="chatbox" className="p-4 h-[calc(100vh-220px)] overflow-y-auto">
-        {renderMessages()}
+         {renderMessages() || (
+    <div className="italic">typing...</div>
+  )}
       </div>
       <form className="w-full" onSubmit={(e) => {
         e.preventDefault();

@@ -24,6 +24,22 @@ async function fetchLearningMaterials() {
   }
 }
 
+async function fetchSettings() {
+  try {
+    const response = await fetch('http://localhost:3000/api/settings');
+    const result = await response.json();
+    if (result.success) {
+      return result.data;
+    } else {
+      console.error('Error fetching settings:', result.error);
+      return [];
+    }
+  } catch (error) {
+    console.error('Error fetching settings:', error);
+    return [];
+  }
+}
+
 function buildPrompt(messages: { content: string; role: 'system' | 'user' | 'assistant' }[]) {
   const lastUserMessage = messages
     .filter(({ role }) => role === 'user') // Only consider user messages
@@ -33,15 +49,26 @@ function buildPrompt(messages: { content: string; role: 'system' | 'user' | 'ass
 }
 
 export async function POST(req: Request) {
-  // Extract the `messages` from the body of the request
-  let { messages } = await req.json()
+  let { messages } = await req.json();
 
   const learningMaterials = await fetchLearningMaterials();
   const concatenatedPrompts = learningMaterials.map((material: { prompt: string }) => material.prompt).join('\n\n');
 
+  const settingsArray = await fetchSettings();
+ const combinedEngagement = settingsArray.map((setting: any) => {
+    const prompt = setting.engagingPrompt || '';
+    const video = setting.engagingVideo ? `Watch this video: ${setting.engagingVideo}` : '';
+    const image = setting.engagingImage ? `Here is an image related to the topic: ${setting.engagingImage}` : '';
+
+    return [prompt, video, image].filter(Boolean).join('\n\n');
+  }).join('\n\n');
+
   const prompt = `
-    Below is the information if someone ask anything:
+    Below is the information if someone asks anything:
     ${concatenatedPrompts}
+
+    Below is a fun fact you can share with the user if it’s relevant to the question or fits naturally into the conversation, always include the video and image if it is not empty:
+    ${combinedEngagement}
 
     Below is the stages:
  
