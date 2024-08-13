@@ -67,7 +67,7 @@ const saveUserProfile = async (update: any) => {
 
 
 
-  const response = await fetch('http://localhost:3000/api/userProfiles', {
+  const response = await fetch('/api/userProfiles', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -240,7 +240,7 @@ const handleButtonClickRegime = async (message: any) => {
   }
 
   try {
-    const response = await axios.post('http://localhost:3000/api/chat', {
+    const response = await axios.post('/api/chat', {
       messages: [{
         content: "Please analyze the provided data and extract the user name. Respond solely with the user name in the format '{name}'. If the data does not contain a name, respond only with '404'." + messageAI,
         role: 'user',
