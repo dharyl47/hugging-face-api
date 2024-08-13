@@ -1,21 +1,31 @@
+/** @type {import('next').NextConfig} */
 const nextConfig = {
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'https://moneyversity-ai-chat.vercel.app/api/:path*', // Proxy to backend
+      },
+    ];
+  },
   async headers() {
     return [
       {
-        source: '/(.*)',
+        source: '/(.*)', // Apply to all routes
         headers: [
           {
             key: 'X-Frame-Options',
-            value: 'DENY',
+            value: 'DENY', // Prevents all framing
           },
           {
             key: 'Content-Security-Policy',
-            value: "frame-ancestors 'none';",
+            value: "frame-ancestors 'none';", // Prevents framing
           },
         ],
       },
     ];
   },
+  // Add the transpilePackages setting
   transpilePackages: ['crypto-js'],
 };
 
