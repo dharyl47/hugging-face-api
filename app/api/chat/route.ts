@@ -39,7 +39,7 @@ async function fetchLearningMaterials() {
   }
 
   try {
-    const response = await fetch('http://localhost:3000/api/learningMaterials'); // This is for testing 
+    const response = await fetch('/api/learningMaterials'); // This is for testing 
     const result = await response.json();
     if (result.success) {
       cache.learningMaterials = result.data;
@@ -62,7 +62,7 @@ async function fetchSettings() {
   }
 
   try {
-    const response = await fetch('http://localhost:3000/api/settings');
+    const response = await fetch('/api/settings');
     const result = await response.json();
     if (result.success) {
       cache.settings = result.data;
@@ -104,7 +104,7 @@ async function fetchChatSettings() {
   // }
 
   try {
-    const response = await fetch('http://localhost:3000/api/chatSettings');
+    const response = await fetch('/api/chatSettings');
     const result = await response.json();
     if (result.success) {
       cache.prompt = result.data;
