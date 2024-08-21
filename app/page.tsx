@@ -338,6 +338,8 @@ const getImageUrl = (filename: string) => {
     const funFact = message.content.includes("Before we continue with your assets");
     const reg = message.content.includes("type of marriage");
     const birth = message.content.includes("birth");
+    const video = message.content.includes("I've got a short video");
+  
     // Split message content by "<prompt>" and take the first part
 
     const videoUrlMatch = message.content.match(/(https:\/\/www\.youtube\.com\/embed\/[^\s]+)/);
@@ -462,8 +464,23 @@ const getImageUrl = (filename: string) => {
   </div>
   </>
 ) : null}
-
-
+video
+{video && (
+ <div className="space-x-2 mt-2">
+                <button
+                  onClick={() => handleButtonClick("Yes, I want to watch")}
+                  className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                >
+                  Yes, I want to watch
+                </button>
+                <button
+                  onClick={() => handleButtonClick("No, Let's move on")}
+                  className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                >
+                  No, Let's move on
+                </button>
+                </div>
+)}
             {isMaritalStatusQuestion && (
               <div className="space-x-2 mt-2">
                 <button
