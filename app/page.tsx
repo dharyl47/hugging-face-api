@@ -70,7 +70,7 @@ const saveUserProfile = async (update: any) => {
 
 
 
-  const response = await fetch('/api/userProfiles', {
+  const response = await fetch('https://moneyversity-ai-chat.vercel.app/api/userProfiles', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -309,7 +309,7 @@ const handleButtonClickRegime = async (message: any) => {
 const getImageUrl = (filename: string) => {
   try {
     // Create the URL with query parameters
-    const url = `/api/uploads?filename=${encodeURIComponent(filename)}`;
+    const url = `https://moneyversity-ai-chat.vercel.app/api/uploads?filename=${encodeURIComponent(filename)}`;
     console.log('Generated URL:', url);
     return url;
   } catch (error) {
