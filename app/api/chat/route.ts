@@ -1,18 +1,49 @@
-import { HfInference } from '@huggingface/inference'
-import { HuggingFaceStream, StreamingTextResponse } from 'ai'
-import { experimental_buildOpenAssistantPrompt } from 'ai/prompts'
+import { HfInference } from '@huggingface/inference';
+import { HuggingFaceStream, StreamingTextResponse } from 'ai';
+import { experimental_buildOpenAssistantPrompt } from 'ai/prompts';
 
 // Create a new HuggingFace Inference instance
-const Hf = new HfInference(process.env.HUGGINGFACE_API_KEY)
+const Hf = new HfInference(process.env.HUGGINGFACE_API_KEY);
 
 // IMPORTANT! Set the runtime to edge
-export const runtime = 'edge'
+export const runtime = 'edge';
 
+// In-memory cache objects
+interface Cache {
+  learningMaterials: any | null;
+  settings: any | null;
+   prompt: any | null;
+  concatenatedPrompts: string;
+  combinedEngagement: string;
+  messagesCache: string[]; // Explicitly define messagesCache as an array of strings
+}
+
+// Initialize cache with proper types
+const cache: Cache = {
+  learningMaterials: null,
+  settings: null,
+   prompt: null,
+  concatenatedPrompts: '',
+  combinedEngagement: '',
+  messagesCache: [] // Initialize as an empty array of strings
+};
+
+interface Message {
+  content: string;
+  role: 'system' | 'user' | 'assistant';
+}
+// Fetch learning materials
 async function fetchLearningMaterials() {
+  if (cache.learningMaterials) {
+    return cache.learningMaterials;
+  }
+
   try {
-    const response = await fetch('http://localhost:3000/api/learningMaterials'); // Replace with the correct URL
+    const response = await fetch('http://localhost:3000/api/learningMaterials'); // This is for testing 
     const result = await response.json();
     if (result.success) {
+      cache.learningMaterials = result.data;
+      cache.concatenatedPrompts = result.data.map((material: { prompt: string }) => material.prompt).join('\n\n');
       return result.data;
     } else {
       console.error('Error fetching learning materials:', result.error);
@@ -24,11 +55,24 @@ async function fetchLearningMaterials() {
   }
 }
 
+// Fetch settings
 async function fetchSettings() {
+  if (cache.settings) {
+    return cache.settings;
+  }
+
   try {
-    const response = await fetch('https://moneyversity-ai-chat.vercel.app/api/settings');
+    const response = await fetch('http://localhost:3000/api/settings');
     const result = await response.json();
     if (result.success) {
+      cache.settings = result.data;
+      cache.combinedEngagement = result.data.map((setting: any) => {
+        const prompt = setting.engagingPrompt || '';
+        const video = setting.engagingVideo ? `Watch this video: ${setting.engagingVideo}` : '';
+        const image = setting.engagingImage ? `Here is an image related to the topic: ${setting.engagingImage}` : '';
+
+        return [prompt, video, image].filter(Boolean).join('\n\n');
+      }).join('\n\n');
       return result.data;
     } else {
       console.error('Error fetching settings:', result.error);
@@ -40,83 +84,124 @@ async function fetchSettings() {
   }
 }
 
+// Build the prompt with context from previous messages
 function buildPrompt(messages: { content: string; role: 'system' | 'user' | 'assistant' }[]) {
-  const lastUserMessage = messages
-    .filter(({ role }) => role === 'user') // Only consider user messages
-    .pop(); // Get the last user message
+  const context = messages.map(({ role, content }) => {
+    if (role === 'user') {
+      return `User: ${content}`;
+    } else if (role === 'assistant') {
+      return `Assistant: ${content}`;
+    }
+    return '';
+  }).filter(Boolean).join('\n');
 
-  return lastUserMessage ? lastUserMessage.content : '';
+  return context;
 }
 
-export async function POST(req: Request) {
-  let { messages } = await req.json();
+async function fetchChatSettings() {
+  // if (cache.prompt) {
+  //   return cache.prompt;
+  // }
 
-  const learningMaterials = await fetchLearningMaterials();
-  const concatenatedPrompts = learningMaterials.map((material: { prompt: string }) => material.prompt).join('\n\n');
-
-  const settingsArray = await fetchSettings();
- const combinedEngagement = settingsArray.map((setting: any) => {
-    const prompt = setting.engagingPrompt || '';
-    const video = setting.engagingVideo ? `Watch this video: ${setting.engagingVideo}` : '';
-    const image = setting.engagingImage ? `Here is an image related to the topic: ${setting.engagingImage}` : '';
-
-    return [prompt, video, image].filter(Boolean).join('\n\n');
-  }).join('\n\n');
-
-  const prompt = `
-    Below is the information if someone asks anything:
-    ${concatenatedPrompts}
-
-    Below is a fun fact you can share with the user if it’s relevant to the question or fits naturally into the conversation, always include the video and image if it is not empty:
-    ${combinedEngagement}
-
-    Below is the stages:
- 
-    Our goal is to help people in real estate and with that one of our goal is to create a user profile which we capture user information for us to decide
-    situational conversation, If user provided a name, we will call that person by its name.
-    There will be stages on how you communicate with the user. 
-   
-    Stage 1: Initial Selection
-
-The user can select one of the following options: "Absolutely," "Tell me more," or "Not now."
-If the user selects "Absolutely" or "Tell me more," respond with:
-"Great Choice! Estate Planning can help ensure your assets are protected and distributed according to your wishes. I've got a short video that explains the basics. Want to watch?"
-Stage 2: Video Initiation
-
-If the user wants to watch the video, respond with:
-"initiate video"
-After responding with "initiate video," wait for the user to provide their name, then respond with:
-"Nice to meet you, [user name]! 👋 Let's talk about your family life briefly. Are you married, single, divorced, or widowed?"
-Stage 3: Marital Status
-
-If the user says they are married, ask:
-"Thanks! Are you married in community of property, or out of community of property?"
-Stage 4: Dependents
-
-After the user specifies "community of property" or "out of community of property," ask:
-"Do you have dependents? Spouse, Children, Stepchildren, Grandchildren, Other Dependents?"
-Stage 5: Major Assets
-
-After the user confirms they have selected dependents, ask:
-"What are your major assets you want to include in your estate plan?"
-Stage 6: Understanding Assets
-
-After the user confirms their assets, ask:
-"Please list the asset and the people or organizations you want to leave them to, but Before we continue with your assets, did you know that estate planning isn't just about physical assets like your home or car?"
-Stage 7: Investment Risk
-
-After the user responds about uploading their asset, ask:
-"When it comes to investments for your estate, how do you feel about risk?"
-    
-    `;
-
-messages = messages.map((message: { content: string; role: 'system' | 'user' | 'assistant' }) => {
-  if (message.role === 'user') {
-    return { ...message, content: prompt + `Respond not exceeding 4 sentences ${message.content}` };
-  } else {
-    return message;
+  try {
+    const response = await fetch('http://localhost:3000/api/chatSettings');
+    const result = await response.json();
+    if (result.success) {
+      cache.prompt = result.data;
+      return result.data;
+    } else {
+      console.error('Error fetching chat settings:', result.error);
+      return [];
+    }
+  } catch (error) {
+    console.error('Error fetching chat settings:', error);
+    return [];
   }
-});
+}
+
+
+export async function POST(req: Request) {
+  let { messages }: { messages: Message[] } = await req.json();
+
+  // Ensure learning materials and settings are cached
+  await fetchLearningMaterials();
+  await fetchSettings();
+   await fetchChatSettings();
+
+   
+
+  // Fetch the existing messagesCache
+  const existingMessages = cache.messagesCache;
+
+  // Append new messages to the cache
+  cache.messagesCache = [...existingMessages, ...messages.map((message: Message) => message.content)];
+
+  // Build the context from previous messages
+  const context = buildPrompt(messages);
+
+  // Construct the prompt with dynamic content
+  // const prompt = `
+  //   Here is the context of the conversation:
+  //   ${context}
+
+  //   Below is the information if someone asks anything:
+  //   ${cache.concatenatedPrompts}
+
+  //   Below is a fun fact you can share with the user if it’s relevant to the question or fits naturally into the conversation, always include the video and image if it is not empty:
+  //   If the user specifically asks for a fun fact please provide our current fun fact data below.
+  //   ${cache.combinedEngagement}
+
+  //   End of Fun Fact
+  //   After the fun fact is inserted, ask if they want to continue with building their user profile or if they have any additional questions.
+
+  //   Note: Only ask one question at a time. Don't ask the same question if the user already provided an answer.
+    
+  //   After asking the consent, ask below:
+  //   Insert fun fact-  Start and End of "components of estate planning" in Fun Fact. 
+  //   Please only ask questions if the user has not provided an answer already:
+
+  //   Name: 'What is your name?'
+  //   Date of Birth: 'What is your date of birth?'
+
+  //   After asking the date of birth two questions, ask below:
+  //   'Before we proceed, I want to ensure you're comfortable with us collecting and storing this information securely. This data will only be used to help create your estate plan. Do you consent to this?'
+   
+  //   Marital Status: 'What is your marital status? (Single, Married)'
+  //   If married, ask: 'What type of marriage do you have? (Community of Property, Out of Community of Property with Accrual, Out of Community of Property without Accrual, I can’t remember)'
+
+  //   Dependents: 
+  //   'Please list the types of dependents you have. (Spouse, Children, Stepchildren, Grandchildren, Other dependents)'
+  //   'How many dependents are over the age of 18?'
+  //   'How many dependents are under the age of 18?'
+
+  //   Risk Tolerance: Ask this question: 'How do you feel about risk when it comes to investing in your estate? (Low Risk, Medium Risk, High Risk)'
+
+  //   Email Address: Ask this question: 'What is your email address?'
+  // `;
+
+  messages = messages.map((message: Message) => {
+    if (message.role === 'user') {
+      return {
+        ...message,
+        content: `
+        Below are the instructions on how to interact with the user.
+        \n
+        ${cache.prompt.friendlyTone}\n\n
+${cache.prompt.mainPrompt}
+\n\n${message.content}`,
+      };
+    } else {
+      return message;
+    }
+  });
+
+ // console.log(messages); // Logging messages with all cached contents
+
+  // Clear the cache after use
+  cache.learningMaterials = null;
+  cache.settings = null;
+  cache.concatenatedPrompts = '';
+  cache.combinedEngagement = '';
 
   const response = Hf.textGenerationStream({
     model: 'meta-llama/Meta-Llama-3.1-70B-Instruct',
@@ -129,11 +214,11 @@ messages = messages.map((message: { content: string; role: 'system' | 'user' | '
       truncate: 1000,
       return_full_text: false
     }
-  })
+  });
 
   // Convert the response into a friendly text-stream
-  const stream = HuggingFaceStream(response)
+  const stream = HuggingFaceStream(response);
 
   // Respond with the stream
-  return new StreamingTextResponse(stream)
+  return new StreamingTextResponse(stream);
 }

@@ -4,10 +4,13 @@ import { useState, useEffect } from "react";
 import CustomInput from "@/app/components/CustomInput";
 import CustomCheckBox from "@/app/components/CustomCheckBox"; // Import the CustomCheckBox component
 import EmbeddedVideo from '@/app/components/EmbeddedVideo';
+import Calendar from '@/app/components/Calendar';
+
 import Navbar from '@/app/components/Navbar';
 import axios from 'axios';
 import { v4 as uuidv4 } from 'uuid';
 import CryptoJS from 'crypto-js';
+
 
 interface Checkboxes {
   spouse: boolean;
@@ -67,7 +70,7 @@ const saveUserProfile = async (update: any) => {
 
 
 
-  const response = await fetch('https://moneyversity-ai-chat.vercel.app/api/userProfiles', {
+  const response = await fetch('/api/userProfiles', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -88,7 +91,7 @@ const saveUserProfile = async (update: any) => {
     setMessages([{
       id: Date.now().toString(),
       role: 'assistant',
-      content: "Hi there! 😊 Welcome to Moneyversity's Estate Planning Chatbot. 🤖 I'm here to secure your future and that of your loved ones. Ready to get started?"
+      content: "Hello 😊 and welcome to Moneyversity's Estate Planning Consultant 🤖. I'm here to help you navigate the estate planning process with ease. Together, we'll ensure your assets and wishes are well- documented and protected. Ready to get started on this important journey?"
     }]);
   }, [setMessages]);
 
@@ -171,13 +174,17 @@ const handleCheckboxChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
   await saveUserProfile({ checkboxes: updatedCheckboxes });
 };
 
+const handleButtonFunFact = async (message: any) => {
+    handleInputChange({ target: { value: message } } as React.ChangeEvent<HTMLInputElement>);
+    setSubmitOnNextUpdate(true);
+}
 const handleButtonClick = async (message: any) => {
   const allowedStatuses = ['Single', 'Married', 'Divorced', 'Widowed'];
   
-  if (allowedStatuses.includes(message)) {
-    setMaritalStatus(message);
-    await saveUserProfile({ maritalStatus: message });
-  }
+  // if (allowedStatuses.includes(message)) {
+  //   setMaritalStatus(message);
+  //   await saveUserProfile({ maritalStatus: message });
+  // }
    handleInputChange({ target: { value: message } } as React.ChangeEvent<HTMLInputElement>);
     setSubmitOnNextUpdate(true);
 };
@@ -185,11 +192,11 @@ const handleButtonClick = async (message: any) => {
 const handleButtonClickRegime = async (message: any) => {
   const allowedStatuses =  ['Community of property', 'Out of community of property'];
   
-  if (allowedStatuses.includes(message)) {
-    setPropertyRegime(message);
-    await saveUserProfile({ propertyRegime: message });
-    console.log("savedatahere", message)
-  }
+  // if (allowedStatuses.includes(message)) {
+  //   setPropertyRegime(message);
+  //   await saveUserProfile({ propertyRegime: message });
+  //   console.log("savedatahere", message)
+  // }
    handleInputChange({ target: { value: message } } as React.ChangeEvent<HTMLInputElement>);
     setSubmitOnNextUpdate(true);
 };
@@ -235,74 +242,74 @@ const handleButtonClickRegime = async (message: any) => {
 //   }
 // };
   async function userProfile(messageAI: any) {
-  if (isUserNameCollected) {
-    return; // Exit the function if the username has already been collected
-  }
+  // if (isUserNameCollected) {
+  //   return; // Exit the function if the username has already been collected
+  // }
 
-  try {
-    const response = await axios.post('https://moneyversity-ai-chat.vercel.app/api/chat', {
-      messages: [{
-        content: "Please analyze the provided data and extract the user name. Respond solely with the user name in the format '{name}'. If the data does not contain a name, respond only with '404'." + messageAI,
-        role: 'user',
-        createdAt: new Date()
-      }]
-    });
+  // try {
+  //   const response = await axios.post('https://moneyversity-ai-chat.vercel.app/api/chat', {
+  //     messages: [{
+  //       content: "Please analyze the provided data and extract the user name. Respond solely with the user name in the format '{name}'. If the data does not contain a name, respond only with '404'." + messageAI,
+  //       role: 'user',
+  //       createdAt: new Date()
+  //     }]
+  //   });
 
-    let newMessages: Message[] = [];
-    if (typeof response.data === 'string') {
-      const responseLines = response.data.split('\n').filter(line => line.trim() !== '');
-      newMessages = responseLines.map(content => ({
-        id: uuidv4(),
-        content,
-        role: 'assistant' // Ensure role is set if not in the response
-      }));
-    } else if (Array.isArray(response.data.messages)) {
-      newMessages = response.data.messages.map((msg: any) => ({
-        ...msg,
-        id: uuidv4()
-      }));
-    } else {
-      throw new Error('Invalid response format');
-    }
+  //   let newMessages: Message[] = [];
+  //   if (typeof response.data === 'string') {
+  //     const responseLines = response.data.split('\n').filter(line => line.trim() !== '');
+  //     newMessages = responseLines.map(content => ({
+  //       id: uuidv4(),
+  //       content,
+  //       role: 'assistant' // Ensure role is set if not in the response
+  //     }));
+  //   } else if (Array.isArray(response.data.messages)) {
+  //     newMessages = response.data.messages.map((msg: any) => ({
+  //       ...msg,
+  //       id: uuidv4()
+  //     }));
+  //   } else {
+  //     throw new Error('Invalid response format');
+  //   }
 
-    const userName = newMessages[0].content;
+  //   const userName = newMessages[0].content;
 
-    // Check if the response contains '404'
-    if (userName.includes('404')) {
-      return; // Exit the function if the response contains '404'
-    }
+  //   // Check if the response contains '404'
+  //   if (userName.includes('404')) {
+  //     return; // Exit the function if the response contains '404'
+  //   }
 
-    // Encrypt the user name
-    const secretKey = 'MLKN87y8VSH&Y*SF'; // Replace with your own secret key
-    const encryptedName = CryptoJS.AES.encrypt(userName, secretKey).toString();
+  //   // Encrypt the user name
+  //   const secretKey = 'MLKN87y8VSH&Y*SF'; // Replace with your own secret key
+  //   const encryptedName = CryptoJS.AES.encrypt(userName, secretKey).toString();
 
-    // Update state variables
-    setUserName(userName);
-    setEncryptedName(encryptedName);
-    setIsUserNameCollected(true);
+  //   // Update state variables
+  //   setUserName(userName);
+  //   setEncryptedName(encryptedName);
+  //   setIsUserNameCollected(true);
 
-    // Log the name and encrypted name
-    console.log(`Name: ${userName}`);
-    console.log(`Encrypted Name: ${encryptedName}`);
+  //   // Log the name and encrypted name
+  //   console.log(`Name: ${userName}`);
+  //   console.log(`Encrypted Name: ${encryptedName}`);
 
-    // Save the username to the database with default values for other fields
-    await saveUserProfile({
-      name: userName,
-      propertyRegime: 'N/A',
-      encryptedName,
-      checkboxes: {},
-      checkboxesAsset: {},
-      maritalStatus: ''
-    });
-  } catch (error) {
-    console.error('Error:', error);
-  }
+  //   // Save the username to the database with default values for other fields
+  //   await saveUserProfile({
+  //     name: userName,
+  //     propertyRegime: 'N/A',
+  //     encryptedName,
+  //     checkboxes: {},
+  //     checkboxesAsset: {},
+  //     maritalStatus: ''
+  //   });
+  // } catch (error) {
+  //   console.error('Error:', error);
+  // }
 }
 
 const getImageUrl = (filename: string) => {
   try {
     // Create the URL with query parameters
-    const url = `https://moneyversity-ai-chat.vercel.app/api/uploads?filename=${encodeURIComponent(filename)}`;
+    const url = `/api/uploads?filename=${encodeURIComponent(filename)}`;
     console.log('Generated URL:', url);
     return url;
   } catch (error) {
@@ -325,11 +332,12 @@ const getImageUrl = (filename: string) => {
   const renderMessages = () => {
   return messages.map((message, index) => {
     const isVideoTrigger = message.id === videoTriggerMessageId;
-    const isMaritalStatusQuestion = message.content.includes("Are you married, single, divorced, or widowed?");
-    const isDependentsQuestion = message.content.includes("Do you have dependents?");
+    const isMaritalStatusQuestion = message.content.includes("Single, Married") || message.content.includes("single, married");
+    const isDependentsQuestion = message.content.includes("any dependents") && !message.content.includes("18");
     const isMajorAsset = message.content.includes("What are your major assets");
     const funFact = message.content.includes("Before we continue with your assets");
-    const reg = message.content.includes("Are you married in");
+    const reg = message.content.includes("type of marriage");
+    const birth = message.content.includes("birth");
     // Split message content by "<prompt>" and take the first part
 
     const videoUrlMatch = message.content.match(/(https:\/\/www\.youtube\.com\/embed\/[^\s]+)/);
@@ -366,6 +374,7 @@ const getImageUrl = (filename: string) => {
                 Not now
               </button>
             </div>
+            
           </>
         ) : (
           <div className={message.role === "user" ? "mb-2 text-right mt-4" : "mb-2"}>
@@ -376,8 +385,20 @@ const getImageUrl = (filename: string) => {
                 </p>
                 <EmbeddedVideo embedUrl="https://www.youtube.com/embed/cMoaGEpffds" />
                 <p className="bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block mt-2">
-                  Now, let's get to know you a bit better. Who am I talking to? 🤔
+                  Is there anything else you'd like to know about estate planning or any questions you have at this stage? 🤔
                 </p>
+                 <button
+                  onClick={() => handleButtonClick("Yes, I have a question")}
+                  className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                >
+                  Yes, I have a question
+                </button>
+                <button
+                  onClick={() => handleButtonClick("No, Let's move on")}
+                  className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                >
+                  No, Let's move on
+                </button>
               </>
             ) : (
               <p className={message.role === "user" ? "bg-[#8dc63f] text-white rounded-lg py-2 px-4 inline-block" : "bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block"}>
@@ -416,6 +437,31 @@ const getImageUrl = (filename: string) => {
                     allowFullScreen
                   ></iframe>
                 )}
+                {imageFilename || videoUrl ? (
+                  <>
+                  <div className="flex flex-col space-y-2 mt-2">
+      <p className="bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+      
+       Are you ready to explore some potential outcomes of different estate planning choices 🌐?
+      </p>
+    </div>
+  <div className="space-x-2 mt-2">
+    <button
+      onClick={() => handleButtonFunFact("Yes, I'm ready to move on.")}
+      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+    >
+      Yes, I'm ready to move on.
+    </button>
+    <button
+      onClick={() => handleButtonFunFact("No, I have some questions about the above")}
+      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+    >
+      No, I have some questions about the above
+    </button>
+   
+  </div>
+  </>
+) : null}
 
 
             {isMaritalStatusQuestion && (
@@ -537,20 +583,44 @@ const getImageUrl = (filename: string) => {
          {reg && (
               <div className="space-x-2 mt-2">
                 <button
-                  onClick={() => handleButtonClickRegime("Community of property")}
+                  onClick={() => handleButtonClickRegime("In Community of Property ")}
                   className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
                 >
-                  Community of property
+                  In Community of Property 
                 </button>
                 <button
-                  onClick={() => handleButtonClickRegime("Out of community of property")}
+                  onClick={() => handleButtonClickRegime("Out of Community of Property with Accrual")}
                   className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
                 >
-                  Out of community of property
+                  Out of Community of Property with Accrual
+                </button>
+                <button
+                  onClick={() => handleButtonClickRegime("Out of Community of Property without Accrual")}
+                  className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                >
+                  Out of Community of Property without Accrual
+                </button>
+                <button
+                  onClick={() => handleButtonClickRegime("I can't remember")}
+                  className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                >
+                  I can't remember
                 </button>
               </div>
               
             )}
+             {birth && (
+<>
+<div className="space-x-2 mt-2">
+
+<Calendar />
+
+
+
+</div>
+</>
+
+               )}
       </div>
     );
   });

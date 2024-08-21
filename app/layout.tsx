@@ -1,5 +1,7 @@
+// app/layout.tsx
 import './globals.css';
 import { Inter } from 'next/font/google';
+import { GlobalProvider } from './context/GlobalContext'; // Adjust the path as needed
 
 const inter = Inter({ subsets: ['latin'] });
 
@@ -15,7 +17,11 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body className={inter.className}>
+        <GlobalProvider>
+          {children}
+        </GlobalProvider>
+      </body>
     </html>
   );
 }
