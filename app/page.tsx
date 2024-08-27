@@ -50,7 +50,7 @@ export default function Chat() {
   const [encryptedName, setEncryptedName] = useState('');
   const [isUserNameCollected, setIsUserNameCollected] = useState(false);
   const [propertyRegime, setPropertyRegime] = useState('');
-
+  const [privacyPolicy, setPrivacyPolicy] = useState(false);
   
 
 const saveUserProfile = async (update: any) => {
@@ -94,6 +94,7 @@ const saveUserProfile = async (update: any) => {
       content: "Hello 😊 and welcome to Moneyversity's Estate Planning Consultant 🤖. I'm here to help you navigate the estate planning process with ease. Together, we'll ensure your assets and wishes are well- documented and protected. Ready to get started on this important journey?"
     }]);
   }, [setMessages]);
+  
 
   useEffect(() => {
     if (submitOnNextUpdate) {
@@ -173,6 +174,9 @@ const handleCheckboxChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
 
   await saveUserProfile({ checkboxes: updatedCheckboxes });
 };
+const handleButtonPrivacy = async (message: any) => {
+setPrivacyPolicy(true);
+}
 
 const handleButtonFunFact = async (message: any) => {
     handleInputChange({ target: { value: message } } as React.ChangeEvent<HTMLInputElement>);
@@ -339,6 +343,7 @@ const getImageUrl = (filename: string) => {
     const reg = message.content.includes("type of marriage");
     const birth = message.content.includes("birth");
     const video = message.content.includes("I've got a short video");
+    const privacy = message.content.includes("I understand and respect your decision");
   
     // Split message content by "<prompt>" and take the first part
 
@@ -428,6 +433,37 @@ const getImageUrl = (filename: string) => {
               </div>
             )}
             <br/>
+            {privacy && (
+              <>
+             <div className="space-y-4 mt-4">
+    <h2 className="font-bold text-lg">Our data privacy practices ensure that your personal information is handled with the utmost care and security. Here are the key points:</h2>
+    <ul className="list-disc list-inside space-y-2">
+      <li><strong>Data Collection:</strong> We collect only the necessary information required to assist you with your estate planning.</li>
+      <li><strong>Data Storage:</strong> Your data is stored securely using encryption and other security measures to prevent unauthorized access.</li>
+      <li><strong>Data Usage:</strong> Your information is used solely for the purpose of creating and managing your estate plan. We do not share your data with third parties without your explicit consent.</li>
+      <li><strong>Data Access:</strong> You have the right to access, modify, or delete your information at any time.</li>
+      <li><strong>Data Retention:</strong> We retain your information only for as long as necessary to provide our services and comply with legal obligations.</li>
+      <li><strong>Privacy Policy:</strong> For detailed information, you can read our full privacy policy <a href="https://moneyveristylms.vercel.app/privacy" className="text-blue-600 underline">here</a>.</li>
+    </ul>
+    <p>Would you like to proceed with consenting to data collection and storage?</p>
+  </div>
+   <div className="space-x-2 mt-2">
+    <button
+      onClick={() => handleButtonFunFact("Yes, I consent")}
+      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+    >
+      Yes, I consent
+    </button>
+     <button
+      onClick={() => handleButtonPrivacy("No, I do not consent")}
+      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+    >
+      No, I don not consent
+    </button>
+    </div>
+  </>
+            )}
+
  {videoUrl && (
                   <iframe
                     width="560"
@@ -464,7 +500,7 @@ const getImageUrl = (filename: string) => {
   </div>
   </>
 ) : null}
-video
+
 {video && (
  <div className="space-x-2 mt-2">
                 <button
