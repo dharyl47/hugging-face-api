@@ -187,8 +187,8 @@ export async function POST(req: Request) {
         Below are the instructions on how to interact with the user.
         \n
         ${cache.prompt.friendlyTone}\n\n
-${cache.prompt.mainPrompt}
-\n\n${message.content}`,
+        ${cache.prompt.mainPrompt}
+        \n\n${message.content}`,
       };
     } else {
       return message;
