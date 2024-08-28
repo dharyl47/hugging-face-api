@@ -184,7 +184,14 @@ export async function POST(req: Request) {
       return {
         ...message,
         content: `
-        
+         Below are the instructions on how to interact with the user.
+        \n
+        ${cache.prompt.friendlyTone}\n\n
+
+         Below is the information if someone asks anything:
+        ${cache.concatenatedPrompts}
+        \n\n
+        Below is the stages of conversation:
         Important Note: When interacting with the user, do not include stage numbers or prompt instructions in your responses. Focus only on the user-facing messages as specified.
 
 Stage 1: Starting Message
@@ -278,7 +285,7 @@ Ask for their email address again.
     }
   });
 
- // console.log(messages); // Logging messages with all cached contents
+// console.log(cache.concatenatedPrompts); // Logging messages with all cached contents
 
   // Clear the cache after use
   cache.learningMaterials = null;
