@@ -341,9 +341,11 @@ const getImageUrl = (filename: string) => {
     const isMajorAsset = message.content.includes("What are your major assets");
     const funFact = message.content.includes("Before we continue with your assets");
     const reg = message.content.includes("type of marriage");
-    const birth = message.content.includes("birth");
+    const birth = message.content.includes("please tell me your date of birth");
     const video = message.content.includes("I've got a short video");
+    const askingConsent = message.content.includes("Do you consent");
     const privacy = message.content.includes("I understand and respect your decision");
+    const uploadDocumentANC = message.content.includes("upload your antenuptial contract") || message.content.includes("please upload your ANC");
   
     // Split message content by "<prompt>" and take the first part
 
@@ -412,6 +414,23 @@ const getImageUrl = (filename: string) => {
                 {` ${filteredContent.replace(/<\|endoftext\|>/g, "")}`}
               </p>
             )}
+
+ {askingConsent && ( 
+<div className="space-x-2 mt-2">
+    <button
+      onClick={() => handleButtonFunFact("Yes, I consent")}
+      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+    >
+      Yes, I consent
+    </button>
+     <button
+      onClick={() => handleButtonPrivacy("No, I do not consent")}
+      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+    >
+      No, I don not consent
+    </button>
+    </div>
+ )}
 
  {imageFilename && (
               <div className="relative">
@@ -570,6 +589,18 @@ const getImageUrl = (filename: string) => {
                   ))}
                 </div>
               )}
+
+{uploadDocumentANC && (
+<div className="flex space-x-2 mt-2">
+        <button className="bg-[#8DC63F] text-white rounded-lg py-2 px-4" style={{ borderRadius: '10px' }}>
+          Upload Document
+        </button>
+        <button className="border border-[#8DC63F] text-[#8DC63F] rounded-lg py-2 px-4 bg-transparent" style={{ borderRadius: '10px' }}>
+          Maybe Later
+        </button>
+      </div>
+)}
+
               {isMajorAsset && (
                 <div className="flex flex-col space-y-2 mt-2">
                    <label className="text-white">(Select all that apply)</label>
