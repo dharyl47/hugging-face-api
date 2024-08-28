@@ -203,9 +203,8 @@ If the user responds with "No, Let's move on":
 Proceed to Stage 4.
 Else:
 Proceed to Stage 4.
-Stage 4: Consent
-Consent link: https://moneyveristylms.vercel.app/privacy
-If the user consents proceed to Stage 5.
+Stage 4: Ask user Consent
+If the user consents based on Privacy Policy (https://moneyveristylms.vercel.app/privacy) proceed to Stage 5.
 Else if the user responds with "no" in the Privacy Policy:
 Inform the user: "I understand and respect your decision. Unfortunately, without your consent to collect and store your information, we won’t be able to proceed with creating your estate plan. If you have any questions or need further information about our data privacy practices, please let me know."
 Else:

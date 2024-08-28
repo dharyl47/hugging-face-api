@@ -424,10 +424,10 @@ const getImageUrl = (filename: string) => {
       Yes, I consent
     </button>
      <button
-      onClick={() => handleButtonPrivacy("No, I do not consent")}
+      onClick={() => handleButtonFunFact("No, I do not consent")}
       className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
     >
-      No, I don not consent
+      No, I do not consent
     </button>
     </div>
  )}
@@ -462,7 +462,7 @@ const getImageUrl = (filename: string) => {
       <li><strong>Data Usage:</strong> Your information is used solely for the purpose of creating and managing your estate plan. We do not share your data with third parties without your explicit consent.</li>
       <li><strong>Data Access:</strong> You have the right to access, modify, or delete your information at any time.</li>
       <li><strong>Data Retention:</strong> We retain your information only for as long as necessary to provide our services and comply with legal obligations.</li>
-      <li><strong>Privacy Policy:</strong> For detailed information, you can read our full privacy policy <a href="https://moneyveristylms.vercel.app/privacy" className="text-blue-600 underline">here</a>.</li>
+      <li><strong>Privacy Policy:</strong> For detailed information, you can read our full privacy policy <a href="https://moneyveristylms.vercel.app/privacy" className=" text-[#8DC63F] underline">here</a>.</li>
     </ul>
     <p>Would you like to proceed with consenting to data collection and storage?</p>
   </div>
