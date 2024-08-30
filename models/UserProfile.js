@@ -2,8 +2,12 @@ import mongoose from 'mongoose';
 
 // Define schema
 const userProfileSchema = new mongoose.Schema({
-  name: { type: String, required: true },
+  name: { type: String, required: true }, 
   propertyRegime: { type: String, default: 'N/A'},
+  dependentsOver: { type: String, default: 'N/A'},
+  dependentsUnder: { type: String, default: 'N/A'},
+  emailAddress: { type: String, default: 'N/A'},
+  dateOfBirth: { type: String, default: 'N/A'},
   dependants: {
     spouse: { type: Boolean, default: false },
     children: { type: Boolean, default: false },

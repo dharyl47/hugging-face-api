@@ -1,6 +1,7 @@
 import { HfInference } from '@huggingface/inference';
 import { HuggingFaceStream, StreamingTextResponse } from 'ai';
 import { experimental_buildOpenAssistantPrompt } from 'ai/prompts';
+import { encode } from 'gpt-tokenizer'; // Import a tokenizer library compatible with your model
 
 // Create a new HuggingFace Inference instance
 const Hf = new HfInference(process.env.HUGGINGFACE_API_KEY);
@@ -84,6 +85,22 @@ async function fetchSettings() {
   }
 }
 
+function trimMessages(messages: Message[], maxTokens: number) {
+    let totalTokens = 0;
+    const trimmedMessages: Message[] = [];
+
+    for (let i = messages.length - 1; i >= 0; i--) {
+        const messageTokens = messages[i].content.split(' ').length; // A rough estimate
+        if (totalTokens + messageTokens > maxTokens) {
+            break;
+        }
+        totalTokens += messageTokens;
+        trimmedMessages.unshift(messages[i]);
+    }
+
+    return trimmedMessages;
+}
+
 // Build the prompt with context from previous messages
 function buildPrompt(messages: { content: string; role: 'system' | 'user' | 'assistant' }[]) {
   const context = messages.map(({ role, content }) => {
@@ -119,6 +136,79 @@ async function fetchChatSettings() {
   }
 }
 
+async function fetchWithRetry(messages: Message[], retries = 10, delay = 1000) {
+  for (let i = 0; i < retries; i++) {
+    try {
+      messages = trimMessages(messages, 8192 - 100);
+      const response = await Hf.textGenerationStream({
+        model: 'meta-llama/Meta-Llama-3.1-70B-Instruct',
+        inputs: experimental_buildOpenAssistantPrompt(messages),
+        parameters: {
+          
+          stop_sequences: ['<|endofresponse|>', '**Video Link:**', '<|endoftext|>'],
+          
+        }
+      });
+      return response; // Return the response if successful
+    } catch (error) {
+      console.log(`Number of tokens in input: ${messages.reduce((sum, msg) => sum + msg.content.split(' ').length, 0)}`);
+
+      if (error instanceof Error) {
+        console.warn(`Attempt ${i + 1} failed: ${error.message}`);
+      } else {
+        console.warn(`Attempt ${i + 1} failed with an unknown error`);
+      }
+
+      if (i < retries - 1) {
+        console.log(`Retrying in ${delay}ms...`);
+        await new Promise(res => setTimeout(res, delay));
+        delay *= 2; // Exponential backoff
+      } else {
+        console.error("All retry attempts failed.");
+        throw error; // Re-throw the error after the last retry
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
+function estimateTokens(text: string): number {
+    return encode(text).length; // Estimate the number of tokens using a tokenizer library
+}
+
+
+function trimMessagesToFitTokenLimit(messages: Message[], maxTokens: number) {
+    let totalTokens = 0;
+    const trimmedMessages: Message[] = [];
+
+    for (let i = messages.length - 1; i >= 0; i--) {
+        const messageTokens = estimateTokens(messages[i].content);
+        if (totalTokens + messageTokens > maxTokens) {
+            break;
+        }
+        totalTokens += messageTokens;
+        trimmedMessages.unshift(messages[i]);
+    }
+
+    return trimmedMessages;
+}
+
+function sanitizeMessages(messages: Message[]): Message[] {
+    return messages.map(message => ({
+        ...message,
+        content: message.content.replace(/<\|endoftext\|>/g, ''),
+    }));
+}
+
+
+function truncateConversationHistory(messages: Message[], maxMessages: number = 5): Message[] {
+    return messages.slice(-maxMessages);
+}
 
 export async function POST(req: Request) {
   let { messages }: { messages: Message[] } = await req.json();
@@ -127,14 +217,20 @@ export async function POST(req: Request) {
   await fetchLearningMaterials();
   await fetchSettings();
    await fetchChatSettings();
-
    
-
   // Fetch the existing messagesCache
   const existingMessages = cache.messagesCache;
 
   // Append new messages to the cache
   cache.messagesCache = [...existingMessages, ...messages.map((message: Message) => message.content)];
+
+  messages = truncateConversationHistory(messages);
+  messages = sanitizeMessages(messages);
+
+  const maxAllowedTokens = 8192 - 100; // Considering 100 tokens for max_new_tokens
+  messages = trimMessagesToFitTokenLimit(messages, maxAllowedTokens);
+
+
 
   // Build the context from previous messages
   const context = buildPrompt(messages);
@@ -179,19 +275,26 @@ export async function POST(req: Request) {
   //   Email Address: Ask this question: 'What is your email address?'
   // `;
 
+  //  Below are the previous conversation you have from the users, use this information and analyze it so that we can continue the conversation.
+  //       This is the Start of the previous conversation
+  //       ${cache.messagesCache}\n\n
+  //       This is the End of the previous conversation
+
+  //        Below are the instructions on how to interact with the user.
+  //       \n
+  //       ${cache.prompt.friendlyTone}\n\n
+
+  //        Below is the information if someone asks anything:
+  //       ${cache.concatenatedPrompts}
+  //       \n\n
+
   messages = messages.map((message: Message) => {
     if (message.role === 'user') {
       return {
         ...message,
         content: `
-         Below are the instructions on how to interact with the user.
-        \n
-        ${cache.prompt.friendlyTone}\n\n
-
-         Below is the information if someone asks anything:
-        ${cache.concatenatedPrompts}
-        \n\n
-        Below is the stages of conversation:
+       
+       
         Important Note: When interacting with the user, do not include stage numbers or prompt instructions in your responses. Focus only on the user-facing messages as specified.
 
 Stage 1: Starting Message
@@ -230,7 +333,7 @@ Stage 7: Marital Status
 If the user responds with "Single," "Married," "Divorced," or "Widowed":
 Save the marital status.
 If the user is "Married":
-Ask for the type of marriage (Community of Property, Out of Community of Property with Accrual, Out of Community of Property without Accrual, I can’t remember) and proceed to Stage 8.
+Ask user: "Excellent. Are you married in or out of community of property, and does your marriage include the accrual system?" and proceed to Stage 7,1.
 Save type of marriage
 Else:
 Proceed to Stage 8.
@@ -250,19 +353,16 @@ Else
 Proceed to stage 8
 Stage 8: Dependents
 If the user has dependents (Spouse, Children, Stepchildren, Grandchildren):
-Ask how many are over 18 (Stage 8.1).
-Else:
-Skip to Stage 9.
+Save dependents
+Proceed to Stage 9
+Stage Stage 9: Dependents Under 18
+Ask how many are under 18.
+Save number of dependents under 18
+Proceed to Stage 9.1
 Stage 9.1: Dependents Over 18
-If the user provides a number:
-Save the number and proceed to Stage 9.2.
-Else:
-Ask for the number again.
-Stage 9.2: Dependents Under 18
-If the user provides a number:
-Save the number and proceed to Stage 10.
-Else:
-Ask for the number again.
+Ask how many are over 18.
+Save number of dependents over 18
+Proceed to Stage 10
 Stage 10: Risk Tolerance
 If the user provides their risk tolerance:
 Save the risk tolerance and proceed to Stage 11.
@@ -271,7 +371,7 @@ Ask for their risk tolerance again.
 Stage 11: Email Address
 If the user provides their email address:
 Save the email and conclude the conversation with:
-"Thanks, {name}! Is there anything else you’d like to add about your personal particulars or any questions you have at this stage?"
+"Thanks! Is there anything else you’d like to add about your personal particulars or any questions you have at this stage?"
 If the user responds with "no":
 Reply with: "Thanks for using our Estate Planning Chatbot, {name}! Have a great day, and we're looking forward to helping you secure your future!"
 Else:
@@ -293,22 +393,23 @@ Ask for their email address again.
   cache.concatenatedPrompts = '';
   cache.combinedEngagement = '';
 
-  const response = Hf.textGenerationStream({
-    model: 'meta-llama/Meta-Llama-3.1-70B-Instruct',
-    inputs: experimental_buildOpenAssistantPrompt(messages),
-    parameters: {
-      max_new_tokens: 200,
-      // @ts-ignore (this is a valid parameter specifically in OpenAssistant models)
-      typical_p: 0.2,
-      repetition_penalty: 1,
-      truncate: 1000,
-      return_full_text: false
+  try {
+    const inputs = experimental_buildOpenAssistantPrompt(messages);
+
+     const response = await fetchWithRetry(messages);
+    if (!response) {
+      throw new Error("Failed to get a response from the model.");
     }
-  });
 
-  // Convert the response into a friendly text-stream
-  const stream = HuggingFaceStream(response);
+    // Convert the response into a friendly text-stream
+    const stream = HuggingFaceStream(response);
 
-  // Respond with the stream
-  return new StreamingTextResponse(stream);
+    // Respond with the stream
+    return new StreamingTextResponse(stream);
+  } catch (error) {
+    console.error("Failed to generate a response:", error);
+    return new Response("An error occurred while generating the response. Please try again later.", { status: 500 });
+  }
+
+
 }
