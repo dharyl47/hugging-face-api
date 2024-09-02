@@ -4,6 +4,7 @@ import mongoose from 'mongoose';
 const userProfileSchema = new mongoose.Schema({
   name: { type: String, required: true }, 
   propertyRegime: { type: String, default: 'N/A'},
+  deletionRequest: { type: String, default: 'N/A'},
   dependentsOver: { type: String, default: 'N/A'},
   dependentsUnder: { type: String, default: 'N/A'},
   emailAddress: { type: String, default: 'N/A'},

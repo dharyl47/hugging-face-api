@@ -40,6 +40,9 @@ export default function Chat() {
   const { messages, input, handleInputChange, handleSubmit, setMessages } =
     useChat();
   const [inputStr, setInputStr] = useState(input);
+  const [userExists, setUserExists] = useState(false);
+  const [isCheckingUser, setIsCheckingUser] = useState(false);
+  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
   const [submitOnNextUpdate, setSubmitOnNextUpdate] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [videoTriggerMessageId, setVideoTriggerMessageId] = useState<
@@ -230,6 +233,9 @@ console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkb
   const saveTypeOfMarriage = async (message: any) => {
     await saveUserProfile({ propertyRegime: message });
   };
+  const saveDeletionRequest = async (message: any) => {
+    await saveUserProfile({ deletionRequest: message });
+  };
 
   const handleButtonClickRegime = async (message: any) => {
     const allowedStatuses = [
@@ -379,6 +385,7 @@ console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkb
       await saveUserProfile({
         name: cleanedUserName,
         dateOfBirth: "N/A",
+        deletionRequest: "N/A",
         emailAddress: "N/A",
         dependentsOver: "N/A",
         dependentsUnder: "N/A",
@@ -417,6 +424,19 @@ console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkb
   };
 
   const messageData = useRef("");
+
+ const checkUserExists = async (username: string) => {
+    try {
+      setIsCheckingUser(true);
+      const response = await axios.get(`/api/checkUser?username=${username}`);
+      setUserExists(response.data.exists);
+      setIsCheckingUser(false);
+    } catch (error) {
+      console.error("Error checking user:", error);
+      setUserExists(false);
+      setIsCheckingUser(false);
+    }
+  };
 
   const renderMessages = () => {
     return messages.map((message, index) => {
@@ -485,6 +505,8 @@ console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkb
       //console.log(imageFilename);
 
       const filteredContent = message.content.split("<|prompter|>")[0];
+
+      
 
       return (
         <div
@@ -1144,6 +1166,13 @@ console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkb
                         saveTypeOfMarriage(inputStr);
                       }
 
+                      if (
+                        messageData.current.includes("delete") || messageData.current.includes("Delete") ||
+                        messageData.current.includes("deletion") || messageData.current.includes("Deletion") 
+                      ){
+                       saveDeletionRequest(inputStr)
+                      }
+
                       setInputStr("");
                       // userProfile(inputStr);
                     }
@@ -1157,9 +1186,16 @@ console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkb
                       onChange={(e: any) => {
                         setInputStr(e.target.value);
                         handleInputChange(e);
+                        if(messageData.current.includes("Can you please provide your user name so I can assist you with deleting")){
+                        checkUserExists(e.target.value);}
                       }}
                       placeholder="Type a message"
                     />
+                    {!userExists && messageData.current.includes("Can you please provide your user name so I can assist you with deleting") && (
+                    <div className="text-red-500 text-sm absolute -mt-3 ml-3">
+                    No user found
+                    </div>
+                    )}
                     <button
                       id="send-button"
                       type="submit"
