@@ -453,6 +453,10 @@ console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkb
   const renderMessages = () => {
     return messages.map((message, index) => {
       const isVideoTrigger = message.id === videoTriggerMessageId;
+      const educationInformation = message.content.includes("Let's dive into the world of estate planning!")
+      const legalRequirement = message.content.includes("It’s important to understand the legal requirements and considerations specific to South Africa")
+      const scenarioSimulation = message.content.includes("Would you like to see how different scenarios could impact your estate? Here are a few examples we can simulate")
+      const faqStage = message.content.includes("Here are some frequently asked questions about estate planning in South Africa")
       const isMaritalStatusQuestion =
         message.content.includes("Single, Married") ||
         message.content.includes("Are you married") ||
@@ -591,6 +595,114 @@ console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkb
                 >
                   {` ${filteredContent.replace(/<\|endoftext\|>/g, "")}`}
                 </p>
+              )}
+              
+              {scenarioSimulation && (
+               <div className="space-x-2 mt-2">
+                  <button
+                    onClick={() => handleButtonFunFact("Scenario 1")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Scenario 1
+                  </button>
+                   <button
+                    onClick={() => handleButtonFunFact("Scenario 2")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Scenario 2
+                  </button>
+                   <button
+                    onClick={() => handleButtonFunFact("Scenario 3")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Scenario 3
+                  </button>
+                   <button
+                    onClick={() => handleButtonFunFact("Scenario 4")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Scenario 4
+                  </button>
+                   <button
+                    onClick={() => handleButtonFunFact("All Scenario")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    All Scenario
+                  </button>
+                </div>
+              )}
+{faqStage && (
+  <>
+    <div className="space-x-2 mt-2">
+      ❓ What is estate planning?<br/>
+      Estate planning is the process of arranging for the management and disposal of a person’s estate during their life and after death. It involves creating documents like wills, trusts, and powers of attorney. 📝💼
+      <br/><br/>
+      ❓ Why is having a will important?<br/>
+      A will ensures your assets are distributed according to your wishes, names guardians for minor children, and can help reduce estate taxes and legal fees. 📜👨‍👩‍👧‍👦
+      <br/><br/>
+      ❓ What happens if I die without a will?<br/>
+      If you die intestate (without a will), your estate will be distributed according to South Africa’s Intestate Succession Act, which may not align with your wishes. ⚖️❗
+      <br/><br/>
+      ❓ Can I change my will after it’s been created?<br/>
+      Yes, you can update your will as often as you like. It’s recommended to review and update it after major life events, such as marriage, divorce, or the birth of a child. 🔄💍👶
+      <br/><br/>
+      ❓ What is a trust and why would I need one?<br/>
+      A trust is a legal arrangement where a trustee manages assets on behalf of beneficiaries. Trusts can help manage assets, reduce estate taxes, and provide for beneficiaries according to your wishes. 🏦🔐
+      <br/><br/>
+      ❓ When should I seek legal advice for estate planning?<br/>
+      It’s advisable to seek legal advice if you have a large or complex estate, anticipate family disputes, own a business, or need to stay updated with changing laws. 🧑‍⚖️💡
+      <br/><br/>
+      Do you have any other questions or need further information? I’m here to help! 🤝💬
+    </div>
+  </>
+)}
+              {legalRequirement && (
+  <>
+    <div className="space-x-2 mt-2">
+      Estate planning in South Africa involves understanding key legal requirements to ensure your wishes are respected and legally binding. 📜⚖️
+      <br/><br/>
+      Here are some important acts and considerations:
+    </div>
+    <div className="space-x-2 mt-2">
+      📝 Wills Act 7 of 1953<br/>
+      The Wills Act governs the creation and execution of wills. Your will must be in writing, signed by you, and witnessed by two people who are not beneficiaries.
+      <br/><br/>
+      💼 Estate Duty Act 45 of 1955<br/>
+      This Act imposes estate duty (a form of tax) on the estate of a deceased person. The first R3.5 million of an estate is exempt from estate duty.
+      <br/><br/>
+      📋 Intestate Succession Act 81 of 1987<br/>
+      If you die without a will, the Intestate Succession Act determines how your estate will be distributed. This may not align with your wishes, so having a will is crucial.
+      <br/><br/>
+      💍 Marital Property Regimes<br/>
+      Your marital status can affect your estate planning. South Africa recognises different marital property regimes, such as community of property, antenuptial contract (ANC), and ANC with accrual. It’s important to consider how these will impact your estate.
+      <br/><br/>
+      🏛️ Master of the High Court<br/>
+      The Master of the High Court oversees the administration of deceased estates. Executors of estates must be appointed and approved by the Master.
+      <br/><br/>
+      Understanding these components and local laws can help ensure that your estate plan is comprehensive and legally sound. 📚✅
+    </div>
+    <div className="space-x-2 mt-2">
+      Are you ready to explore some potential outcomes of different estate planning choices?
+    </div>
+  </>
+)}
+
+              {educationInformation && (
+                <>
+                <div className="space-x-2 mt-2">
+                    Estate planning is the process of arranging how your assets will be managed and distributed after your death. It ensures that your wishes are respected, your loved ones are taken care of, and potential disputes are minimised. 🏠💼
+                    <br/><br/>It's important because it gives you peace of mind knowing that your affairs are in order, and it can also help reduce taxes and legal costs in the future.💡
+                </div>
+                 <div className="space-x-2 mt-2">
+                  There are 5 key components of estate planning:<br/>
+                 📜 Wills<br/>
+                 🔐 Trusts<br/>
+                 🖋️ Power of Attorney<br/>
+                 🏥 Living Will<br/>
+                 💼 Beneficiary Designations<br/>
+                 <br/>Would you like a detailed explanation of all or some of these components?
+                 </div>
+                 </>
               )}
 
               {askingConsent && (

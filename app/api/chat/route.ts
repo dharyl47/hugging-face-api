@@ -293,6 +293,13 @@ export async function POST(req: Request) {
       return {
         ...message,
         content: `
+
+        Below is the different scenarios could impact the estate:
+        Scenario 1 Setting Up a Trust: Imagine you set up a trust to manage your assets. The trust could be used to provide for your children’s education and care until they reach adulthood. This can protect the assets from being mismanaged or spent too quickly. Additionally, trusts can offer tax benefits and ensure a smoother transfer of assets to your beneficiaries.
+        Scenario 2 Dying Intestate (Without a Will): Suppose you pass away without a will. According to South Africa’s Intestate Succession Act, your estate will be distributed to your surviving spouse and children, or other relatives if you have no spouse or children. This may not align with your personal wishes and could lead to disputes among family members
+        Scenario 3 Appointing a Power of Attorney: Consider appointing a trusted person as your power of attorney. This individual can manage your financial and legal affairs if you become incapacitated. For example, they could pay your bills, manage your investments, or make medical decisions on your behalf. This ensures that your affairs are handled according to your wishes, even if you’re unable to communicate them.
+        Scenario 4 Tax Implications of Estate Planning Decisions: Imagine you decide to gift a portion of your assets to your children during your lifetime. While this can reduce the size of your taxable estate, it’s important to consider any potential gift taxes and how it might impact your overall estate plan. Consulting with a tax advisor can help you understand the best strategies for minimising tax liabilities while achieving your estate planning goals"
+
        
         Below is the instructions if the user requested of Account Deletion
         If the user requests the deletion of their Estate Planning Profile: Ask for user name using only this templated message "Can you please provide your user name so I can assist you with deleting your Estate Planning Profile?".
@@ -377,13 +384,41 @@ Ask for their risk tolerance again.
 Stage 11: Email Address
 If the user provides their email address:
 Save the email and conclude the conversation with:
-"Thanks! Is there anything else you’d like to add about your personal particulars or any questions you have at this stage?"
+"Great! Let’s move on to the next section where we’ll discuss what estate planning is and why it is important. Ready?" Proceed to Stage 12
 If the user responds with "no":
 Reply with: "Thanks for using our Estate Planning Chatbot, {name}! Have a great day, and we're looking forward to helping you secure your future!"
 Else:
 Continue assisting the user based on their response.
 Else:
 Ask for their email address again.
+Stage 12: Introduction to Estate Planning Components
+If the user responds with "Yes"
+Reply only with this templated message: "Let's dive into the world of estate planning!"
+If user ask for definition of Will
+Reply only with this templated message: "Wills: A will is a legal document that outlines how you want your assets to be distributed after your death. It also allows you to appoint guardians for minor children."
+If user ask for definition of Trusts
+Reply only with this templated message: "Trusts: A trust is a legal arrangement where you transfer assets to a trustee to manage on behalf of your beneficiaries. Trusts can help manage assets during your lifetime and provide for beneficiaries after your death"
+If user ask for definition of Power of Attorney
+Reply only with this templated message: "Power of Attorney: This legal document allows you to appoint someone to make financial or medical decisions on your behalf if you become unable to do so"
+If user ask for definition of Living Will
+Reply only with this templated message: "Living Will: A living will specifies your wishes regarding medical treatment if you are unable to communicate them yourself."
+If user ask for definition of Beneficiary Designations
+Reply only with this templated message: "Beneficiary Designations: These are used to specify who will receive assets like life insurance or retirement accounts directly, bypassing the will."
+After Providing any definition, ask users this templated message "Is there anything else you’d like to know about estate planning or any questions you have at this stage?"
+If user want to move-on on this stage, proceed to Stage 13
+Stage 13: Legal Requirement
+Ask user only this templated message "It’s important to understand the legal requirements and considerations specific to South Africa. " Proceed to Stage 14
+If the user want to move-on on this stage 13, proceed to Stage 14
+Stage 14: Scenario of Estate
+Ask user only this templated message "Would you like to see how different scenarios could impact your estate? Here are a few examples we can simulate:"
+If the user want to move-on on this stage, proceed to Stage 15
+Stage 15: FAQ
+Ask user only this templated message "Here are some frequently asked questions about estate planning in South Africa"
+
+
+
+
+
         \n\n${message.content}`,
       };
     } else {
