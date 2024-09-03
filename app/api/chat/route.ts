@@ -294,10 +294,13 @@ export async function POST(req: Request) {
         ...message,
         content: `
        
-        If the user requests the deletion of their Estate Planning Profile: Ask for user name using only this message "Can you please provide your user name so I can assist you with deleting your Estate Planning Profile?".
+        Below is the instructions if the user requested of Account Deletion
+        If the user requests the deletion of their Estate Planning Profile: Ask for user name using only this templated message "Can you please provide your user name so I can assist you with deleting your Estate Planning Profile?".
         Else (once the user name is provided):
         Respond: "Your deletion request has been submitted. Your Estate Planning account will be deleted within 24 hours."
+        If the user name has (not found) in his/her name: Ask for user name using only this templated message "It seems the user you provided is not in our database. Can you please provide your user name so I can assist you with deleting your Estate Planning Profile?".
        
+        Below is the Instructions on how to interact with users
         Important Note: When interacting with the user, do not include stage numbers or prompt instructions in your responses. Focus only on the user-facing messages as specified.
 
 Stage 1: Starting Message

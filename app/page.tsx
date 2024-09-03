@@ -51,6 +51,7 @@ export default function Chat() {
 
   const [isChecked, setIsChecked] = useState(false);
   const [userName, setUserName] = useState("");
+  const [userNameDelete, setUserNameDelete] = useState("");
   const [maritalStatus, setMaritalStatus] = useState("");
   const [encryptedName, setEncryptedName] = useState("");
   const [isUserNameCollected, setIsUserNameCollected] = useState(false);
@@ -65,10 +66,13 @@ export default function Chat() {
   const [dependentsUnderStage, setDependentsUnderStage] = useState(false);
   const [userEmailStage, setUserEmailStage] = useState(false);
   const [dateOfBirthStage, setDateOfBirthStage] = useState(false);
+  const [deletionRequestData, setDeletionRequestData] = useState("");
+  
 
   const saveUserProfile = async (update: any) => {
     const profile = {
       name: userName || "",
+      deletionRequest: deletionRequestData || "",
       dateOfBirth: dateOfBirth || "",
       emailAddress: userEmail || "",
       dependentsOver: dependentsOver || "",
@@ -233,8 +237,12 @@ console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkb
   const saveTypeOfMarriage = async (message: any) => {
     await saveUserProfile({ propertyRegime: message });
   };
-  const saveDeletionRequest = async (message: any) => {
-    await saveUserProfile({ deletionRequest: message });
+  const saveDeletionRequest = async (message: any, messageName: any) => {
+    setDeletionRequestData("true")
+    
+    setUserName(messageName);
+    console.log(userName+" "+message)
+    await saveUserProfile({ name: messageName, deletionRequest: "true" });
   };
 
   const handleButtonClickRegime = async (message: any) => {
@@ -437,7 +445,11 @@ console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkb
       setIsCheckingUser(false);
     }
   };
-
+  useEffect(() => {
+    if (inputStr.trim() !== "" && messageData.current.includes("Can you please provide your user name so I can assist you with deleting")) {
+      checkUserExists(inputStr);
+    }
+  }, [inputStr]);
   const renderMessages = () => {
     return messages.map((message, index) => {
       const isVideoTrigger = message.id === videoTriggerMessageId;
@@ -1072,109 +1084,66 @@ console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkb
                 <form
                   className="w-full"
                   onSubmit={(e) => {
-                    e.preventDefault();
-                    if (inputStr.trim()) {
-                      //working
-                      handleSubmit(e);
-                      setAllCheckboxesFalse();
-                      // savePropertyRegime(inputStr);
+                   e.preventDefault();
 
-                      // if(userNameFlag.current){
-                      //    saveUserName(inputStr);
-                      //    userNameFlag.current = false;
-                      // }
-                      if (
-                        messageData.current.includes(
-                          "please tell me your name"
-                        ) ||
-                        messageData.current.includes("tell me your name") ||
-                        messageData.current.includes("is your name") ||
-                        messageData.current.includes("your full names") ||
-                        messageData.current.includes("your full name") ||
-                        messageData.current.includes("what's your name") ||
-                        messageData.current.includes("What is your full name") ||
-                         messageData.current.includes("What's your full name") ||
-                        messageData.current.includes("ask for your name") ||
-                        messageData.current.includes("your full legal name")
-                        
-                      ) {
-                        saveUserName(inputStr);
-                      }
+    let currentInputStr = inputStr.trim();
 
-                      if (
-                        messageData.current.includes("dependents over") ||
-                        messageData.current.includes("Dependents over") ||
-                        messageData.current.includes("over the age") ||
-                        messageData.current.includes("Over the age") ||
-                        (messageData.current.includes("18") || messageData.current.includes("over")) ||
-                        (messageData.current.includes("18") || messageData.current.includes("Over"))
-                      ) {
-                        setDependentsOver(inputStr);
-                        saveDependentsOver(inputStr);
-                      }
-                      if (
-                        messageData.current.includes("dependents under") ||
-                        messageData.current.includes("Dependents under") ||
-                        messageData.current.includes("under the age") ||
-                        messageData.current.includes("Under the age") ||
-                        (messageData.current.includes("18") || messageData.current.includes("under")) ||
-                        (messageData.current.includes("18") || messageData.current.includes("Under"))
-                        
-                      ) {
-                        setDependentsUnder(inputStr);
-                        saveDependentsUnder(inputStr);
-                      }
-                      if (
-                        messageData.current.includes("email") ||
-                        messageData.current.includes("Email")
-                      ) {
-                        setUserEmail(inputStr);
-                        saveUserEmail(inputStr);
-                      }
-                      if (
-                        messageData.current.includes(
-                          "tell me your date of birth"
-                        ) ||
-                        messageData.current.includes(
-                          "have your date of birth"
-                        ) ||
-                        messageData.current.includes(
-                          "ask for your date of birth"
-                        ) ||
-                        messageData.current.includes(
-                          "about your date of birth"
-                        ) ||
-                        messageData.current.includes(
-                          "were you born"
-                        ) || 
-                        messageData.current.includes(
-                          "your date of birth"
-                        )
-                        
-                      ) {
-                        setDateOfBirth(inputStr);
-                        saveDateOfBirth(inputStr);
-                      }
+    if (currentInputStr) {
+      // Modify inputStr if the user is not found
+      if (
+        userExists &&
+        messageData.current.includes("Can you please provide your user name so I can assist you with deleting")
+      ) {
+        currentInputStr = `(not found) ${currentInputStr}`;
+              setDeletionRequestData("true")
+              setUserName(inputStr)
+        saveDeletionRequest(currentInputStr,inputStr);
+      } else if(!userExists &&
+        messageData.current.includes("Can you please provide your user name so I can assist you with deleting")) {
+        setDeletionRequestData("true")
+          setUserName(inputStr)
+        saveDeletionRequest(currentInputStr, inputStr);
+      }
 
-                      if (
-                        messageData.current.includes("type of marriage") ||
-                        messageData.current.includes("marriage include the accrual system") ||
-                        messageData.current.includes("kind of marriage do you have") &&
-                        !messageData.current.includes("Spouse") &&
-                        !messageData.current.includes("spouse")
-                      ) {
-                        saveTypeOfMarriage(inputStr);
-                      }
+      // Save profile data based on conditions
+      if (
+        messageData.current.includes("please tell me your name") ||
+        messageData.current.includes("tell me your name") ||
+        messageData.current.includes("is your name") ||
+        messageData.current.includes("your full names") ||
+        messageData.current.includes("your full name") ||
+        messageData.current.includes("what's your name") ||
+        messageData.current.includes("What is your full name") ||
+        messageData.current.includes("What's your full name") ||
+        messageData.current.includes("ask for your name") ||
+        messageData.current.includes("your full legal name")
+      ) {
+        saveUserName(currentInputStr);
+      }
 
-                      if (
-                        messageData.current.includes("delete") || messageData.current.includes("Delete") ||
-                        messageData.current.includes("deletion") || messageData.current.includes("Deletion") 
-                      ){
-                       saveDeletionRequest(inputStr)
-                      }
+      if (
+        messageData.current.includes("dependents over") ||
+        messageData.current.includes("Dependents over") ||
+        messageData.current.includes("over the age") ||
+        messageData.current.includes("Over the age") ||
+        (messageData.current.includes("18") && messageData.current.includes("over")) ||
+        (messageData.current.includes("18") && messageData.current.includes("Over"))
+      ) {
+        setDependentsOver(currentInputStr);
+        saveDependentsOver(currentInputStr);
+      }
+      // Add other conditions here...
 
-                      setInputStr("");
-                      // userProfile(inputStr);
+  
+
+      // Update the inputStr with the final value before submission
+      setInputStr("");
+      
+      // Now submit the form with the potentially modified inputStr
+      handleSubmit(e);
+
+      // Clear other related states or handle post-submission logic
+      setAllCheckboxesFalse();
                     }
                   }}
                 >
@@ -1186,8 +1155,8 @@ console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkb
                       onChange={(e: any) => {
                         setInputStr(e.target.value);
                         handleInputChange(e);
-                        if(messageData.current.includes("Can you please provide your user name so I can assist you with deleting")){
-                        checkUserExists(e.target.value);}
+                        // if(messageData.current.includes("Can you please provide your user name so I can assist you with deleting")){
+                        // checkUserExists(e.target.value);}
                       }}
                       placeholder="Type a message"
                     />
