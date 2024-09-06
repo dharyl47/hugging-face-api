@@ -55,7 +55,8 @@ export default function Chat() {
   const [videoTriggerMessageId, setVideoTriggerMessageId] = useState<
     string | null
   >(null);
-
+  const [nextResponse, setNextResponse] = useState("");
+  let isResponse = useRef("0");
   const [isChecked, setIsChecked] = useState(false);
   const [userName, setUserName] = useState("");
   const [userNameDelete, setUserNameDelete] = useState("");
@@ -74,6 +75,10 @@ export default function Chat() {
   const [userEmailStage, setUserEmailStage] = useState(false);
   const [dateOfBirthStage, setDateOfBirthStage] = useState(false);
   const [dateC, setDateC] = useState();
+
+  const [currentStage, setCurrentStage] = useState(1); // Stores current stage
+  const [previousStage, setPreviousStage] = useState(null); // Stores previous stage
+  const [showQuestionButtons, setShowQuestionButtons] = useState(false); // Controls when to show question buttons
 
   const [deletionRequestData, setDeletionRequestData] = useState("");
 
@@ -139,9 +144,47 @@ export default function Chat() {
     // Append both the user message and AI response to the existing messages
     setMessages([...messages, userMessage, aiMessage]);
   };
+  
+  const handleButtonQuestion = (message: any) => {
+     let response = "";
+    if(message == "Is there anything else you'd like to ask?"){
+      response =
+        "What is your question?";
+        isResponse.current = "1";
+    }
+
+    if (message == "Continue") {
+      response =
+        nextResponse;
+         isResponse.current = "0";
+    }
+
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  }
 
   const handleButtonStage12 = (message: any) => {
     let response = "";
+    if(message == "I have a question."){
+      response =
+        "What is your question?";
+
+      setNextResponse("It’s important to understand the legal requirements and considerations specific to South Africa:")
+      isResponse.current = "1";
+    }
 
     if (message == "No, Let's move on") {
       response =
@@ -168,6 +211,14 @@ export default function Chat() {
 
   const handleButtonStage13 = (message: any) => {
     let response = "";
+
+     if(message == "I have a question."){
+      response =
+        "What is your question?";
+
+      setNextResponse("Would you like to see how different scenarios could impact your estate? Here are a few examples we can simulate:")
+      isResponse.current = "1";
+    }
 
     if (message == "Yes, Im ready to explore some potential outcomes.") {
       response =
@@ -2532,6 +2583,29 @@ export default function Chat() {
                 </>
               )}
 
+              {message.content.includes("Is there anything else you'd like to ask?") && (
+                <>
+                <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonQuestion("Is there anything else you'd like to ask?")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Is there anything else you?
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonQuestion("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Continue
+                    </button>
+                    </div>
+                </>
+              )}
+
               {message.content.includes(
                 "To prevent any cash shortfall in your estate, how important is it to have provisions in place for your dependants' maintenance? For instance, would you want to ensure there’s enough capital to cover any immediate expenses and ongoing support for your dependants?"
               ) && (
@@ -3445,6 +3519,12 @@ export default function Chat() {
                 <form
                   className="w-full"
                   onSubmit={(e) => {
+                    e.preventDefault();
+                    if(isResponse.current == "1"){
+                    e.preventDefault();
+                     handleSubmit(e);
+                     
+                    } else
                     if (
                       messageData.current.includes(
                         "Great! Please provide the above mentioned details."
@@ -3531,6 +3611,7 @@ export default function Chat() {
                       handleAddAIResponse(
                         "Let's dive into the world of estate planning!"
                       );
+                      trigger.current = !trigger.current;
                     } else {
                       e.preventDefault();
 
