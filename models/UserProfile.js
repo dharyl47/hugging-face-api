@@ -3,6 +3,7 @@ import mongoose from 'mongoose';
 // Define schema
 const userProfileSchema = new mongoose.Schema({
   name: { type: String, required: true }, 
+  dateCreated: { type: Date, default: Date.now }, 
   propertyRegime: { type: String, default: 'N/A'},
   deletionRequest: { type: String, default: 'N/A'},
   dependentsOver: { type: String, default: 'N/A'},

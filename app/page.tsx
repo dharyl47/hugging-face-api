@@ -32,13 +32,20 @@ interface CheckboxesAsset {
 interface Message {
   id: string;
   content: string;
-  role: string;
-  encryptedName?: string; // Optional field for encrypted name
+  role: "assistant" | "user"; // Restrict role to valid values
+  encryptedName?: string;
 }
+
+const MAX_RETRIES = 5;
+const RETRY_DELAY = 3000; // 3 seconds
 
 export default function Chat() {
   const { messages, input, handleInputChange, handleSubmit, setMessages } =
     useChat();
+
+  const [error, setError] = useState("");
+  const [retryCount, setRetryCount] = useState(0);
+
   const [inputStr, setInputStr] = useState(input);
   const [userExists, setUserExists] = useState(false);
   const [isCheckingUser, setIsCheckingUser] = useState(false);
@@ -66,13 +73,883 @@ export default function Chat() {
   const [dependentsUnderStage, setDependentsUnderStage] = useState(false);
   const [userEmailStage, setUserEmailStage] = useState(false);
   const [dateOfBirthStage, setDateOfBirthStage] = useState(false);
+  const [dateC, setDateC] = useState();
+
   const [deletionRequestData, setDeletionRequestData] = useState("");
-  
+
+  // Function to handle the button click and append the "Hello" response
+  const handleAddAIResponse = (message: any) => {
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      role: "user", // This should be 'user' for the right-side alignment
+      content: inputStr, // This will be the user's input
+    };
+
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Must be a valid role
+      content: message, // AI response content
+    };
+
+    // Append both the user input and AI response to the messages
+    setMessages([...messages, userMessage, aiMessage]);
+
+    // Clear the input field after sending
+    setInputStr("");
+  };
+
+  const handleButtonComponent = (message: any) => {
+    let response = "";
+
+    if (message == "Wills") {
+      response =
+        "A will is a legal document that outlines how you want your assets to be distributed after your death. It also allows you to appoint guardians for minor children. Is there anything else you’d like to know about estate planning, or any questions you have at this stage?";
+    }
+    if (message == "Trusts") {
+      response =
+        "A trust is a legal arrangement where you transfer assets to a trustee to manage on behalf of your beneficiaries. Trusts can help manage assets during your lifetime and provide for beneficiaries after your death. Is there anything else you’d like to know about estate planning, or any questions you have at this stage?";
+    }
+    if (message == "Power of Attorney") {
+      response =
+        "A Power of Attorney allows you to appoint someone to make financial or medical decisions on your behalf if you become unable to do so. Is there anything else you’d like to know about estate planning, or any questions you have at this stage?";
+    }
+    if (message == "Living Will") {
+      response =
+        "A Living Will specifies your wishes regarding medical treatment if you are unable to communicate them yourself. Is there anything else you’d like to know about estate planning, or any questions you have at this stage?";
+    }
+    if (message == "Beneficiary Designations") {
+      response =
+        "These are used to specify who will receive assets like life insurance or retirement accounts directly, bypassing the will. Is there anything else you’d like to know about estate planning, or any questions you have at this stage?";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage12 = (message: any) => {
+    let response = "";
+
+    if (message == "No, Let's move on") {
+      response =
+        "It’s important to understand the legal requirements and considerations specific to South Africa:";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage13 = (message: any) => {
+    let response = "";
+
+    if (message == "Yes, Im ready to explore some potential outcomes.") {
+      response =
+        "Would you like to see how different scenarios could impact your estate? Here are a few examples we can simulate:";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage13Component = (message: any) => {
+    let response = "";
+
+    if (message == "Scenario 1") {
+      response =
+        "Setting Up a Trust: Imagine you set up a trust to manage your assets. The trust could be used to provide for your children’s education and care until they reach adulthood. This can protect the assets from being mismanaged or spent too quickly. Additionally, trusts can offer tax benefits and ensure a smoother transfer of assets to your beneficiaries. Would you like to see another scenario or move on to the next step?";
+    }
+    if (message == "Scenario 2") {
+      response =
+        "Dying Intestate (Without a Will): Suppose you pass away without a will. According to South Africa’s Intestate Succession Act, your estate will be distributed to your surviving spouse and children, or other relatives if you have no spouse or children. This may not align with your personal wishes and could lead to disputes among family members. Would you like to see another scenario or move on to the next step?";
+    }
+    if (message == "Scenario 3") {
+      response =
+        "Appointing a Power of Attorney: Consider appointing a trusted person as your power of attorney. This individual can manage your financial and legal affairs if you become incapacitated. For example, they could pay your bills, manage your investments, or make medical decisions on your behalf. This ensures that your affairs are handled according to your wishes, even if you’re unable to communicate them. Would you like to see another scenario or move on to the next step?";
+    }
+    if (message == "Scenario 4") {
+      response =
+        "Tax Implications of Estate Planning Decisions: Imagine you decide to gift a portion of your assets to your children during your lifetime. While this can reduce the size of your taxable estate, it’s important to consider any potential gift taxes and how it might impact your overall estate plan. Consulting with a tax advisor can help you understand the best strategies for minimising tax liabilities while achieving your estate planning goals. Would you like to see another scenario or move on to the next step?";
+    }
+    if (message == "All Scenario") {
+      response = "Here are the all scenario";
+    }
+
+    if (message == "No, Let's move on") {
+      response =
+        "Now that we’ve explored these scenarios, would you like to move on to some frequently asked questions about estate planning in South Africa? This will help you understand more about the process and address any additional concerns you might have. Here are some frequently asked questions about estate planning in South Africa:";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage14 = (message: any) => {
+    let response = "";
+
+    if (message == "No, let’s move on") {
+      response =
+        "Now that I have some basic information about you, let’s create a customised estate planning process tailored to your needs";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage14Component = (message: any) => {
+    let response = "";
+
+    if (message == "No, let's move on") {
+      response =
+        "Great! To help you stay organised throughout the estate planning process, here are some checklists for different stages:";
+    }
+    if (message == "Yes") {
+      response =
+        "Here are some templates to help you get started with your estate planning documents:";
+    }
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage14Template = (message: any) => {
+    let response = "";
+
+    if (message == "Download Will Template") {
+      response = "Templates are downloaded";
+    }
+    if (message == "Download Trust Template") {
+      response = "Templates are downloaded";
+    }
+    if (message == "Download Power of Attorney Template") {
+      response = "Templates are downloaded";
+    }
+    if (message == "Download Living Will Template") {
+      response = "Templates are downloaded";
+    }
+    if (message == "Download All Templates") {
+      response = "Templates are downloaded";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage14Checklist = (message: any) => {
+    let response = "";
+
+    if (message == "Download Checklist") {
+      response = "Checklist is downloaded";
+    }
+    if (message == "Let’s move on") {
+      response =
+        "While these templates and checklists can help you get started, there are times when seeking professional legal advice is essential. Consider getting legal advice* if the following applies to you:";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage14Contact = (message: any) => {
+    let response = "";
+
+    if (
+      message == "Yes" ||
+      message == "Get in touch with an Old Mutual Financial Advisor"
+    ) {
+      response =
+        "Fantastic! Our financial advisors at Old Mutual are ready to assist you in filling out these templates. Please reach out to us directly to schedule a consultation and receive personalised guidance. Here’s how you can get in touch:";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage15 = (message: any) => {
+    let response = "";
+
+    if (message == "No, let's move on") {
+      response =
+        "Now that we’ve covered your personal details, let’s talk about your objectives for estate planning. Understanding your goals will help us create a plan that fits your needs perfectly. Ready to dive in?";
+    }
+    if (message == "Continue") {
+      response =
+        "Now that we’ve covered your personal details, let’s talk about your objectives for estate planning. Understanding your goals will help us create a plan that fits your needs perfectly. Ready to dive in?";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage15Component = (message: any) => {
+    let response = "";
+
+    if (message == "Yes") {
+      response =
+        "Great! Here are a few key considerations to keep in mind while planning your estate. I’ll ask you some questions to get a better understanding of your specific needs and goals.";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage15No = (message: any) => {
+    let response = "";
+
+    if (message == "No") {
+      response =
+        "No problem, I understand that estate planning can be a lot to think about. Is there something specific you'd like to discuss or any concerns you have that I can address?";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage15Financial = (message: any) => {
+    let response = "";
+
+    if (message == "Yes" || message == "No") {
+      response =
+        "Do you own a business? If so, how important is it to you that your estate plan protects your business interests, especially in terms of its continuation if you were to pass away or become disabled?";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage15TellMe = (message: any) => {
+    let response = "";
+
+    if (message == "Yes" || message == "No") {
+      response =
+        "Flexibility in an estate plan means it can be adjusted without major legal hurdles if your circumstances change. For instance, if tax laws change or you acquire new assets, a flexible plan allows for these updates to ensure your wishes are still carried out effectively. This can save time, reduce legal costs, and provide peace of mind knowing your plan remains relevant. Does that make sense, or would you like more details?";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage16Business = (message: any) => {
+    let response = "";
+
+    if (message == "Not important") {
+      response =
+        "What strategies and measures would you like to have in place to ensure the financial resources set aside for retirement are safeguarded, particularly regarding your business assets or investments?";
+    }
+    if (message == "Average Importance") {
+      response =
+        "What strategies and measures would you like to have in place to ensure the financial resources set aside for retirement are safeguarded, particularly regarding your business assets or investments?";
+    }
+    if (message == "Very Important") {
+      response =
+        "What strategies and measures would you like to have in place to ensure the financial resources set aside for retirement are safeguarded, particularly regarding your business assets or investments?";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage17Strategies = (message: any) => {
+    let response = "";
+
+    if (message == "No, let's move on") {
+      response =
+        "When it comes to the administration of your estate after your passing, how important is it to you that the process is smooth and straightforward for your heirs?";
+    }
+    if (message == "Establish a Trust") {
+      response =
+        "When it comes to the administration of your estate after your passing, how important is it to you that the process is smooth and straightforward for your heirs?";
+    }
+    if (message == "Set Up Insurance Policies") {
+      response =
+        "When it comes to the administration of your estate after your passing, how important is it to you that the process is smooth and straightforward for your heirs?";
+    }
+    if (message == "Legal Agreement") {
+      response =
+        "When it comes to the administration of your estate after your passing, how important is it to you that the process is smooth and straightforward for your heirs?";
+    }
+    if (message == "Buy-Sell Agreement") {
+      response =
+        "When it comes to the administration of your estate after your passing, how important is it to you that the process is smooth and straightforward for your heirs?";
+    }
+    if (message == "Contingent Liability Insurance") {
+      response =
+        "When it comes to the administration of your estate after your passing, how important is it to you that the process is smooth and straightforward for your heirs?";
+    }
+    if (message == "Diversified Investment Strategy") {
+      response =
+        "When it comes to the administration of your estate after your passing, how important is it to you that the process is smooth and straightforward for your heirs?";
+    }
+    if (message == "Business Succession Planning") {
+      response =
+        "When it comes to the administration of your estate after your passing, how important is it to you that the process is smooth and straightforward for your heirs?";
+    }
+    if (message == "Debt Repayment Plan") {
+      response =
+        "When it comes to the administration of your estate after your passing, how important is it to you that the process is smooth and straightforward for your heirs?";
+    }
+    if (message == "Asset Protection Planning") {
+      response =
+        "When it comes to the administration of your estate after your passing, how important is it to you that the process is smooth and straightforward for your heirs?";
+    }
+    if (message == "Separation of Personal & Business Finances") {
+      response =
+        "When it comes to the administration of your estate after your passing, how important is it to you that the process is smooth and straightforward for your heirs?";
+    }
+    if (message == "Continue") {
+      response =
+        "When it comes to the administration of your estate after your passing, how important is it to you that the process is smooth and straightforward for your heirs?";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage17Other = (message: any) => {
+    let response = "";
+
+    if (message == "Other") {
+      response = "Please provide details of your arrangement.";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage17Undecided = (message: any) => {
+    let response = "";
+
+    if (message == "I’m Undecided") {
+      response =
+        "That's okay! It can be overwhelming to decide on the best measures without more information. Here’s a brief overview to help you:";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage18Administration = (message: any) => {
+    let response = "";
+
+    if (message == "Not important") {
+      response =
+        "Are you concerned about protecting your assets from potential insolvency issues, either for yourself or your heirs?";
+    }
+    if (message == "Average Importance") {
+      response =
+        "Are you concerned about protecting your assets from potential insolvency issues, either for yourself or your heirs?";
+    }
+    if (message == "Very Important") {
+      response =
+        "Are you concerned about protecting your assets from potential insolvency issues, either for yourself or your heirs?";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage18Component = (message: any) => {
+    let response = "";
+
+    if (message == "Continue") {
+      response =
+        "To prevent any cash shortfall in your estate, how important is it to have provisions in place for your dependants' maintenance? For instance, would you want to ensure there’s enough capital to cover any immediate expenses and ongoing support for your dependants?";
+    }
+
+    if (message == "Yes") {
+      response =
+        "To prevent any cash shortfall in your estate, how important is it to have provisions in place for your dependants' maintenance? For instance, would you want to ensure there’s enough capital to cover any immediate expenses and ongoing support for your dependants?";
+    }
+    if (message == "No") {
+      response =
+        "To prevent any cash shortfall in your estate, how important is it to have provisions in place for your dependants' maintenance? For instance, would you want to ensure there’s enough capital to cover any immediate expenses and ongoing support for your dependants?";
+    }
+    if (message == "Maybe") {
+      response =
+        "It's understandable to be uncertain about this. Protecting assets from potential insolvency can be crucial for maintaining financial stability. Here are some points to consider";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage19Capital = (message: any) => {
+    let response = "";
+
+    if (message == "Not important") {
+      response =
+        "Reducing taxes and expenses payable upon your death can help maximise the value passed on to your heirs. How high a priority is it for you to minimise these costs?";
+    }
+    if (message == "Average Importance") {
+      response =
+        "Reducing taxes and expenses payable upon your death can help maximise the value passed on to your heirs. How high a priority is it for you to minimise these costs?";
+    }
+    if (message == "Very Important") {
+      response =
+        "Reducing taxes and expenses payable upon your death can help maximise the value passed on to your heirs. How high a priority is it for you to minimise these costs?";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage20Final = (message: any) => {
+    let response = "";
+
+    if (message == "Yes, I have a question") {
+      response = "What's your question?";
+    }
+    if (message == "No") {
+      response =
+        "Let’s dive into the details of what you own to ensure we have a comprehensive understanding of your estate. Your assets play a crucial role in your estate plan.";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage21Asset = (message: any) => {
+    let response = "";
+
+    if (message == "Upload Document") {
+      response = "Estate Document Uploaded";
+    }
+    if (message == "Specify") {
+      response = "Great! Please provide the above mentioned details.";
+    }
+    if (message == "Maybe Later") {
+      response =
+        "No problem. Whenever you're ready to provide the details, just let me know.";
+    }
+    if (message == "I’m unsure of the details") {
+      response =
+        "To help you estimate the value of your property, let’s go through a few simple steps. This will give you a rough idea of what your property could be worth. First, please specify the type of property you have (e.g. house, apartment, land).";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage21Calculator = (message: any) => {
+    let response = "";
+
+    if (message == "Continue") {
+      response =
+        "Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan.";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage20Payable = (message: any) => {
+    let response = "";
+
+    if (message == "Low") {
+      response =
+        "The success of your estate plan relies on accurate information about your assets, liabilities, and clear communication of your wishes. How confident are you in the accuracy of the details you’ve provided so far? And would you be open to regularly reviewing and updating your estate plan to reflect any changes?";
+    }
+    if (message == "Average") {
+      response =
+        "The success of your estate plan relies on accurate information about your assets, liabilities, and clear communication of your wishes. How confident are you in the accuracy of the details you’ve provided so far? And would you be open to regularly reviewing and updating your estate plan to reflect any changes?";
+    }
+    if (message == "High") {
+      response =
+        "The success of your estate plan relies on accurate information about your assets, liabilities, and clear communication of your wishes. How confident are you in the accuracy of the details you’ve provided so far? And would you be open to regularly reviewing and updating your estate plan to reflect any changes?";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage20 = (message: any) => {
+    let response = "";
+
+    if (message == "Yes") {
+      response =
+        "Thanks for sharing your thoughts, [Client's Name]. It’s important to have a clear understanding of your objectives so we can tailor your estate plan to meet your needs. Is there anything else you’d like to add before we move on?";
+    }
+    if (message == "No") {
+      response =
+        "Thanks for sharing your thoughts, [Client's Name]. It’s important to have a clear understanding of your objectives so we can tailor your estate plan to meet your needs. Is there anything else you’d like to add before we move on?";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
 
   const saveUserProfile = async (update: any) => {
+    let retries = 0;
+
+    // Show the loading indicator
+    setLoading(true);
+    setError("");
+
     const profile = {
       name: userName || "",
       deletionRequest: deletionRequestData || "",
+      dateCreated: dateC || "",
       dateOfBirth: dateOfBirth || "",
       emailAddress: userEmail || "",
       dependentsOver: dependentsOver || "",
@@ -85,19 +962,32 @@ export default function Chat() {
       ...update,
     };
 
-    const response = await fetch("/api/userProfiles", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(profile),
-    });
+    // Don't include `dateCreated` in updates, unless it's a new profile
 
-    if (!response.ok) {
-      throw new Error("Failed to save user profile");
+    while (retries < MAX_RETRIES) {
+      try {
+        const response = await axios.post("/api/userProfiles", profile);
+        if (response.status === 200) {
+          setLoading(false); // Success, hide the loading indicator
+          return response.data;
+        }
+      } catch (err: any) {
+        // Check for specific error like ECONNRESET
+        if (err.code === "ECONNRESET") {
+          retries += 1;
+          setRetryCount(retries);
+          console.error(`Retry ${retries}/${MAX_RETRIES}: Connection reset`);
+
+          // Wait before retrying
+          await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
+        } else {
+          setError("Failed to save profile. Please try again.");
+          break;
+        }
+      }
     }
 
-    return await response.json(); // if you need to process the response
+    setLoading(false); // Stop loading if retries exceed limit
   };
 
   useEffect(() => {
@@ -165,6 +1055,44 @@ export default function Chat() {
     setInputStr(checkedItems.join(", "));
   };
 
+  const handleSubmitWithRetry = async (
+    event: React.FormEvent<HTMLFormElement>,
+    retries = MAX_RETRIES
+  ) => {
+    event.preventDefault();
+    let attempt = 0;
+
+    while (attempt < retries) {
+      try {
+        handleSubmit(event); // Try submitting the message
+        setRetryCount(0); // Reset retry count if successful
+        setError(""); // Clear any previous errors
+        break; // Exit the loop if submission is successful
+      } catch (error: any) {
+        attempt += 1;
+        setRetryCount(attempt);
+        setError(`Attempt ${attempt}/${MAX_RETRIES} failed. Retrying...`);
+
+        if (attempt >= retries) {
+          setError("Failed to submit after several attempts.");
+          break;
+        }
+
+        // Wait for the retry delay before the next attempt
+        await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
+      }
+    }
+  };
+
+  // Automatically resubmit previous user input after error
+  useEffect(() => {
+    if (submitOnNextUpdate && inputStr.trim()) {
+      const formEvent = { preventDefault: () => {} };
+      handleSubmitWithRetry(formEvent as React.FormEvent<HTMLFormElement>);
+      setSubmitOnNextUpdate(false);
+    }
+  }, [submitOnNextUpdate, inputStr]);
+
   useEffect(() => {
     handleInputChange({
       target: { value: inputStr },
@@ -188,7 +1116,7 @@ export default function Chat() {
   ) => {
     const { id, checked } = e.target;
     const updatedCheckboxes = { ...checkboxes, [id]: checked };
-console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkboxes
+    console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkboxes
 
     setCheckboxes(updatedCheckboxes);
     updateInputStr(checkboxesAsset, updatedCheckboxes);
@@ -200,7 +1128,7 @@ console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkb
     handleInputChange({
       target: { value: message },
     } as React.ChangeEvent<HTMLInputElement>);
-     setSubmitOnNextUpdate(true);
+    setSubmitOnNextUpdate(true);
   };
 
   const handleButtonFunFact = async (message: any) => {
@@ -238,10 +1166,10 @@ console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkb
     await saveUserProfile({ propertyRegime: message });
   };
   const saveDeletionRequest = async (message: any, messageName: any) => {
-    setDeletionRequestData("true")
-    
+    setDeletionRequestData("true");
+
     setUserName(messageName);
-    console.log(userName+" "+message)
+    console.log(userName + " " + message);
     await saveUserProfile({ name: messageName, deletionRequest: "true" });
   };
 
@@ -305,15 +1233,17 @@ console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkb
   //   }
   // };
 
-  const saveUserName = async (message: any) => {
+  const saveUserName = async (message: any, dateNow: any) => {
     const secretKey = "MLKN87y8VSH&Y*SF"; // Replace with your own secret key
     const encryptedName = CryptoJS.AES.encrypt(message, secretKey).toString();
+    setDateC(dateNow);
     setUserName(message);
     setEncryptedName(encryptedName);
     setIsUserNameCollected(true);
 
     await saveUserProfile({
       name: message,
+      dateCreated: dateNow,
       dateOfBirth: "N/A",
       emailAddress: "N/A",
       dependentsOver: "N/A",
@@ -432,8 +1362,9 @@ console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkb
   };
 
   const messageData = useRef("");
+  const trigger = useRef(false);
 
- const checkUserExists = async (username: string) => {
+  const checkUserExists = async (username: string) => {
     try {
       setIsCheckingUser(true);
       const response = await axios.get(`/api/checkUser?username=${username}`);
@@ -446,25 +1377,72 @@ console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkb
     }
   };
   useEffect(() => {
-    if (inputStr.trim() !== "" && messageData.current.includes("Can you please provide your user name so I can assist you with deleting")) {
+    if (
+      inputStr.trim() !== "" &&
+      messageData.current.includes(
+        "Can you please provide your user name so I can assist you with deleting"
+      )
+    ) {
       checkUserExists(inputStr);
     }
   }, [inputStr]);
   const renderMessages = () => {
     return messages.map((message, index) => {
       const isVideoTrigger = message.id === videoTriggerMessageId;
-      const educationInformation = message.content.includes("Let's dive into the world of estate planning!")
-      const legalRequirement = message.content.includes("It’s important to understand the legal requirements and considerations specific to South Africa")
-      const scenarioSimulation = message.content.includes("Would you like to see how different scenarios could impact your estate? Here are a few examples we can simulate")
-      const faqStage = message.content.includes("Here are some frequently asked questions about estate planning in South Africa")
+      const questionResponseStage12 = message.content.includes(
+        "Is there anything else you’d like to know about estate planning, or any questions you have at this stage?"
+      );
+
+      const triggerPoint = message.content.includes(
+        "Great! Let’s move on to the next section where we’ll discuss what estate planning is and why it is important."
+      );
+      trigger.current = triggerPoint;
+
+      const questionResponse1 =
+        message.content.includes(
+          "we’ll discuss what estate planning is and why it is important. Ready?"
+        ) ||
+        message.content.includes(
+          "Do you have any other questions or need further information?"
+        ) ||
+        message.content.includes("why it is important, Ready?");
+      const potentialOutcomes =
+        message.content.includes("Setting Up a Trust:") ||
+        message.content.includes("Dying Intestate (Without a Will):") ||
+        message.content.includes("Appointing a Power of Attorney:") ||
+        message.content.includes(
+          "Tax Implications of Estate Planning Decisions:"
+        ) ||
+        (message.content.includes(
+          "Would you like to see how this scenario could impact your estate?"
+        ) &&
+          !message.content.includes("Here are a few examples"));
+
+      const educationInformation = message.content.includes(
+        "Let's dive into the world of estate planning!"
+      );
+      const legalRequirement = message.content.includes(
+        "It’s important to understand the legal requirements and considerations specific to South Africa"
+      );
+      const scenarioSimulation = message.content.includes(
+        "Would you like to see how different scenarios could impact your estate? Here are a few examples we can simulate"
+      );
+      const templateButton = message.content.includes(
+        "let’s create a customised estate planning process tailored to your needs!"
+      );
+      const faqStage = message.content.includes(
+        "Now that we’ve explored these scenarios, would you like to move on to some frequently asked questions about estate planning in South Africa? This will help you understand more about the process and address any additional concerns you might have."
+      );
+      const stepByStep = message.content.includes(
+        "Now that I have some basic information about you, let’s create a customised estate planning process tailored to your needs"
+      );
       const isMaritalStatusQuestion =
         message.content.includes("Single, Married") ||
         message.content.includes("Are you married") ||
-         message.content.includes("your marital status") ||
-        
+        message.content.includes("your marital status") ||
         message.content.includes("current marital status") ||
-        message.content.includes("single, married") &&
-        !message.content.includes("accrual");
+        (message.content.includes("single, married") &&
+          !message.content.includes("accrual"));
       const isDependentsQuestion =
         message.content.includes("any dependents") &&
         !message.content.includes("18");
@@ -477,19 +1455,28 @@ console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkb
       const reg =
         message.content.includes("type of marriage") ||
         message.content.includes("marriage include the accrual system") ||
-        message.content.includes("kind of marriage do you have")
-        &&
-        !message.content.includes("Spouse") &&
-        !message.content.includes("spouse");
+        (message.content.includes("kind of marriage do you have") &&
+          !message.content.includes("Spouse") &&
+          !message.content.includes("spouse"));
       const birth =
-        message.content.includes("tell me your date of birth") ||
+        message.content.includes("tell me your date of birth.") ||
+        message.content.includes("please provide your date of birth?") ||
+        message.content.includes("provide your date of birth.") ||
+        message.content.includes("provide your date of birth") ||
+        message.content.includes("date of birth?") ||
         message.content.includes("have your date of birth") ||
-        message.content.includes("your date of birth") ||
-        message.content.includes("about your date of birth") ||
+        message.content.includes("What is your date of") ||
+        message.content.includes("your date of birth.") ||
+        message.content.includes("about your date of birth.") ||
         message.content.includes("were you born") ||
         message.content.includes("ask for your date of birth");
       const video = message.content.includes("I've got a short video");
-      const askingConsent = message.content.includes("Do you consent");
+      const askingConsent =
+        message.content.includes("Do you consent") ||
+        message.content.includes("consent to our Privacy Policy") ||
+        message.content.includes(
+          "Please confirm that you have read and agree to our Privacy"
+        );
       const privacy = message.content.includes(
         "I understand and respect your decision"
       );
@@ -521,8 +1508,6 @@ console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkb
       //console.log(imageFilename);
 
       const filteredContent = message.content.split("<|prompter|>")[0];
-
-      
 
       return (
         <div
@@ -596,113 +1581,1376 @@ console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkb
                   {` ${filteredContent.replace(/<\|endoftext\|>/g, "")}`}
                 </p>
               )}
-              
-              {scenarioSimulation && (
-               <div className="space-x-2 mt-2">
+
+              {questionResponse1 && (
+                <div className="space-x-2 mt-2">
                   <button
-                    onClick={() => handleButtonFunFact("Scenario 1")}
+                    onClick={() => handleButtonFunFact("I have a question.")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    I have a question.
+                  </button>
+                  <button
+                    onClick={() => handleButtonFunFact("Yes, I'm ready.")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Yes, I'm ready.
+                  </button>
+                </div>
+              )}
+              {questionResponseStage12 && (
+                <div className="space-x-2 mt-2">
+                  <button
+                    onClick={() => handleButtonStage12("I have a question.")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    I have a question.
+                  </button>
+                  <button
+                    onClick={() => handleButtonStage12("No, Let's move on")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    No, Let's move on
+                  </button>
+                </div>
+              )}
+              {message.content.includes(
+                "Would you like to see another scenario or move on to the next step?"
+              ) && (
+                <div className="space-x-2 mt-4">
+                  <button
+                    onClick={() => handleButtonStage13Component("Scenario 1")}
                     className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
                   >
                     Scenario 1
                   </button>
-                   <button
-                    onClick={() => handleButtonFunFact("Scenario 2")}
+                  <button
+                    onClick={() => handleButtonStage13Component("Scenario 2")}
                     className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
                   >
                     Scenario 2
                   </button>
-                   <button
-                    onClick={() => handleButtonFunFact("Scenario 3")}
+                  <button
+                    onClick={() => handleButtonStage13Component("Scenario 3")}
                     className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
                   >
                     Scenario 3
                   </button>
-                   <button
-                    onClick={() => handleButtonFunFact("Scenario 4")}
+                  <button
+                    onClick={() => handleButtonStage13Component("Scenario 4")}
                     className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
                   >
                     Scenario 4
                   </button>
-                   <button
-                    onClick={() => handleButtonFunFact("All Scenario")}
+                  <button
+                    onClick={() => handleButtonStage13Component("All Scenario")}
                     className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
                   >
-                    All Scenario
+                    All Scenarios
+                  </button>
+                  <button
+                    onClick={() =>
+                      handleButtonStage13Component("No, Let's move on")
+                    }
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    No, Let's move on
                   </button>
                 </div>
               )}
-{faqStage && (
-  <>
-    <div className="space-x-2 mt-2">
-      ❓ What is estate planning?<br/>
-      Estate planning is the process of arranging for the management and disposal of a person’s estate during their life and after death. It involves creating documents like wills, trusts, and powers of attorney. 📝💼
-      <br/><br/>
-      ❓ Why is having a will important?<br/>
-      A will ensures your assets are distributed according to your wishes, names guardians for minor children, and can help reduce estate taxes and legal fees. 📜👨‍👩‍👧‍👦
-      <br/><br/>
-      ❓ What happens if I die without a will?<br/>
-      If you die intestate (without a will), your estate will be distributed according to South Africa’s Intestate Succession Act, which may not align with your wishes. ⚖️❗
-      <br/><br/>
-      ❓ Can I change my will after it’s been created?<br/>
-      Yes, you can update your will as often as you like. It’s recommended to review and update it after major life events, such as marriage, divorce, or the birth of a child. 🔄💍👶
-      <br/><br/>
-      ❓ What is a trust and why would I need one?<br/>
-      A trust is a legal arrangement where a trustee manages assets on behalf of beneficiaries. Trusts can help manage assets, reduce estate taxes, and provide for beneficiaries according to your wishes. 🏦🔐
-      <br/><br/>
-      ❓ When should I seek legal advice for estate planning?<br/>
-      It’s advisable to seek legal advice if you have a large or complex estate, anticipate family disputes, own a business, or need to stay updated with changing laws. 🧑‍⚖️💡
-      <br/><br/>
-      Do you have any other questions or need further information? I’m here to help! 🤝💬
-    </div>
-  </>
-)}
-              {legalRequirement && (
-  <>
-    <div className="space-x-2 mt-2">
-      Estate planning in South Africa involves understanding key legal requirements to ensure your wishes are respected and legally binding. 📜⚖️
-      <br/><br/>
-      Here are some important acts and considerations:
-    </div>
-    <div className="space-x-2 mt-2">
-      📝 Wills Act 7 of 1953<br/>
-      The Wills Act governs the creation and execution of wills. Your will must be in writing, signed by you, and witnessed by two people who are not beneficiaries.
-      <br/><br/>
-      💼 Estate Duty Act 45 of 1955<br/>
-      This Act imposes estate duty (a form of tax) on the estate of a deceased person. The first R3.5 million of an estate is exempt from estate duty.
-      <br/><br/>
-      📋 Intestate Succession Act 81 of 1987<br/>
-      If you die without a will, the Intestate Succession Act determines how your estate will be distributed. This may not align with your wishes, so having a will is crucial.
-      <br/><br/>
-      💍 Marital Property Regimes<br/>
-      Your marital status can affect your estate planning. South Africa recognises different marital property regimes, such as community of property, antenuptial contract (ANC), and ANC with accrual. It’s important to consider how these will impact your estate.
-      <br/><br/>
-      🏛️ Master of the High Court<br/>
-      The Master of the High Court oversees the administration of deceased estates. Executors of estates must be appointed and approved by the Master.
-      <br/><br/>
-      Understanding these components and local laws can help ensure that your estate plan is comprehensive and legally sound. 📚✅
-    </div>
-    <div className="space-x-2 mt-2">
-      Are you ready to explore some potential outcomes of different estate planning choices?
-    </div>
-  </>
-)}
+
+              {/* {message.content.includes("Do you have any other questions or need further information? I’m here to help!") && (
+                <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() => handleButtonStage14("Yes, I have a question")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Yes, I have a question
+                    </button>
+                    <button
+                      onClick={() => handleButtonStage14("No, let’s move on")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      "No, let’s move on
+                    </button>
+                    </div>
+                )} */}
+              {message.content.includes("Templates are downloaded") && (
+                <>
+                  <div className="space-x-2 mt-2">
+                    Would you like any assistance filling out any of these
+                    templates?
+                  </div>
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() => handleButtonStage15("No, let's move on")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      No, let's move on
+                    </button>
+                    <button
+                      onClick={() => handleButtonStage14Contact("Yes")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Yes
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {message.content.includes(
+                "Are you concerned about protecting your assets from potential insolvency issues, either for yourself or your heirs?"
+              ) && (
+                <>
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() => handleButtonStage18Component("Yes")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Yes
+                    </button>
+                    <button
+                      onClick={() => handleButtonStage18Component("No")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      No
+                    </button>
+                    <button
+                      onClick={() => handleButtonStage18Component("Maybe")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Maybe
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {message.content.includes(
+                "Fantastic! Our financial advisors at Old Mutual are ready to assist you in filling out these templates. Please reach out to us directly to schedule a consultation and receive personalised guidance. Here’s how you can get in touch:"
+              ) && (
+                <>
+                  <div className="space-x-2 mt-2">
+                    📞 Phone: Call us at [insert phone number] to speak with an
+                    advisor.
+                    <br />
+                    <br />
+                    📧 Email: Send us an email at [insert email address] with
+                    your contact details, and we’ll get back to you promptly.
+                  </div>
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() => handleButtonStage15("Continue")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Continue
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {message.content.includes("Here are the all scenario") && (
+                <>
+                  <div className="space-x-2 mt-2">
+                    Scenario 1 - Setting Up a Trust: Imagine you set up a trust
+                    to manage your assets. The trust could be used to provide
+                    for your children’s education and care until they reach
+                    adulthood. This can protect the assets from being mismanaged
+                    or spent too quickly. Additionally, trusts can offer tax
+                    benefits and ensure a smoother transfer of assets to your
+                    beneficiaries. 🔐💼
+                    <br />
+                    Scenario 2 - Dying Intestate (Without a Will):
+                    <br />
+                    Suppose you pass away without a will. According to South
+                    Africa’s Intestate Succession Act, your estate will be
+                    distributed to your surviving spouse and children, or other
+                    relatives if you have no spouse or children. This may not
+                    align with your personal wishes and could lead to disputes
+                    among family members. 📜👨‍👩‍👧‍👦
+                    <br />
+                    <br />
+                    Scenario 3 - Appointing a Power of Attorney:
+                    <br />
+                    Consider appointing a trusted person as your power of
+                    attorney. This individual can manage your financial and
+                    legal affairs if you become incapacitated. For example, they
+                    could pay your bills, manage your investments, or make
+                    medical decisions on your behalf. This ensures that your
+                    affairs are handled according to your wishes, even if you’re
+                    unable to communicate them. 🗝️📋
+                    <br />
+                    <br />
+                    Scenario 4 - Tax Implications of Estate Planning Decisions:
+                    <br />
+                    Imagine you decide to gift a portion of your assets to your
+                    children during your lifetime. While this can reduce the
+                    size of your taxable estate, it’s important to consider any
+                    potential gift taxes and how it might impact your overall
+                    estate plan. Consulting with a tax advisor can help you
+                    understand the best strategies for minimising tax
+                    liabilities while achieving your estate planning goals. 💰📊
+                  </div>
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() => handleButtonFunFact("Scenario 1")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Scenario 1
+                    </button>
+                    <button
+                      onClick={() => handleButtonFunFact("Scenario 2")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Scenario 2
+                    </button>
+                    <button
+                      onClick={() => handleButtonFunFact("Scenario 3")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Scenario 3
+                    </button>
+                    <button
+                      onClick={() => handleButtonFunFact("Scenario 4")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Scenario 4
+                    </button>
+                    <button
+                      onClick={() => handleButtonFunFact("All Scenario")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      All Scenarios
+                    </button>
+                    <button
+                      onClick={() => handleButtonFunFact("No, Let's move on")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      No, Let's move on
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {scenarioSimulation && (
+                <>
+                  <div className="space-x-2 mt-2">
+                    Scenario 1: How will setting up a trust affect the
+                    management and distribution of your assets?
+                    <br />
+                    <br />
+                    Scenario 2: What happens if you pass away without a will
+                    (intestate)?
+                    <br />
+                    <br />
+                    Scenario 3: How will appointing a power of attorney impact
+                    your estate during your lifetime?
+                    <br />
+                    <br />
+                    Scenario 4: What are the potential tax implications of your
+                    estate planning decisions?
+                    <br />
+                    <br />
+                    Choose a scenario you’d like to explore, and I’ll show you
+                    the potential outcomes.
+                  </div>
+
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() => handleButtonStage13Component("Scenario 1")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Scenario 1
+                    </button>
+                    <button
+                      onClick={() => handleButtonStage13Component("Scenario 2")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Scenario 2
+                    </button>
+                    <button
+                      onClick={() => handleButtonStage13Component("Scenario 3")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Scenario 3
+                    </button>
+                    <button
+                      onClick={() => handleButtonStage13Component("Scenario 4")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Scenario 4
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage13Component("All Scenario")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      All Scenarios
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage13Component("No, Let's move on")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      No, Let's move on
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {templateButton && (
+                <>
+                  <div className="space-x-2 mt-2">
+                    Based on your profile, here’s a suggested plan:
+                    <br />
+                    <br />
+                    📝 **Wills**: Given your marital status and number of
+                    dependents, it’s essential to have a will to ensure your
+                    assets are distributed according to your wishes. 📜👨‍👩‍👧‍👦
+                    <br />
+                    <br />
+                    🏦 **Trusts**: If you have significant assets or minor
+                    children, setting up a trust might be beneficial. This can
+                    help manage and protect assets for your beneficiaries. 🔐💼
+                    <br />
+                    <br />
+                    🤝 **Power of Attorney**: Appointing a trusted person to
+                    make decisions on your behalf if you’re unable to is
+                    crucial. 🗝️📋
+                    <br />
+                    <br />
+                    💉 **Living Will**: Consider a living will to outline your
+                    medical treatment preferences in case you’re incapacitated.
+                    This helps ensure your wishes are followed in medical
+                    situations. ⚖️🏥
+                    <br />
+                    <br />
+                    Would you like me to share some templates to help you get
+                    started? 📄🔖
+                  </div>
+                </>
+              )}
+              {stepByStep && (
+                <>
+                  <div className="space-x-2 mt-2">
+                    Based on your profile, here’s a suggested plan:
+                    <br />
+                    <br />
+                    📝 Wills: Given your marital status and number of
+                    dependents, it’s essential to have a will to ensure your
+                    assets are distributed according to your wishes.
+                    <br />
+                    <br />
+                    🏦 Trusts: If you have significant assets or minor children,
+                    setting up a trust might be beneficial. This can help manage
+                    and protect assets for your beneficiaries.
+                    <br />
+                    <br />
+                    🤝 Power of Attorney: Appointing a trusted person to make
+                    decisions on your behalf if you’re unable to is crucial.
+                    <br />
+                    <br />
+                    💉 Living Will: Consider a living will to outline your
+                    medical treatment preferences in case you’re incapacitated.
+                    <br />
+                    <br />
+                    Would you like me to share some templates to help you get
+                    started? I’m here to help! 🤝💬
+                  </div>
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage14Component("No, let's move on")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      No, let's move on
+                    </button>
+                    <button
+                      onClick={() => handleButtonStage14Component("Yes")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Yes
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {message.content.includes(
+                "Here are some templates to help you get started with your estate planning documents:"
+              ) && (
+                <>
+                  <div className="space-x-2 mt-2">
+                    📝 Will: A basic template for drafting your will.
+                    <br />
+                    <br />
+                    🏦 Trusts: A template to set up a simple trust.
+                    <br />
+                    <br />
+                    🤝 Power of Attorney: A template for appointing a power of
+                    attorney.
+                    <br />
+                    <br />
+                    💉 Living Will: A template to specify your medical treatment
+                    preferences.
+                  </div>
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage14Template("Download Will Template")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Download Will Template
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage14Template("Download Trust Template")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Download Trust Template
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage14Template(
+                          "Download Power of Attorney Template"
+                        )
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Download Power of Attorney Template
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage14Template(
+                          "Download Living Will Template"
+                        )
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Download Living Will Template
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage14Template("Download All Templates")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Download All Templates
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {message.content.includes(
+                "Now that we’ve covered your personal details, let’s talk about your objectives for estate planning. Understanding your goals will help us create a plan that fits your needs perfectly. Ready to dive in?"
+              ) && (
+                <>
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() => handleButtonStage15Component("Yes")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Yes
+                    </button>
+                    <button
+                      onClick={() => handleButtonStage15No("No")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      No
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {message.content.includes(
+                "Great! Here are a few key considerations to keep in mind while planning your estate. I’ll ask you some questions to get a better understanding of your specific needs and goals."
+              ) && (
+                <>
+                  <div className="space-x-2 mt-2">
+                    Great! Here are a few key considerations to keep in mind
+                    while planning your estate. I’ll ask you some questions to
+                    get a better understanding of your specific needs and goals.
+                    <br />
+                    <br />
+                    Firstly, how important is it for your estate plan to be
+                    flexible and adapt to changes in your personal, financial,
+                    and legislative environment?
+                    <br />
+                    <br />
+                    For example, would you want your plan to easily adjust if
+                    there are changes in laws or your financial situation?
+                  </div>
+                  <>
+                    <div className="space-x-2 mt-4">
+                      <button
+                        onClick={() => handleButtonStage15Financial("Yes")}
+                        className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                      >
+                        Yes
+                      </button>
+                      <button
+                        onClick={() => handleButtonStage15Financial("No")}
+                        className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                      >
+                        No
+                      </button>
+                      <button
+                        onClick={() => handleButtonStage15TellMe("No")}
+                        className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                      >
+                        Not sure, tell me more
+                      </button>
+                    </div>
+                  </>
+                </>
+              )}
+              {message.content.includes(
+                "No problem, I understand that estate planning can be a lot to think about. Is there something specific you'd like to discuss or any concerns you have that I can address?"
+              ) && (
+                <>
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() => handleButtonStage15Financial("No")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      No
+                    </button>
+                  </div>
+                </>
+              )}
+              {message.content.includes(
+                "Do you own a business? If so, how important is it to you that your estate plan protects your business interests, especially in terms of its continuation if you were to pass away or become disabled"
+              ) && (
+                <>
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage16Business("Not important")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Not important
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage16Business("Average Importance")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Average Importance
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage16Business("Very Important")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Very Important
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {message.content.includes(
+                "Please provide details of your arrangement."
+              ) && (
+                <>
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage17Strategies("No, let's move on")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      No, let's move on
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {message.content.includes(
+                "What strategies and measures would you like to have in place to ensure the financial resources set aside for retirement are safeguarded, particularly regarding your business assets or investments?"
+              ) && (
+                <>
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage17Strategies("Establish a Trust")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Establish a Trust
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage17Strategies(
+                          "Set Up Insurance Policies"
+                        )
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Set Up Insurance Policies
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage17Strategies("Legal Agreement")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Legal Agreement
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage17Strategies("Buy-Sell Agreement")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Buy-Sell Agreement
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage17Strategies(
+                          "Contingent Liability Insurance"
+                        )
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Contingent Liability Insurance
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage17Strategies(
+                          "Diversified Investment Strategy"
+                        )
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Diversified Investment Strategy
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage17Strategies(
+                          "Business Succession Planning"
+                        )
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Business Succession Planning
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage17Strategies("Debt Repayment Plan")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Debt Repayment Plan
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage17Strategies(
+                          "Asset Protection Planning"
+                        )
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Asset Protection Planning
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage17Strategies(
+                          "Separation of Personal & Business Finances"
+                        )
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Separation of Personal & Business Finances
+                    </button>
+                    <button
+                      onClick={() => handleButtonStage17Other("Other")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Other
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage17Undecided("I’m Undecided")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      I’m Undecided
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {message.content.includes(
+                "That's okay! It can be overwhelming to decide on the best measures without more information. Here’s a brief overview to help you:"
+              ) && (
+                <>
+                  <div className="space-x-2 mt-2">
+                    🏦 Establish a Trust: Protects your assets and ensures they
+                    are distributed according to your wishes.
+                    <br />
+                    🛡️ Set Up Insurance Policies: Provides financial security in
+                    case of unforeseen events.
+                    <br />
+                    📜 Legal Agreements: Formalizes arrangements to manage and
+                    protect your business interests.
+                    <br />
+                    🤝 Buy-Sell Agreement: Ensures smooth transition and fair
+                    value if a business partner exits.
+                    <br />
+                    🏢 Contingent Liability Insurance: Covers potential business
+                    liabilities.
+                    <br />
+                    📊 Diversified Investment Strategy: Spreads risk across
+                    different investments.
+                    <br />
+                    🔄 Regular Financial Reviews: Keeps your financial plan up
+                    to date with your current situation.
+                    <br />
+                    💳 Debt Repayment Plan: Manages and prioritizes repayment of
+                    debts.
+                    <br />
+                    🛡️ Asset Protection Planning: Safeguards your personal and
+                    business assets from risks.
+                    <br />
+                    🔄 Separation of Personal & Business Finances: Keeps your
+                    personal and business finances distinct to avoid
+                    complications.
+                    <br />
+                    <br />
+                    Would you like to discuss any of these options further, or
+                    do you need more details on any specific measure?
+                  </div>
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() => handleButtonStage17Strategies("Continue")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Continue
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {message.content.includes(
+                "Flexibility in an estate plan means it can be adjusted without major legal hurdles if your circumstances change. For instance,"
+              ) && (
+                <>
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() => handleButtonStage15Financial("Yes")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Yes
+                    </button>
+                    <button
+                      onClick={() => handleButtonStage15Financial("No")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      No
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {message.content.includes(
+                "When it comes to the administration of your estate after your passing, how important is it to you that the process is smooth and straightforward for your heirs?"
+              ) && (
+                <>
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage18Administration("Not important")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Not important
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage18Administration("Average Importance")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Average Importance
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage18Administration("Very Important")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Very Important
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {message.content.includes(
+                "Great! To help you stay organised throughout the estate planning process, here are some checklists for different stages:"
+              ) && (
+                <>
+                  <div className="space-x-2 mt-2">
+                    Initial Stage:
+                    <br />
+                    📋 Gather personal information (name, age, marital status,
+                    dependents)
+                    <br />
+                    💼 List all assets and liabilities
+                    <br />
+                    👥 Identify beneficiaries
+                    <br />
+                    📝 Consider your wishes for asset distribution and
+                    guardianship
+                    <br />
+                    <br />
+                    Creating Documents:
+                    <br />
+                    ✍️ Draft your will
+                    <br />
+                    🏦 Set up any necessary trusts
+                    <br />
+                    🤝 Prepare power of attorney documents
+                    <br />
+                    💉 Create a living will
+                    <br />
+                    <br />
+                    Review and Update:
+                    <br />
+                    🔄 Regularly review your documents (annually or after major
+                    life events)
+                    <br />
+                    📑 Update beneficiaries as needed
+                    <br />
+                    🖊️ Ensure all documents are properly signed and witnessed
+                    <br />
+                    <br />
+                    Final Steps:
+                    <br />
+                    🔒 Store your documents in a safe place
+                    <br />
+                    👨‍👩‍👧‍👦 Inform your executor and loved ones where to find your
+                    documents
+                    <br />
+                    📂 Keep a copy with a trusted person or legal advisor
+                  </div>
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage14Checklist("Download Checklist")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Download Checklist
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage14Checklist("Let’s move on")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Let’s move on
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {message.content.includes(
+                "Describe the condition of your property (new, good, fair, needs renovation). Also, mention any special features (e.g., swimming pool, garden, garage)"
+              ) && (
+                <>
+                  <div className="space-x-2 mt-2">
+                    🏘️ Describe the condition of your property (new, good, fair,
+                    needs renovation).
+                    <br />
+                    🌳 Also, mention any special features (e.g., swimming pool,
+                    garden, garage).
+                    <br />
+                    <br />
+                    💰 The estimated value of your property based on the
+                    information you provided is: (value displayed).
+                    <br />
+                    Please note that this is a rough estimate and should not be
+                    considered an official appraisal.
+                    <br />
+                    📉 The actual value of your property may vary based on
+                    additional factors such as market conditions, recent sales
+                    data, and property-specific details not accounted for in
+                    this calculation.
+                    <br />
+                    For a precise valuation, we recommend consulting a property
+                    appraiser or real estate agent.
+                  </div>
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() => handleButtonStage21Calculator("Continue")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Continue
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {message.content.includes(
+                "It's understandable to be uncertain about this. Protecting assets from potential insolvency can be crucial for maintaining financial stability. Here are some points to consider"
+              ) && (
+                <>
+                  <div className="space-x-2 mt-2">
+                    🏦 Trusts: Placing assets in a trust can shield them from
+                    creditors.
+                    <br />
+                    🛡️ Insurance: Certain insurance policies can provide a
+                    safety net.
+                    <br />
+                    📜 Legal Structures: Properly structuring your business and
+                    personal finances can offer protection.
+                    <br />
+                    📊 Asset Diversification: Spreading assets across various
+                    investments can mitigate risk.
+                    <br />
+                    📝 Estate Planning: Comprehensive estate planning can help
+                    safeguard your heirs’ inheritance.
+                    <br />
+                    <br />
+                    Would you like to explore these options further to see which
+                    might be the best fit for your situation?
+                  </div>
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() => handleButtonStage18Component("Continue")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Continue
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {message.content.includes(
+                "To prevent any cash shortfall in your estate, how important is it to have provisions in place for your dependants' maintenance? For instance, would you want to ensure there’s enough capital to cover any immediate expenses and ongoing support for your dependants?"
+              ) && (
+                <>
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage19Capital("Not important")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Not important
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage19Capital("Average Importance")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Average Importance
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage19Capital("Very Important")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Very Important
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {message.content.includes(
+                "Let’s dive into the details of what you own to ensure we have a comprehensive understanding of your estate. Your assets play a crucial role in your estate plan."
+              ) && (
+                <>
+                  <div className="space-x-2 mt-2">
+                    🏡 Do you own any real estate properties, such as houses,
+                    apartments, or land?
+                    <br />
+                    If so, could you provide details about each property,
+                    including:
+                    <br />
+                    📍 Location
+                    <br />
+                    💰 Estimated current market value
+                    <br />
+                    🏦 Outstanding mortgage amount (if any)
+                    <br />
+                    🔧 Any significant improvements made
+                  </div>
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage21Asset("Upload Document")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Upload Document
+                    </button>
+                    <button
+                      onClick={() => handleButtonStage21Asset("Specify")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Specify
+                    </button>
+                    <button
+                      onClick={() => handleButtonStage21Asset("Maybe Later")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Maybe Later
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage21Asset("I’m unsure of the details")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      I’m unsure of the details
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {message.content.includes(
+                "Thanks for sharing your thoughts, [Client's Name]. It’s important to have a clear understanding of your objectives so we can tailor your estate plan to meet your needs. Is there anything else you’d like to add before we move on?"
+              ) && (
+                <>
+                  <button
+                    onClick={() =>
+                      handleButtonStage20Final("Yes, I have a question")
+                    }
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Yes, I have a question
+                  </button>
+                  <button
+                    onClick={() => handleButtonStage20Final("No")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    No
+                  </button>
+                </>
+              )}
+
+              {message.content.includes(
+                "The success of your estate plan relies on accurate information about your assets, liabilities, and clear communication of your wishes. How confident are you in the accuracy of the details you’ve provided so far? And would you be open to regularly reviewing and updating your estate plan to reflect any changes?"
+              ) && (
+                <>
+                  <button
+                    onClick={() => handleButtonStage20("Yes")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Yes
+                  </button>
+                  <button
+                    onClick={() => handleButtonStage20("No")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    No
+                  </button>
+                </>
+              )}
+
+              {message.content.includes(
+                "Reducing taxes and expenses payable upon your death can help maximise the value passed on to your heirs. How high a priority is it for you to minimise these costs?"
+              ) && (
+                <>
+                  <button
+                    onClick={() => handleButtonStage20Payable("Low")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Low
+                  </button>
+                  <button
+                    onClick={() => handleButtonStage20Payable("Average")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Average
+                  </button>
+                  <button
+                    onClick={() => handleButtonStage20Payable("High")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    High
+                  </button>
+                </>
+              )}
+
+              {(message.content.includes(
+                "While these templates and checklists can help you get started, there are times when seeking professional"
+              ) ||
+                message.content.includes("Checklist is downloaded")) && (
+                <>
+                  <div className="space-x-2 mt-2">
+                    🏦 Complex Estates:
+                    <br />
+                    If you have a large or complex estate, a lawyer can help
+                    navigate intricate legal requirements and tax implications.
+                    <br />
+                    <br />
+                    ⚖️ Disputes:
+                    <br />
+                    If you anticipate family disputes or have a blended family,
+                    legal advice can ensure your wishes are clear and
+                    enforceable.
+                    <br />
+                    <br />
+                    💼 Business Interests:
+                    <br />
+                    If you own a business, a lawyer can assist in ensuring its
+                    continuity and proper transfer of ownership.
+                    <br />
+                    <br />
+                    📜 Changing Laws:
+                    <br />
+                    Estate laws can change. A legal professional can keep your
+                    plan up-to-date with the latest regulations.
+                    <br />
+                    <br />
+                    *Old Mutual has a dedicated team of legal advisers that can
+                    assist, free of charge when consulting via financial
+                    adviser.
+                  </div>
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() => handleButtonStage15("Continue")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Continue
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage14Contact(
+                          "Get in touch with an Old Mutual Financial Advisor"
+                        )
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Get in touch with an Old Mutual Financial Advisor
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {faqStage && (
+                <>
+                  <div className="space-x-2 mt-2">
+                    ❓ What is estate planning?
+                    <br />
+                    Estate planning is the process of arranging for the
+                    management and disposal of a person’s estate during their
+                    life and after death. It involves creating documents like
+                    wills, trusts, and powers of attorney. 📝💼
+                    <br />
+                    <br />
+                    ❓ Why is having a will important?
+                    <br />
+                    A will ensures your assets are distributed according to your
+                    wishes, names guardians for minor children, and can help
+                    reduce estate taxes and legal fees. 📜👨‍👩‍👧‍👦
+                    <br />
+                    <br />
+                    ❓ What happens if I die without a will?
+                    <br />
+                    If you die intestate (without a will), your estate will be
+                    distributed according to South Africa’s Intestate Succession
+                    Act, which may not align with your wishes. ⚖️❗
+                    <br />
+                    <br />
+                    ❓ Can I change my will after it’s been created?
+                    <br />
+                    Yes, you can update your will as often as you like. It’s
+                    recommended to review and update it after major life events,
+                    such as marriage, divorce, or the birth of a child. 🔄💍👶
+                    <br />
+                    <br />
+                    ❓ What is a trust and why would I need one?
+                    <br />
+                    A trust is a legal arrangement where a trustee manages
+                    assets on behalf of beneficiaries. Trusts can help manage
+                    assets, reduce estate taxes, and provide for beneficiaries
+                    according to your wishes. 🏦🔐
+                    <br />
+                    <br />
+                    ❓ When should I seek legal advice for estate planning?
+                    <br />
+                    It’s advisable to seek legal advice if you have a large or
+                    complex estate, anticipate family disputes, own a business,
+                    or need to stay updated with changing laws. 🧑‍⚖️💡
+                    <br />
+                    <br />
+                    Do you have any other questions or need further information?
+                    I’m here to help! 🤝💬
+                  </div>
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage14("Yes, I have a question")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Yes, I have a question
+                    </button>
+                    <button
+                      onClick={() => handleButtonStage14("No, let’s move on")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      No, let’s move on
+                    </button>
+                  </div>
+                </>
+              )}
+              {legalRequirement &&
+                !message.content.includes("different scenarios") && (
+                  <>
+                    <div className="space-x-2 mt-2">
+                      Estate planning in South Africa involves understanding key
+                      legal requirements to ensure your wishes are respected and
+                      legally binding. 📜⚖️
+                      <br />
+                      <br />
+                      Here are some important acts and considerations:
+                    </div>
+                    <div className="space-x-2 mt-2">
+                      📝 Wills Act 7 of 1953
+                      <br />
+                      The Wills Act governs the creation and execution of wills.
+                      Your will must be in writing, signed by you, and witnessed
+                      by two people who are not beneficiaries.
+                      <br />
+                      <br />
+                      💼 Estate Duty Act 45 of 1955
+                      <br />
+                      This Act imposes estate duty (a form of tax) on the estate
+                      of a deceased person. The first R3.5 million of an estate
+                      is exempt from estate duty.
+                      <br />
+                      <br />
+                      📋 Intestate Succession Act 81 of 1987
+                      <br />
+                      If you die without a will, the Intestate Succession Act
+                      determines how your estate will be distributed. This may
+                      not align with your wishes, so having a will is crucial.
+                      <br />
+                      <br />
+                      💍 Marital Property Regimes
+                      <br />
+                      Your marital status can affect your estate planning. South
+                      Africa recognises different marital property regimes, such
+                      as community of property, antenuptial contract (ANC), and
+                      ANC with accrual. It’s important to consider how these
+                      will impact your estate.
+                      <br />
+                      <br />
+                      🏛️ Master of the High Court
+                      <br />
+                      The Master of the High Court oversees the administration
+                      of deceased estates. Executors of estates must be
+                      appointed and approved by the Master.
+                      <br />
+                      <br />
+                      Understanding these components and local laws can help
+                      ensure that your estate plan is comprehensive and legally
+                      sound. 📚✅
+                    </div>
+                    <div className="space-x-2 mt-2">
+                      Are you ready to explore some potential outcomes of
+                      different estate planning choices?
+                    </div>
+                    <div className="space-x-2 mt-2">
+                      <button
+                        onClick={() =>
+                          handleButtonStage13("I have a question.")
+                        }
+                        className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                      >
+                        I have a question.
+                      </button>
+                      <button
+                        onClick={() =>
+                          handleButtonStage13(
+                            "Yes, Im ready to explore some potential outcomes."
+                          )
+                        }
+                        className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                      >
+                        Yes, Im ready to explore some potential outcomes.
+                      </button>
+                    </div>
+                  </>
+                )}
 
               {educationInformation && (
                 <>
-                <div className="space-x-2 mt-2">
-                    Estate planning is the process of arranging how your assets will be managed and distributed after your death. It ensures that your wishes are respected, your loved ones are taken care of, and potential disputes are minimised. 🏠💼
-                    <br/><br/>It's important because it gives you peace of mind knowing that your affairs are in order, and it can also help reduce taxes and legal costs in the future.💡
-                </div>
-                 <div className="space-x-2 mt-2">
-                  There are 5 key components of estate planning:<br/>
-                 📜 Wills<br/>
-                 🔐 Trusts<br/>
-                 🖋️ Power of Attorney<br/>
-                 🏥 Living Will<br/>
-                 💼 Beneficiary Designations<br/>
-                 <br/>Would you like a detailed explanation of all or some of these components?
-                 </div>
-                 </>
+                  <div className="space-x-2 mt-2">
+                    Estate planning is the process of arranging how your assets
+                    will be managed and distributed after your death. It ensures
+                    that your wishes are respected, your loved ones are taken
+                    care of, and potential disputes are minimised. 🏠💼
+                    <br />
+                    <br />
+                    It's important because it gives you peace of mind knowing
+                    that your affairs are in order, and it can also help reduce
+                    taxes and legal costs in the future.💡
+                  </div>
+                  <div className="space-x-2 mt-2">
+                    There are 5 key components of estate planning:
+                    <br />
+                    📜 Wills
+                    <br />
+                    🔐 Trusts
+                    <br />
+                    🖋️ Power of Attorney
+                    <br />
+                    🏥 Living Will
+                    <br />
+                    💼 Beneficiary Designations
+                    <br />
+                    <br />
+                    Would you like a detailed explanation of all or some of
+                    these components?
+                  </div>
+                  <div className="space-x-2 mt-2">
+                    <button
+                      onClick={() => handleButtonComponent("Wills")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Wills
+                    </button>
+                    <button
+                      onClick={() => handleButtonComponent("Trusts")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Trusts
+                    </button>
+                    <button
+                      onClick={() => handleButtonComponent("Power of Attorney")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Power of Attorney
+                    </button>
+                    <button
+                      onClick={() => handleButtonComponent("Living Will")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Living Will
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonComponent("Beneficiary Designations")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Beneficiary Designations
+                    </button>
+                  </div>
+                </>
               )}
 
               {askingConsent && (
@@ -874,7 +3122,7 @@ console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkb
                   </button>
                 </div>
               )}
-              {isMaritalStatusQuestion && (
+              {isMaritalStatusQuestion && !reg && (
                 <div className="space-x-2 mt-2">
                   <button
                     onClick={() => handleButtonClick("Single")}
@@ -944,6 +3192,7 @@ console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkb
                   <button
                     className="border border-[#8DC63F] text-[#8DC63F] rounded-lg py-2 px-4 bg-transparent"
                     style={{ borderRadius: "10px" }}
+                    onClick={() => handleButtonFunFact("Maybe Later")}
                   >
                     Maybe Later
                   </button>
@@ -1032,7 +3281,7 @@ console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkb
             <div className="space-x-2 mt-2">
               <button
                 onClick={() =>
-                  handleButtonClickRegime("In Community of Property ")
+                  handleButtonClickRegime("In Community of Property")
                 }
                 className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
               >
@@ -1196,66 +3445,213 @@ console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkb
                 <form
                   className="w-full"
                   onSubmit={(e) => {
-                   e.preventDefault();
+                    if (
+                      messageData.current.includes(
+                        "Great! Please provide the above mentioned details."
+                      )
+                    ) {
+                      e.preventDefault();
+                      handleAddAIResponse(
+                        "Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan."
+                      );
+                    } else if (
+                      messageData.current.includes(
+                        "No problem. Whenever you're ready to provide the details, just let me know."
+                      )
+                    ) {
+                      e.preventDefault();
+                      handleAddAIResponse(
+                        "Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan."
+                      );
+                    } else if (
+                      messageData.current.includes(
+                        "First, please specify the type of property you have (e.g. house, apartment, land)."
+                      )
+                    ) {
+                      e.preventDefault();
+                      handleAddAIResponse(
+                        "Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan."
+                      );
+                    } else if (
+                      messageData.current.includes(
+                        "Next, provide the location of your property (suburb, or specific neighbourhood, province)."
+                      )
+                    ) {
+                      e.preventDefault();
+                      handleAddAIResponse(
+                        "Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan."
+                      );
+                    } else if (
+                      messageData.current.includes(
+                        "What is the size of your property? For houses and apartments, include the square metres of living space. For land, provide the total area in square metres or hectares."
+                      )
+                    ) {
+                      e.preventDefault();
+                      handleAddAIResponse(
+                        "Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan."
+                      );
+                    } else if (
+                      messageData.current.includes(
+                        "How many bedrooms and bathrooms does your property have?"
+                      )
+                    ) {
+                      e.preventDefault();
+                      handleAddAIResponse(
+                        "Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan."
+                      );
+                    } else if (
+                      messageData.current.includes(
+                        "Describe the condition of your property (new, good, fair, needs renovation). Also, mention any special features (e.g., swimming pool, garden, garage)."
+                      )
+                    ) {
+                      e.preventDefault();
+                      handleAddAIResponse(
+                        "Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan."
+                      );
+                    } else if (
+                      messageData.current.includes(
+                        "Please provide details of your arrangement."
+                      )
+                    ) {
+                      e.preventDefault();
+                      handleAddAIResponse(
+                        "When it comes to the administration of your estate after your passing, how important is it to you that the process is smooth and straightforward for your heirs?"
+                      );
+                    } else if (
+                      messageData.current.includes(
+                        "No problem, I understand that estate planning can be a lot to think about. Is there"
+                      )
+                    ) {
+                      e.preventDefault();
+                      handleAddAIResponse(
+                        "Great! Here are a few key considerations to keep in mind while planning your estate. I’ll ask you some questions to get a better understanding of your specific needs and goals."
+                      );
+                    } else if (!trigger.current) {
+                      e.preventDefault();
+                      handleAddAIResponse(
+                        "Let's dive into the world of estate planning!"
+                      );
+                    } else {
+                      e.preventDefault();
 
-    let currentInputStr = inputStr.trim();
+                      let currentInputStr = inputStr.trim();
 
-    if (currentInputStr) {
-      // Modify inputStr if the user is not found
-      if (
-        userExists &&
-        messageData.current.includes("Can you please provide your user name so I can assist you with deleting")
-      ) {
-        currentInputStr = `(not found) ${currentInputStr}`;
-              setDeletionRequestData("true")
-              setUserName(inputStr)
-        saveDeletionRequest(currentInputStr,inputStr);
-      } else if(!userExists &&
-        messageData.current.includes("Can you please provide your user name so I can assist you with deleting")) {
-        setDeletionRequestData("true")
-          setUserName(inputStr)
-        saveDeletionRequest(currentInputStr, inputStr);
-      }
+                      if (currentInputStr) {
+                        // Modify inputStr if the user is not found
+                        if (
+                          userExists &&
+                          messageData.current.includes(
+                            "Can you please provide your user name so I can assist you with deleting"
+                          )
+                        ) {
+                          currentInputStr = `(not found) ${currentInputStr}`;
+                          setDeletionRequestData("true");
+                          setUserName(inputStr);
+                          saveDeletionRequest(currentInputStr, inputStr);
+                        } else if (
+                          !userExists &&
+                          messageData.current.includes(
+                            "Can you please provide your user name so I can assist you with deleting"
+                          )
+                        ) {
+                          setDeletionRequestData("true");
+                          setUserName(inputStr);
+                          saveDeletionRequest(currentInputStr, inputStr);
+                        }
 
-      // Save profile data based on conditions
-      if (
-        messageData.current.includes("please tell me your name") ||
-        messageData.current.includes("tell me your name") ||
-        messageData.current.includes("is your name") ||
-        messageData.current.includes("your full names") ||
-        messageData.current.includes("your full name") ||
-        messageData.current.includes("what's your name") ||
-        messageData.current.includes("What is your full name") ||
-        messageData.current.includes("What's your full name") ||
-        messageData.current.includes("ask for your name") ||
-        messageData.current.includes("your full legal name")
-      ) {
-        saveUserName(currentInputStr);
-      }
+                        if (
+                          messageData.current.includes(
+                            "tell me your date of birth."
+                          ) ||
+                          messageData.current.includes("date of birth?") ||
+                          messageData.current.includes(
+                            "please provide your date of birth?"
+                          ) ||
+                          messageData.current.includes(
+                            "provide your date of birth."
+                          ) ||
+                          messageData.current.includes(
+                            "provide your date of birth"
+                          ) ||
+                          messageData.current.includes(
+                            "have your date of birth"
+                          ) ||
+                          messageData.current.includes(
+                            "What is your date of"
+                          ) ||
+                          messageData.current.includes("your date of birth.") ||
+                          messageData.current.includes(
+                            "about your date of birth."
+                          ) ||
+                          messageData.current.includes("were you born") ||
+                          messageData.current.includes(
+                            "ask for your date of birth"
+                          )
+                        ) {
+                          saveDateOfBirth(currentInputStr);
+                        }
 
-      if (
-        messageData.current.includes("dependents over") ||
-        messageData.current.includes("Dependents over") ||
-        messageData.current.includes("over the age") ||
-        messageData.current.includes("Over the age") ||
-        (messageData.current.includes("18") && messageData.current.includes("over")) ||
-        (messageData.current.includes("18") && messageData.current.includes("Over"))
-      ) {
-        setDependentsOver(currentInputStr);
-        saveDependentsOver(currentInputStr);
-      }
-      // Add other conditions here...
+                        // Save profile data based on conditions
+                        if (
+                          messageData.current.includes(
+                            "please tell me your name"
+                          ) ||
+                          messageData.current.includes("tell me your name") ||
+                          messageData.current.includes("is your name") ||
+                          messageData.current.includes("your full names") ||
+                          messageData.current.includes("your full name") ||
+                          messageData.current.includes("what's your name") ||
+                          messageData.current.includes(
+                            "What is your full name"
+                          ) ||
+                          messageData.current.includes(
+                            "What's your full name"
+                          ) ||
+                          messageData.current.includes("ask for your name") ||
+                          messageData.current.includes("provide your name") ||
+                          messageData.current.includes("your full legal name")
+                        ) {
+                          saveUserName(currentInputStr, Date.now());
+                        }
 
-  
+                        if (
+                          messageData.current.includes("dependents over") ||
+                          messageData.current.includes("Dependents over") ||
+                          messageData.current.includes("over the age") ||
+                          messageData.current.includes("Over the age") ||
+                          (messageData.current.includes("18") &&
+                            messageData.current.includes("over")) ||
+                          (messageData.current.includes("18") &&
+                            messageData.current.includes("Over"))
+                        ) {
+                          setDependentsOver(currentInputStr);
+                          saveDependentsOver(currentInputStr);
+                        }
 
-      // Update the inputStr with the final value before submission
-      setInputStr("");
-      
-      // Now submit the form with the potentially modified inputStr
-      handleSubmit(e);
+                        if (
+                          messageData.current.includes("dependents under") ||
+                          messageData.current.includes("Dependents under") ||
+                          messageData.current.includes("under the age") ||
+                          messageData.current.includes("Under the age") ||
+                          (messageData.current.includes("18") &&
+                            messageData.current.includes("under")) ||
+                          (messageData.current.includes("18") &&
+                            messageData.current.includes("under"))
+                        ) {
+                          setDependentsUnder(currentInputStr);
+                          saveDependentsUnder(currentInputStr);
+                        }
+                        // Add other conditions here...
 
-      // Clear other related states or handle post-submission logic
-      setAllCheckboxesFalse();
+                        // Update the inputStr with the final value before submission
+                        setInputStr("");
+
+                        // Now submit the form with the potentially modified inputStr
+                        handleSubmit(e);
+
+                        // Clear other related states or handle post-submission logic
+                        setAllCheckboxesFalse();
+                      }
                     }
                   }}
                 >
@@ -1272,11 +3668,14 @@ console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkb
                       }}
                       placeholder="Type a message"
                     />
-                    {!userExists && messageData.current.includes("Can you please provide your user name so I can assist you with deleting") && (
-                    <div className="text-red-500 text-sm absolute -mt-3 ml-3">
-                    No user found
-                    </div>
-                    )}
+                    {!userExists &&
+                      messageData.current.includes(
+                        "Can you please provide your user name so I can assist you with deleting"
+                      ) && (
+                        <div className="text-red-500 text-sm absolute -mt-3 ml-3">
+                          No user found
+                        </div>
+                      )}
                     <button
                       id="send-button"
                       type="submit"
@@ -1286,6 +3685,11 @@ console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkb
                     </button>
                   </div>
                 </form>
+                {loading && (
+                  <p className="text-white">
+                    Loading... Retrying {retryCount}/{MAX_RETRIES}
+                  </p>
+                )}
               </div>
             </div>
           </div>
