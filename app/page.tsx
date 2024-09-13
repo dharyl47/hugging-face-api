@@ -866,7 +866,10 @@ export default function Chat() {
 
   const handleButtonStage21Asset = (message: any) => {
     let response = "";
-
+    
+    if (message == "Continue") {
+      response = "Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan.";
+    }
     if (message == "Upload Document") {
       response = "Estate Document Uploaded";
     }
@@ -875,7 +878,7 @@ export default function Chat() {
     }
     if (message == "Maybe Later") {
       response =
-        "No problem. Whenever you're ready to provide the details, just let me know.";
+        "No problem. Whenever you're ready to provide the details of any of your real estate, just let me know.";
     }
     if (message == "I’m unsure of the details") {
       response =
@@ -1034,11 +1037,11 @@ const handleButtonStage22Farm = (message: any) => {
     let response = "";
     if (message == "Continue") {
       response =
-        "How many vehicles (cars, boats, caravans, motorcycles etc) do you own, and what are their makes, models, and estimated values?";
+        "Are there any valuable possessions such as artwork, jewellery, or collectibles that you own? If so, could you describe each item and estimate its value?";
     }
     if (message == "Upload Document") {
       response =
-        "How many vehicles (cars, boats, caravans, motorcycles etc) do you own, and what are their makes, models, and estimated values?";
+        "Are there any valuable possessions such as artwork, jewellery, or collectibles that you own? If so, could you describe each item and estimate its value?";
     }
     if (message == "Specify") {
       response =
@@ -1263,11 +1266,11 @@ const handleButtonStage26BusinessInterest = (message: any) => {
     let response = "";
     if (message == "Continue") {
       response =
-        "Do you own any intellectual property rights, such as patents, trademarks, or copyrights? If yes, please provide details about each intellectual property asset";
+        "Do you own any intellectual property rights, such as patents, trademarks, or copyrights? If yes, please provide details about each intellectual property asset.";
     }
     if (message == "Upload Document") {
       response =
-        "Do you own any intellectual property rights, such as patents, trademarks, or copyrights? If yes, please provide details about each intellectual property asset";
+        "Do you own any intellectual property rights, such as patents, trademarks, or copyrights? If yes, please provide details about each intellectual property asset.";
     }
     if (message == "Specify") {
       response =
@@ -1949,7 +1952,7 @@ const handleButtonStage41ContingentInsurance = (message: any) => {
       response =
         "I recommend considering contingent liability insurance as it can protect you against unexpected financial obligations. It’s especially useful if you've provided personal guarantees or securities for business obligations. Please think about whether this might be a valuable addition to your insurance portfolio and let me know if you have any questions or need assistance with this.";
     }
-    if (message == "Unsure") {
+    if (message == "I'm not sure.") {
       response =
         "I recommend considering contingent liability insurance as it can protect you against unexpected financial obligations. It’s especially useful if you've provided personal guarantees or securities for business obligations. Please think about whether this might be a valuable addition to your insurance portfolio and let me know if you have any questions or need assistance with this.";
     }
@@ -2169,12 +2172,12 @@ const handleButtonStage46Continue = (message: any) => {
     let response = "";
     if (message == "Continue") {
       response =
-        "Are you invested in any bonds or fixed-income securities? If so, please provide details about the types of bonds (government, corporate, municipal), the face value of each bond, the interest rate, and the maturity date";
+        "Are you invested in any bonds or fixed-income securities? If so, please provide details about the types of bonds (government, corporate, municipal), the face value of each bond, the interest rate, and the maturity date.";
     }
 
     if (message == "Upload Document") {
       response =
-        "Are you invested in any bonds or fixed-income securities? If so, please provide details about the types of bonds (government, corporate, municipal), the face value of each bond, the interest rate, and the maturity date";
+        "Are you invested in any bonds or fixed-income securities? If so, please provide details about the types of bonds (government, corporate, municipal), the face value of each bond, the interest rate, and the maturity date.";
     }
       if (message == "Specify") {
       response =
@@ -3053,6 +3056,2319 @@ const handleButtonStage69ExecutorFinal = (message: any) => {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
+const handleButtonStage70Liquidity = (message: any) => {
+    let response = "";
+
+    if (message == "Yes") {
+      response =
+        "Liquidity is essential to cover estate costs without having to sell assets. Are you aware of any sources of liquidity in your estate, such as cash reserves or liquid investments?";
+    }
+    
+      if (message == "No") {
+      response =
+        "No problem, I understand that there is a lot to think about. Is there something specific you'd like to discuss or any concerns you have that I can address?";
+        
+    }
+    
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage71LiquidityEssential = (message: any) => {
+    let response = "";
+
+    if (message == "Continue") {
+      response =
+        "If there's a shortfall, there are a few options. The executor may ask heirs to contribute cash to prevent asset sales. Are you open to this option?";
+        
+    }
+    if (message == "Yes, specify") {
+      response =
+        "Great! Please provide the details of the sources of liquidity.";
+    }
+    
+      if (message == "No, I have no significant sourced of liquidity") {
+      response =
+        "If there's a shortfall, there are a few options. The executor may ask heirs to contribute cash to prevent asset sales. Are you open to this option?";
+        
+    }
+
+    if (message == "Unsure, will need assistance") {
+      response =
+        "Great! Based on the information you've provided earlier, we can review your existing financial assets and investments to assess their liquidity. We will include this information in the report shared at the end of this conversation.";
+        
+    }
+    
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+
+const handleButtonStage72Shortfall = (message: any) => {
+    let response = "";
+
+    if (message == "Yes, with considerations") {
+      response =
+        "Thank you for your openness to this option. When considering this approach, it's essential to assess the financial impact on each heir and ensure fairness in the distribution of responsibilities. Factors such as each heir's financial situation, willingness to contribute, and the impact on their inheritance should be carefully considered. Would you like guidance on how to navigate these considerations?";
+        
+    }
+    if (message == "No, assets should be sold to cover shortfall") {
+      response =
+        "Selling assets could impact your wishes for asset distribution and family business continuation. How do you feel about selling assets to cover a shortfall?";
+    }
+    
+      if (message == "I need more information before deciding") {
+      response =
+        "Sure! In the event of a shortfall, the executor may explore various options to cover expenses without liquidating assets prematurely. These options could include negotiating payment terms with creditors, utilising existing insurance policies, or securing a loan against estate assets. Each option comes with its own set of considerations and implications. Would you like further details on these options to help you make an informed decision?";
+        
+    }
+
+    
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+
+const handleButtonStage73FinancialImpact = (message: any) => {
+    let response = "";
+    if (message == "Continue") {
+      response =
+        "Selling assets could impact your wishes for asset distribution and family business continuation. How do you feel about selling assets to cover a shortfall?";
+        
+    }
+    if (message == "Yes") {
+      response =
+        "Great! Our financial advisors at Old Mutual can help you and your heirs understand the financial implications and create a fair strategy. They can assist in evaluating each heir’s ability to contribute, ensure clear communication among all parties, and develop a plan that respects everyone's circumstances. We'll include this information in the report shared at the end of this conversation.";
+        
+    }
+    if (message == "No") {
+      response =
+        "Selling assets could impact your wishes for asset distribution and family business continuation. How do you feel about selling assets to cover a shortfall?";
+    }
+    
+      
+    
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage74Shortfall = (message: any) => {
+    let response = "";
+    if (message == "Continue") {
+      response =
+        "Selling assets could impact your wishes for asset distribution and family business continuation. How do you feel about selling assets to cover a shortfall?";
+        
+    }
+    if (message == "Yes") {
+      response =
+        "Excellent! Here are some details on the potential options:";
+        
+    }
+    if (message == "No") {
+      response =
+        "Selling assets could impact your wishes for asset distribution and family business continuation. How do you feel about selling assets to cover a shortfall?";
+    }
+    
+      
+    
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage75SellingAsset = (message: any) => {
+    let response = "";
+    if (message == "Continue") {
+      response =
+        "Borrowing funds is another option, but it could be costly and limit asset use if assets are used as security. Have you considered this option?";
+        
+    }
+    if (message == "I am open to selling assets") {
+      response =
+        "Borrowing funds is another option, but it could be costly and limit asset use if assets are used as security. Have you considered this option?";
+        
+    }
+    if (message == "I am against selling assets") {
+      response =
+        "Borrowing funds is another option, but it could be costly and limit asset use if assets are used as security. Have you considered this option?";
+        
+    }
+    if (message == "I need more information before deciding") {
+      response =
+        "It's understandable to have reservations about selling assets, especially if it affects your long-term plans for asset distribution or business continuity. Selling assets can impact the legacy you wish to leave behind and may disrupt the stability of family businesses. However, it's essential to balance these concerns with the immediate need to cover a shortfall. Exploring alternative financing options or negotiating payment terms with creditors could help alleviate the need for asset liquidation. Would you like to explore these alternatives further?";
+    }
+    if (message == "I’d like to explore alternative financing options") {
+      response =
+        "Absolutely! When facing a shortfall, selling assets isn't the only option available. Alternative financing strategies, such as securing loans against estate assets, negotiating payment terms with creditors, or utilising existing insurance policies, can provide additional flexibility without compromising your long-term goals for asset distribution. Each option comes with its own set of considerations and implications, so it's essential to weigh them carefully. Our financial advisors can help you set this up.";
+    }
+      
+    
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage76Reservation = (message: any) => {
+    let response = "";
+     if (message == "Continue") {
+      response =
+        "Borrowing funds is another option, but it could be costly and limit asset use if assets are used as security. Have you considered this option?";
+        
+    }
+    if (message == "Yes") {
+      response =
+        "Great! Here are some alternative options you might consider:";
+        
+    }
+    if (message == "No") {
+      response =
+        "Borrowing funds is another option, but it could be costly and limit asset use if assets are used as security. Have you considered this option?";
+        
+    }
+    
+   
+      
+    
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage77BorrowingFunds = (message: any) => {
+    let response = "";
+     if (message == "I am open to borrowing funds") {
+      response =
+        "Have you considered life assurance as a way to address any cash shortfall? Life assurance provides immediate cash without income tax or capital gains tax. How willing are you to go this route?";
+        
+    }
+    if (message == "I am against borrowing funds") {
+      response =
+        "Have you considered life assurance as a way to address any cash shortfall? Life assurance provides immediate cash without income tax or capital gains tax. How willing are you to go this route?";
+        
+    }
+    if (message == "I need more information before deciding") {
+      response =
+        "Absolutely, it's essential to fully understand the implications before making a decision. Borrowing funds can indeed be costly, especially if assets are used as security, as it may limit their use and potentially increase financial risk. I can provide more detailed information on the costs involved, potential risks, and alternative financing options to help you make an informed decision. Would you like to explore these aspects further?";
+        
+    }
+    if (message == "I’d like to explore alternative financing options") {
+      response =
+        "Exploring alternative financing options is a prudent approach to ensure you make the best decision for your estate. There are various strategies available, such as negotiating payment terms with creditors, utilising existing insurance policies, or seeking financial assistance from family members or business partners. Each option has its pros and cons, so it's essential to weigh them carefully. Would you like more information on these alternative financing options?";
+        
+    }
+   
+      
+    
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage77FinancialRisk = (message: any) => {
+    let response = "";
+    if (message == "Continue") {
+      response =
+        "Have you considered life assurance as a way to address any cash shortfall? Life assurance provides immediate cash without income tax or capital gains tax. How willing are you to go this route";
+        
+    }
+     if (message == "Yes") {
+      response =
+        "Great! Here are some important aspects to consider:";
+        
+    }
+    if (message == "No") {
+      response =
+        "Have you considered life assurance as a way to address any cash shortfall? Life assurance provides immediate cash without income tax or capital gains tax. How willing are you to go this route";
+        
+    }
+   
+   
+      
+    
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage77Alternative = (message: any) => {
+    let response = "";
+    if (message == "Continue") {
+      response =
+        "Have you considered life assurance as a way to address any cash shortfall? Life assurance provides immediate cash without income tax or capital gains tax. How willing are you to go this route?";
+        
+    }
+     if (message == "Yes") {
+      response =
+        "Great! Here are some alternative financing options to consider:";
+        
+    }
+    if (message == "No") {
+      response =
+        "Have you considered life assurance as a way to address any cash shortfall? Life assurance provides immediate cash without income tax or capital gains tax. How willing are you to go this route";
+        
+    }
+   
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage78LifeInsurance = (message: any) => {
+    let response = "";
+    if (message == "Against") {
+      response =
+        "Thank you for discussing your estate's liquidity position. Let's discuss maintenance claims. Ready?";
+        
+    }
+     if (message == "Considering") {
+      response =
+        "Thank you for discussing your estate's liquidity position. Let's discuss maintenance claims. Ready?";
+        
+    }
+    if (message == "Agree") {
+      response =
+        "Thank you for discussing your estate's liquidity position. Let's discuss maintenance claims. Ready?";
+        
+    }
+   
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage79LiquidityEnd = (message: any) => {
+    let response = "";
+    if (message == "Yes") {
+      response =
+        "Let's discuss maintenance claims in terms of court orders. If you pass away while there are maintenance obligations towards children or a former spouse, they will have a maintenance claim against your estate. Are you aware of any existing maintenance obligations or court orders?";
+        
+    }
+     if (message == "No") {
+      response =
+        "Sure, I’m here to help. What additional information or questions do you have?";
+            setNextResponse("Let's discuss maintenance claims in terms of court orders. If you pass away while there are maintenance obligations towards children or a former spouse, they will have a maintenance claim against your estate. Are you aware of any existing maintenance obligations or court orders?")
+      isResponse.current = "1";
+        
+    }
+    
+   
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage80Claims = (message: any) => {
+    let response = "";
+    if (message == "I have court ordered maintenance obligations") {
+      response =
+        "It's crucial to consider these maintenance obligations in your estate planning to ensure they are adequately addressed. Court-ordered maintenance obligations typically take precedence and must be factored into your estate plan to avoid potential disputes or legal complications. Would you like assistance in incorporating these obligations into your estate plan? If so, please provide the details of the court order."; 
+    }
+     if (message == "I have informal agreements, not court orders") {
+      response =
+        "While informal agreements may not have the same legal standing as court orders, they are still important to consider in your estate planning. Even informal arrangements could result in maintenance claims against your estate if not addressed properly. Would you like guidance on how to formalise these agreements or ensure they are appropriately accounted for in your estate plan?";
+    }
+      if (message == "I don’t have any maintenance obligations") {
+      response =
+        "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?"; 
+    }
+      if (message == "I haven’t considered maintenance claims in relation to my estate planning") {
+      response =
+        "It's essential to assess any potential maintenance claims in relation to your estate to avoid unexpected complications for your heirs. Even if you haven't formalised maintenance obligations through court orders or agreements, they may still arise based on legal obligations. Would you like assistance in evaluating and addressing any potential maintenance claims in your estate planning?";
+    }
+    
+   
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage81Obligations = (message: any) => {
+    let response = "";
+    if (message == "Upload Document") {
+      response =
+        "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?"; 
+    }
+     if (message == "Specify") {
+      response =
+        "Great! Please provide the above-mentioned details about your life insurance policy and how it will be payable to the testamentary trust.";
+    }
+      if (message == "Maybe Later") {
+      response =
+        "No problem. Whenever you're ready, please provide the details about your life insurance policy."; 
+    }
+     if (message == "Continue") {
+      response =
+        "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?"; 
+    }
+    
+   
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage81Agreements = (message: any) => {
+    let response = "";
+    if (message == "Continue") {
+      response =
+        "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?";
+    }
+    if (message == "Yes") {
+      response =
+        "We will include this information about life insurance policy in the report shared at the end of this conversation."; 
+    }
+     if (message == "No") {
+      response =
+        "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?";
+    }
+      if (message == "Maybe") {
+      response =
+        "No problem. Whenever you're ready to provide the details about life insurance policy, just let me know."; 
+    }
+     
+    
+   
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage81Complications = (message: any) => {
+    let response = "";
+    if (message == "Continue") {
+      response =
+        "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?";
+    }
+    if (message == "Yes") {
+      response =
+        "We will include this information about life insurance policy in the report shared at the end of this conversation."; 
+    }
+     if (message == "No") {
+      response =
+        "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?";
+    }
+      if (message == "Maybe") {
+      response =
+        "No problem. Whenever you're ready to provide the details about life insurance policy option, just let me know."; 
+    }
+     
+    
+   
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage82LifeInsurance = (message: any) => {
+    let response = "";
+    if (message == "Yes") {
+      response =
+        "That's a proactive approach to ensuring adequate provision for maintenance obligations. Have you already taken steps to set up such a policy, or would you like assistance in exploring this option further?"; 
+    }
+     if (message == "No") {
+      response =
+        "It's an important consideration to ensure that your loved ones are provided for in the event of your passing. If you'd like, we can discuss the benefits and implications of setting up a life insurance policy payable to a testamentary trust to cover maintenance obligations. Would you like more information on this option?";
+    }
+      if (message == "Unsure") {
+      response =
+        "It's an important consideration to ensure that your loved ones are provided for in the event of your passing. If you'd like, we can discuss the benefits and implications of setting up a life insurance policy payable to a testamentary trust to cover maintenance obligations. Would you like more information on this option?"; 
+    }
+     
+    
+   
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+
+const handleButtonStage83Proactive = (message: any) => {
+    let response = "";
+     if (message == "Continue") {
+      response =
+        "Next, let's talk about maintenance for the surviving spouse. If you don't make provision for maintenance for the surviving spouse, they can institute a claim against your estate in terms of the Maintenance of Surviving Spouse’s Act. Are you considering provisions for your surviving spouse?";
+    }
+    if (message == "I have set up a policy") {
+      response =
+        "Next, let's talk about maintenance for the surviving spouse. If you don't make provision for maintenance for the surviving spouse, they can institute a claim against your estate in terms of the Maintenance of Surviving Spouse’s Act. Are you considering provisions for your surviving spouse?"; 
+    }
+     if (message == "I need assistance in setting up a policy") {
+      response =
+        "We will include information about assistance with setting up a policy in the report that will be shared at the end of this conversation.";
+    }
+     
+     
+    
+   
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage83Passing = (message: any) => {
+    let response = "";
+     if (message == "No") {
+      response =
+        "Next, let's talk about maintenance for the surviving spouse. If you don't make provision for maintenance for the surviving spouse, they can institute a claim against your estate in terms of the Maintenance of Surviving Spouse’s Act. Are you considering provisions for your surviving spouse?";
+    }
+    if (message == "Continue") {
+      response =
+        "Next, let's talk about maintenance for the surviving spouse. If you don't make provision for maintenance for the surviving spouse, they can institute a claim against your estate in terms of the Maintenance of Surviving Spouse’s Act. Are you considering provisions for your surviving spouse?"; 
+    }
+     if (message == "Yes") {
+      response =
+        "Setting up a life insurance policy payable to a testamentary trust can ensure that maintenance obligations are met without burdening your estate. This approach provides a reliable income stream for your beneficiaries. Our financial advisors at Old Mutual can provide detailed guidance and help you explore this option further.";
+    }
+     
+     
+    
+   
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage84Provision = (message: any) => {
+    let response = "";
+     if (message == "I have provisions in place") {
+      response =
+        "It's great that you've already made provisions for your surviving spouse. Would you like to review your existing provisions to ensure they align with your current goals and circumstances?";
+    }
+    if (message == "I want to make provisions in my estate planning") {
+      response =
+        "Making provisions for your surviving spouse ensures their financial security after you're gone. We can discuss various options for including these provisions in your estate plan. Would you like more information on this?";
+    }
+    if (message == "I don’t want to make provisions in my estate planning") {
+      response =
+        "In the event of your passing, how much income would your spouse/family/dependants need per month for their maintenance after tax and deductions?";
+    }
+    if (message == "I need more information before deciding") {
+      response =
+        "Sure, understanding the implications and options for provisions for your surviving spouse is crucial. Would you like more information on how this can be incorporated into your estate planning?";
+    }
+    
+     
+     
+    
+   
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+
+const handleButtonStage84ExistingProvision = (message: any) => {
+    let response = "";
+    if (message == "Continue") {
+      response =
+        "In the event of your passing, how much income would your spouse/family/dependants need per month for their maintenance after tax and deductions?";
+    }
+     if (message == "Yes") {
+      response =
+        "Reviewing your existing provisions can ensure they are still appropriate and effective given your current situation and goals. We will include this information in the report shared at the end of this conversation.";
+    }
+    if (message == "No") {
+      response =
+        "In the event of your passing, how much income would your spouse/family/dependants need per month for their maintenance after tax and deductions?";
+    }
+    
+    
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage84OptionProvision = (message: any) => {
+    let response = "";
+    if (message == "Continue") {
+      response =
+        "In the event of your passing, how much income would your spouse/family/dependants need per month for their maintenance after tax and deductions?";
+    }
+     if (message == "Yes") {
+      response =
+        "Providing for your surviving spouse can be done through various means, such as setting up a trust, designating life insurance benefits, or specifying direct bequests in your will. Our financial advisors at Old Mutual can guide you through these options to find the best solution for your needs. We will include this information in the report shared at the end of this conversation.";
+    }
+    if (message == "No") {
+      response =
+        "In the event of your passing, how much income would your spouse/family/dependants need per month for their maintenance after tax and deductions?";
+    }
+    
+    
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage84CrucialProvision = (message: any) => {
+    let response = "";
+    if (message == "Continue") {
+      response =
+        "In the event of your passing, how much income would your spouse/family/dependants need per month for their maintenance after tax and deductions?";
+    }
+     if (message == "Yes") {
+      response =
+        "Incorporating provisions for your surviving spouse can be an essential part of a comprehensive estate plan. Understanding the legal and financial implications will help you make an informed decision. Our financial advisors at Old Mutual can provide you with the necessary information and advice. We will include this information in the report shared at the end of this conversation.";
+    }
+    if (message == "No") {
+      response =
+        "In the event of your passing, how much income would your spouse/family/dependants need per month for their maintenance after tax and deductions?";
+    }
+    
+    
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage85FactorsProvision = (message: any) => {
+    let response = "";
+    if (message == "Yes, I have considered them and have factored them into my estate planning") {
+      response =
+        "It's excellent that you've already considered these factors in your estate planning. Would you like to discuss how they can further inform your decisions and ensure your plan aligns with your goals?";
+    }
+    if (message == "I am aware of these factors but haven’t considered them in my estate planning") {
+      response =
+        "Understanding these factors is essential for effective estate planning. Would you like assistance in incorporating them into your estate plan to ensure it reflects your wishes and circumstances?";
+    }
+    if (message == "No, I haven’t thought about these factors yet") {
+      response =
+        "No worries, considering these factors can help you create a more comprehensive estate plan. Would you like assistance in understanding how they may impact your estate planning decisions?";
+    }
+    if (message == "I need more information before I can respond") {
+      response =
+        "Sure, understanding these factors is crucial for effective estate planning. Would you like more information on how they can influence your estate planning decisions before you respond?";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage85GoalsProvision = (message: any) => {
+    let response = "";
+    if (message == "Continue") {
+      response =
+        "You can make provision for maintenance through an insurance policy where your surviving spouse is the nominated beneficiary or stipulate in the will that the proceeds will be paid to a testamentary trust for the spouse's benefit. What are your preferences regarding this?";
+    }
+    if (message == "Yes") {
+      response =
+        "Great! When these factors are considered, it helps ensure that your estate plan is tailored to meet your specific circumstances. For example, longer marriages or significant disparities in earning capacity might necessitate larger or longer-term maintenance provisions. Keeping your plan flexible and periodically reviewing it can help accommodate any changes in your situation. Would you like to delve deeper into any particular area?";
+    }
+    if (message == "No") {
+      response =
+        "You can make provision for maintenance through an insurance policy where your surviving spouse is the nominated beneficiary or stipulate in the will that the proceeds will be paid to a testamentary trust for the spouse's benefit. What are your preferences regarding this?";
+    }
+    
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage85UnderstandingProvision = (message: any) => {
+    let response = "";
+    if (message == "Continue") {
+      response =
+        "You can make provision for maintenance through an insurance policy where your surviving spouse is the nominated beneficiary or stipulate in the will that the proceeds will be paid to a testamentary trust for the spouse's benefit. What are your preferences regarding this?";
+    }
+    if (message == "Yes") {
+      response =
+        "Excellent! Incorporating these factors into your estate plan ensures a fair and well-thought-out approach to maintenance and asset distribution. For instance, ensuring that your plan addresses the financial needs of a surviving spouse based on their age and earning capacity can provide long-term security. We will include this information in the report shared at the end of this conversation.";
+    }
+    if (message == "No") {
+      response =
+        "You can make provision for maintenance through an insurance policy where your surviving spouse is the nominated beneficiary or stipulate in the will that the proceeds will be paid to a testamentary trust for the spouse's benefit. What are your preferences regarding this?";
+    }
+    
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage85ComprehensiveProvision = (message: any) => {
+    let response = "";
+    if (message == "Continue") {
+      response =
+        "You can make provision for maintenance through an insurance policy where your surviving spouse is the nominated beneficiary or stipulate in the will that the proceeds will be paid to a testamentary trust for the spouse's benefit. What are your preferences regarding this?";
+    }
+    if (message == "Yes") {
+      response =
+        "Wonderful! Understanding how these factors impact your estate planning can help you make more informed decisions. For example, considering the spouse's earning capacity can guide how much and how long maintenance should be provided, and knowing the size of your assets helps in deciding the distribution method. We will include this information in the report shared at the end of this conversation.";
+    }
+    if (message == "No") {
+      response =
+        "You can make provision for maintenance through an insurance policy where your surviving spouse is the nominated beneficiary or stipulate in the will that the proceeds will be paid to a testamentary trust for the spouse's benefit. What are your preferences regarding this?";
+    }
+    
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+
+const handleButtonStage85EffectiveProvision = (message: any) => {
+    let response = "";
+    if (message == "Continue") {
+      response =
+        "You can make provision for maintenance through an insurance policy where your surviving spouse is the nominated beneficiary or stipulate in the will that the proceeds will be paid to a testamentary trust for the spouse's benefit. What are your preferences regarding this?";
+    }
+    if (message == "Yes") {
+      response =
+        "Perfect! Knowing how these factors influence your estate planning can help ensure your plan is both fair and effective. For instance, a longer marriage might lead to more substantial maintenance claims, and a larger estate might require more detailed planning to minimize tax implications. We will include this information in the report shared at the end of this conversation.";
+    }
+    if (message == "No") {
+      response =
+        "You can make provision for maintenance through an insurance policy where your surviving spouse is the nominated beneficiary or stipulate in the will that the proceeds will be paid to a testamentary trust for the spouse's benefit. What are your preferences regarding this?";
+    }
+    
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage85MaintenanceProvision = (message: any) => {
+    let response = "";
+    if (message == "Insurance policy with my spouse as the nominated beneficiary") {
+      response =
+        "Do your dependents require any income per month for maintenance?";
+    }
+    if (message == "Testamentary trust for spouse outlines in my will") {
+      response =
+        "Do your dependents require any income per month for maintenance?";
+    }
+    if (message == "I’m open to either option") {
+      response =
+        "Both options have their advantages. With an insurance policy, the benefit is usually paid out quickly and directly to your spouse, providing immediate financial support. On the other hand, setting up a testamentary trust in your will offers more control over how the funds are managed and distributed, ensuring long-term financial security for your spouse and potential tax benefits. We can discuss the specifics of each option further and tailor the solution to best meet your needs. Would you like to explore these options in more detail?";
+    }
+    if (message == "I’m not sure, I need more information of each option") {
+      response =
+        "Absolutely! Let's delve deeper into both options. An insurance policy with your spouse as the nominated beneficiary provides immediate liquidity and financial support to your spouse upon your passing. However, a testamentary trust outlined in your will can offer ongoing financial security, asset protection, and control over how the funds are used and distributed. We can discuss the benefits, considerations, and implications of each option to help you make an informed decision. How does that sound?";
+    }
+    if (message == "I’d like to explore other options") {
+      response =
+        "Certainly! Besides the options mentioned, there are alternative ways to provision for maintenance, such as setting up annuities, creating specific bequests in your will, or establishing a family trust. Each option has its unique advantages and considerations. We can explore these alternatives further and tailor a solution that aligns with your estate planning goals. Would you like to discuss these options in more detail?";
+    }
+
+
+
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage85BenefitProvision = (message: any) => {
+    let response = "";
+    if (message == "Yes") {
+      response =
+        "Great! Here’s a brief overview of each option:";
+    }
+    if (message == "No") {
+      response =
+        "Do your dependents require any income per month for maintenance?";
+    }
+    if (message == "Continue") {
+      response =
+        "Do your dependents require any income per month for maintenance?";
+    }
+
+
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage86DeeperProvision = (message: any) => {
+    let response = "";
+    if (message == "Yes") {
+      response =
+        "Great! Here’s a brief overview of each option:";
+    }
+    if (message == "No") {
+      response =
+        "Do your dependents require any income per month for maintenance?";
+    }
+    if (message == "Continue") {
+      response =
+        "Do your dependents require any income per month for maintenance?";
+    }
+
+
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage86AnnuitiesProvision = (message: any) => {
+    let response = "";
+    if (message == "Yes") {
+      response =
+        "Certainly! Besides insurance policies and testamentary trusts, you might consider options such as:";
+    }
+    if (message == "No") {
+      response =
+        "Do your dependents require any income per month for maintenance?";
+    }
+    if (message == "Continue") {
+      response =
+        "Do your dependents require any income per month for maintenance?";
+    }
+
+
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+
+ const handleButtonStage87ShortFall = (message: any) => {
+    let response = "";
+    if (message == "I have capital available to generate an income for my dependents") {
+      response =
+        "Additional life assurance can provide the capital required for the income needs of dependents. Have you considered obtaining additional life insurance for this purpose?";
+    }
+    if (message == "I have capital but unsure if it will generate enough income") {
+      response =
+        "It's essential to ensure that the capital you have can generate sufficient income to support your dependents after your passing. We can work together to assess your current financial situation, projected expenses, and income needs to determine if any adjustments or additional planning are necessary to bridge any potential income shortfalls. Would you like to review your financial situation in more detail?";
+    }
+    if (message == "I haven’t thought of this aspect of financial planning yet") {
+      response =
+        "Planning for the financial well-being of your dependents is a crucial aspect of estate planning. We can assist you in evaluating your current financial situation, projected expenses, and income needs to ensure that your loved ones are adequately provided for in the event of your passing. Would you like to explore this aspect of financial planning further?";
+    }
+    if (message == "I need more information to determine this") {
+      response =
+        "Understanding the capital available to your dependents and its potential to generate income is essential for effective estate planning. We can help you gather the necessary information and provide guidance to evaluate your current financial situation, projected expenses, and income needs. Together, we can determine the most suitable strategies to ensure financial security for your loved ones. Would you like assistance in assessing your financial situation?";
+    }
+
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage87Capital = (message: any) => {
+    let response = "";
+     if (message == "Continue") {
+      response =
+        "Additional life assurance can provide the capital required for the income needs of dependents. Have you considered obtaining additional life insurance for this purpose?";
+    }
+    if (message == "Yes") {
+      response =
+        "We will include this information about your financial situation and any necessary adjustments in the report shared at the end of this conversation.";
+    }
+    if (message == "No") {
+      response =
+        "Additional life assurance can provide the capital required for the income needs of dependents. Have you considered obtaining additional life insurance for this purpose?";
+    }
+    
+
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+
+
+const handleButtonStage87Planning = (message: any) => {
+    let response = "";
+     if (message == "Continue") {
+      response =
+        "Additional life assurance can provide the capital required for the income needs of dependents. Have you considered obtaining additional life insurance for this purpose?";
+    }
+    if (message == "Yes") {
+      response =
+        "We'll include this financial planning information in the report shared at the end of this conversation.";
+    }
+    if (message == "No") {
+      response =
+        "Additional life assurance can provide the capital required for the income needs of dependents. Have you considered obtaining additional life insurance for this purpose?";
+    }
+    
+
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage87Dependents = (message: any) => {
+    let response = "";
+     if (message == "Continue") {
+      response =
+        "Additional life assurance can provide the capital required for the income needs of dependents. Have you considered obtaining additional life insurance for this purpose?";
+    }
+    if (message == "Yes") {
+      response =
+        "We will include this information about your financial situation and strategies in the report shared at the end of this conversation.";
+    }
+    if (message == "No") {
+      response =
+        "Additional life assurance can provide the capital required for the income needs of dependents. Have you considered obtaining additional life insurance for this purpose?";
+    }
+    
+
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage88Additional = (message: any) => {
+    let response = "";
+     if (message == "My current life insurance coverage is sufficient") {
+      response =
+        "Excellent! Now, let's continue with your estate planning. Ready?";
+    }
+    if (message == "I’m currently reviewing my options for additional life insurance") {
+      response =
+        "It's prudent to periodically review your life insurance coverage to ensure that it aligns with your current financial situation and the needs of your dependents. We can assist you in evaluating your insurance needs and exploring suitable options for additional coverage based on your evolving circumstances. Would you like guidance in assessing your life insurance needs and exploring available options?";
+    }
+     if (message == "No, I haven’t considered obtaining M additional life insurance") {
+      response =
+        "Life insurance can play a vital role in providing financial security for your dependents in the event of your passing. If you haven't considered obtaining additional coverage, it may be worthwhile to explore your options and ensure that your loved ones are adequately protected. We can help you evaluate your insurance needs and identify suitable coverage options. Would you like assistance in exploring the benefits of additional life insurance?";
+    }
+     if (message == "I’m unsure if additional life insurance is necessary given my current financial situation") {
+      response =
+        "Understanding the necessity of additional life insurance coverage requires a thorough assessment of your current financial situation and the future needs of your dependents. We can assist you in evaluating your financial circumstances and determining whether additional coverage is warranted based on your specific situation. Would you like to review your financial situation and assess the potential benefits of additional life insurance?";
+    }
+    
+
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+ const handleButtonStage88Coverage = (message: any) => {
+    let response = "";
+     if (message == "Continue") {
+      response =
+        "Excellent! Now, let's continue with your estate planning. Ready?";
+    }
+    if (message == "Yes") {
+      response =
+        "We will include this information about your life insurance needs and options in the report shared at the end of this conversation.";
+    }
+    if (message == "No") {
+      response =
+        "Excellent! Now, let's continue with your estate planning. Ready?";
+    }
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage88LifeInsurance = (message: any) => {
+    let response = "";
+     if (message == "Continue") {
+      response =
+        "Excellent! Now, let's continue with your estate planning. Ready?";
+    }
+    if (message == "Yes") {
+      response =
+        "We will include this information about your life insurance needs and coverage options in the report shared at the end of this conversation.";
+    }
+    if (message == "No") {
+      response =
+        "Excellent! Now, let's continue with your estate planning. Ready?";
+    }
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage88Assessment = (message: any) => {
+    let response = "";
+     if (message == "Continue") {
+      response =
+        "Excellent! Now, let's continue with your estate planning. Ready?";
+    }
+    if (message == "Yes") {
+      response =
+        "We will include this information about your financial situation and potential life insurance needs in the report shared at the end of this conversation.";
+    }
+    if (message == "No") {
+      response =
+        "Excellent! Now, let's continue with your estate planning. Ready?";
+    }
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage89Final = (message: any) => {
+    let response = "";
+     if (message == "Yes") {
+      response =
+        "Now, let's discuss funeral cover. Funeral cover provides liquidity to your beneficiaries within a short time frame after submitting a claim. Have you considered obtaining funeral cover?";
+    }
+    if (message == "No") {
+      response =
+        "Sure, I’m here to help. What additional information or questions do you have?";
+           setNextResponse("Now, let's discuss funeral cover. Funeral cover provides liquidity to your beneficiaries within a short time frame after submitting a claim. Have you considered obtaining funeral cover?")
+      isResponse.current = "1";
+    }
+   
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage90FuneralCover = (message: any) => {
+    let response = "";
+     if (message == "Yes, I have funeral cover in place") {
+      response =
+        "It's recommended to nominate a beneficiary on the funeral cover to ensure prompt payment to your beneficiaries. Have you nominated a beneficiary on your funeral cover policy?";
+    }
+    if (message == "No, I haven’t considered obtaining funeral cover") {
+      response =
+        "Funeral cover can offer peace of mind by providing financial assistance to your loved ones during a challenging time. If you haven't considered obtaining funeral cover, it may be worth exploring to ensure that your family is financially prepared to cover funeral expenses. We can help you understand the benefits of funeral cover and assist you in finding a suitable policy that meets your needs. Would you like more information on the benefits of funeral cover and how it can benefit your family?";
+    }
+    if (message == "I need more information before deciding") {
+      response =
+        "Understanding the specifics of funeral cover and its benefits can help you make an informed decision about whether it's the right choice for you. We're here to provide you with all the information you need to assess the value of funeral cover and its relevance to your financial planning. Is there any specific information you'd like to know about funeral cover to help you make a decision?";
+    }
+   
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage90NominateFuneralCover = (message: any) => {
+    let response = "";
+     if (message == "Yes") {
+      response =
+        "Next, let's talk about trusts. A trust is an arrangement where property belonging to one party is managed by another party for the benefit of a third party. Are you familiar with trusts?";
+    }
+    if (message == "No") {
+      response =
+        "Nominating a beneficiary on your funeral cover policy ensures that the benefit is paid directly to the intended recipient without delays. It's a simple step that can provide peace of mind to your loved ones during a difficult time. Would you like assistance in nominating a beneficiary on your funeral cover policy?";
+    }
+    if (message == "Wasn’t aware this was an option") {
+      response =
+        "Nominating a beneficiary on your funeral cover policy ensures that the benefit is paid directly to the intended recipient without delays. It's a simple step that can provide peace of mind to your loved ones during a difficult time. Would you like assistance in nominating a beneficiary on your funeral cover policy?";
+    }
+   
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage90BeneficiaryFuneralCover = (message: any) => {
+    let response = "";
+    if (message == "Continue") {
+      response =
+        "Next, let's talk about trusts. A trust is an arrangement where property belonging to one party is managed by another party for the benefit of a third party. Are you familiar with trusts?";
+    }
+     if (message == "Yes") {
+      response =
+        "We will include this information about nominating a beneficiary on your funeral cover policy in the report shared at the end of this conversation.";
+    }
+    if (message == "No") {
+      response =
+        "Next, let's talk about trusts. A trust is an arrangement where property belonging to one party is managed by another party for the benefit of a third party. Are you familiar with trusts?";
+    }
+   
+   
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage90AssistanceFuneralCover = (message: any) => {
+    let response = "";
+   
+     if (message == "Yes") {
+      response =
+        "Here’s an outline of the benefits of funeral cover:";
+    }
+    if (message == "No") {
+      response =
+        "Next, let's talk about trusts. A trust is an arrangement where property belonging to one party is managed by another party for the benefit of a third party. Are you familiar with trusts?";
+    }
+   
+   
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+
+
+const handleButtonStage90ImmediateFuneralCover = (message: any) => {
+    let response = "";
+    if (message == "Continue") {
+      response =
+        "Next, let's talk about trusts. A trust is an arrangement where property belonging to one party is managed by another party for the benefit of a third party. Are you familiar with trusts?";
+    }
+     if (message == "Yes") {
+      response =
+        "We will include details on tailoring funeral cover to your needs or finding a suitable policy in the report shared at the end of this conversation.";
+    }
+    if (message == "No") {
+      response =
+        "Next, let's talk about trusts. A trust is an arrangement where property belonging to one party is managed by another party for the benefit of a third party. Are you familiar with trusts?";
+    }
+   
+   
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+
+const handleButtonStage90specificsFuneralCover = (message: any) => {
+    let response = "";
+    if (message == "Yes, I have a question") {
+      response =
+        "Sure, I’m here to help. What additional information or questions do you have?";
+      setNextResponse("Next, let's talk about trusts. A trust is an arrangement where property belonging to one party is managed by another party for the benefit of a third party. Are you familiar with trusts?")
+      isResponse.current = "1";
+      }
+    
+    if (message == "No") {
+      response =
+        "Next, let's talk about trusts. A trust is an arrangement where property belonging to one party is managed by another party for the benefit of a third party. Are you familiar with trusts?";
+    }
+   
+   
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage91Trust = (message: any) => {
+    let response = "";
+    if (message == "Yes") {
+      response =
+        "There are two types of trusts: inter vivos trusts and testamentary trusts. Inter vivos trusts are established during your lifetime, while testamentary trusts are created in your will and come into effect after your death. Have you considered setting up a trust?";
+      }
+    
+    if (message == "No") {
+      response =
+        "Trusts are an integral part of estate planning and can offer various benefits such as asset protection, tax efficiency, and control over asset distribution. They involve a legal arrangement where a trustee holds and manages assets for the benefit of beneficiaries. Trusts can be useful for preserving wealth, providing for loved ones, and ensuring your wishes are carried out. Would you like to explore how trusts can be tailored to meet your specific needs?";
+    }
+   if (message == "Tell me more") {
+      response =
+        "Trusts are an integral part of estate planning and can offer various benefits such as asset protection, tax efficiency, and control over asset distribution. They involve a legal arrangement where a trustee holds and manages assets for the benefit of beneficiaries. Trusts can be useful for preserving wealth, providing for loved ones, and ensuring your wishes are carried out. Would you like to explore how trusts can be tailored to meet your specific needs?";
+    }
+   
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+
+const handleButtonStage91Integral = (message: any) => {
+    let response = "";
+    if (message == "Continue") {
+      response =
+        "There are two types of trusts: inter vivos trusts and testamentary trusts. Inter vivos trusts are established during your lifetime, while testamentary trusts are created in your will and come into effect after your death. Have you considered setting up a trust?";
+    }
+    if (message == "Yes") {
+      response =
+        "We will include information on how trusts can be tailored to your specific needs in the report shared at the end of this conversation.";
+      }
+    
+    if (message == "No") {
+      response =
+        "There are two types of trusts: inter vivos trusts and testamentary trusts. Inter vivos trusts are established during your lifetime, while testamentary trusts are created in your will and come into effect after your death. Have you considered setting up a trust?";
+    }
+   
+   
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage92Vivos = (message: any) => {
+    let response = "";
+    if (message == "Yes, I have considered setting up a trust") {
+      response =
+        "Yes, I have considered setting up a trustTrusts can be beneficial for various reasons. They can protect your estate against insolvency, safeguard assets in the event of divorce, and peg growth in your estate. Are any of these reasons relevant to your estate planning?";
+    }
+    if (message == "No, I haven’t thought about setting up a trust yet") {
+      response =
+        "No, I haven’t thought about setting up a trust yetSetting up a trust can be a valuable component of your estate plan, providing various benefits such as asset protection, wealth preservation, and efficient distribution of assets to beneficiaries. Would you like more information on how trusts can benefit your specific situation?";
+      }
+    
+    if (message == "I’m currently exploring the possibility of setting up a trust") {
+      response =
+        "Exploring the possibility of setting up a trust is a proactive step in your estate planning journey. Trusts offer numerous advantages, including privacy, control over asset distribution, and tax efficiency. If you have any questions or need guidance on this process, feel free to ask.";
+    }
+
+    if (message == "I’m not sure if setting up a trust is necessary for me") {
+      response =
+        "It's understandable to have reservations or uncertainty about setting up a trust. Trusts can be customised to suit your unique needs and goals, offering flexibility and protection for your assets. If you're unsure about whether a trust is right for you, we can discuss your concerns and explore alternative options.";
+    }
+   
+    if (message == "I have some knowledge about trusts but need more information") {
+      response =
+        "I have some knowledge about trusts but need more informationHaving some knowledge about trusts is a great starting point. However, it's essential to have a clear understanding of how trusts work and how they can benefit your estate planning strategy. If you need more information or have specific questions, feel free to ask, and I'll be happy to assist you.";
+    }
+
+     if (message == "I have specific concerns or questions about setting up a trust") {
+      response =
+        "Addressing specific concerns or questions about setting up a trust is crucial for making informed decisions about your estate plan. Whether you're unsure about the process, concerned about potential implications, or have questions about trust administration, I'm here to provide guidance and support. Feel free to share your concerns, and we can discuss them further.";
+    }
+   
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+
+const handleButtonStage92Setting = (message: any) => {
+    let response = "";
+    if (message == "Continue") {
+      response =
+        "Trusts can be beneficial for various reasons. They can protect your estate against insolvency, safeguard assets in the event of divorce, and peg growth in your estate. Are any of these reasons relevant to your estate planning?";
+    }
+   
+   
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+
+const handleButtonStage93Beneficial = (message: any) => {
+    let response = "";
+    if (message == "Yes, protecting my estate against insolvency is a priority for me") {
+      response =
+        "Additionally, transferring assets to a trust can save on executor's fees and exclude assets from your estate for estate duty purposes. Have you thought about these advantages in relation to your estate planning?";
+    }
+   if (message == "I’m concerned about safeguarding assets in case of divorce") {
+      response =
+        "Additionally, transferring assets to a trust can save on executor's fees and exclude assets from your estate for estate duty purposes. Have you thought about these advantages in relation to your estate planning?";
+    }
+    if (message == "Pegging growth in my estate sounds like a beneficial strategy") {
+      response =
+        "Additionally, transferring assets to a trust can save on executor's fees and exclude assets from your estate for estate duty purposes. Have you thought about these advantages in relation to your estate planning?";
+    }
+    if (message == "All of these reasons are relevant to my estate planning") {
+      response =
+        "Additionally, transferring assets to a trust can save on executor's fees and exclude assets from your estate for estate duty purposes. Have you thought about these advantages in relation to your estate planning?";
+    }
+    if (message == "None of these reasons are currently a priority for me") {
+      response =
+        "Additionally, transferring assets to a trust can save on executor's fees and exclude assets from your estate for estate duty purposes. Have you thought about these advantages in relation to your estate planning?";
+    }
+   
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage94Executor = (message: any) => {
+    let response = "";
+    if (message == "Continue") {
+      response =
+        "Donation of assets to a trust. This can remove assets from your estate and allow further growth within the trust and not increasing the value of your personal estate. Are you considering donating assets to a trust?";
+    }
+    if (message == "Yes, saving on executor’s fees is an important consideration for me") {
+      response =
+        "Donation of assets to a trust. This can remove assets from your estate and allow further growth within the trust and not increasing the value of your personal estate. Are you considering donating assets to a trust?";
+    }
+   if (message == "Excluding assets from my estate for estate duty purposes is a key factor in my planning") {
+      response =
+        "Donation of assets to a trust. This can remove assets from your estate and allow further growth within the trust and not increasing the value of your personal estate. Are you considering donating assets to a trust?";
+    }
+    if (message == "I’m interested in exploring how transferring assets to a trust could benefit me") {
+      response =
+        "Exploring how transferring assets to a trust could benefit you is a wise decision in estate planning. It offers various advantages, such as reducing executor's fees and estate duty obligations, as well as providing asset protection and efficient distribution to beneficiaries. If you're interested in learning more about these benefits and how they apply to your specific situation, I am here to provide further information and guidance.";
+    }
+    if (message == "I haven’t considered these advantages before, but they sound appealing") {
+      response =
+        "Exploring how transferring assets to a trust could benefit you is a wise decision in estate planning. It offers various advantages, such as reducing executor's fees and estate duty obligations, as well as providing asset protection and efficient distribution to beneficiaries. If you're interested in learning more about these benefits and how they apply to your specific situation, I'm here to provide further information and guidance.";
+    }
+    if (message == "I’m not sure how significant these advantages before would be for my estate planning") {
+      response =
+        "Understanding the significance of advantages like saving on executor's fees and excluding assets from your estate for estate duty purposes is essential in crafting an effective estate plan. These benefits can have a significant impact on preserving your wealth and ensuring efficient asset distribution. If you're uncertain about their significance or how they apply to your estate planning, I can provide more details and clarify any questions you may have.";
+    }
+    if (message == "I need more information to understand how these advantages would apply to my situation") {
+      response =
+        "It's understandable to need more information to fully grasp how the advantages of transferring assets to a trust would apply to your situation. These advantages, such as saving on executor's fees and estate duty obligations, can vary depending on individual circumstances. If you require further clarification or personalised insights into how these benefits would impact your estate planning, I'm here to assist you and provide the information you need.";
+    }
+   if (message == "I’m primarily focused on other aspects of my estate planning right now") {
+      response =
+        "Addressing specific concerns or questions about setting up a trust is crucial for making informed decisions about your estate plan. Whether you're unsure about the process, concerned about potential implications, or have questions about trust administration, I'm here to provide guidance and support. Feel free to share your concerns, and we can discuss them further.";
+    }
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+
+const handleButtonStage95Donation = (message: any) => {
+    let response = "";
+     if (message == "Continue") {
+      response =
+        "It's important to note that while this strategy can reduce estate duty, there may be tax implications. Are you aware of the potential donations tax liability?";
+    }
+    if (message == "Yes, I’m interested in exploring this option") {
+      response =
+        "It's important to note that while this strategy can reduce estate duty, there may be tax implications. Are you aware of the potential donations tax liability?";
+    }
+     if (message == "I’m not sure if donating assets to a trust aligns with my estate planning goals") {
+      response =
+        "Understanding how donating assets to a trust aligns with your estate planning goals is crucial for making informed decisions. Donating assets to a trust can offer various benefits, including asset protection, estate tax reduction, and efficient wealth transfer. However, it's essential to ensure that this strategy aligns with your overall estate planning objectives. If you're unsure about its compatibility with your goals, I can provide more information and help you evaluate whether it's the right choice for your estate plan.";
+    }
+     if (message == "I need more information before deciding") {
+      response =
+        "Gathering more information before deciding on donating assets to a trust is a prudent approach. This strategy involves transferring assets to a trust, which can have implications for asset protection, tax planning, and wealth preservation. If you require additional details about how this option works, its potential benefits, and any considerations specific to your situation, I'm here to provide the necessary information and support your decision-making process.";
+    }
+  if (message == "I’m not comfortable with the idea of donating assets to a trust") {
+      response =
+        "I’m not comfortable with the idea of donating assets to a trustIt's important to note that while this strategy can reduce estate duty, there may be tax implications. Are you aware of the potential donations tax liability?";
+    }
+
+    
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage96Strategy = (message: any) => {
+    let response = "";
+     if (message == "Yes") {
+      response =
+        "Next, let's talk about selling assets to the trust. This can be a strategic way to remove assets from your estate. However, it’s important to note that a loan account is not automaticaaly created unless there’s a difference between the sale price and the value of the asset. Have you considered selling assets to the trust in this way?";
+    }
+    if (message == "No") {
+      response =
+        "Donations tax is a tax imposed on the transfer of assets to a trust or natural person without receiving adequate consideration in return. It's important to understand that while transferring assets to a trust can help reduce estate duty, it may trigger donations tax liabilities. The amount of donations tax payable depends on several factors, including the value of the assets transferred, any available exemptions or deductions, and the relationship between the donor and the recipient. The donations tax threshold is R100 000 per year.";
+    }
+     if (message == "Tell me more") {
+      response =
+        "Donations tax is a tax imposed on the transfer of assets to a trust or natural person without receiving adequate consideration in return. It's important to understand that while transferring assets to a trust can help reduce estate duty, it may trigger donations tax liabilities. The amount of donations tax payable depends on several factors, including the value of the assets transferred, any available exemptions or deductions, and the relationship between the donor and the recipient. The donations tax threshold is R100 000 per year.";
+    }
+    
+
+    
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage97Donation = (message: any) => {
+    let response = "";
+     if (message == "Continue") {
+      response =
+        "Next, let's talk about selling assets to the trust. This can be a strategic way to remove assets from your estate. However, it’s important to note that a loan account is not automaticaaly created unless there’s a difference between the sale price and the value of the asset. Have you considered selling assets to the trust in this way?";
+    }
+    
+    
+
+    
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+
+const handleButtonStage98Assets = (message: any) => {
+    let response = "";
+    if (message == "Continue") {
+      response =
+        "Selling assets to the trust might reduce estate duty, but a sale and loan agreement should be in place if a loan account is to be created. Are you familiar with the terms and conditions of such agreements?";
+    }
+     if (message == "Yes, I’m interested in exploring this option") {
+      response =
+        "Selling assets to a trust can help minimize estate duty and protect your assets. However, remember that if the sale price matches the asset's value, a loan account won't be created. Additionally, capital gains tax and transfer duty may apply if the asset is a capital asset like property. We can discuss how this option fits with your estate planning goals.";
+    }
+    if (message == "I’m not sure if selling assets to a trust aligns with my estate planning goals") {
+      response =
+        "It's crucial to align your estate planning strategies with your goals. Selling assets to a trust can offer benefits, such as reducing estate duty, but it also comes with implications like capital gains tax and transfer duty. If you're unsure whether this strategy is right for you, we can discuss it further to ensure it aligns with your specific needs and circumstances.";
+    }
+    if (message == "I need more information before deciding") {
+      response =
+        "Understanding the full implications of selling assets to a trust is key. While it can offer estate planning benefits, it's important to consider the potential tax implications, like capital gains tax and transfer duty. If you need more information on how this works and its impact on your estate planning, I’m here to provide the necessary details.";
+    }
+
+    
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage99Selling = (message: any) => {
+    let response = "";
+    if (message == "Continue") {
+      response =
+        "Lastly, let's discuss the costs and tax consequences of transferring assets to a trust. This may include capital gains tax, transfer duty (for immovable property), and possible donations tax. Have you taken these factors into account?";
+    }
+     if (message == "I have some understanding but need more clarity") {
+      response =
+        "It’s great that you have some understanding of sale and loan agreements. These agreements outline the sale terms and the loan's repayment terms if a loan account is created. If you need more clarity or have questions about specific aspects of these agreements, feel free to ask. I’m here to help provide additional information and support your understanding.";
+    }
+    if (message == "I need assistance in understanding the terms and conditions") {
+      response =
+        "Sale and loan agreements can be complex, especially when transferring assets to a trust. These agreements detail the sale transaction and the loan terms, if applicable. If you need help understanding these terms and conditions, or have questions about how they apply to your situation, I’m here to provide guidance and support.";
+    }
+    if (message == "I prefer not to engage in agreements that involve selling assets to a trust") {
+      response =
+        "Lastly, let's discuss the costs and tax consequences of transferring assets to a trust. This may include capital gains tax, transfer duty (for immovable property), and possible donations tax. Have you taken these factors into account?";
+    }
+
+    
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+const handleButtonStage99Final = (message: any) => {
+    let response = "";
+    if (message == "Continue") {
+      response =
+        "Now, let's explore the concept of an investment trust. This structure allows for annual donations to the trust, reducing your estate over time. Are you interested in setting up an investment trust?";
+    }
+     if (message == "Yes, I am familiar") {
+      response =
+        "Selling assets to a trust can be a strategic way to transfer assets out of your estate, potentially reducing estate duty and protecting your wealth. However, it’s important to consider the potential tax implications, such as capital gains tax and transfer duty, and whether a loan account will actually be created. If you’re interested in exploring this option further, we can dive into the specifics and see how it aligns with your overall estate planning goals.";
+    }
+    if (message == "I have some understanding but need more clarity") {
+      response =
+        "It's good to hear that you have some understanding of the costs and tax consequences associated with transferring assets to a trust. These factors can indeed be complex, and it's important to have a clear understanding to make informed decisions. If you need more clarity on any specific aspects of these costs and tax implications or if you have any questions about how they may impact your estate planning, feel free to ask. I'm here to provide additional information and support your understanding.";
+    }
+    if (message == "I need more information before deciding") {
+      response =
+        "Understanding the costs and tax implications of transferring assets to a trust is crucial for making informed decisions in your estate planning. If you need more information before deciding, I'm here to help. We can discuss these factors in more detail, clarify any questions you may have, and ensure that you have a comprehensive understanding of how they may affect your estate plan. Feel free to ask any questions or raise any concerns you may have.";
+    }
+ if (message == "I’m not comfortable with the potential costs & tax implications at this time") {
+      response =
+        "Now, let's explore the concept of an investment trust. This structure allows for annual donations to the trust, reducing your estate over time. Are you interested in setting up an investment trust?";
+    }
+    
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+
+const handleButtonStage100Investment = (message: any) => {
+    let response = "";
+    if (message == "Continue") {
+      response =
+        "An investment trust can provide flexibility for the trust beneficiaries to receive income and borrow funds. Does this align with your estate planning goals?";
+    }
+    if (message == "Yes, I’m interested") {
+      response =
+        "Setting up an investment trust can be a strategic way to manage your assets and reduce your estate over time. It allows for annual donations to the trust, which can have various benefits for your estate planning. If you're interested in exploring this option further, we can discuss the specifics of how an investment trust could align with your estate planning goals and tailor a plan to suit your needs.";
+    }
+    if (message == "I’m not sure if an investment trust aligns with my estate planning goals") {
+      response =
+        "It's understandable to have questions about whether an investment trust aligns with your estate planning goals. An investment trust can offer unique advantages, but it's essential to ensure that it fits your specific needs and objectives. If you're uncertain, we can delve deeper into how an investment trust works and explore whether it's the right option for you.";
+    }
+    if (message == "I prefer to explore other options") {
+      response =
+        "Exploring different options is an important part of estate planning, and it's essential to find the approach that best suits your needs and objectives. If you prefer to explore other options besides setting up an investment trust, we can discuss alternative strategies and find the solution that aligns most closely with your estate planning goals.";
+    }
+    if (message == "I need more information before deciding") {
+      response =
+        "Making an informed decision about whether to set up an investment trust requires a clear understanding of how it works and how it may impact your estate planning goals. If you need more information before deciding, feel free to ask any questions you may have. We can discuss the specifics of an investment trust, its benefits, and how it may fit into your overall estate plan.";
+    }
+    
+   
+    
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+
+const handleButtonStage101InvestmentFlexibility = (message: any) => {
+    let response = "";
+    if (message == "Continue") {
+      response =
+        "Thanks! Do you have anything you’d like to add or any questions that I can help you with today?";
+    }
+    if (message == "Yes") {
+      response =
+        "Thanks! Do you have anything you’d like to add or any questions that I can help you with today?";
+    }
+    if (message == "No") {
+      response =
+        "If an investment trust doesn't align with your estate planning goals, we can explore other options that may better suit your needs. Estate planning is a personalised process, and it's essential to find strategies that align closely with your objectives and preferences. Let's discuss alternative approaches to ensure your estate plan reflects your wishes and priorities.";
+    }
+    if (message == "Tell me more") {
+      response =
+        "An investment trust offers flexibility for beneficiaries to receive income and borrow funds, providing potential advantages for estate planning. With an investment trust, you can structure distributions in a way that aligns with your goals and preferences. If you're interested in learning more about how an investment trust could benefit your estate plan, I can provide further details on how it works and its potential advantages.";
+    }
+ 
+    
+   
+    
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+
+const handleButtonStage101Final = (message: any) => {
+    let response = "";
+    if (message == "Yes, I have a question") {
+      response =
+        "Thanks! Do you have anything you’d like to add or any questions that I can help you with today?";
+         setNextResponse("Thanks for your time today! Your information will be reviewed by a financial advisor, and you can expect to hear back soon with a detailed report.Have a great day, and we’re looking forward to helping you secure your future!")
+      isResponse.current = "1";
+    }
+    if (message == "No") {
+      response =
+        "Thanks for your time today! Your information will be reviewed by a financial advisor, and you can expect to hear back soon with a detailed report.Have a great day, and we’re looking forward to helping you secure your future!";
+    }
+   
+ 
+    
+   
+    
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -3925,37 +6241,37 @@ const handleButtonStage69ExecutorFinal = (message: any) => {
                   </div>
                   <div className="space-x-2 mt-4">
                     <button
-                      onClick={() => handleButtonFunFact("Scenario 1")}
+                      onClick={() => handleButtonStage13Component("Scenario 1")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
                     >
                       Scenario 1
                     </button>
                     <button
-                      onClick={() => handleButtonFunFact("Scenario 2")}
+                      onClick={() => handleButtonStage13Component("Scenario 2")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
                     >
                       Scenario 2
                     </button>
                     <button
-                      onClick={() => handleButtonFunFact("Scenario 3")}
+                      onClick={() => handleButtonStage13Component("Scenario 3")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
                     >
                       Scenario 3
                     </button>
                     <button
-                      onClick={() => handleButtonFunFact("Scenario 4")}
+                      onClick={() => handleButtonStage13Component("Scenario 4")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
                     >
                       Scenario 4
                     </button>
                     <button
-                      onClick={() => handleButtonFunFact("All Scenario")}
+                      onClick={() => handleButtonStage13Component("All Scenario")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
                     >
                       All Scenarios
                     </button>
                     <button
-                      onClick={() => handleButtonFunFact("No, Let's move on")}
+                      onClick={() => handleButtonStage13Component("No, Let's move on")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
                     >
                       No, Let's move on
@@ -4593,7 +6909,7 @@ const handleButtonStage69ExecutorFinal = (message: any) => {
                 </>
               )}
 
-              {message.content.includes(
+              {/* {message.content.includes(
                 "Describe the condition of your property (new, good, fair, needs renovation). Also, mention any special features (e.g., swimming pool, garden, garage)"
               ) && (
                 <>
@@ -4628,7 +6944,7 @@ const handleButtonStage69ExecutorFinal = (message: any) => {
                     </button>
                   </div>
                 </>
-              )}
+              )} */}
 
               {message.content.includes(
                 "It's understandable to be uncertain about this. Protecting assets from potential insolvency can be crucial for maintaining financial stability. Here are some points to consider"
@@ -4778,6 +7094,49 @@ const handleButtonStage69ExecutorFinal = (message: any) => {
                 </>
               )}
 
+ {message.content.includes(
+                "No problem. Whenever you're ready to provide the details of any of your real estate, just let me know."
+              ) && (
+                <>
+                  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage21Asset("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Continue
+                    </button>
+                    
+                  </div>
+                </>
+              )}
+
+
+
+ {message.content.includes(
+                "The estimated value of your property based on the information you provided is"
+              ) && (
+                <>
+                  <div className="space-x-2 mt-2">
+                    💰🏡 (value displayed)
+                    <br />
+                    🔧 Please note that this is a rough estimate and should not be considered an official appraisal. The actual value of your property may vary based on additional factors such
+as market conditions, recent sales data, and property- specific details not accounted for in this calculation. For a precise valuation, we recommend consulting a property appraiser or real estate agent
+                  </div>
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage21Calculator("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Continue
+                    </button>
+                  </div>
+                </>
+              )}
 
 
  {message.content.includes("Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan") && (
@@ -4827,7 +7186,7 @@ const handleButtonStage69ExecutorFinal = (message: any) => {
                       Specify
                     </button>
                     <button
-                      onClick={() => handleButtonStage22Farm("Maybe Later")}
+                      onClick={() => handleButtonStage22Vehicle("Maybe Later")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
                     >
                       Maybe Later
@@ -5481,7 +7840,7 @@ const handleButtonStage69ExecutorFinal = (message: any) => {
                       Yes
                     </button>
                     <button
-                      onClick={() => handleButtonStage41DisabilityCoverage("Monthly Income Replacer")}
+                      onClick={() => handleButtonStage41DisabilityCoverage("No, I'm not aware")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
                     >
                       No, I'm not aware
@@ -5526,7 +7885,7 @@ const handleButtonStage69ExecutorFinal = (message: any) => {
                       Yes
                     </button>
                     <button
-                      onClick={() => handleButtonStage41ContingentInsurance("Monthly Income Replacer")}
+                      onClick={() => handleButtonStage41ContingentInsurance("No")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
                     >
                       No
@@ -5535,7 +7894,7 @@ const handleButtonStage69ExecutorFinal = (message: any) => {
                       onClick={() => handleButtonStage41ContingentInsurance("I'm not sure.")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
                     >
-                      Unsure.
+                      I'm not sure.
                     </button>
                   </div>
                 </>
@@ -5580,11 +7939,11 @@ const handleButtonStage69ExecutorFinal = (message: any) => {
                     </button>
                     <button
                       onClick={() =>
-                        handleButtonStage42BuyAndSell("No, I haven't consider it")
+                        handleButtonStage42BuyAndSell("No, I haven't considered it")
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
                     >
-                       No, I haven't consider it
+                       No, I haven't considered it
                     </button>
                     <button
                       onClick={() =>
@@ -6878,7 +9237,7 @@ const handleButtonStage69ExecutorFinal = (message: any) => {
                   <div className="space-x-2 mt-4">
                     <button
                       onClick={() =>
-                        handleButtonStage65Stages("Upload Document")
+                        handleButtonStage65Stages("Yes")
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
                     >
@@ -7026,11 +9385,2945 @@ const handleButtonStage69ExecutorFinal = (message: any) => {
                 </>
               )}
 
+{message.content.includes("Now, let's talk about the liquidity position of your estate. This helps us understand if there are enough liquid assets available to cover estate costs without having to sell off assets. Ready to proceed?") && (
+                <>  
+                
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage70Liquidity("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage70Liquidity("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                    No
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Liquidity is essential to cover estate costs without having to sell assets. Are you aware of any sources of liquidity in your estate, such as cash reserves or liquid investments?") && (
+                <>  
+                
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage71LiquidityEssential("Yes, specify")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes, specify
+                    </button>
+                     <button
+                      onClick={() =>
+                        handleButtonStage71LiquidityEssential("No, I have no significant sourced of liquidity")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No, I have no significant sourced of liquidity
+                    </button>
+                     <button
+                      onClick={() =>
+                        handleButtonStage71LiquidityEssential("Unsure, will need assistance")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                    Unsure, will need assistance
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Great! Based on the information you've provided earlier, we can review your existing financial assets and investments to assess their liquidity. We will include this information in the report shared at the end of this conversation.") && (
+                <>  
+                
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage71LiquidityEssential("Yes, specify")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                   
+                  </div>
+                </>
+              )}
+
+{message.content.includes("If there's a shortfall, there are a few options. The executor may ask heirs to contribute cash to prevent asset sales. Are you open to this option?") && (
+                <>  
+                
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage72Shortfall("Yes, with considerations")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes, with considerations
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage72Shortfall("No, assets should be sold to cover shortfall")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No, assets should be sold to cover shortfall
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage72Shortfall("I need more information before deciding")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I need more information before deciding
+                    </button>
+                   
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Thank you for your openness to this option. When considering this approach, it's essential to assess the financial impact on each heir and ensure fairness in the distribution of responsibilities. Factors such as each heir's financial situation, willingness to contribute, and the impact on their inheritance should be carefully considered. Would you like guidance on how to navigate these considerations?") && (
+                <>  
+                
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage73FinancialImpact("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage73FinancialImpact("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                    
+                   
+                  </div>
+                </>
+              )}
+{message.content.includes("Great! Our financial advisors at Old Mutual can help you and your heirs understand the financial implications and create a fair strategy. They can assist in evaluating each heir’s ability to contribute, ensure clear communication among all parties, and develop a plan that respects everyone's circumstances. We'll include this information in the report shared at the end of this conversation.") && (
+                <>  
+                
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage73FinancialImpact("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                  
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Sure! In the event of a shortfall, the executor may explore various options to cover expenses without liquidating assets prematurely. These options could include negotiating payment terms with creditors, utilising existing insurance policies, or securing a loan against estate assets. Each option comes with its own set of considerations and implications. Would you like further details on these options to help you make an informed decision?") && (
+                <>  
+                
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage74Shortfall("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage74Shortfall("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                    
+                   
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Excellent! Here are some details on the potential options:") && (
+                <>  
+                  <div className="space-x-2 mt-2">
+      Excellent! Here are some details on the potential options:
+      <br />
+      <br />
+      💬 Negotiating Payment Terms with Creditors:
+      <br />
+      This involves discussing with creditors to extend payment deadlines or set up a payment plan, allowing more time to manage the estate without immediate asset liquidation.
+      <br />
+      <br />
+      🛡️ Utilizing Existing Insurance Policies:
+      <br />
+      Life insurance policies or other relevant insurance can provide liquidity to cover shortfalls. Reviewing existing policies can be a valuable step.
+      <br />
+      <br />
+      💰 Securing a Loan Against Estate Assets:
+      <br />
+      This option involves taking a loan using estate assets as collateral, providing immediate funds to cover expenses while preserving the estate's value.
+      <br />
+      <br />
+      Our financial advisors at Old Mutual can provide more in-depth information and help you evaluate these options based on your specific situation. We will include this information in the report shared at the end of this conversation.
+    </div>
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage74Shortfall("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                  
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Selling assets could impact your wishes for asset distribution and family business continuation. How do you feel about selling assets to cover a shortfall?") && (
+                <>  
+                
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage75SellingAsset("I am open to selling assets")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I am open to selling assets
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage75SellingAsset("I am against selling assets")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I am against selling assets
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage75SellingAsset("I need more information before deciding")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I need more information before deciding
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage75SellingAsset("I’d like to explore alternative financing options")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                    I’d like to explore alternative financing options
+                    </button>
+                   
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Absolutely! When facing a shortfall, selling assets isn't the only option available. Alternative financing strategies, such as securing loans against estate assets, negotiating payment terms with creditors, or utilising existing insurance policies, can provide additional flexibility without compromising your long-term goals for asset distribution. Each option comes with its own set of considerations and implications, so it's essential to weigh them carefully. Our financial advisors can help you set this up.") && (
+                <>  
+                
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage75SellingAsset("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                   
+                  </div>
+                </>
+              )}
+              
+{message.content.includes("It's understandable to have reservations about selling assets, especially if it affects your long-term plans for asset distribution or business continuity. Selling assets can impact the legacy you wish to leave behind and may disrupt the stability of family businesses. However, it's essential to balance these concerns with the immediate need to cover a shortfall. Exploring alternative financing options or negotiating payment terms with creditors could help alleviate the need for asset liquidation. Would you like to explore these alternatives further?") && (
+                <>  
+                
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage76Reservation("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage76Reservation("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                    
+                   
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Great! Here are some alternative options you might consider:") && (
+                <>  
+                 <div className="space-x-2 mt-2">
+      💬 Negotiating Payment Terms with Creditors:
+      <br />
+      This involves discussing with creditors to extend payment deadlines or set up a payment plan, allowing more time to manage the estate without immediate asset liquidation.
+      <br />
+      <br />
+      🛡️ Utilizing Existing Insurance Policies:
+      <br />
+      Life insurance policies or other relevant insurance can provide liquidity to cover shortfalls. Reviewing existing policies can be a valuable step.
+      <br />
+      <br />
+      💰 Securing a Loan Against Estate Assets:
+      <br />
+      This option involves taking a loan using estate assets as collateral, providing immediate funds to cover expenses while preserving the estate's value.
+      <br />
+      <br />
+      Our financial advisors at Old Mutual can provide more in-depth information and help you evaluate these options based on your specific situation. We will include this information in the report shared at the end of this conversation.
+    </div>
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage76Reservation("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Borrowing funds is another option, but it could be costly and limit asset use if assets are used as security. Have you considered this option?") && (
+                <>  
+               
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage77BorrowingFunds("I am open to borrowing funds")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I am open to borrowing funds
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage77BorrowingFunds("I am against borrowing funds")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I am against borrowing funds
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage77BorrowingFunds("I need more information before deciding")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                    I need more information before deciding
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage77BorrowingFunds("I’d like to explore alternative financing options")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                    I’d like to explore alternative financing options
+                    </button>
+                  </div>
+                </>
+              )}
 
 
+{message.content.includes("Absolutely, it's essential to fully understand the implications before making a decision. Borrowing funds can indeed be costly, especially if assets are used as security, as it may limit their use and potentially increase financial risk. I can provide more detailed information on the costs involved, potential risks, and alternative financing options to help you make an informed decision. Would you like to explore these aspects further?") && (
+                <>  
+               
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage77FinancialRisk("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage77FinancialRisk("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Great! Here are some important aspects to consider:") && (
+                <>  
+                   <div className="space-x-2 mt-2">
+      
+      💸 Costs Involved:
+      <br />
+      Borrowing funds often comes with interest rates and fees, which can add up over time. Understanding these costs is crucial to determine if this option is viable.
+      <br />
+      <br />
+      ⚠️ Potential Risks:
+      <br />
+      Using assets as security means those assets could be at risk if repayments are not met. This could affect your long-term financial stability and estate plans.
+      <br />
+      <br />
+      💡 Alternative Financing Options:
+      <br />
+      Options such as negotiating payment terms with creditors, utilizing insurance policies, or setting up payment plans might be more beneficial and less risky.
+      <br />
+      <br />
+      Our financial advisors at Old Mutual can provide a thorough analysis and personalized advice to help you make the best decision. We will include this information in the report shared at the end of this conversation.
+    </div>
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage77FinancialRisk("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                    
+                    
+                  </div>
+                </>
+              )}
 
 
+{message.content.includes("Exploring alternative financing options is a prudent approach to ensure you make the best decision for your estate. There are various strategies available, such as negotiating payment terms with creditors, utilising existing insurance policies, or seeking financial assistance from family members or business partners. Each option has its pros and cons, so it's essential to weigh them carefully. Would you like more information on these alternative financing options?") && (
+                <>  
+                  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage77Alternative("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage77Alternative("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                    
+                  </div>
+                </>
+              )}
 
+{message.content.includes("Great! Here are some alternative financing options to consider:") && (
+                <>  
+                   <div className="space-x-2 mt-2">
+     
+      💬 Negotiating Payment Terms with Creditors:
+      <br />
+      You can often arrange for more favorable payment terms, reducing the immediate financial burden on your estate.
+      <br />
+      <br />
+      🛡️ Utilizing Existing Insurance Policies:
+      <br />
+      Certain insurance policies may offer payouts that can cover the shortfall without the need to liquidate assets.
+      <br />
+      <br />
+      🤝 Financial Assistance from Family or Business Partners:
+      <br />
+      If feasible, seeking help from family members or business partners can provide a flexible and low-cost solution.
+      <br />
+      <br />
+      Our financial advisors at Old Mutual can provide a thorough analysis and personalized advice to help you make the best decision. We will include this information in the report shared at the end of this conversation.
+    </div>
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage77Alternative("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                   
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Have you considered life assurance as a way to address any cash shortfall? Life assurance provides immediate cash without income tax or capital gains tax. How willing are you to go this route?") && (
+                <>  
+                  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage78LifeInsurance("Against")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Against
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage78LifeInsurance("Considering")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Considering
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage78LifeInsurance("Agree")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Agree
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Thank you for discussing your estate's liquidity position. Let's discuss maintenance claims. Ready?") && (
+                <>  
+                  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage79LiquidityEnd("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage79LiquidityEnd("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Let's discuss maintenance claims in terms of court orders. If you pass away while there are maintenance obligations towards children or a former spouse, they will have a maintenance claim against your estate. Are you aware of any existing maintenance obligations or court orders?") && (
+                <>  
+                  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage80Claims("I have court ordered maintenance obligations")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I have court ordered maintenance obligations
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage80Claims("I have informal agreements, not court orders")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I have informal agreements, not court orders
+                    </button>
+                      <button
+                      onClick={() =>
+                        handleButtonStage80Claims("I don’t have any maintenance obligations")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I don’t have any maintenance obligations
+                    </button>
+                     <button
+                      onClick={() =>
+                        handleButtonStage80Claims("I haven’t considered maintenance claims in relation to my estate planning")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I haven’t considered maintenance claims in relation to my estate planning
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("It's crucial to consider these maintenance obligations in your estate planning to ensure they are adequately addressed. Court-ordered maintenance obligations typically take precedence and must be factored into your estate plan to avoid potential disputes or legal complications. Would you like assistance in incorporating these obligations into your estate plan? If so, please provide the details of the court order.") && (
+                <>  
+                  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage81Obligations("Upload Document")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Upload Document
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage81Obligations("Specify")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Specify
+                    </button>
+                      <button
+                      onClick={() =>
+                        handleButtonStage81Obligations("Maybe Later")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Maybe Later
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("No problem. Whenever you're ready, please provide the details about your life insurance policy.") && (
+                <>  
+                  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage81Obligations("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                   
+                  </div>
+                </>
+              )}
+              
+{message.content.includes("While informal agreements may not have the same legal standing as court orders, they are still important to consider in your estate planning. Even informal arrangements could result in maintenance claims against your estate if not addressed properly. Would you like guidance on how to formalise these agreements or ensure they are appropriately accounted for in your estate plan?") && (
+                <>  
+                  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage81Agreements("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage81Agreements("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                      <button
+                      onClick={() =>
+                        handleButtonStage81Agreements("Maybe")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Maybe
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("We will include this information about life insurance policy in the report shared at the end of this conversation.") && (
+                <>  
+                  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage81Agreements("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("It's essential to assess any potential maintenance claims in relation to your estate to avoid unexpected complications for your heirs. Even if you haven't formalised maintenance obligations through court orders or agreements, they may still arise based on legal obligations. Would you like assistance in evaluating and addressing any potential maintenance claims in your estate planning?") && (
+                <>  
+                  
+                   <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage81Complications("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage81Complications("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                      <button
+                      onClick={() =>
+                        handleButtonStage81Complications("Maybe")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Maybe
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {message.content.includes("We will include this information about life insurance policy in the report shared at the end of this conversation.") && (
+                <>  
+                  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage81Complications("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                    
+                  </div>
+                </>
+              )}
+
+              {message.content.includes("To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?") && (
+                <>  
+                  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage82LifeInsurance("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage82LifeInsurance("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage82LifeInsurance("Unsure")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Unsure
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("That's a proactive approach to ensuring adequate provision for maintenance obligations. Have you already taken steps to set up such a policy, or would you like assistance in exploring this option further?") && (
+                <>  
+                  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage83Proactive("I have set up a policy")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I have set up a policy
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage83Proactive("I need assistance in setting up a policy")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I need assistance in setting up a policy
+                    </button>
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("We will include information about assistance with setting up a policy in the report that will be shared at the end of this conversation.") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage83Proactive("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("It's an important consideration to ensure that your loved ones are provided for in the event of your passing. If you'd like, we can discuss the benefits and implications of setting up a life insurance policy payable to a testamentary trust to cover maintenance obligations. Would you like more information on this option?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage83Passing("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage83Passing("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Setting up a life insurance policy payable to a testamentary trust can ensure that maintenance obligations are met without burdening your estate. This approach provides a reliable income stream for your beneficiaries. Our financial advisors at Old Mutual can provide detailed guidance and help you explore this option further.") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage83Passing("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Next, let's talk about maintenance for the surviving spouse. If you don't make provision for maintenance for the surviving spouse, they can institute a claim against your estate in terms of the Maintenance of Surviving Spouse’s Act. Are you considering provisions for your surviving spouse?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage84Provision("I have provisions in place")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I have provisions in place
+                    </button>
+                     <button
+                      onClick={() =>
+                        handleButtonStage84Provision("I want to make provisions in my estate planning")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I want to make provisions in my estate planning
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage84Provision("I don’t want to make provisions in my estate planning")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I don’t want to make provisions in my estate planning
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage84Provision("I need more information before deciding")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I need more information before deciding
+                    </button>
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("It's great that you've already made provisions for your surviving spouse. Would you like to review your existing provisions to ensure they align with your current goals and circumstances?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage84ExistingProvision("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                     <button
+                      onClick={() =>
+                        handleButtonStage84ExistingProvision("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Reviewing your existing provisions can ensure they are still appropriate and effective given your current situation and goals. We will include this information in the report shared at the end of this conversation.") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage84ExistingProvision("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                     
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Making provisions for your surviving spouse ensures their financial security after you're gone. We can discuss various options for including these provisions in your estate plan. Would you like more information on this?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage84OptionProvision("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                      <button
+                      onClick={() =>
+                        handleButtonStage84OptionProvision("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Providing for your surviving spouse can be done through various means, such as setting up a trust, designating life insurance benefits, or specifying direct bequests in your will. Our financial advisors at Old Mutual can guide you through these options to find the best solution for your needs. We will include this information in the report shared at the end of this conversation.") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage84OptionProvision("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                      
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Sure, understanding the implications and options for provisions for your surviving spouse is crucial. Would you like more information on how this can be incorporated into your estate planning?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage84CrucialProvision("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                      <button
+                      onClick={() =>
+                        handleButtonStage84CrucialProvision("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Incorporating provisions for your surviving spouse can be an essential part of a comprehensive estate plan. Understanding the legal and financial implications will help you make an informed decision. Our financial advisors at Old Mutual can provide you with the necessary information and advice. We will include this information in the report shared at the end of this conversation.") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage84CrucialProvision("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Factors considered by the court when assessing the claim include the duration of the marriage, the spouse's age and earning capacity, and the size of your assets. Have you thought about these factors in your estate planning?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage85FactorsProvision("Yes, I have considered them and have factored them into my estate planning")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes, I have considered them and have factored them into my estate planning
+                    </button>
+                     <button
+                      onClick={() =>
+                        handleButtonStage85FactorsProvision("I am aware of these factors but haven’t considered them in my estate planning")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I am aware of these factors but haven’t considered them in my estate planning
+                    </button>
+                     <button
+                      onClick={() =>
+                        handleButtonStage85FactorsProvision("No, I haven’t thought about these factors yet")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No, I haven’t thought about these factors yet
+                    </button>
+                     <button
+                      onClick={() =>
+                        handleButtonStage85FactorsProvision("I need more information before I can respond")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I need more information before I can respond
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("It's excellent that you've already considered these factors in your estate planning. Would you like to discuss how they can further inform your decisions and ensure your plan aligns with your goals?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage85GoalsProvision("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                     <button
+                      onClick={() =>
+                        handleButtonStage85GoalsProvision("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Great! When these factors are considered, it helps ensure that your estate plan is tailored to meet your specific circumstances. For example, longer marriages or significant disparities in earning capacity might necessitate larger or longer-term maintenance provisions. Keeping your plan flexible and periodically reviewing it can help accommodate any changes in your situation. Would you like to delve deeper into any particular area?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage85GoalsProvision("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Understanding these factors is essential for effective estate planning. Would you like assistance in incorporating them into your estate plan to ensure it reflects your wishes and circumstances?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage85UnderstandingProvision("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage85UnderstandingProvision("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Excellent! Incorporating these factors into your estate plan ensures a fair and well-thought-out approach to maintenance and asset distribution. For instance, ensuring that your plan addresses the financial needs of a surviving spouse based on their age and earning capacity can provide long-term security. We will include this information in the report shared at the end of this conversation.") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage85UnderstandingProvision("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("No worries, considering these factors can help you create a more comprehensive estate plan. Would you like assistance in understanding how they may impact your estate planning decisions?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage85ComprehensiveProvision("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage85ComprehensiveProvision("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Wonderful! Understanding how these factors impact your estate planning can help you make more informed decisions. For example, considering the spouse's earning capacity can guide how much and how long maintenance should be provided, and knowing the size of your assets helps in deciding the distribution method. We will include this information in the report shared at the end of this conversation.") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage85ComprehensiveProvision("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Sure, understanding these factors is crucial for effective estate planning. Would you like more information on how they can influence your estate planning decisions before you respond?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage85EffectiveProvision("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage85EffectiveProvision("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Perfect! Knowing how these factors influence your estate planning can help ensure your plan is both fair and effective. For instance, a longer marriage might lead to more substantial maintenance claims, and a larger estate might require more detailed planning to minimize tax implications. We will include this information in the report shared at the end of this conversation.") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage85EffectiveProvision("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                    
+                  </div>
+                </>
+              )}
+
+
+{message.content.includes("You can make provision for maintenance through an insurance policy where your surviving spouse is the nominated beneficiary or stipulate in the will that the proceeds will be paid to a testamentary trust for the spouse's benefit. What are your preferences regarding this?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage85MaintenanceProvision("Insurance policy with my spouse as the nominated beneficiary")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Insurance policy with my spouse as the nominated beneficiary
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage85MaintenanceProvision("Testamentary trust for spouse outlines in my will")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Testamentary trust for spouse outlines in my will
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage85MaintenanceProvision("I’m open to either option")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I’m open to either option
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage85MaintenanceProvision("I’m not sure, I need more information of each option")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I’m not sure, I need more information of each option
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage85MaintenanceProvision("I’d like to explore other options")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I’d like to explore other options
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Both options have their advantages. With an insurance policy, the benefit is usually paid out quickly and directly to your spouse, providing immediate financial support. On the other hand, setting up a testamentary trust in your will offers more control over how the funds are managed and distributed, ensuring long-term financial security for your spouse and potential tax benefits. We can discuss the specifics of each option further and tailor the solution to best meet your needs. Would you like to explore these options in more detail?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage85BenefitProvision("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage85BenefitProvision("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Great! Here’s a brief overview of each option:") && (
+                <>  
+                   <div className="space-x-2 mt-2">
+      
+      
+      🛡️ Insurance Policy: 
+      <br />
+      Provides immediate liquidity to your spouse upon your passing, typically without the need for probate. This can be beneficial for addressing urgent financial needs.
+      <br />
+      <br />
+      🏦 Testamentary Trust: 
+      <br />
+      Allows for greater control over the distribution of assets, potentially offering ongoing support and protection for your spouse. It can also provide tax benefits and help manage the funds according to your wishes.
+    </div>
+    <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage85BenefitProvision("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                    </div>
+                </>
+              )}
+
+{message.content.includes("Absolutely! Let's delve deeper into both options. An insurance policy with your spouse as the nominated beneficiary provides immediate liquidity and financial support to your spouse upon your passing. However, a testamentary trust outlined in your will can offer ongoing financial security, asset protection, and control over how the funds are used and distributed. We can discuss the benefits, considerations, and implications of each option to help you make an informed decision. How does that sound?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage86DeeperProvision("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage86DeeperProvision("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                    
+                  </div>
+                </>
+              )}
+
+
+{message.content.includes("Certainly! Besides the options mentioned, there are alternative ways to provision for maintenance, such as setting up annuities, creating specific bequests in your will, or establishing a family trust. Each option has its unique advantages and considerations. We can explore these alternatives further and tailor a solution that aligns with your estate planning goals. Would you like to discuss these options in more detail?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage86AnnuitiesProvision("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage86AnnuitiesProvision("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Certainly! Besides insurance policies and testamentary trusts, you might consider options such as:") && (
+                <>  
+                 <div className="space-x-2 mt-2">
+      
+      <br />
+      💰 Annuities: 
+      <br />
+      Providing a regular income stream to your spouse for a specified period or for their lifetime.
+      <br />
+      <br />
+      🏡 Specific Bequests: 
+      <br />
+      Leaving particular assets or sums of money directly to your spouse in your will.
+      <br />
+      <br />
+      👪 Family Trusts: 
+      <br />
+      Setting up a family trust to manage and distribute assets according to your wishes, providing flexibility and potential tax benefits.
+    </div>
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage86AnnuitiesProvision("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                    </div>
+                </>
+              )}
+
+
+{/* {message.content.includes("Do your dependents require any income per month for maintenance?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage86AnnuitiesProvision("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage86AnnuitiesProvision("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                    
+                  </div>
+                </>
+              )} */}
+
+{message.content.includes("It's important to provide for the shortfall in household income after your death. Have you assessed the capital available to your spouse/family/dependents from which to generate an income?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage87ShortFall("I have capital available to generate an income for my dependents")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I have capital available to generate an income for my dependents
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage87ShortFall("I have capital but unsure if it will generate enough income")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I have capital but unsure if it will generate enough income
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage87ShortFall("I haven’t thought of this aspect of financial planning yet")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I haven’t thought of this aspect of financial planning yet
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage87ShortFall("I need more information to determine this")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I need more information to determine this
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("It's essential to ensure that the capital you have can generate sufficient income to support your dependents after your passing. We can work together to assess your current financial situation, projected expenses, and income needs to determine if any adjustments or additional planning are necessary to bridge any potential income shortfalls. Would you like to review your financial situation in more detail?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage87Capital("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage87Capital("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("We will include this information about your financial situation and any necessary adjustments in the report shared at the end of this conversation.") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage87Capital("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                   
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Planning for the financial well-being of your dependents is a crucial aspect of estate planning. We can assist you in evaluating your current financial situation, projected expenses, and income needs to ensure that your loved ones are adequately provided for in the event of your passing. Would you like to explore this aspect of financial planning further?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage87Planning("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage87Planning("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("We'll include this financial planning information in the report shared at the end of this conversation.") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage87Planning("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                   
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Understanding the capital available to your dependents and its potential to generate income is essential for effective estate planning. We can help you gather the necessary information and provide guidance to evaluate your current financial situation, projected expenses, and income needs. Together, we can determine the most suitable strategies to ensure financial security for your loved ones. Would you like assistance in assessing your financial situation?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage87Dependents("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage87Dependents("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("We will include this information about your financial situation and strategies in the report shared at the end of this conversation.") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage87Dependents("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                   
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Additional life assurance can provide the capital required for the income needs of dependents. Have you considered obtaining additional life insurance for this purpose?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage88Additional("My current life insurance coverage is sufficient")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     My current life insurance coverage is sufficient
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage88Additional("I’m currently reviewing my options for additional life insurance")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I’m currently reviewing my options for additional life insurance
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage88Additional("No, I haven’t considered obtaining M additional life insurance")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No, I haven’t considered obtaining M additional life insurance
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage88Additional("I’m unsure if additional life insurance is necessary given my current financial situation")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I’m unsure if additional life insurance is necessary given my current financial situation
+                    </button>
+                   
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("It's prudent to periodically review your life insurance coverage to ensure that it aligns with your current financial situation and the needs of your dependents. We can assist you in evaluating your insurance needs and exploring suitable options for additional coverage based on your evolving circumstances. Would you like guidance in assessing your life insurance needs and exploring available options?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage88Coverage("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                  <button
+                      onClick={() =>
+                        handleButtonStage88Coverage("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                    No
+                    </button>
+                   
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("We will include this information about your life insurance needs and options in the report shared at the end of this conversation.") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage88Coverage("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Life insurance can play a vital role in providing financial security for your dependents in the event of your passing. If you haven't considered obtaining additional coverage, it may be worthwhile to explore your options and ensure that your loved ones are adequately protected. We can help you evaluate your insurance needs and identify suitable coverage options. Would you like assistance in exploring the benefits of additional life insurance?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage88LifeInsurance("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                  <button
+                      onClick={() =>
+                        handleButtonStage88LifeInsurance("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                    No
+                    </button>
+                   
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("We will include this information about your life insurance needs and coverage options in the report shared at the end of this conversation.") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage88LifeInsurance("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Understanding the necessity of additional life insurance coverage requires a thorough assessment of your current financial situation and the future needs of your dependents. We can assist you in evaluating your financial circumstances and determining whether additional coverage is warranted based on your specific situation. Would you like to review your financial situation and assess the potential benefits of additional life insurance?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage88Assessment("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                  <button
+                      onClick={() =>
+                        handleButtonStage88Assessment("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                    No
+                    </button>
+                   
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("We will include this information about your financial situation and potential life insurance needs in the report shared at the end of this conversation.") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage88Assessment("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Excellent! Now, let's continue with your estate planning. Ready?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage89Final("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage89Final("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                  </div>
+                </>
+              )}
+
+
+{message.content.includes("Now, let's discuss funeral cover. Funeral cover provides liquidity to your beneficiaries within a short time frame after submitting a claim. Have you considered obtaining funeral cover?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage90FuneralCover("Yes, I have funeral cover in place")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes, I have funeral cover in place
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage90FuneralCover("No, I haven’t considered obtaining funeral cover")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No, I haven’t considered obtaining funeral cover
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage90FuneralCover("I need more information before deciding")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I need more information before deciding
+                    </button>
+                  </div>
+                </>
+              )}
+
+
+              {message.content.includes("It's recommended to nominate a beneficiary on the funeral cover to ensure prompt payment to your beneficiaries. Have you nominated a beneficiary on your funeral cover policy?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage90NominateFuneralCover("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage90NominateFuneralCover("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage90NominateFuneralCover("Wasn’t aware this was an option")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Wasn’t aware this was an option
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Nominating a beneficiary on your funeral cover policy ensures that the benefit is paid directly to the intended recipient without delays. It's a simple step that can provide peace of mind to your loved ones during a difficult time. Would you like assistance in nominating a beneficiary on your funeral cover policy?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage90BeneficiaryFuneralCover("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage90BeneficiaryFuneralCover("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("We will include this information about nominating a beneficiary on your funeral cover policy in the report shared at the end of this conversation.") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage90BeneficiaryFuneralCover("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Funeral cover can offer peace of mind by providing financial assistance to your loved ones during a challenging time. If you haven't considered obtaining funeral cover, it may be worth exploring to ensure that your family is financially prepared to cover funeral expenses. We can help you understand the benefits of funeral cover and assist you in finding a suitable policy that meets your needs. Would you like more information on the benefits of funeral cover and how it can benefit your family?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage90AssistanceFuneralCover("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage90AssistanceFuneralCover("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                    
+                  </div>
+                </>
+              )}
+
+
+{message.content.includes("Here’s an outline of the benefits of funeral cover:") && (
+                <>  
+                <div className="space-x-2 mt-2">
+      
+      <br />
+      💸 Immediate Financial Support:
+      <br />
+      Funeral cover provides immediate funds to cover funeral expenses, reducing the financial burden on your family during a difficult time.
+      <br />
+      <br />
+      🧘 Peace of Mind:
+      <br />
+      Knowing that funeral expenses are covered offers peace of mind for you and your loved ones, ensuring that financial concerns don’t add to the stress of planning a funeral.
+      <br />
+      <br />
+      🏥 Comprehensive Coverage:
+      <br />
+      Funeral cover often includes a range of services, such as transportation, burial or cremation, and related expenses, ensuring that all aspects of the funeral are taken care of.
+      <br />
+      <br />
+      💼 Avoiding Financial Strain:
+      <br />
+      By having a dedicated policy for funeral expenses, you prevent your family from having to dip into savings or take out loans to cover costs, helping them avoid unnecessary financial strain.
+      <br />
+      <br />
+      📜 Flexibility in Planning:
+      <br />
+      Many funeral cover policies offer flexibility in terms of benefits and services, allowing you to tailor the policy to meet your specific wishes and needs.
+      <br />
+      <br />
+      ⚡ Ease of Access:
+      <br />
+      Funeral cover typically provides a quick payout, ensuring that funds are available when needed without lengthy administrative delays.
+      <br />
+      <br />
+      📈 Protection Against Rising Costs:
+      <br />
+      With a funeral cover policy, you lock in a level of coverage at today's rates, helping to protect against future increases in funeral costs.
+      <br />
+      <br />
+      Would you like more details on how funeral cover can be tailored to your specific needs or assistance in finding a suitable policy?
+    </div>
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage90ImmediateFuneralCover("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage90ImmediateFuneralCover("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("We will include details on tailoring funeral cover to your needs or finding a suitable policy in the report shared at the end of this conversation.") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage90ImmediateFuneralCover("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Understanding the specifics of funeral cover and its benefits can help you make an informed decision about whether it's the right choice for you. We're here to provide you with all the information you need to assess the value of funeral cover and its relevance to your financial planning. Is there any specific information you'd like to know about funeral cover to help you make a decision?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage90specificsFuneralCover("Yes, I have a question")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes, I have a question
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage90specificsFuneralCover("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                  </div>
+                </>
+              )}
+
+
+{message.content.includes("Next, let's talk about trusts. A trust is an arrangement where property belonging to one party is managed by another party for the benefit of a third party. Are you familiar with trusts?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage91Trust("Yes, I have a question")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes, I have a question
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage91Trust("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage91Trust("Tell me more")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Tell me more
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Trusts are an integral part of estate planning and can offer various benefits such as asset protection, tax efficiency, and control over asset distribution. They involve a legal arrangement where a trustee holds and manages assets for the benefit of beneficiaries. Trusts can be useful for preserving wealth, providing for loved ones, and ensuring your wishes are carried out. Would you like to explore how trusts can be tailored to meet your specific needs?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage91Integral("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage91Integral("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("We will include information on how trusts can be tailored to your specific needs in the report shared at the end of this conversation.") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage91Integral("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("There are two types of trusts: inter vivos trusts and testamentary trusts. Inter vivos trusts are established during your lifetime, while testamentary trusts are created in your will and come into effect after your death. Have you considered setting up a trust?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage92Vivos("Yes, I have considered setting up a trust")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes, I have considered setting up a trust
+                    </button>
+                     <button
+                      onClick={() =>
+                        handleButtonStage92Vivos("No, I haven’t thought about setting up a trust yet")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No, I haven’t thought about setting up a trust yet
+                    </button>
+                     <button
+                      onClick={() =>
+                        handleButtonStage92Vivos("I’m currently exploring the possibility of setting up a trust")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I’m currently exploring the possibility of setting up a trust
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage92Vivos("I’m not sure if setting up a trust is necessary for me")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I’m not sure if setting up a trust is necessary for me
+                    </button>
+                     <button
+                      onClick={() =>
+                        handleButtonStage92Vivos("I have some knowledge about trusts but need more information")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I have some knowledge about trusts but need more information
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage92Vivos("I have specific concerns or questions about setting up a trust")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I have specific concerns or questions about setting up a trust
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Setting up a trust can be a valuable component of your estate plan, providing various benefits such as asset protection, wealth preservation, and efficient distribution of assets to beneficiaries. Would you like more information on how trusts can benefit your specific situation?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage92Setting("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                     
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Exploring the possibility of setting up a trust is a proactive step in your estate planning journey. Trusts offer numerous advantages, including privacy, control over asset distribution, and tax efficiency. If you have any questions or need guidance on this process, feel free to ask.") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage92Setting("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                     
+                  </div>
+                </>
+              )}
+
+{message.content.includes("It's understandable to have reservations or uncertainty about setting up a trust. Trusts can be customised to suit your unique needs and goals, offering flexibility and protection for your assets. If you're unsure about whether a trust is right for you, we can discuss your concerns and explore alternative options.") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage92Setting("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                     
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Having some knowledge about trusts is a great starting point. However, it's essential to have a clear understanding of how trusts work and how they can benefit your estate planning strategy. If you need more information or have specific questions, feel free to ask, and I'll be happy to assist you.") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage92Setting("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                     
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Addressing specific concerns or questions about setting up a trust is crucial for making informed decisions about your estate plan. Whether you're unsure about the process, concerned about potential implications, or have questions about trust administration, I'm here to provide guidance and support. Feel free to share your concerns, and we can discuss them further.") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage92Setting("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                     
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Trusts can be beneficial for various reasons. They can protect your estate against insolvency, safeguard assets in the event of divorce, and peg growth in your estate. Are any of these reasons relevant to your estate planning?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage93Beneficial("Yes, protecting my estate against insolvency is a priority for me")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes, protecting my estate against insolvency is a priority for me
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage93Beneficial("I’m concerned about safeguarding assets in case of divorce")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I’m concerned about safeguarding assets in case of divorce
+                    </button>
+                     <button
+                      onClick={() =>
+                        handleButtonStage93Beneficial("Pegging growth in my estate sounds like a beneficial strategy")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Pegging growth in my estate sounds like a beneficial strategy
+                    </button>
+                     <button
+                      onClick={() =>
+                        handleButtonStage93Beneficial("All of these reasons are relevant to my estate planning")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     All of these reasons are relevant to my estate planning
+                    </button>
+                      <button
+                      onClick={() =>
+                        handleButtonStage93Beneficial("None of these reasons are currently a priority for me")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     None of these reasons are currently a priority for me
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Additionally, transferring assets to a trust can save on executor's fees and exclude assets from your estate for estate duty purposes. Have you thought about these advantages in relation to your estate planning?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage94Executor("Yes, saving on executor’s fees is an important consideration for me")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes, saving on executor’s fees is an important consideration for me
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage94Executor("Excluding assets from my estate for estate duty purposes is a key factor in my planning")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Excluding assets from my estate for estate duty purposes is a key factor in my planning
+                    </button>
+                     <button
+                      onClick={() =>
+                        handleButtonStage94Executor("I’m interested in exploring how transferring assets to a trust could benefit me")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I’m interested in exploring how transferring assets to a trust could benefit me
+                    </button>
+                     <button
+                      onClick={() =>
+                        handleButtonStage94Executor("I haven’t considered these advantages before, but they sound appealing")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I haven’t considered these advantages before, but they sound appealing
+                    </button>
+                      <button
+                      onClick={() =>
+                        handleButtonStage94Executor("I’m not sure how significant these advantages before would be for my estate planning")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I’m not sure how significant these advantages before would be for my estate planning
+                    </button>
+                     <button
+                      onClick={() =>
+                        handleButtonStage94Executor("I need more information to understand how these advantages would apply to my situation")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                    I need more information to understand how these advantages would apply to my situation
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage94Executor("I’m primarily focused on other aspects of my estate planning right now")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                    I’m primarily focused on other aspects of my estate planning right now
+                    </button>
+                  </div>
+                </>
+              )}
+
+
+{message.content.includes("Exploring how transferring assets to a trust could benefit you is a wise decision in estate planning. It offers various advantages, such as reducing executor's fees and estate duty obligations, as well as providing asset protection and efficient distribution to beneficiaries. If you're interested in learning more about these benefits and how they apply to your specific situation, I am here to provide further information and guidance.") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage94Executor("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Understanding the significance of advantages like saving on executor's fees and excluding assets from your estate for estate duty purposes is essential in crafting an effective estate plan. These benefits can have a significant impact on preserving your wealth and ensuring efficient asset distribution. If you're uncertain about their significance or how they apply to your estate planning, I can provide more details and clarify any questions you may have.") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage94Executor("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Exploring how transferring assets to a trust could benefit you is a wise decision in estate planning. It offers various advantages, such as reducing executor's fees and estate duty obligations, as well as providing asset protection and efficient distribution to beneficiaries. If you're interested in learning more about these benefits and how they apply to your specific situation, I'm here to provide further information and guidance.") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage94Executor("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Understanding the significance of advantages like saving on executor's fees and excluding assets from your estate for estate duty purposes is essential in crafting an effective estate plan. These benefits can have a significant impact on preserving your wealth and ensuring efficient asset distribution. If you're uncertain about their significance or how they apply to your estate planning, I can provide more details and clarify any questions you may have.") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage94Executor("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("It's understandable to need more information to fully grasp how the advantages of transferring assets to a trust would apply to your situation. These advantages, such as saving on executor's fees and estate duty obligations, can vary depending on individual circumstances. If you require further clarification or personalised insights into how these benefits would impact your estate planning, I'm here to assist you and provide the information you need.") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage94Executor("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Addressing specific concerns or questions about setting up a trust is crucial for making informed decisions about your estate plan. Whether you're unsure about the process, concerned about potential implications, or have questions about trust administration, I'm here to provide guidance and support. Feel free to share your concerns, and we can discuss them further.") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage94Executor("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Donation of assets to a trust. This can remove assets from your estate and allow further growth within the trust and not increasing the value of your personal estate. Are you considering donating assets to a trust?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage95Donation("Yes, I’m interested in exploring this option")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes, I’m interested in exploring this option
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage95Donation("I’m not sure if donating assets to a trust aligns with my estate planning goals")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I’m not sure if donating assets to a trust aligns with my estate planning goals
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage95Donation("I need more information before deciding")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I need more information before deciding
+                    </button>
+                     <button
+                      onClick={() =>
+                        handleButtonStage95Donation("I’m not comfortable with the idea of donating assets to a trust")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I’m not comfortable with the idea of donating assets to a trust
+                    </button>
+                  </div>
+                </>
+              )}
+
+
+{message.content.includes("Understanding how donating assets to a trust aligns with your estate planning goals is crucial for making informed decisions. Donating assets to a trust can offer various benefits, including asset protection, estate tax reduction, and efficient wealth transfer. However, it's essential to ensure that this strategy aligns with your overall estate planning objectives. If you're unsure about its compatibility with your goals, I can provide more information and help you evaluate whether it's the right choice for your estate plan.") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage95Donation("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                   
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Gathering more information before deciding on donating assets to a trust is a prudent approach. This strategy involves transferring assets to a trust, which can have implications for asset protection, tax planning, and wealth preservation. If you require additional details about how this option works, its potential benefits, and any considerations specific to your situation, I'm here to provide the necessary information and support your decision-making process.") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage95Donation("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                   
+                  </div>
+                </>
+              )}
+
+{message.content.includes("It's important to note that while this strategy can reduce estate duty, there may be tax implications. Are you aware of the potential donations tax liability?") && (
+                <>  
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage96Strategy("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage96Strategy("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                     <button
+                      onClick={() =>
+                        handleButtonStage96Strategy("Tell me more")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Tell me more
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Donations tax is a tax imposed on the transfer of assets to a trust or natural person without receiving adequate consideration in return. It's important to understand that while transferring assets to a trust can help reduce estate duty, it may trigger donations tax liabilities. The amount of donations tax payable depends on several factors, including the value of the assets transferred, any available exemptions or deductions, and the relationship between the donor and the recipient. The donations tax threshold is R100 000 per year.") && (
+                <>  
+                <br />
+                    📜 If you'd like to learn more about donations tax and its implications for your estate planning, I can provide further details to help you make informed decisions.
+                    <br />
+                
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage97Donation("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                    
+                  </div>
+                </>
+              )}
+
+
+{message.content.includes("Next, let's talk about selling assets to the trust. This can be a strategic way to remove assets from your estate. However, it’s important to note that a loan account is not automaticaaly created unless there’s a difference between the sale price and the value of the asset. Have you considered selling assets to the trust in this way?") && (
+                <>  
+                
+                
+                  <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage98Assets("Yes, I’m interested in exploring this option")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes, I’m interested in exploring this option
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage98Assets("I’m not sure if selling assets to a trust aligns with my estate planning goals")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I’m not sure if selling assets to a trust aligns with my estate planning goals
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage98Assets("I need more information before deciding")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I need more information before deciding
+                    </button>
+                     <button
+                      onClick={() =>
+                        handleButtonStage98Assets("I’m not comfortable with the idea of selling assets to a trust")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I’m not comfortable with the idea of selling assets to a trust
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Selling assets to a trust can help minimize estate duty and protect your assets. However, remember that if the sale price matches the asset's value, a loan account won't be created. Additionally, capital gains tax and transfer duty may apply if the asset is a capital asset like property. We can discuss how this option fits with your estate planning goals.") && (
+                <>  
+                 <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage98Assets("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("It's crucial to align your estate planning strategies with your goals. Selling assets to a trust can offer benefits, such as reducing estate duty, but it also comes with implications like capital gains tax and transfer duty. If you're unsure whether this strategy is right for you, we can discuss it further to ensure it aligns with your specific needs and circumstances.") && (
+                <>  
+                 <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage98Assets("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Understanding the full implications of selling assets to a trust is key. While it can offer estate planning benefits, it's important to consider the potential tax implications, like capital gains tax and transfer duty. If you need more information on how this works and its impact on your estate planning, I’m here to provide the necessary details.") && (
+                <>  
+                 <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage98Assets("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Selling assets to the trust might reduce estate duty, but a sale and loan agreement should be in place if a loan account is to be created. Are you familiar with the terms and conditions of such agreements?") && (
+                <>  
+                 <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage99Selling("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes, I am familiar
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage99Selling("I have some understanding but need more clarity")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I have some understanding but need more clarity
+                    </button>
+                     <button
+                      onClick={() =>
+                        handleButtonStage99Selling("I need assistance in understanding the terms and conditions")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I need assistance in understanding the terms and conditions
+                    </button>
+                      <button
+                      onClick={() =>
+                        handleButtonStage99Selling("I prefer not to engage in agreements that involve selling assets to a trust")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I prefer not to engage in agreements that involve selling assets to a trust
+                    </button>
+                  </div>
+                </>
+              )}
+              
+              {message.content.includes("Sale and loan agreements can be complex, especially when transferring assets to a trust. These agreements detail the sale transaction and the loan terms, if applicable. If you need help understanding these terms and conditions, or have questions about how they apply to your situation, I’m here to provide guidance and support.") && (
+                <>  
+                 <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage99Selling("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                   
+                  </div>
+                </>
+              )}
+{message.content.includes("It’s great that you have some understanding of sale and loan agreements. These agreements outline the sale terms and the loan's repayment terms if a loan account is created. If you need more clarity or have questions about specific aspects of these agreements, feel free to ask. I’m here to help provide additional information and support your understanding.") && (
+                <>  
+                 <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage99Selling("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                   
+                  </div>
+                </>
+              )}
+{message.content.includes("Lastly, let's discuss the costs and tax consequences of transferring assets to a trust. This may include capital gains tax, transfer duty (for immovable property), and possible donations tax. Have you taken these factors into account?") && (
+                <>  
+                 <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage99Final("Yes, I am familiar")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes, I am familiar
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage99Final("I have some understanding but need more clarity")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                    I have some understanding but need more clarity
+                    </button>
+                     <button
+                      onClick={() =>
+                        handleButtonStage99Final("I need more information before deciding")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I need more information before deciding
+                    </button>
+                      <button
+                      onClick={() =>
+                        handleButtonStage99Final("I’m not comfortable with the potential costs & tax implications at this time")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I’m not comfortable with the potential costs & tax implications at this time
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Selling assets to a trust can be a strategic way to transfer assets out of your estate, potentially reducing estate duty and protecting your wealth. However, it’s important to consider the potential tax implications, such as capital gains tax and transfer duty, and whether a loan account will actually be created. If you’re interested in exploring this option further, we can dive into the specifics and see how it aligns with your overall estate planning goals.") && (
+                <>  
+                 <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage99Final("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("It's good to hear that you have some understanding of the costs and tax consequences associated with transferring assets to a trust. These factors can indeed be complex, and it's important to have a clear understanding to make informed decisions. If you need more clarity on any specific aspects of these costs and tax implications or if you have any questions about how they may impact your estate planning, feel free to ask. I'm here to provide additional information and support your understanding.") && (
+                <>  
+                 <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage99Final("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Understanding the costs and tax implications of transferring assets to a trust is crucial for making informed decisions in your estate planning. If you need more information before deciding, I'm here to help. We can discuss these factors in more detail, clarify any questions you may have, and ensure that you have a comprehensive understanding of how they may affect your estate plan. Feel free to ask any questions or raise any concerns you may have.") && (
+                <>  
+                 <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage99Final("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Now, let's explore the concept of an investment trust. This structure allows for annual donations to the trust, reducing your estate over time. Are you interested in setting up an investment trust?") && (
+                <>  
+                 <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage100Investment("Yes, I’m interested")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes, I’m interested
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage100Investment("I’m not sure if an investment trust aligns with my estate planning goals")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I’m not sure if an investment trust aligns with my estate planning goals
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage100Investment("I prefer to explore other options")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I prefer to explore other options
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage100Investment("I need more information before deciding")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I need more information before deciding
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Setting up an investment trust can be a strategic way to manage your assets and reduce your estate over time. It allows for annual donations to the trust, which can have various benefits for your estate planning. If you're interested in exploring this option further, we can discuss the specifics of how an investment trust could align with your estate planning goals and tailor a plan to suit your needs.") && (
+                <>  
+                 <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage100Investment("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("It's understandable to have questions about whether an investment trust aligns with your estate planning goals. An investment trust can offer unique advantages, but it's essential to ensure that it fits your specific needs and objectives. If you're uncertain, we can delve deeper into how an investment trust works and explore whether it's the right option for you.") && (
+                <>  
+                 <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage100Investment("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Exploring different options is an important part of estate planning, and it's essential to find the approach that best suits your needs and objectives. If you prefer to explore other options besides setting up an investment trust, we can discuss alternative strategies and find the solution that aligns most closely with your estate planning goals.") && (
+                <>  
+                 <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage100Investment("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Making an informed decision about whether to set up an investment trust requires a clear understanding of how it works and how it may impact your estate planning goals. If you need more information before deciding, feel free to ask any questions you may have. We can discuss the specifics of an investment trust, its benefits, and how it may fit into your overall estate plan.") && (
+                <>  
+                 <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage100Investment("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                  </div>
+                </>
+              )}
+
+
+{message.content.includes("An investment trust can provide flexibility for the trust beneficiaries to receive income and borrow funds. Does this align with your estate planning goals?") && (
+                <>  
+                 <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage101InvestmentFlexibility("Yes")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage101InvestmentFlexibility("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage101InvestmentFlexibility("Tell me more")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Tell me more
+                    </button>
+                  </div>
+                </>
+              )}
+
+
+{message.content.includes("If an investment trust doesn't align with your estate planning goals, we can explore other options that may better suit your needs. Estate planning is a personalised process, and it's essential to find strategies that align closely with your objectives and preferences. Let's discuss alternative approaches to ensure your estate plan reflects your wishes and priorities.") && (
+                <>  
+                 <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage101InvestmentFlexibility("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("An investment trust offers flexibility for beneficiaries to receive income and borrow funds, providing potential advantages for estate planning. With an investment trust, you can structure distributions in a way that aligns with your goals and preferences. If you're interested in learning more about how an investment trust could benefit your estate plan, I can provide further details on how it works and its potential advantages.") && (
+                <>  
+                 <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage101InvestmentFlexibility("Continue")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                    
+                  </div>
+                </>
+              )}
+
+{message.content.includes("Thanks! Do you have anything you’d like to add or any questions that I can help you with today?") && (
+                <>  
+                 <div className="space-x-2 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage101Final("Yes, I have a question")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     Continue
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage101Final("No")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     No
+                    </button>
+                  </div>
+                </>
+              )}
 
 
 
@@ -7359,6 +12652,14 @@ const handleButtonStage69ExecutorFinal = (message: any) => {
                       className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
                     >
                       Wills
+                    </button>
+                     <button
+                      onClick={() =>
+                        handleButtonStage80Claims("I don’t have any maintenance obligations")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                     I don’t have any maintenance obligations
                     </button>
                     <button
                       onClick={() => handleButtonComponent("Trusts")}
@@ -7883,10 +13184,10 @@ const handleButtonStage69ExecutorFinal = (message: any) => {
                   className="w-full"
                   onSubmit={(e) => {
                     e.preventDefault();
+
                     if(isResponse.current == "1"){
                     e.preventDefault();
                      handleSubmit(e);
-                     
                     } else 
                     if (messageData.current.includes("Great! Please provide the above mentioned details.")) { 
                       e.preventDefault();
@@ -7915,6 +13216,19 @@ const handleButtonStage69ExecutorFinal = (message: any) => {
                         "Are there any valuable possessions such as artwork, jewellery, or collectibles that you own? If so, could you describe each item and estimate its value?"
                       );
                     }
+
+
+                    //ASSET
+                    else if (messageData.current.includes("To help you estimate the value of your property, let’s go through a few simple steps. This will give you a rough idea of what your property could be worth. First, please specify the type of property you have (e.g. house, apartment, land).")) { 
+                      e.preventDefault();
+                      handleAddAIResponse(
+                        "Next, provide the location of your property (suburb, or specific neighbourhood, province)."
+                      );
+                    }
+
+
+
+                    
 
                     
                     else if (messageData.current.includes("Great! Please provide the above mentioned details of your valuable possessions")) { 
@@ -8188,14 +13502,14 @@ const handleButtonStage69ExecutorFinal = (message: any) => {
                     else if (messageData.current.includes("Great! Please provide the above mentioned details of your stocks or equities")) { 
                       e.preventDefault();
                       handleAddAIResponse(
-                        "Are you invested in any bonds or fixed-income securities? If so, please provide details about the types of bonds (government, corporate, municipal), the face value of each bond, the interest rate, and the maturity date"
+                        "Are you invested in any bonds or fixed-income securities? If so, please provide details about the types of bonds (government, corporate, municipal), the face value of each bond, the interest rate, and the maturity date."
                       );
                     }
 
                     else if (messageData.current.includes("No problem. Whenever you're ready to provide the details of your stocks or equities")) { 
                       e.preventDefault();
                       handleAddAIResponse(
-                        "Are you invested in any bonds or fixed-income securities? If so, please provide details about the types of bonds (government, corporate, municipal), the face value of each bond, the interest rate, and the maturity date"
+                        "Are you invested in any bonds or fixed-income securities? If so, please provide details about the types of bonds (government, corporate, municipal), the face value of each bond, the interest rate, and the maturity date."
                       );
                     }
 
@@ -8353,47 +13667,114 @@ const handleButtonStage69ExecutorFinal = (message: any) => {
                       );
                     }
 
-                    
+                    else if (messageData.current.includes("No problem, I understand that there is a lot to think about. Is there something specific you'd like to discuss or any concerns you have that I can address?")) { 
+                      e.preventDefault();
+                      handleAddAIResponse(
+                        "Liquidity is essential to cover estate costs without having to sell assets. Are you aware of any sources of liquidity in your estate, such as cash reserves or liquid investments?"
+                      );
+                    }
 
+                    else if (messageData.current.includes("Great! Please provide the details of the sources of liquidity.")) { 
+                      e.preventDefault();
+                      handleAddAIResponse(
+                        "If there's a shortfall, there are a few options. The executor may ask heirs to contribute cash to prevent asset sales. Are you open to this option?"
+                      );
+                    }
 
+                    else if (messageData.current.includes("Great! Please provide the above-mentioned details about your life insurance policy and how it will be payable to the testamentary trust.")) { 
+                      e.preventDefault();
+                      handleAddAIResponse(
+                        "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?"
+                      );
+                    }
 
+                    else if (messageData.current.includes("No problem. Whenever you're ready, please provide the details about your life insurance policy.")) { 
+                      e.preventDefault();
+                      handleAddAIResponse(
+                        "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?"
+                      );
+                    }
 
+                    else if (messageData.current.includes("We will include this information in the report shared at the end of this conversation.")) { 
+                      e.preventDefault();
+                      handleAddAIResponse(
+                        "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?"
+                      );
+                    }
 
+                    else if (messageData.current.includes("No problem. Whenever you're ready to provide the details about life insurance policy, just let me know.")) { 
+                      e.preventDefault();
+                      handleAddAIResponse(
+                        "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?"
+                      );
+                    }
+  
+                    else if (messageData.current.includes("No problem. Whenever you're ready to provide the details about life insurance policy option, just let me know.")) { 
+                      e.preventDefault();
+                      handleAddAIResponse(
+                        "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?"
+                      );
+                    }
 
+                    else if (messageData.current.includes("In the event of your passing, how much income would your spouse/family/dependants need per month for their maintenance after tax and deductions?")) { 
+                      e.preventDefault();
+                      handleAddAIResponse(
+                        "Factors considered by the court when assessing the claim include the duration of the marriage, the spouse's age and earning capacity, and the size of your assets. Have you thought about these factors in your estate planning?"
+                      );
+                    }
 
+                    else if (messageData.current.includes("Do your dependents require any income per month for maintenance?")) { 
+                      e.preventDefault();
+                      handleAddAIResponse(
+                        "It's important to provide for the shortfall in household income after your death. Have you assessed the capital available to your spouse/family/dependents from which to generate an income?"
+                      );
+                    }
 
+                    else if (messageData.current.includes("Setting up a trust can be a valuable component of your estate plan, providing various benefits such as asset protection, wealth preservation, and efficient distribution of assets to beneficiaries. Would you like more information on how trusts can benefit your specific situation?")) { 
+                      e.preventDefault();
+                      handleAddAIResponse(
+                        "Trusts can be beneficial for various reasons. They can protect your estate against insolvency, safeguard assets in the event of divorce, and peg growth in your estate. Are any of these reasons relevant to your estate planning?"
+                      );
+                    }
 
+                    else if (messageData.current.includes("Exploring the possibility of setting up a trust is a proactive step in your estate planning journey. Trusts offer numerous advantages, including privacy, control over asset distribution, and tax efficiency. If you have any questions or need guidance on this process, feel free to ask.")) { 
+                      e.preventDefault();
+                      handleAddAIResponse(
+                        "Trusts can be beneficial for various reasons. They can protect your estate against insolvency, safeguard assets in the event of divorce, and peg growth in your estate. Are any of these reasons relevant to your estate planning?"
+                      );
+                    }
 
+                    else if (messageData.current.includes("It's understandable to have reservations or uncertainty about setting up a trust. Trusts can be customised to suit your unique needs and goals, offering flexibility and protection for your assets. If you're unsure about whether a trust is right for you, we can discuss your concerns and explore alternative options.")) { 
+                      e.preventDefault();
+                      handleAddAIResponse(
+                        "Trusts can be beneficial for various reasons. They can protect your estate against insolvency, safeguard assets in the event of divorce, and peg growth in your estate. Are any of these reasons relevant to your estate planning?"
+                      );
+                    }
 
+                    else if (messageData.current.includes("Having some knowledge about trusts is a great starting point. However, it's essential to have a clear understanding of how trusts work and how they can benefit your estate planning strategy. If you need more information or have specific questions, feel free to ask, and I'll be happy to assist you.")) { 
+                      e.preventDefault();
+                      handleAddAIResponse(
+                        "Trusts can be beneficial for various reasons. They can protect your estate against insolvency, safeguard assets in the event of divorce, and peg growth in your estate. Are any of these reasons relevant to your estate planning?"
+                      );
+                    }
 
+                    else if (messageData.current.includes("Addressing specific concerns or questions about setting up a trust is crucial for making informed decisions about your estate plan. Whether you're unsure about the process, concerned about potential implications, or have questions about trust administration, I'm here to provide guidance and support. Feel free to share your concerns, and we can discuss them further.")) { 
+                      e.preventDefault();
+                      handleAddAIResponse(
+                        "Trusts can be beneficial for various reasons. They can protect your estate against insolvency, safeguard assets in the event of divorce, and peg growth in your estate. Are any of these reasons relevant to your estate planning?"
+                      );
+                    }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+                    else if (messageData.current.includes("Donations tax is a tax imposed on the transfer of assets to a trust or natural person without receiving adequate consideration in return. It's important to understand that while transferring assets to a trust can help reduce estate duty, it may trigger donations tax liabilities. The amount of donations tax payable depends on several factors, including the value of the assets transferred, any available exemptions or deductions, and the relationship between the donor and the recipient. The donations tax threshold is R100 000 per year.")) { 
+                      e.preventDefault();
+                      handleAddAIResponse(
+                        "Next, let's talk about selling assets to the trust. This can be a strategic way to remove assets from your estate. However, it’s important to note that a loan account is not automaticaaly created unless there’s a difference between the sale price and the value of the asset. Have you considered selling assets to the trust in this way?"
+                      );
+                    }
+                    //END OF Flow
                     else if (
                       messageData.current.includes(
-                        "No problem. Whenever you're ready to provide the details, just let me know."
+                        "No problem. Whenever you're ready to provide the details of any of your real estate, just let me know."
                       )
                     ) {
                       e.preventDefault();
@@ -8407,7 +13788,7 @@ const handleButtonStage69ExecutorFinal = (message: any) => {
                     ) {
                       e.preventDefault();
                       handleAddAIResponse(
-                        "Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan."
+                        "Next, provide the location of your property (suburb, or specific neighbourhood, province)."
                       );
                     } else if (
                       messageData.current.includes(
@@ -8416,7 +13797,7 @@ const handleButtonStage69ExecutorFinal = (message: any) => {
                     ) {
                       e.preventDefault();
                       handleAddAIResponse(
-                        "Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan."
+                        "What is the size of your property? For houses and apartments, include the square metres of living space. For land, provide the total area in square metres or hectares."
                       );
                     } else if (
                       messageData.current.includes(
@@ -8425,7 +13806,7 @@ const handleButtonStage69ExecutorFinal = (message: any) => {
                     ) {
                       e.preventDefault();
                       handleAddAIResponse(
-                        "Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan."
+                        "How many bedrooms and bathrooms does your property have?"
                       );
                     } else if (
                       messageData.current.includes(
@@ -8434,7 +13815,7 @@ const handleButtonStage69ExecutorFinal = (message: any) => {
                     ) {
                       e.preventDefault();
                       handleAddAIResponse(
-                        "Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan."
+                        "Describe the condition of your property (new, good, fair, needs renovation). Also, mention any special features (e.g., swimming pool, garden, garage)."
                       );
                     } else if (
                       messageData.current.includes(
@@ -8443,7 +13824,7 @@ const handleButtonStage69ExecutorFinal = (message: any) => {
                     ) {
                       e.preventDefault();
                       handleAddAIResponse(
-                        "Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan."
+                        "The estimated value of your property based on the information you provided is:"
                       );
                     } else if (
                       messageData.current.includes(
@@ -8454,16 +13835,15 @@ const handleButtonStage69ExecutorFinal = (message: any) => {
                       handleAddAIResponse(
                         "When it comes to the administration of your estate after your passing, how important is it to you that the process is smooth and straightforward for your heirs?"
                       );
-                    } else if (
-                      messageData.current.includes(
-                        "No problem, I understand that estate planning can be a lot to think about. Is there"
-                      )
-                    ) {
-                      e.preventDefault();
-                      handleAddAIResponse(
-                        "Great! Here are a few key considerations to keep in mind while planning your estate. I’ll ask you some questions to get a better understanding of your specific needs and goals."
-                      );
-                    } else if (!trigger.current) {
+                    } else if (messageData.current.includes("No problem, I understand that estate planning can be a lot to think about. Is there")) {
+  e.preventDefault();
+  handleAddAIResponse(
+    "Great! Here are a few key considerations to keep in mind while planning your estate. I’ll ask you some questions to get a better understanding of your specific needs and goals."
+  );
+} else {
+  handleSubmit(e); // Let the AI respond freely if no conditions are met
+}
+ if (!trigger.current) {
                       e.preventDefault();
                       handleAddAIResponse(
                         "Let's dive into the world of estate planning!"

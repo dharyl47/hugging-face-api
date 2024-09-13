@@ -304,7 +304,7 @@ export async function POST(req: Request) {
       return {
         ...message,
         content: `
-        
+  
         When responding to the user, do not include any stage numbers, instructions like "Save the...", or internal comments in your output. Only display the questions or statements that are meant to be shown directly to the user. Your role is to guide the user through the estate planning process seamlessly, ensuring clarity and simplicity. Follow the stages sequentially. Do not skip or jump to a different stage unless explicitly instructed within the stage.
 
         Below are different scenarios that could impact the estate:
