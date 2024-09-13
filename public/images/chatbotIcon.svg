@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32">
+  <defs>
+    <linearGradient id="linear-gradient" x1="0.5" y1="1" x2="0.5" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#015842"/>
+      <stop offset="1" stop-color="#009677"/>
+    </linearGradient>
+    <linearGradient id="linear-gradient-2" x2="0.935" y2="1" gradientUnits="objectBoundingBox">
+      <stop offset="0" stop-color="#009f7f"/>
+      <stop offset="1" stop-color="#009f7f" stop-opacity="0"/>
+    </linearGradient>
+  </defs>
+  <g id="chatbot_icon" data-name="chatbot icon" transform="translate(-19.647 -22)">
+    <g id="chatbot_icon-2" data-name="chatbot icon" transform="translate(19.647 22)">
+      <circle id="Ellipse_17" data-name="Ellipse 17" cx="16" cy="16" r="16" fill="url(#linear-gradient)"/>
+    </g>
+    <g id="moneyversity_icon" data-name="moneyversity icon" transform="translate(22.206 35.83) rotate(-22)">
+      <path id="Path_1" data-name="Path 1" d="M14.316,5.364,1.331,0,.007,5.274a.262.262,0,0,0,.08.258L4.968,9.908a.261.261,0,0,0,.175.067H11.7a.26.26,0,0,0,.23-.139Z" transform="translate(2.931 4.118)" fill="#009f7f" fill-rule="evenodd"/>
+      <path id="Path_2" data-name="Path 2" d="M6.786,6.9,9.174,2.425,2.836,0,0,7.037H6.556a.261.261,0,0,0,.23-.139" transform="translate(8.074 7.057)" fill="#005842" fill-rule="evenodd"/>
+      <path id="Path_3" data-name="Path 3" d="M23.211,8.781,16.938,3.158h0L13.565.134A.525.525,0,0,0,13.216,0H.262A.262.262,0,0,0,.087.457L4.626,4.527,9.732,9.1a.526.526,0,0,0,.35.134H23.036a.262.262,0,0,0,.175-.457" transform="translate(0 0.339)" fill="#78b928" fill-rule="evenodd"/>
+      <path id="Path_4" data-name="Path 4" d="M6.883,4.875.418.052A.262.262,0,0,0,.105.473L6,4.875Z" transform="translate(11.391 4.703)" fill-rule="evenodd" fill="url(#linear-gradient-2)"/>
+      <path id="Path_5" data-name="Path 5" d="M10.963,2.289a.264.264,0,0,0-.327.175A4.2,4.2,0,0,1,8.061,5.311,4.659,4.659,0,0,0,8.7,4.65,6.6,6.6,0,0,0,10,1.545a.262.262,0,0,0-.519-.073,5.7,5.7,0,0,1-1.8,3.489,9.477,9.477,0,0,0,.934-4.7.262.262,0,1,0-.524.008C8.1,1.61,7.973,4.032,6.865,5.158a1.936,1.936,0,0,1-1.43.593H5.414a9.293,9.293,0,0,1-5-1.1.262.262,0,0,0-.3.426c.069.049,1.723,1.2,5.3,1.2,3.82,0,5.221-1.991,5.724-3.661a.261.261,0,0,0-.175-.326" transform="translate(11.243 0)" fill="#009f7f" fill-rule="evenodd"/>
+    </g>
+  </g>
+</svg>
