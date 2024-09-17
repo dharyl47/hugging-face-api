@@ -8,7 +8,7 @@ export async function POST(req: Request) {
         await connectMongoDB();
         console.log("MongoDB connection successful");
 
-        const { name, dateOfBirth, dateCreated, emailAddress, deletionRequest, dependentsOver, dependentsUnder, propertyRegime, encryptedName, checkboxes, checkboxesAsset, maritalStatus } = await req.json();
+        const { name, dateOfBirth, will, willStatus, dateCreated, emailAddress, deletionRequest, dependentsOver, dependentsUnder, propertyRegime, encryptedName, checkboxes, checkboxesAsset, maritalStatus } = await req.json();
 
         if (name === '404') {
             return NextResponse.json({ error: 'Invalid user name' }, { status: 400 });
@@ -18,7 +18,10 @@ export async function POST(req: Request) {
 
         const updatedFields: any = {};
         if (dateOfBirth) updatedFields.dateOfBirth = dateOfBirth;
+         if (will) updatedFields.will = will;
+        
         if (dateCreated) updatedFields.dateCreated = dateCreated
+        if (willStatus) updatedFields.willStatus = willStatus
         if (deletionRequest) updatedFields.deletionRequest = deletionRequest;
         if (emailAddress) updatedFields.emailAddress = emailAddress;
         if (dependentsOver) updatedFields.dependentsOver = dependentsOver;
