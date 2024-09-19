@@ -85,6 +85,14 @@ export default function Chat() {
 
   const [deletionRequestData, setDeletionRequestData] = useState("");
 
+ 
+  const chatboxRef = useRef<HTMLDivElement | null>(null); 
+ useEffect(() => {
+    if (chatboxRef.current) {
+      chatboxRef.current.scrollTop = chatboxRef.current.scrollHeight;
+    }
+  }, [messages]);
+
   // Function to handle the button click and append the "Hello" response
   const handleAddAIResponse = (message: any) => {
     const userMessage: Message = {
@@ -14647,7 +14655,7 @@ const handleAdvisorModalToggle = () => {
 
             <div
               id="chatbox"
-              className="p-4 h-[calc(100vh-220px)] overflow-y-auto"
+              className="p-4 h-[calc(100vh-220px)] overflow-y-auto" ref={chatboxRef}
             >
               {renderMessages() || <div className="italic">typing...</div>}
             </div>
@@ -15773,16 +15781,16 @@ const handleAdvisorModalToggle = () => {
                 </button>
               </div>
             </form>
-            {loading && (
+            {/* {loading && (
               <p className="text-white">
                 Loading... Retrying {retryCount}/{MAX_RETRIES}
               </p>
-            )}
+            )} */}
           </div>
         </div>
       </div>
 
-      <button
+      {/* <button
         onClick={() => setIsOpen(true)}
         className="fixed bottom-5 right-5 bg-[#84c342] p-4 text-white rounded-full shadow-md hover:bg-blue-500 transition duration-300 block md:hidden"
       >
@@ -15800,7 +15808,7 @@ const handleAdvisorModalToggle = () => {
             d="m19.5 8.25-7.5 7.5-7.5-7.5"
           />
         </svg>
-      </button>
+      </button> */}
     </div>
   );
 }
