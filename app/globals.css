@@ -7,6 +7,18 @@
     width: 30rem;
     padding-left: 100px;
 } */
+ #chatbox {
+  max-height: calc(100vh - 100px); /* Adjust this based on your header and input section height */
+  overflow-y: auto;
+}
+
+/* Input form fixed at the bottom */
+form {
+  position: sticky;
+  bottom: 0;
+  background-color: #303134;
+  z-index: 10; /* Make sure it's above the chat container */
+}
 @media (max-width: 767px) {
     #chat-container-2 {
       display: none;

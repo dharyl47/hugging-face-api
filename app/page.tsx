@@ -11,6 +11,7 @@ import Navbar from "@/app/components/Navbar";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import CryptoJS from "crypto-js";
+import "./globals.css"
 
 interface Checkboxes {
   spouse: boolean;
@@ -14530,7 +14531,7 @@ const handleAdvisorModalToggle = () => {
   };
 
   return (
-    <div className="fixed inset-0 bg-[#212121]">
+    <div className="fixed inset-0 bg-[#212121] flex flex-col">
       <div className="fixed inset-0">
         <div className="fixed inset-0 flex items-end lg:w-1/2 xl:w-2/5 mx-auto ">
           <div className="bg-[#212121] shadow-md rounded-lg w-full h-full">
