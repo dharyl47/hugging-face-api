@@ -298,7 +298,7 @@ if (message == "Guardian") {
  if (message == "Married") {
       response = "Excellent. Are you married in or out of community of property? If married out of community of property, is it with or without the accrual system?";
     }
-    saveTypeOfMarriage(message);
+    saveMarriage(message);
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     const userMessage: Message = {
@@ -465,8 +465,11 @@ const handleButtonStage7 = (message: any) => {
       response = "Do you have any dependents?";
     }
     if (message == "No, let’s move on") {
-      response = "Now that I have some basic information about you, let’s create a customised estate planning process tailored to your needs";
-    }
+    //  response = "Now that I have some basic information about you, let’s create a customised estate planning process tailored to your needs";
+    response = "Here are some templates to help you get started with your estate planning documents:";
+    
+  
+  }
     
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -782,7 +785,11 @@ const handleButtonStage13v3 = (message: any) => {
     if (message == "Download All Templates") {
       response = "Templates are downloaded";
     }
+    if (message == "Skip") {
+      response = "Now that we’ve covered your personal details, let’s talk about your objectives for estate planning. Understanding your goals will help us create a plan that fits your needs perfectly. Ready to dive in?";
+    }
 
+    
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     const userMessage: Message = {
       id: Date.now().toString(), // Unique ID
@@ -869,6 +876,33 @@ const handleButtonStage13v3 = (message: any) => {
     if (message == "Continue") {
       response =
         "Now that we’ve covered your personal details, let’s talk about your objectives for estate planning. Understanding your goals will help us create a plan that fits your needs perfectly. Ready to dive in?";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage15v1 = (message: any) => {
+    let response = "";
+
+  
+    if (message == "Continue") {
+      response =
+        "Great! To help you stay organised throughout the estate planning process, here are some checklists for different stages:";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -5898,6 +5932,9 @@ const handleButtonStage13v3 = (message: any) => {
   const saveTypeOfMarriage = async (message: any) => {
     await saveUserProfile({ propertyRegime: message });
   };
+  const saveMarriage = async (message: any) => {
+    await saveUserProfile({ maritalStatus: message });
+  };
   const saveDeletionRequest = async (message: any, messageName: any) => {
     setDeletionRequestData("true");
 
@@ -6500,7 +6537,7 @@ const handleButtonStage13v3 = (message: any) => {
                   </div>
                   <div className="space-x-2 mt-4">
                     <button
-                      onClick={() => handleButtonStage15("Continue")}
+                      onClick={() => handleButtonStage15v1("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
                     >
                       Continue
@@ -6759,6 +6796,8 @@ const handleButtonStage13v3 = (message: any) => {
                     <br />
                     💉 Living Will: A template to specify your medical treatment
                     preferences.
+                    <br/>
+                    These templates are for your perusal, you can either fill them in and share at the end of this chat or simply store the copy for reference at any point in your estate planning journey.
                   </div>
                   <div className="space-x-2 mt-4">
                     <button
@@ -6804,6 +6843,14 @@ const handleButtonStage13v3 = (message: any) => {
                       className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
                     >
                       Download All Templates
+                    </button>
+                     <button
+                      onClick={() =>
+                        handleButtonStage14Template("Skip")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Skip
                     </button>
                   </div>
                 </>
@@ -14510,90 +14557,91 @@ const handleAdvisorModalToggle = () => {
               </div>
                {/* Modal Popup */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-[#2f2f2f] text-white rounded-lg w-[90%] max-w-3xl p-8">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-4xl font-bold">Estate Planning FAQs</h2>
-              <button
-                className="text-white text-2xl hover:text-gray-300"
-                onClick={handleModalToggle}
-              >
-                ✖
-              </button>
-            </div>
-            <p className="mb-6 text-xl">
-              Here are some frequently asked questions about estate planning in
-              South Africa:
-            </p>
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="bg-[#2f2f2f] text-white rounded-lg w-[90%] max-w-3xl p-8">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-4xl font-bold">Estate Planning FAQs</h2>
+        <button
+          className="text-white text-2xl hover:text-gray-300"
+          onClick={handleModalToggle}
+        >
+          ✖
+        </button>
+      </div>
+      <p className="mb-6 text-xl">
+        Here are some frequently asked questions about estate planning in
+        South Africa:
+      </p>
 
-            {/* FAQ Content */}
-            <div className="space-y-6 text-lg">
-              <div>
-                <p className="font-semibold text-2xl">
-                  What is estate planning? 🧾
-                </p>
-                <p>
-                  Estate planning is the process of arranging for the management
-                  and disposal of a person’s estate during their life and after
-                  death. It involves creating documents like wills, trusts, and
-                  powers of attorney.
-                </p>
-              </div>
-              <div>
-                <p className="font-semibold text-2xl">
-                  Why is having a will important? 📄
-                </p>
-                <p>
-                  A will ensures your assets are distributed according to your
-                  wishes, names guardians for minor children, and can help
-                  reduce estate taxes and legal fees.
-                </p>
-              </div>
-              <div>
-                <p className="font-semibold text-2xl">
-                  What happens if I die without a will? ⚖️
-                </p>
-                <p>
-                  If you die intestate (without a will), your estate will be
-                  distributed according to South Africa’s Intestate Succession
-                  Act, which may not align with your wishes.
-                </p>
-              </div>
-              <div>
-                <p className="font-semibold text-2xl">
-                  Can I change my will after it’s been created? 💼
-                </p>
-                <p>
-                  Yes, you can update your will as often as you like. It’s
-                  recommended to review and update it after major life events,
-                  such as marriage, divorce, or the birth of a child.
-                </p>
-              </div>
-              <div>
-                <p className="font-semibold text-2xl">
-                  What is a trust and why would I need one? 🔒
-                </p>
-                <p>
-                  A trust is a legal arrangement where a trustee manages assets
-                  on behalf of beneficiaries. Trusts can help manage assets,
-                  reduce estate taxes, and provide for beneficiaries according
-                  to your wishes.
-                </p>
-              </div>
-              <div>
-                <p className="font-semibold text-2xl">
-                  When should I seek legal advice for estate planning? 🏛️
-                </p>
-                <p>
-                  It’s advisable to seek legal advice if you have a large or
-                  complex estate, anticipate family disputes, own a business, or
-                  need to stay updated with changing laws.
-                </p>
-              </div>
-            </div>
-          </div>
+      {/* Scrollable FAQ Content with custom scrollbar */}
+      <div className="space-y-6 text-lg max-h-[60vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[#8DC63F] scrollbar-track-[#2f2f2f]">
+        <div>
+          <p className="font-semibold text-2xl">
+            What is estate planning? 🧾
+          </p>
+          <p>
+            Estate planning is the process of arranging for the management
+            and disposal of a person’s estate during their life and after
+            death. It involves creating documents like wills, trusts, and
+            powers of attorney.
+          </p>
         </div>
-      )}
+        <div>
+          <p className="font-semibold text-2xl">
+            Why is having a will important? 📄
+          </p>
+          <p>
+            A will ensures your assets are distributed according to your
+            wishes, names guardians for minor children, and can help
+            reduce estate taxes and legal fees.
+          </p>
+        </div>
+        <div>
+          <p className="font-semibold text-2xl">
+            What happens if I die without a will? ⚖️
+          </p>
+          <p>
+            If you die intestate (without a will), your estate will be
+            distributed according to South Africa’s Intestate Succession
+            Act, which may not align with your wishes.
+          </p>
+        </div>
+        <div>
+          <p className="font-semibold text-2xl">
+            Can I change my will after it’s been created? 💼
+          </p>
+          <p>
+            Yes, you can update your will as often as you like. It’s
+            recommended to review and update it after major life events,
+            such as marriage, divorce, or the birth of a child.
+          </p>
+        </div>
+        <div>
+          <p className="font-semibold text-2xl">
+            What is a trust and why would I need one? 🔒
+          </p>
+          <p>
+            A trust is a legal arrangement where a trustee manages assets
+            on behalf of beneficiaries. Trusts can help manage assets,
+            reduce estate taxes, and provide for beneficiaries according
+            to your wishes.
+          </p>
+        </div>
+        <div>
+          <p className="font-semibold text-2xl">
+            When should I seek legal advice for estate planning? 🏛️
+          </p>
+          <p>
+            It’s advisable to seek legal advice if you have a large or
+            complex estate, anticipate family disputes, own a business, or
+            need to stay updated with changing laws.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+)}
+
           {/* Modal Popup for Financial Advisor */}
       {/* Modal Popup for Financial Advisor */}
       {isAdvisorModalOpen && (
@@ -14788,7 +14836,7 @@ const handleAdvisorModalToggle = () => {
                   e.preventDefault();
                   saveDependentsUnder(inputStr);
                   handleAddAIResponse(
-                    "Thank you for sharing, "+inputStr+". Is there anything else you’d like to add about your personal particulars or any questions you have at this stage?"
+                    "Thank you for sharing, "+userName+". Is there anything else you’d like to add about your personal particulars or any questions you have at this stage?"
                   );
                 }
 
