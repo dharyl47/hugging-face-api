@@ -1,7 +1,14 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+/* Apply Montserrat globally with !important to ensure it overrides other styles */
+* {
+  font-family: 'Montserrat', sans-serif !important;
+  font-size: 20px !important; /* Adjust font size if needed */
+}
 
 /* #chat-container{
     width: 30rem;

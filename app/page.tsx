@@ -45,7 +45,22 @@ const RETRY_DELAY = 3000; // 3 seconds
 export default function Chat() {
   const { messages, input, handleInputChange, handleSubmit, setMessages } =
     useChat();
+const [consent, setConsent] = useState<string>("");
 
+  const handleButtonConsentData = (value: string) => {
+    setConsent(value);
+  };
+  const [selectedTerms, setSelectedTerms] = useState<string[]>([]);
+   const terms = [
+    "Wills",
+    "Trusts",
+    "Power of Attorney",
+    "Living Will",
+    "Beneficiaries",
+    "Beneficiary Designation Forms",
+    "Executor",
+    "Guardian",
+  ];
   const [error, setError] = useState("");
   const [retryCount, setRetryCount] = useState(0);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -115,54 +130,23 @@ export default function Chat() {
     setInputStr("");
   };
 
-  const handleButtonComponent = (message: any) => {
-    let response = "";
-
-    if (message == "Wills") {
-      response =
-        "A will is a legal document that says how you want your belongings, money, and assets to be divided after you pass away. It also names someone to carry out your wishes (an executor) and can appoint guardians for your children. Is there anything else you’d like to know about estate planning, or any questions you have at this stage?";
-    }
-    if (message == "Trusts") {
-      response =
-        "A trust is a legal arrangement where you (the founder/settlor) place assets, like money or property, into a separate entity managed by a person (the trustee) for the benefit of someone else (the beneficiary). The trustee manages these assets according to your instructions, often to provide for beneficiaries over time, such as children or loved ones. A trust can be set up in your will and will come into existence when you pass away, or it can be set up while you are alive. Is there anything else you’d like to know about estate planning, or any questions you have at this stage?";
-    }
-    if (message == "Power of Attorney") {
-      response =
-        "A power of attorney is a legal document that allows you to give someone else the authority to make decisions for you. It could be about financial matters, health care, or other personal affairs, especially if you’re unable to handle them yourself. Is there anything else you’d like to know about estate planning, or any questions you have at this stage?";
-    }
-    if (message == "Living Will") {
-      response =
-        "A living will is a document where you write down your wishes about medical care if you’re unable to communicate. It’s about what kind of treatments you do or don’t want if you’re seriously ill or injured and can’t speak for yourself. Is there anything else you’d like to know about estate planning, or any questions you have at this stage?";
-    }
-    if (message == "Beneficiary Designations") {
-      response =
-        "Beneficiary Designations: These are used to specify who will receive assets like life insurance or retirement accounts directly, bypassing the will. Is there anything else you’d like to know about estate planning, or any questions you have at this stage?";
-    }
-     if (message == "Beneficiaries") {
-      response =
-        "Beneficiaries: Beneficiaries are the people you choose to receive your money, assets, or other benefits when you pass away. They are named in your insurance policies or retirement benefit forms. Is there anything else you’d like to know about estate planning, or any questions you have at this stage?";
-    }
-    if (message == "Beneficiary Designation Forms") {
-      response =
-        "Beneficiary Designation Forms: For assets like retirement accounts, life insurance, or certain bank accounts, you may need to fill our a form naming who gets those assets after you pass away. These forms typically override what’s written in a will or trust. Is there anything else you’d like to know about estate planning, or any questions you have at this stage?";
-    }
-     if (message == "Executor") {
-      response =
-        "Executor: The person named in your will who is responsible for carrying out your wishes after you pass away, including paying debts and distributing assets to beneficiaries. . Is there anything else you’d like to know about estate planning, or any questions you have at this stage?";
-    }
-    if (message == "All Key Terms") {
-      response =
-        "Here are all key terms:";
-    }
-if (message == "Guardian") {
-      response =
-        "Guardian: If you have minor children, you can name a guardian in your will. The person will be responsible for taking care of your children if something happens to you. . Is there anything else you’d like to know about estate planning, or any questions you have at this stage?";
-    }
+ // Handle the proceed button click - send definitions for selected terms
+  const handleProceed = () => {
+    //selectedTerms.forEach((term) => {
+      handleButtonComponent(selectedTerms);
+   // });
+  };
+//Here are the definition of key terms:
+  const handleButtonComponent = (messagesData: string[]) => {
+    let response = "Here are the definition of key terms:";
+    
+     const userResponse = messagesData.join(", ");
+   
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     const userMessage: Message = {
       id: Date.now().toString(), // Unique ID
       role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+      content: userResponse, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
     };
 
     // Then append the assistant response
@@ -207,6 +191,7 @@ if (message == "Guardian") {
 
   
   const handleButtonConsent = (message: any) => {
+     setConsent(message);
     let response = "";
     if (message == "Yes, I consent") {
       response = "Hello and welcome to Moneyversity’s Estate Planning Consultant.";
@@ -238,6 +223,9 @@ if (message == "Guardian") {
   
   const handleButtonStage0 = (message: any) => {
     let response = "";
+     if (message == "Let's chat again!") {
+      response = "Let’s dive into the world of estate planning!";
+    }
     if (message == "Absolutely") {
       response = "Let’s dive into the world of estate planning!";
     }
@@ -245,6 +233,10 @@ if (message == "Guardian") {
     if (message == "Tell me more") {
       response =
         "Let’s dive into the world of estate planning!";
+    }
+     if (message == "Not now") {
+      response =
+        "No problem at all. If you ever have questions or decide to start your estate planning, I’m here to help. Have a great day!";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -267,7 +259,7 @@ if (message == "Guardian") {
   const handleButtonStage1 = (message: any) => {
     let response = "";
     if (message == "Tell me more") {
-      response = "There are 9 key components of estate planning:";
+      response = "There are a few documents and phrases that are important when you are doing your estate planning:";
     }
  if (message == "Skip Estate Planning Explanation") {
       response = "I know estate planning can be daunting, so I’m here to make it as easy as possible for you to find a tailored estate plan that suits your needs. To begin, I need to gather some basic information. This will help tailor the estate planning process to your unique situation. Let’s get to know each other a bit better. What is your name?";
@@ -294,7 +286,7 @@ if (message == "Guardian") {
  const handleButtonStage2 = (message: any) => {
     let response = "";
     if (message == "Single") {
-      response = "There are 9 key components of estate planning:";
+   //   response = "There are 9 key components of estate planning:";
     }
  if (message == "Married") {
       response = "Excellent. Are you married in or out of community of property? If married out of community of property, is it with or without the accrual system?";
@@ -536,6 +528,10 @@ const handleButtonStage7 = (message: any) => {
     }
 
     if (message == "No, Let's move on") {
+      response =
+        "It’s important to understand the legal requirements and considerations specific to South Africa:";
+    }
+     if (message == "Proceed") {
       response =
         "It’s important to understand the legal requirements and considerations specific to South Africa:";
     }
@@ -5879,6 +5875,16 @@ const handleButtonStage13v3 = (message: any) => {
     await saveUserProfile({ checkboxesAsset: updatedCheckboxesAsset });
   };
 
+    // Handle checkbox change
+  const handleCheckboxChangeTerms = (event: React.ChangeEvent<HTMLInputElement>) => {
+     const term = event.target.value;
+    if (selectedTerms.includes(term)) {
+      setSelectedTerms(selectedTerms.filter((item) => item !== term));
+    } else {
+      setSelectedTerms([...selectedTerms, term]);
+    }
+  };
+
   const handleCheckboxChange = async (
     e: React.ChangeEvent<HTMLInputElement>
   ) => {
@@ -6191,7 +6197,7 @@ const handleButtonStage13v3 = (message: any) => {
           !message.content.includes("Here are a few examples"));
 
       const educationInformation = message.content.includes(
-        "There are 9 key components of estate planning:"
+        "There are a few documents and phrases that are important when you are doing your estate planning:"
       );
       const legalRequirement = message.content.includes(
         "It’s important to understand the legal requirements and considerations specific to South Africa"
@@ -6316,20 +6322,55 @@ const handleButtonStage13v3 = (message: any) => {
                 >
                   Not now
                 </button> */}
-                <div className="space-x-2 mt-2">
-                  <button
-                    onClick={() => handleButtonConsent("Yes, I consent")}
-                    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                  >
-                    Yes, I consent
-                  </button>
-                  <button
-                    onClick={() => handleButtonConsent("No, I do not consent")}
-                    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                  >
-                    No, I do not consent
-                  </button>
-                </div>
+              <div className="space-y-2 mt-2">
+  {/* Yes, I consent checkbox */}
+  <div
+    className={`flex items-center space-x-2 px-4 py-2  w-[400px] rounded-md border cursor-pointer ${
+      consent === "Yes, I consent"
+        ? "bg-[#8DC63F] text-white border-transparent"
+        : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
+    }`}
+   
+  >
+    <input
+      type="checkbox"
+      id="consentYes"
+      name="consent"
+      value="Yes, I consent"
+      checked={consent === "Yes, I consent"}
+      onChange={() => handleButtonConsent("Yes, I consent")}
+      className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
+    />
+    <label htmlFor="consentYes" className="cursor-pointer">
+      Yes, I consent
+    </label>
+  </div>
+
+  {/* No, I do not consent checkbox */}
+  <div
+    className={`flex items-center space-x-2 px-4 py-2 rounded-md border cursor-pointer ${
+      consent === "No, I do not consent"
+        ? "bg-[#8DC63F] text-white border-transparent"
+        : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
+    }`}
+   
+  >
+    <input
+      type="checkbox"
+      id="consentNo"
+      name="consent"
+      value="No, I do not consent"
+      checked={consent === "No, I do not consent"}
+      onChange={() => handleButtonConsent("No, I do not consent")}
+      className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
+    />
+    <label htmlFor="consentNo" className="cursor-pointer">
+      No, I do not consent
+    </label>
+  </div>
+</div>
+
+
               </div>
             </>
           ) : (
@@ -6528,7 +6569,7 @@ const handleButtonStage13v3 = (message: any) => {
                 "Fantastic! Our financial advisors at Old Mutual are ready to assist you in filling out these templates. Please reach out to us directly to schedule a consultation and receive personalised guidance. Here’s how you can get in touch:"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     📞 Phone: Call us at [insert phone number] to speak with an
                     advisor.
                     <br />
@@ -6549,7 +6590,7 @@ const handleButtonStage13v3 = (message: any) => {
 
               {message.content.includes("Here are the all scenario") && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Scenario 1 - Setting Up a Trust: Imagine you set up a trust
                     to manage your assets. The trust could be used to provide
                     for your children’s education and care until they reach
@@ -6636,7 +6677,7 @@ const handleButtonStage13v3 = (message: any) => {
 
               {scenarioSimulation && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Scenario 1: How will setting up a trust affect the
                     management and distribution of your assets?
                     <br />
@@ -6704,7 +6745,7 @@ const handleButtonStage13v3 = (message: any) => {
 
               {templateButton && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Based on your profile, here’s a suggested plan:
                     <br />
                     <br />
@@ -6736,7 +6777,7 @@ const handleButtonStage13v3 = (message: any) => {
               )}
               {stepByStep && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Based on your profile, here’s a suggested plan:
                     <br />
                     <br />
@@ -6784,7 +6825,7 @@ const handleButtonStage13v3 = (message: any) => {
                 "Here are some templates to help you get started with your estate planning documents:"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     📝 Will: A basic template for drafting your will.
                     <br />
                     <br />
@@ -6882,7 +6923,7 @@ const handleButtonStage13v3 = (message: any) => {
                 "Great! Here are a few key considerations to keep in mind while planning your estate. I’ll ask you some questions to get a better understanding of your specific needs and goals."
               ) && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Great! Here are a few key considerations to keep in mind
                     while planning your estate. I’ll ask you some questions to
                     get a better understanding of your specific needs and goals.
@@ -7103,7 +7144,7 @@ const handleButtonStage13v3 = (message: any) => {
                 "That's okay! It can be overwhelming to decide on the best measures without more information. Here’s a brief overview to help you:"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     🏦 Establish a Trust: Protects your assets and ensures they
                     are distributed according to your wishes.
                     <br />
@@ -7208,7 +7249,7 @@ const handleButtonStage13v3 = (message: any) => {
                 "Great! To help you stay organised throughout the estate planning process, here are some checklists for different stages:"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Initial Stage:
                     <br />
                     📋 Gather personal information (name, age, marital status,
@@ -7277,7 +7318,7 @@ const handleButtonStage13v3 = (message: any) => {
                 "Describe the condition of your property (new, good, fair, needs renovation). Also, mention any special features (e.g., swimming pool, garden, garage)"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     🏘️ Describe the condition of your property (new, good, fair,
                     needs renovation).
                     <br />
@@ -7314,7 +7355,7 @@ const handleButtonStage13v3 = (message: any) => {
                 "It's understandable to be uncertain about this. Protecting assets from potential insolvency can be crucial for maintaining financial stability. Here are some points to consider"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     🏦 Trusts: Placing assets in a trust can shield them from
                     creditors.
                     <br />
@@ -7407,7 +7448,7 @@ const handleButtonStage13v3 = (message: any) => {
                 "Let’s dive into the details of what you own to ensure we have a comprehensive understanding of your estate. Your assets play a crucial role in your estate plan."
               ) && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     🏡 Do you own any real estate properties, such as houses,
                     apartments, or land?
                     <br />
@@ -7474,7 +7515,7 @@ const handleButtonStage13v3 = (message: any) => {
                 "The estimated value of your property based on the information you provided is"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     💰🏡 (value displayed)
                     <br />
                     🔧 Please note that this is a rough estimate and should not
@@ -8889,7 +8930,7 @@ const handleButtonStage13v3 = (message: any) => {
                 "Understanding your investment holdings helps us assess your overall financial position and develop strategies to maximise the value of your estate. Please provide as much detail as possible for each of the following questions"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Do you currently hold any stocks or equities in your
                     investment portfolio? If yes, please specify the name of the
                     stocks, the number of shares held, and the current market
@@ -9682,7 +9723,7 @@ const handleButtonStage13v3 = (message: any) => {
                 "DID YOU KNOW If your spouse were to pass away immediately after you, there are specific estate duty implications and/or arrangements you would need to consider? All the more reason to get in touch with our Financial Advisors. This will be noted and added to the report supplied to you at the end of this chat."
               ) && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Thank you for providing all these details. This helps us
                     understand the estate duty implications of your current
                     will. Please share your current will. 🔐💼
@@ -9769,7 +9810,7 @@ const handleButtonStage13v3 = (message: any) => {
                 "Great, one of our financial advisors will be in touch in this regard."
               ) && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     <strong>DID YOU KNOW</strong>:
                     <br />
                     💡 If your spouse were to pass away immediately after you,
@@ -9779,7 +9820,7 @@ const handleButtonStage13v3 = (message: any) => {
                     noted and added to the report supplied to you at the end of
                     this chat.
                   </div>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Thank you for providing all these details. This helps us
                     understand the estate duty implications of your current
                     will. Please share your current will. 🔐💼
@@ -9834,7 +9875,7 @@ const handleButtonStage13v3 = (message: any) => {
                 "Now, let's discuss the fees that will be charged for the administration of your estate. The executor's fees can be a significant part of the costs, so it's important to understand how these are calculated."
               ) && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Now, let's discuss the fees that will be charged for the
                     administration of your estate. The executor's fees can be a
                     significant part of the costs, so it's important to
@@ -10080,7 +10121,7 @@ const handleButtonStage13v3 = (message: any) => {
                 "Excellent! Here are some details on the potential options:"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Excellent! Here are some details on the potential options:
                     <br />
                     <br />
@@ -10213,7 +10254,7 @@ const handleButtonStage13v3 = (message: any) => {
                 "Great! Here are some alternative options you might consider:"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     💬 Negotiating Payment Terms with Creditors:
                     <br />
                     This involves discussing with creditors to extend payment
@@ -10326,7 +10367,7 @@ const handleButtonStage13v3 = (message: any) => {
                 "Great! Here are some important aspects to consider:"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     💸 Costs Involved:
                     <br />
                     Borrowing funds often comes with interest rates and fees,
@@ -10391,7 +10432,7 @@ const handleButtonStage13v3 = (message: any) => {
                 "Great! Here are some alternative financing options to consider:"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     💬 Negotiating Payment Terms with Creditors:
                     <br />
                     You can often arrange for more favorable payment terms,
@@ -11230,7 +11271,7 @@ const handleButtonStage13v3 = (message: any) => {
                 "Great! Here’s a brief overview of each option:"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     🛡️ Insurance Policy:
                     <br />
                     Provides immediate liquidity to your spouse upon your
@@ -11308,7 +11349,7 @@ const handleButtonStage13v3 = (message: any) => {
                 "Certainly! Besides insurance policies and testamentary trusts, you might consider options such as:"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     <br />
                     💰 Annuities:
                     <br />
@@ -11852,7 +11893,7 @@ const handleButtonStage13v3 = (message: any) => {
                 "Here’s an outline of the benefits of funeral cover:"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     <br />
                     💸 Immediate Financial Support:
                     <br />
@@ -12533,7 +12574,7 @@ const handleButtonStage13v3 = (message: any) => {
               )}
 {message.content.includes("Hello and welcome to Moneyversity’s Estate Planning Consultant") && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     I'm here to help you navigate the estate planning process with ease 🛠️. 
                     Together, we’ll ensure your assets and wishes are well-documented and protected 🛡️. 
                     Ready to get started on this important journey? 🚀
@@ -12561,11 +12602,27 @@ const handleButtonStage13v3 = (message: any) => {
                 </>
               )}
 
+{message.content.includes("No problem at all. If you ever have questions or decide to start your estate planning, I’m here to help. Have a great day!") && (
+                <>
+                  
+                  <div className="space-x-2 mt-4">
+                  <button
+                  onClick={() => handleButtonStage0("Let's chat again!")}
+                  className="px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                >
+                  Let's chat again!
+                </button>
+                
+                  </div>
+                </>
+              )}
+              
+
 
 {message.content.includes("Let’s dive into the world of estate planning!") && (
                 <>
-                  <div className="space-x-2 mt-2">
-                    Estate planning is the process of arranging how your assets will be managed and distributed after your death 🏡📜. It ensures that your wishes are respected, your loved ones are taken care of ❤️, and potential disputes are minimized ⚖️. It’s important because it gives you peace of mind 🧘 knowing that your affairs are in order, and it can also help reduce taxes and legal costs in the future 💰📉.
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    Estate planning is the process of arranging how your assets will be managed and distributed after your death 🏡📜. It ensures that your wishes are respected, your loved ones are taken care of ❤️, and potential disputes are minimized ⚖️. <br/><br/> It’s important because it gives you peace of mind 🧘 knowing that your affairs are in order, and it can also help reduce taxes and legal costs in the future 💰📉.
                   </div>
                   <div className="space-x-2 mt-4">
                   <button
@@ -12590,7 +12647,7 @@ const handleButtonStage13v3 = (message: any) => {
 
             {message.content.includes("When were you born?") && (
             <>
-              <div className="space-x-2 mt-2">
+              <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                 <Calendar />
               </div>
             </>
@@ -12598,7 +12655,7 @@ const handleButtonStage13v3 = (message: any) => {
 
 {message.content.includes("Let’s talk about your family life quickly. Are you married or single?") && (
             <>
-              <div className="space-x-2 mt-2">
+              <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                 <div className="space-x-2 mt-2">
                   <button
                     onClick={() => handleButtonStage2("Married")}
@@ -12676,7 +12733,7 @@ const handleButtonStage13v3 = (message: any) => {
 
 {message.content.includes("No worries! Here’s a brief description of each type to help you remember:") && (
             <>
-            <div className="space-x-2 mt-2">
+            <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
               👫⚖️ <b>In Community of Property:</b> All assets and debts are shared equally between spouses.<br/>
               📈🏠 <b>Out of Community of Property with Accrual:</b> Each spouse retains separate ownership of their assets, but they share the growth in value of their estates during the marriage<br/>
               🏡❌ <b>Out of Community of Property without Accrual:</b> Each spouse retains separate ownership of their assets, and there is no sharing of assets or growth in value <br/>
@@ -12724,7 +12781,7 @@ const handleButtonStage13v3 = (message: any) => {
 
 {message.content.includes("Accrual is a concept in marriage where the growth in wealth during the marriage is shared between spouses. When a couple marries under the accrual system, each spouse keeps the assets they had before the marriage. However, any increase in their respective estates during the marriage is shared equally when the marriage ends, either through divorce or death.") && (
             <>
-            <div className="space-x-2 mt-2">
+            <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
               For example, if one spouse's estate grows significantly while the other’s does not 📈💼, the spouse with the smaller growth may be entitled to a portion of the increase in the other’s estate 💰. This ensures fairness and protects both parties 🤝🛡️.<br/>
             </div>
             <div className="space-x-2 mt-2">
@@ -13511,7 +13568,7 @@ const handleButtonStage13v3 = (message: any) => {
               ) ||
                 message.content.includes("Checklist is downloaded")) && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     🏦 Complex Estates:
                     <br />
                     If you have a large or complex estate, a lawyer can help
@@ -13564,7 +13621,7 @@ const handleButtonStage13v3 = (message: any) => {
 
               {faqStage && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     ❓ What is estate planning?
                     <br />
                     Estate planning is the process of arranging for the
@@ -13633,7 +13690,7 @@ const handleButtonStage13v3 = (message: any) => {
               {legalRequirement &&
                 !message.content.includes("different scenarios") && (
                   <>
-                    <div className="space-x-2 mt-2">
+                    <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                       Estate planning in South Africa involves understanding key
                       legal requirements to ensure your wishes are respected and
                       legally binding. 📜⚖️
@@ -13641,7 +13698,7 @@ const handleButtonStage13v3 = (message: any) => {
                       <br />
                       Here are some important acts and considerations:
                     </div>
-                    <div className="space-x-2 mt-2">
+                    <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                       📝 Wills Act 7 of 1953
                       <br />
                       The Wills Act governs the creation and execution of wills.
@@ -13741,7 +13798,7 @@ const handleButtonStage13v3 = (message: any) => {
     <li>⚖️ This can have implications on your estate plan as you can be considered single/unmarried if your marriage is not registered with Home Affairs.</li>
   </ul>
                     </div>
-                    <div className="space-x-2 mt-2">
+                    <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                       Do you have any questions regarding bequeathing a farm at this stage?
                     </div>
                     <div className="space-x-2 mt-2">
@@ -13798,7 +13855,7 @@ const handleButtonStage13v3 = (message: any) => {
                 "A farm may only be sold to one person or entity and as such, the offer to purchase cannot be made by more than one person. An exception to this would be if a couple is married in community of property as South African law views their estate as one."
               ) && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
   🌾 As with the case of agricultural land being bequeathed to multiple heirs, the consent of the Minister may be requested in order to grant permission for the sale of agricultural land to more than one person. This consent must be sought prior to the agreement of sale being concluded and therefore an offer to purchase by multiple purchasers can only be made after the owner has received the Minister's consent.
   <br />
   <br />
@@ -13820,7 +13877,7 @@ const handleButtonStage13v3 = (message: any) => {
   <br />
   💡 For instance, if you have usufruct over a property, you can live in it or rent it out, but you can't sell the property.
 </div>
- <div className="space-x-2 mt-2">
+ <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                       Do you have any questions regarding bequeathing a farm at this stage?
                     </div>
                      <div className="space-x-2 mt-2">
@@ -13982,265 +14039,175 @@ const handleButtonStage13v3 = (message: any) => {
 {educationInformation && (
                 <>
                  
-                  <div className="space-x-2 mt-2">
-                    There are 9 key components of estate planning:
-                    <br />
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                   
                     📜 Wills
                     <br />
                     🔐 Trusts
                     <br />
                     🖋️ Power of Attorney
                     <br />
-                    🏥 Living Will
-                    <br />
-                    💼 Beneficiary Designations
+                    🏥 Living Will 
                     <br />
                     🧑‍💼 Beneficiaries
                     <br />
-                    📑 Beneficiary Designation Forms
+                    📑  Beneficiary Designation Forms
                     <br />
                     ⚖️ Executor
                     <br />
                     🛡️ Guardian
                     <br />
-                    Would you like a detailed explanation of all or some of
-                    these components?
+                    Would you like a detailed explanation of all or some of these terms?
                   </div>
                   <div className="space-x-2 mt-2">
-                    <button
-                      onClick={() => handleButtonComponent("Wills")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Wills
-                    </button>
-                    {/* <button
-                      onClick={() =>
-                        handleButtonStage80Claims(
-                          "I don’t have any maintenance obligations"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      I don’t have any maintenance obligations
-                    </button> */}
-                    <button
-                      onClick={() => handleButtonComponent("Trusts")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Trusts
-                    </button>
-                    <button
-                      onClick={() => handleButtonComponent("Power of Attorney")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Power of Attorney
-                    </button>
-                    <button
-                      onClick={() => handleButtonComponent("Living Will")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Living Will
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonComponent("Beneficiary Designations")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Beneficiary Designations
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonComponent("Beneficiaries")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Beneficiaries
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonComponent("Beneficiary Designation Forms")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Beneficiary Designation Forms
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonComponent("Executor")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Executor
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonComponent("Guardian")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Guardian
-                    </button>
-                     <button
-                      onClick={() =>
-                        handleButtonComponent("All Key Terms")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      All Key Terms
-                    </button>
+                   {terms.map((term) => (
+  <div
+    key={term}
+    className={`flex items-center space-x-2 px-4 py-2 w-[400px] rounded-md border cursor-pointer ${
+      selectedTerms.includes(term)
+        ? "bg-[#8DC63F] text-white border-transparent"
+        : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
+    }`}
+  >
+    <input
+      type="checkbox"
+      id={term}
+      name={term}
+      value={term}
+      checked={selectedTerms.includes(term)}
+      onChange={handleCheckboxChangeTerms}
+      className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
+    />
+    <label htmlFor={term} className="cursor-pointer">
+      {term}
+    </label>
+  </div>
+))}
+
+
+      <button
+        onClick={handleProceed}
+        className="mt-4 px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition"
+      >
+        Proceed
+      </button>
                     
                   </div>
-                   <div className="space-x-2 mt-2">
-                  <button
-                    onClick={() => handleButtonStage12("I have a question.")}
-                    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                  >
-                    I have a question.
-                  </button>
-                  <button
-                    onClick={() => handleButtonStage12("No, Let's move on")}
-                    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                  >
-                    No, Let's move on
-                  </button>
-                </div>
+                   
                 </>
               )}
 
 
               
 
-{message.content.includes("Here are all key terms:") && (
+{message.content.includes("Here are the definition of key terms:") && (
                 <>
-                 
-                  <div className="space-x-2 mt-2">
-  📜 Wills
-  <br />
-  A will is a legal document that says how you want your belongings, money, and assets to be divided after you pass away. 
-  It also names someone to carry out your wishes (an executor) and can appoint guardians for your children.
-  <br />
-  <br />
-  🔐 Trusts
-  <br />
-  A trust is a legal arrangement where you (the founder/settlor) place assets, like money or property, into a separate entity managed by a person (the trustee) for the benefit of someone else (the beneficiary). 
-  The trustee manages these assets according to your instructions, often to provide for beneficiaries over time, such as children or loved ones.
-  A trust can be set up in your will and will come into existence when you pass away, or it can be set up while you are alive.
-  <br />
-  <br />
-  🖋️ Power of Attorney
-  <br />
-  A power of attorney is a legal document that allows you to give someone else the authority to make decisions for you. 
-  It could be about financial matters, health care, or other personal affairs, especially if you’re unable to handle them yourself.
-  <br />
-  <br />
-  🏥 Living Will
-  <br />
-  A living will is a document where you write down your wishes about medical care if you’re unable to communicate. 
-  It’s about what kind of treatments you do or don’t want if you’re seriously ill or injured and can’t speak for yourself.
-  <br />
-  <br />
-  💼 Beneficiaries
-  <br />
-  Beneficiaries are the people you choose to receive your money, assets, or other benefits when you pass away. 
-  They are named in your insurance policies or retirement benefit forms.
-  <br />
-  <br />
-  📑 Beneficiary Designation Forms
-  <br />
-  For assets like retirement accounts, life insurance, or certain bank accounts, you may need to fill out a form naming who gets those assets after you pass away. 
-  These forms typically override what’s written in a will or trust.
-  <br />
-  <br />
-  ⚖️ Executor
-  <br />
-  The person named in your will who is responsible for carrying out your wishes after you pass away, including paying debts and distributing assets to beneficiaries.
-  <br />
-  <br />
-  🛡️ Guardian
-  <br />
-  If you have minor children, you can name a guardian in your will. 
-  This person will be responsible for taking care of your children if something happens to you.
-</div>
+            
+      {selectedTerms.length > 0 && (
+  <>
+    <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+      {selectedTerms.includes("Wills") && (
+        <>
+          📜 Wills
+          <br />
+          A will is a legal document that says how you want your belongings, money, and assets to be divided after you pass away. 
+          It also names someone to carry out your wishes (an executor) and can appoint guardians for your children.
+          <br />
+          <br />
+        </>
+      )}
 
-                  <div className="space-x-2 mt-2">
-                    <button
-                      onClick={() => handleButtonComponent("Wills")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Wills
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage80Claims(
-                          "I don’t have any maintenance obligations"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      I don’t have any maintenance obligations
-                    </button>
-                    <button
-                      onClick={() => handleButtonComponent("Trusts")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Trusts
-                    </button>
-                    <button
-                      onClick={() => handleButtonComponent("Power of Attorney")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Power of Attorney
-                    </button>
-                    <button
-                      onClick={() => handleButtonComponent("Living Will")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Living Will
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonComponent("Beneficiary Designations")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Beneficiary Designations
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonComponent("Beneficiaries")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Beneficiaries
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonComponent("Beneficiary Designation Forms")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Beneficiary Designation Forms
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonComponent("Executor")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Executor
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonComponent("Guardian")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Guardian
-                    </button>
-                     
-                    
-                  </div>
+      {selectedTerms.includes("Trusts") && (
+        <>
+          🔐 Trusts
+          <br />
+          A trust is a legal arrangement where you (the founder/settlor) place assets, like money or property, into a separate entity managed by a person (the trustee) for the benefit of someone else (the beneficiary). 
+          The trustee manages these assets according to your instructions, often to provide for beneficiaries over time, such as children or loved ones.
+          A trust can be set up in your will and will come into existence when you pass away, or it can be set up while you are alive.
+          <br />
+          <br />
+        </>
+      )}
+
+      {selectedTerms.includes("Power of Attorney") && (
+        <>
+          🖋️ Power of Attorney
+          <br />
+          A power of attorney is a legal document that allows you to give someone else the authority to make decisions for you. 
+          It could be about financial matters, health care, or other personal affairs, especially if you’re unable to handle them yourself.
+          <br />
+          <br />
+        </>
+      )}
+
+      {selectedTerms.includes("Living Will") && (
+        <>
+          🏥 Living Will
+          <br />
+          A living will is a document where you write down your wishes about medical care if you’re unable to communicate. 
+          It’s about what kind of treatments you do or don’t want if you’re seriously ill or injured and can’t speak for yourself.
+          <br />
+          <br />
+        </>
+      )}
+
+      {selectedTerms.includes("Beneficiaries") && (
+        <>
+          💼 Beneficiaries
+          <br />
+          Beneficiaries are the people you choose to receive your money, assets, or other benefits when you pass away. 
+          They are named in your insurance policies or retirement benefit forms.
+          <br />
+          <br />
+        </>
+      )}
+
+      {selectedTerms.includes("Beneficiary Designation Forms") && (
+        <>
+          📑 Beneficiary Designation Forms
+          <br />
+          For assets like retirement accounts, life insurance, or certain bank accounts, you may need to fill out a form naming who gets those assets after you pass away. 
+          These forms typically override what’s written in a will or trust.
+          <br />
+          <br />
+        </>
+      )}
+
+      {selectedTerms.includes("Executor") && (
+        <>
+          ⚖️ Executor
+          <br />
+          The person named in your will who is responsible for carrying out your wishes after you pass away, including paying debts and distributing assets to beneficiaries.
+          <br />
+          <br />
+        </>
+      )}
+
+      {selectedTerms.includes("Guardian") && (
+        <>
+          🛡️ Guardian
+          <br />
+          If you have minor children, you can name a guardian in your will. 
+          This person will be responsible for taking care of your children if something happens to you.
+          <br />
+          <br />
+        </>
+      )}
+    </div>
+
+   
+  </>
+)}
+
+
+    <div className="space-x-2 mt-2">
+      <button
+        onClick={() => handleButtonStage12("Proceed")}
+        className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+      >
+        Proceed
+      </button>
+    </div>
                 </>
               )}
               
@@ -14559,89 +14526,77 @@ const handleAdvisorModalToggle = () => {
                {/* Modal Popup */}
       {isModalOpen && (
   <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-    <div className="bg-[#2f2f2f] text-white rounded-lg w-[90%] max-w-3xl p-8">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-4xl font-bold">Estate Planning FAQs</h2>
-        <button
-          className="text-white text-2xl hover:text-gray-300"
-          onClick={handleModalToggle}
-        >
-          ✖
-        </button>
-      </div>
-      <p className="mb-6 text-xl">
-        Here are some frequently asked questions about estate planning in
-        South Africa:
-      </p>
+  <div className="bg-[#2f2f2f] text-white rounded-lg w-[90%] max-w-3xl p-8">
+    <div className="flex justify-between items-center mb-6">
+      <h2 className="text-3xl font-bold leading-tight">Estate Planning FAQs</h2> {/* H2 should be 36px according to Adobe XD */}
+      <button
+        className="text-white text-2xl hover:text-gray-300"
+        onClick={handleModalToggle}
+      >
+        ✖
+      </button>
+    </div>
+    <p className="mb-6 text-base leading-relaxed">
+      Here are some frequently asked questions about estate planning in South Africa:
+    </p>
 
-      {/* Scrollable FAQ Content with custom scrollbar */}
-      <div className="space-y-6 text-lg max-h-[60vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[#8DC63F] scrollbar-track-[#2f2f2f]">
-        <div>
-          <p className="font-semibold text-2xl">
-            What is estate planning? 🧾
-          </p>
-          <p>
-            Estate planning is the process of arranging for the management
-            and disposal of a person’s estate during their life and after
-            death. It involves creating documents like wills, trusts, and
-            powers of attorney.
-          </p>
-        </div>
-        <div>
-          <p className="font-semibold text-2xl">
-            Why is having a will important? 📄
-          </p>
-          <p>
-            A will ensures your assets are distributed according to your
-            wishes, names guardians for minor children, and can help
-            reduce estate taxes and legal fees.
-          </p>
-        </div>
-        <div>
-          <p className="font-semibold text-2xl">
-            What happens if I die without a will? ⚖️
-          </p>
-          <p>
-            If you die intestate (without a will), your estate will be
-            distributed according to South Africa’s Intestate Succession
-            Act, which may not align with your wishes.
-          </p>
-        </div>
-        <div>
-          <p className="font-semibold text-2xl">
-            Can I change my will after it’s been created? 💼
-          </p>
-          <p>
-            Yes, you can update your will as often as you like. It’s
-            recommended to review and update it after major life events,
-            such as marriage, divorce, or the birth of a child.
-          </p>
-        </div>
-        <div>
-          <p className="font-semibold text-2xl">
-            What is a trust and why would I need one? 🔒
-          </p>
-          <p>
-            A trust is a legal arrangement where a trustee manages assets
-            on behalf of beneficiaries. Trusts can help manage assets,
-            reduce estate taxes, and provide for beneficiaries according
-            to your wishes.
-          </p>
-        </div>
-        <div>
-          <p className="font-semibold text-2xl">
-            When should I seek legal advice for estate planning? 🏛️
-          </p>
-          <p>
-            It’s advisable to seek legal advice if you have a large or
-            complex estate, anticipate family disputes, own a business, or
-            need to stay updated with changing laws.
-          </p>
-        </div>
+    {/* Scrollable FAQ Content with custom scrollbar */}
+    <div className="space-y-4 text-sm max-h-[60vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[#8DC63F] scrollbar-track-[#2f2f2f]">
+      <div>
+        <p className="font-semibold text-lg">What is estate planning? 🧾</p> {/* Change to 24px (text-lg) */}
+        <p>
+          Estate planning is the process of arranging for the management
+          and disposal of a person’s estate during their life and after
+          death. It involves creating documents like wills, trusts, and
+          powers of attorney.
+        </p>
+      </div>
+      <div>
+        <p className="font-semibold text-lg">Why is having a will important? 📄</p>
+        <p>
+          A will ensures your assets are distributed according to your
+          wishes, names guardians for minor children, and can help
+          reduce estate taxes and legal fees.
+        </p>
+      </div>
+      <div>
+        <p className="font-semibold text-lg">What happens if I die without a will? ⚖️</p>
+        <p>
+          If you die intestate (without a will), your estate will be
+          distributed according to South Africa’s Intestate Succession
+          Act, which may not align with your wishes.
+        </p>
+      </div>
+      <div>
+        <p className="font-semibold text-lg">Can I change my will after it’s been created? 💼</p>
+        <p>
+          Yes, you can update your will as often as you like. It’s
+          recommended to review and update it after major life events,
+          such as marriage, divorce, or the birth of a child.
+        </p>
+      </div>
+      <div>
+        <p className="font-semibold text-lg">What is a trust and why would I need one? 🔒</p>
+        <p>
+          A trust is a legal arrangement where a trustee manages assets
+          on behalf of beneficiaries. Trusts can help manage assets,
+          reduce estate taxes, and provide for beneficiaries according
+          to your wishes.
+        </p>
+      </div>
+      <div>
+        <p className="font-semibold text-lg">When should I seek legal advice for estate planning? 🏛️</p>
+        <p>
+          It’s advisable to seek legal advice if you have a large or
+          complex estate, anticipate family disputes, own a business, or
+          need to stay updated with changing laws.
+        </p>
       </div>
     </div>
   </div>
-)}
+</div>
+
+      )}
 
           {/* Modal Popup for Financial Advisor */}
       {/* Modal Popup for Financial Advisor */}
@@ -15821,13 +15776,14 @@ const handleAdvisorModalToggle = () => {
                       No user found
                     </div>
                   )}
-                <button
-                  id="send-button"
-                  type="submit"
-                  className="bg-[#8dc63f] text-white px-4 py-2 rounded-md ml-2"
-                >
-                  Send
-                </button>
+               <button
+  id="send-button"
+  type="submit"
+  className=" text-white px-4 rounded-md ml-2 flex items-center justify-center"
+>
+  <img src="/images/sendButton.png" alt="Send Icon" className="h-[60px] w-[70px]" />
+</button>
+
               </div>
             </form>
             {/* {loading && (
