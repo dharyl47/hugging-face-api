@@ -1,12 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
-const Calendar = () => {
-  const [selectedYear, setSelectedYear] = useState(1994);
-  const [selectedMonth, setSelectedMonth] = useState(2); // 0 - January, 2 - March
-  const [selectedDate, setSelectedDate] = useState(22);
+const Calendar = ({ onDateSelect }) => {
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = currentDate.getMonth(); // 0 = January, so getMonth returns a 0-based index
+  const currentDay = currentDate.getDate();
+
+  const [selectedYear, setSelectedYear] = useState(currentYear);
+  const [selectedMonth, setSelectedMonth] = useState(currentMonth);
+  const [selectedDate, setSelectedDate] = useState(currentDay);
+
+  const [highlightMonth, setHighlightMonth] = useState(false);
+  const [highlightDate, setHighlightDate] = useState(false);
 
   const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  
+
   const getDaysInMonth = (year, month) => {
     return new Date(year, month + 1, 0).getDate();
   };
@@ -19,10 +27,17 @@ const Calendar = () => {
 
   const handleMonthClick = (index) => {
     setSelectedMonth(index);
+    setHighlightMonth(true);
+    setHighlightDate(false); // Reset date highlight when changing the month
   };
 
   const handleDateClick = (date) => {
     setSelectedDate(date);
+    setHighlightDate(true);
+    // Call the onDateSelect function to update the parent with the selected date
+    if (onDateSelect) {
+      onDateSelect(selectedYear, selectedMonth, date);
+    }
   };
 
   return (
@@ -35,7 +50,7 @@ const Calendar = () => {
             style={{ backgroundColor: '#333', color: '#fff', border: 'none', padding: '5px', borderRadius: '4px', fontSize: '16px', textAlign: 'center' }}
           >
             {Array.from({ length: 100 }, (_, i) => (
-              <option key={i} value={1994 + i}>{1994 + i}</option>
+              <option key={i} value={currentYear - 50 + i}>{currentYear - 50 + i}</option>
             ))}
           </select>
         </div>
@@ -46,8 +61,8 @@ const Calendar = () => {
               onClick={() => handleMonthClick(index)}
               style={{ 
                 cursor: 'pointer',
-                color: selectedMonth === index ? '#88c550' : '#fff',
-                fontWeight: selectedMonth === index ? 'bold' : 'normal',
+                color: selectedMonth === index && highlightMonth ? '#88c550' : '#fff',
+                fontWeight: selectedMonth === index && highlightMonth ? 'bold' : 'normal',
                 fontSize: '16px',
               }}
             >
@@ -70,8 +85,8 @@ const Calendar = () => {
               onClick={() => handleDateClick(i + 1)}
               style={{
                 cursor: 'pointer',
-                color: selectedDate === i + 1 ? '#88c550' : '#fff',
-                fontWeight: selectedDate === i + 1 ? 'bold' : 'normal',
+                color: selectedDate === i + 1 && highlightDate ? '#88c550' : '#fff',
+                fontWeight: selectedDate === i + 1 && highlightDate ? 'bold' : 'normal',
                 fontSize: '16px',
               }}
             >
