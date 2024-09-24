@@ -6,13 +6,14 @@ import CustomCheckBox from "@/app/components/CustomCheckBox"; // Import the Cust
 import EmbeddedVideo from "@/app/components/EmbeddedVideo";
 import Calendar from "@/app/components/Calendar";
 import Image from "next/image"; // Import the Image component
-import BusinessImportanceSlider from "./components/BusinessImportanceSlider"
-import TaxesSlider from "./components/TaxesSlider"
+import BusinessImportanceSlider from "./components/BusinessImportanceSlider";
+import LifeInsuranceSlider from "./components/LifeInsuranceSlider";
+import TaxesSlider from "./components/TaxesSlider";
 import Navbar from "@/app/components/Navbar";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import CryptoJS from "crypto-js";
-import "./globals.css"
+import "./globals.css";
 
 interface Checkboxes {
   spouse: boolean;
@@ -46,13 +47,13 @@ const RETRY_DELAY = 3000; // 3 seconds
 export default function Chat() {
   const { messages, input, handleInputChange, handleSubmit, setMessages } =
     useChat();
-const [consent, setConsent] = useState<string>("");
+  const [consent, setConsent] = useState<string>("");
 
   const handleButtonConsentData = (value: string) => {
     setConsent(value);
   };
   const [selectedTerms, setSelectedTerms] = useState<string[]>([]);
-   const terms = [
+  const terms = [
     "Wills",
     "Trusts",
     "Power of Attorney",
@@ -63,18 +64,17 @@ const [consent, setConsent] = useState<string>("");
     "Guardian",
   ];
 
-    const [selectedScenario, setSelectedScenario] = useState<string[]>([]);
-   const scenario = [
+  const [selectedScenario, setSelectedScenario] = useState<string[]>([]);
+  const scenario = [
     "Scenario 1",
     "Scenario 2",
     "Scenario 3",
     "Scenario 4",
     "All Scenarios",
-    
   ];
 
-const [selectedStrategies, setSelectedStrategies] = useState<string[]>([]);
-   const strategies = [
+  const [selectedStrategies, setSelectedStrategies] = useState<string[]>([]);
+  const strategies = [
     "Establish a Trust",
     "Set Up Insurance Policies",
     "Legal Agreements",
@@ -89,8 +89,10 @@ const [selectedStrategies, setSelectedStrategies] = useState<string[]>([]);
     "Tell Me More About Each Option",
   ];
 
-  const [selectedStrategiesv2, setSelectedStrategiesv2] = useState<string[]>([]);
-   const strategiesv2 = [
+  const [selectedStrategiesv2, setSelectedStrategiesv2] = useState<string[]>(
+    []
+  );
+  const strategiesv2 = [
     "Establish a Trust",
     "Set Up Insurance Policies",
     "Legal Agreements",
@@ -144,9 +146,8 @@ const [selectedStrategies, setSelectedStrategies] = useState<string[]>([]);
 
   const [deletionRequestData, setDeletionRequestData] = useState("");
 
- 
-  const chatboxRef = useRef<HTMLDivElement | null>(null); 
- useEffect(() => {
+  const chatboxRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
     if (chatboxRef.current) {
       chatboxRef.current.scrollTop = chatboxRef.current.scrollHeight;
     }
@@ -173,43 +174,43 @@ const [selectedStrategies, setSelectedStrategies] = useState<string[]>([]);
     setInputStr("");
   };
 
-   const handleDateSelection = (year : any, month  : any, day : any) => {
+  const handleDateSelection = (year: any, month: any, day: any) => {
     const selectedDate = `${day}-${month + 1}-${year}`; // Format the date as DD-MM-YYYY
     setInputStr(selectedDate);
   };
 
-
- // Handle the proceed button click - send definitions for selected terms
+  // Handle the proceed button click - send definitions for selected terms
   const handleProceed = () => {
     //selectedTerms.forEach((term) => {
-      handleButtonComponent(selectedTerms);
-   // });
+    handleButtonComponent(selectedTerms);
+    // });
   };
-   const handleProceedScenario = () => {
+  const handleProceedScenario = () => {
     //selectedTerms.forEach((term) => {
-      handleButtonComponentScenario(selectedScenario);
-   // });
+    handleButtonComponentScenario(selectedScenario);
+    // });
   };
-   const handleProceedStrategy = () => {
+  const handleProceedStrategy = () => {
     //selectedTerms.forEach((term) => {
-      handleButtonComponentStrategy(selectedStrategies);
-   // });
+    handleButtonComponentStrategy(selectedStrategies);
+    // });
   };
   const handleProceedStrategyv2 = () => {
     //selectedTerms.forEach((term) => {
-      handleButtonComponentStrategyv2(selectedStrategiesv2);
-   // });
+    handleButtonComponentStrategyv2(selectedStrategiesv2);
+    // });
   };
   const handleButtonComponentStrategyv2 = (messagesData: string[]) => {
     let response = "";
-   if(messagesData.includes("Other")){
-      response = "Please provide details of your arrangement."
+    if (messagesData.includes("Other")) {
+      response = "Please provide details of your arrangement.";
     } else {
-      response = "Are you concerned about protecting your assets from potential insolvency issues, either for yourself or your heirs?"
+      response =
+        "Are you concerned about protecting your assets from potential insolvency issues, either for yourself or your heirs?";
     }
-    
-     const userResponse = messagesData.join(", ");
-   
+
+    const userResponse = messagesData.join(", ");
+
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     const userMessage: Message = {
       id: Date.now().toString(), // Unique ID
@@ -227,19 +228,20 @@ const [selectedStrategies, setSelectedStrategies] = useState<string[]>([]);
     // Append both the user message and AI response to the existing messages
     setMessages([...messages, userMessage, aiMessage]);
   };
-   const handleButtonComponentStrategy = (messagesData: string[]) => {
+  const handleButtonComponentStrategy = (messagesData: string[]) => {
     let response = "";
-    if(messagesData.includes("Tell Me More About Each Option")){
-      response = "That's okay! It can be overwhelming to decide on the best measures without more information. Here’s a brief overview to help you:"
-    } else
-    if(messagesData.includes("Other")){
-      response = "Please provide details of your arrangement."
+    if (messagesData.includes("Tell Me More About Each Option")) {
+      response =
+        "That's okay! It can be overwhelming to decide on the best measures without more information. Here’s a brief overview to help you:";
+    } else if (messagesData.includes("Other")) {
+      response = "Please provide details of your arrangement.";
     } else {
-      response = "Are you concerned about protecting your assets from potential insolvency issues, either for yourself or your heirs?"
+      response =
+        "Are you concerned about protecting your assets from potential insolvency issues, either for yourself or your heirs?";
     }
-    
-     const userResponse = messagesData.join(", ");
-   
+
+    const userResponse = messagesData.join(", ");
+
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     const userMessage: Message = {
       id: Date.now().toString(), // Unique ID
@@ -260,9 +262,9 @@ const [selectedStrategies, setSelectedStrategies] = useState<string[]>([]);
   //Here are the definition of key terms:
   const handleButtonComponentScenario = (messagesData: string[]) => {
     let response = "Here are the potential outcomes of each scenario:";
-    
-     const userResponse = messagesData.join(", ");
-   
+
+    const userResponse = messagesData.join(", ");
+
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     const userMessage: Message = {
       id: Date.now().toString(), // Unique ID
@@ -280,12 +282,12 @@ const [selectedStrategies, setSelectedStrategies] = useState<string[]>([]);
     // Append both the user message and AI response to the existing messages
     setMessages([...messages, userMessage, aiMessage]);
   };
-//Here are the definition of key terms:
+  //Here are the definition of key terms:
   const handleButtonComponent = (messagesData: string[]) => {
     let response = "Here are the definition of key terms:";
-    
-     const userResponse = messagesData.join(", ");
-   
+
+    const userResponse = messagesData.join(", ");
+
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     const userMessage: Message = {
       id: Date.now().toString(), // Unique ID
@@ -333,12 +335,12 @@ const [selectedStrategies, setSelectedStrategies] = useState<string[]>([]);
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-  
   const handleButtonConsent = (message: any) => {
-     setConsent(message);
+    setConsent(message);
     let response = "";
     if (message == "Yes, I consent") {
-      response = "Hello and welcome to Moneyversity’s Estate Planning Consultant.";
+      response =
+        "Hello and welcome to Moneyversity’s Estate Planning Consultant.";
     }
 
     if (message == "No, I do not consent") {
@@ -364,10 +366,9 @@ const [selectedStrategies, setSelectedStrategies] = useState<string[]>([]);
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-  
   const handleButtonStage0 = (message: any) => {
     let response = "";
-     if (message == "Let's chat again!") {
+    if (message == "Let's chat again!") {
       response = "Let’s dive into the world of estate planning!";
     }
     if (message == "Absolutely") {
@@ -375,10 +376,9 @@ const [selectedStrategies, setSelectedStrategies] = useState<string[]>([]);
     }
 
     if (message == "Tell me more") {
-      response =
-        "Let’s dive into the world of estate planning!";
+      response = "Let’s dive into the world of estate planning!";
     }
-     if (message == "Not now") {
+    if (message == "Not now") {
       response =
         "No problem at all. If you ever have questions or decide to start your estate planning, I’m here to help. Have a great day!";
     }
@@ -403,10 +403,12 @@ const [selectedStrategies, setSelectedStrategies] = useState<string[]>([]);
   const handleButtonStage1 = (message: any) => {
     let response = "";
     if (message == "Tell me more") {
-      response = "There are a few documents and phrases that are important when you are doing your estate planning:";
+      response =
+        "There are a few documents and phrases that are important when you are doing your estate planning:";
     }
- if (message == "Skip Estate Planning Explanation") {
-      response = "I know estate planning can be daunting, so I’m here to make it as easy as possible for you to find a tailored estate plan that suits your needs. To begin, I need to gather some basic information. This will help tailor the estate planning process to your unique situation.";
+    if (message == "Skip Estate Planning Explanation") {
+      response =
+        "I know estate planning can be daunting, so I’m here to make it as easy as possible for you to find a tailored estate plan that suits your needs. To begin, I need to gather some basic information. This will help tailor the estate planning process to your unique situation.";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -427,13 +429,14 @@ const [selectedStrategies, setSelectedStrategies] = useState<string[]>([]);
     setMessages([...messages, userMessage, aiMessage]);
   };
 
- const handleButtonStage2 = (message: any) => {
+  const handleButtonStage2 = (message: any) => {
     let response = "";
     if (message == "Single") {
-   //   response = "There are 9 key components of estate planning:";
+      //   response = "There are 9 key components of estate planning:";
     }
- if (message == "Married") {
-      response = "Excellent. Are you married in or out of community of property? If married out of community of property, is it with or without the accrual system?";
+    if (message == "Married") {
+      response =
+        "Excellent. Are you married in or out of community of property? If married out of community of property, is it with or without the accrual system?";
     }
     saveMarriage(message);
 
@@ -455,29 +458,33 @@ const [selectedStrategies, setSelectedStrategies] = useState<string[]>([]);
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-const handleButtonStage3 = async (message: any) => {
+  const handleButtonStage3 = async (message: any) => {
     let response = "";
-    
+
     if (message == "Continue") {
       response = "Do you currently have a will in place?";
     }
     if (message == "In Community of Property") {
-       await saveUserProfile({ propertyRegime: message });
+      await saveUserProfile({ propertyRegime: message });
       response = "Do you currently have a will in place?";
     }
     if (message == "Out of Community of Property with Accrual") {
       await saveUserProfile({ propertyRegime: message });
-      response = "Excellent. In order to calculate the accrual, we need to know the specifics of your antenuptial contract (ANC). We will ask for your antenuptial contract at the end of this chat.";
+      response =
+        "Excellent. In order to calculate the accrual, we need to know the specifics of your antenuptial contract (ANC). We will ask for your antenuptial contract at the end of this chat.";
     }
-     if (message == "Out of Community of Property without Accrual") {
+    if (message == "Out of Community of Property without Accrual") {
       await saveUserProfile({ propertyRegime: message });
-      response = "Excellent. In order to calculate the accrual, we need to know the specifics of your antenuptial contract (ANC). We will ask for your antenuptial contract at the end of this chat.";
+      response =
+        "Excellent. In order to calculate the accrual, we need to know the specifics of your antenuptial contract (ANC). We will ask for your antenuptial contract at the end of this chat.";
     }
     if (message == "I can't remember") {
-      response = "No worries! Here’s a brief description of each type to help you remember:";
+      response =
+        "No worries! Here’s a brief description of each type to help you remember:";
     }
     if (message == "What is Accrual?") {
-      response = "Accrual is a concept in marriage where the growth in wealth during the marriage is shared between spouses. When a couple marries under the accrual system, each spouse keeps the assets they had before the marriage. However, any increase in their respective estates during the marriage is shared equally when the marriage ends, either through divorce or death.";
+      response =
+        "Accrual is a concept in marriage where the growth in wealth during the marriage is shared between spouses. When a couple marries under the accrual system, each spouse keeps the assets they had before the marriage. However, any increase in their respective estates during the marriage is shared equally when the marriage ends, either through divorce or death.";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -498,20 +505,21 @@ const handleButtonStage3 = async (message: any) => {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-const handleButtonStage4 = async (message: any) => {
+  const handleButtonStage4 = async (message: any) => {
     let response = "";
-     if (message == "Continue") {
+    if (message == "Continue") {
       response = "Do you currently have a trust in place?";
     }
     if (message == "Yes") {
       await saveUserProfile({ will: message });
-      response = "When was the last time you reviewed your will? It’s a good idea to keep it up-to-date with any changes in your life";
+      response =
+        "When was the last time you reviewed your will? It’s a good idea to keep it up-to-date with any changes in your life";
     }
     if (message == "No") {
-       await saveUserProfile({ will: message });
-      response = "Creating a will is an important step in securing your assets and ensuring your wishes are followed. We can start drafting your will right here by answering a few questions about your estate and preferences a little later in the chat.";
+      await saveUserProfile({ will: message });
+      response =
+        "Creating a will is an important step in securing your assets and ensuring your wishes are followed. We can start drafting your will right here by answering a few questions about your estate and preferences a little later in the chat.";
     }
-    
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     const userMessage: Message = {
@@ -531,18 +539,17 @@ const handleButtonStage4 = async (message: any) => {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-const handleButtonStage5 = async (message: any) => {
+  const handleButtonStage5 = async (message: any) => {
     let response = "";
-    
+
     if (message == "Will is up to date") {
-        await saveUserProfile({ willStatus: message });
+      await saveUserProfile({ willStatus: message });
       response = "Do you currently have a trust in place?";
     }
     if (message == "Will needs to be reviewed & updated") {
-        await saveUserProfile({ willStatus: message });
+      await saveUserProfile({ willStatus: message });
       response = "Do you currently have a trust in place";
     }
-    
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     const userMessage: Message = {
@@ -562,17 +569,15 @@ const handleButtonStage5 = async (message: any) => {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-
-const handleButtonStage6 = (message: any) => {
+  const handleButtonStage6 = (message: any) => {
     let response = "";
-    
+
     if (message == "Yes") {
       response = "Do you have any dependents?";
     }
     if (message == "No") {
       response = "Do you have any dependents?";
     }
-    
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     const userMessage: Message = {
@@ -592,12 +597,12 @@ const handleButtonStage6 = (message: any) => {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-
-const handleButtonStage7 = (message: any) => {
+  const handleButtonStage7 = (message: any) => {
     let response = "";
-    
+
     if (message == "Yes, I have a question") {
-       response = "Of course, I'm here to help. What would you like to know or discuss?";
+      response =
+        "Of course, I'm here to help. What would you like to know or discuss?";
 
       setNextResponse(
         "Now that I have some basic information about you, let’s create a customised estate planning process tailored to your needs"
@@ -605,12 +610,10 @@ const handleButtonStage7 = (message: any) => {
       isResponse.current = "1";
     }
     if (message == "No, let’s move on") {
-    //  response = "Now that I have some basic information about you, let’s create a customised estate planning process tailored to your needs";
-    response = "Now that I have some basic information about you, let’s create a customised estate planning process tailored to your needs!";
-    
-  
-  }
-    
+      //  response = "Now that I have some basic information about you, let’s create a customised estate planning process tailored to your needs";
+      response =
+        "Now that I have some basic information about you, let’s create a customised estate planning process tailored to your needs!";
+    }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     const userMessage: Message = {
@@ -629,39 +632,6 @@ const handleButtonStage7 = (message: any) => {
     // Append both the user message and AI response to the existing messages
     setMessages([...messages, userMessage, aiMessage]);
   };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
   const handleButtonStage12 = (message: any) => {
     let response = "";
@@ -678,10 +648,10 @@ const handleButtonStage7 = (message: any) => {
       response =
         "It’s important to understand the legal requirements and considerations specific to South Africa:";
     }
-     if (message == "Proceed") {
+    if (message == "Proceed") {
       // response =
       //   "It’s important to understand the legal requirements and considerations specific to South Africa:";
-        response =
+      response =
         "Is there anything else you’d like to know about estate planning or any questions you have at this stage?";
     }
 
@@ -703,18 +673,17 @@ const handleButtonStage7 = (message: any) => {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-const handleButtonStage13v1 = (message: any) => {
+  const handleButtonStage13v1 = (message: any) => {
     let response = "";
     if (message == "Yes, I’m ready to move on") {
-      response = "Let’s check out some examples to understand these options better. Here are a few examples we can simulate:";
-
+      response =
+        "Let’s check out some examples to understand these options better. Here are a few examples we can simulate:";
     }
 
     if (message == "Skip") {
       response =
         "I know estate planning can be daunting, so I’m here to make it as easy as possible for you to find a tailored estate plan that suits your needs.";
     }
-     
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     const userMessage: Message = {
@@ -733,12 +702,9 @@ const handleButtonStage13v1 = (message: any) => {
     // Append both the user message and AI response to the existing messages
     setMessages([...messages, userMessage, aiMessage]);
   };
-  
 
-
-const handleButtonStage13v2v1 = (message: any) => {
-  
-  let response = "";
+  const handleButtonStage13v2v1 = (message: any) => {
+    let response = "";
 
     if (message == "Yes, I have a question.") {
       response = "What is your question?";
@@ -771,12 +737,13 @@ const handleButtonStage13v2v1 = (message: any) => {
     // Append both the user message and AI response to the existing messages
     setMessages([...messages, userMessage, aiMessage]);
   };
-  
+
   const handleButtonStage13EstateDuty = (message: any) => {
     let response = "";
 
     if (message == "Yes") {
-      response = "This tax is levied on the total value of a deceased person’s estate. The conditions include:";
+      response =
+        "This tax is levied on the total value of a deceased person’s estate. The conditions include:";
     }
 
     if (message == "No, let’s move on") {
@@ -802,7 +769,7 @@ const handleButtonStage13v2v1 = (message: any) => {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-const handleButtonStage13v2 = (message: any) => {
+  const handleButtonStage13v2 = (message: any) => {
     let response = "";
 
     if (message == "Yes, I have a question.") {
@@ -837,11 +804,12 @@ const handleButtonStage13v2 = (message: any) => {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-const handleButtonStage13v3 = (message: any) => {
+  const handleButtonStage13v3 = (message: any) => {
     let response = "";
 
     if (message == "Yes") {
-      response = "A farm may only be sold to one person or entity and as such, the offer to purchase cannot be made by more than one person. An exception to this would be if a couple is married in community of property as South African law views their estate as one.";
+      response =
+        "A farm may only be sold to one person or entity and as such, the offer to purchase cannot be made by more than one person. An exception to this would be if a couple is married in community of property as South African law views their estate as one.";
     }
 
     if (message == "No, does not apply to me") {
@@ -867,17 +835,9 @@ const handleButtonStage13v3 = (message: any) => {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-
-
-
-
-
-
-
   const handleButtonStage13 = (message: any) => {
     let response = "";
 
-    
     if (message == "Yes, I have a question") {
       response = "What is your question?";
 
@@ -951,14 +911,13 @@ const handleButtonStage13v3 = (message: any) => {
         "I know estate planning can be daunting, so I’m here to make it as easy as possible for you to find a tailored estate plan that suits your needs. To begin, I need to gather some basic information. This will help tailor the estate planning process to your unique situation.";
     }
     if (message == "Yes, I have a question") {
-      response =
-        "Certainly! Let me know what you'd like to know.";
-  
+      response = "Certainly! Let me know what you'd like to know.";
+
       setNextResponse(
         "I know estate planning can be daunting, so I’m here to make it as easy as possible for you to find a tailored estate plan that suits your needs. To begin, I need to gather some basic information. This will help tailor the estate planning process to your unique situation."
       );
       isResponse.current = "1";
-      }
+    }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     const userMessage: Message = {
@@ -1052,10 +1011,10 @@ const handleButtonStage13v3 = (message: any) => {
       response = "Templates are downloaded";
     }
     if (message == "Skip") {
-      response = "Now that we’ve covered your personal details, let’s talk about your objectives for estate planning. Understanding your goals will help us create a plan that fits your needs perfectly. Ready to dive in?";
+      response =
+        "Now that we’ve covered your personal details, let’s talk about your objectives for estate planning. Understanding your goals will help us create a plan that fits your needs perfectly. Ready to dive in?";
     }
 
-    
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     const userMessage: Message = {
       id: Date.now().toString(), // Unique ID
@@ -1190,7 +1149,6 @@ const handleButtonStage13v3 = (message: any) => {
   const handleButtonStage15v1 = (message: any) => {
     let response = "";
 
-  
     if (message == "Continue") {
       response =
         "Great! To help you stay organised throughout the estate planning process, here are some checklists for different stages:";
@@ -1585,7 +1543,7 @@ const handleButtonStage13v3 = (message: any) => {
 
     if (message == "Yes, I have a question") {
       response = "I’m here to help! Feel free to ask any questions you have.";
-       setNextResponse(
+      setNextResponse(
         "Let’s dive into the details of what you own to ensure we have a comprehensive understanding of your estate. Your assets play a crucial role in your estate plan."
       );
       isResponse.current = "1";
@@ -1718,11 +1676,15 @@ const handleButtonStage13v3 = (message: any) => {
 
     if (message == "Yes") {
       response =
-        "Thanks for sharing your thoughts, "+userName+". It’s important to have a clear understanding of your objectives so we can tailor your estate plan to meet your needs. Is there anything else you’d like to add before we move on?";
+        "Thanks for sharing your thoughts, " +
+        userName +
+        ". It’s important to have a clear understanding of your objectives so we can tailor your estate plan to meet your needs. Is there anything else you’d like to add before we move on?";
     }
     if (message == "No") {
       response =
-        "Thanks for sharing your thoughts, "+userName+". It’s important to have a clear understanding of your objectives so we can tailor your estate plan to meet your needs. Is there anything else you’d like to add before we move on?";
+        "Thanks for sharing your thoughts, " +
+        userName +
+        ". It’s important to have a clear understanding of your objectives so we can tailor your estate plan to meet your needs. Is there anything else you’d like to add before we move on?";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -3464,8 +3426,7 @@ const handleButtonStage13v3 = (message: any) => {
     if (message == "Yes") {
       firstTip.current = 1;
       response =
-        "USEFUL TIP";
-        
+        "USEFUL TIP: For estate duty: When farms are bequeathed (whether to trust or natural person) and the farm was used for bona fide farming purposes, the market value less 30% is included as the value of the farm for estate duty purposes.";
     }
     if (message == "No") {
       response =
@@ -3519,8 +3480,7 @@ const handleButtonStage13v3 = (message: any) => {
 
     if (message == "Yes, I have it in my current will") {
       response =
-        "USEFUL TIP";
-       
+        "USEFUL TIP: If your spouse were to pass away immediately after you, there are specific estate duty implications and/or arrangements you would need to consider? All the more reason to get in touch with our Financial Advisors. This will be noted and added to the report supplied to you at the end of this chat.";
     }
     if (message == "No, I have not included specific instructions") {
       response =
@@ -3699,13 +3659,13 @@ const handleButtonStage13v3 = (message: any) => {
   const handleButtonStage68Payable = (message: any) => {
     let response = "";
 
-    if (message == "Yes") {
+    if (message == "Yes, specify") {
       response = "Great! Please provide the policy details.";
     }
 
     if (message == "No") {
       response =
-        "Thank you for providing these details. Now, we can move on to the next part of your estate planning. Ready to continue?";
+        "Thank you for providing these details,"+userName+". Now, we can move on to the next part of your estate planning. Ready to continue?";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -4185,7 +4145,7 @@ const handleButtonStage13v3 = (message: any) => {
     }
     if (message == "I don’t have any maintenance obligations") {
       response =
-        "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?";
+        "Have you considered the cost of education and taken that into account regarding maintenance?";
     }
     if (
       message ==
@@ -4217,7 +4177,7 @@ const handleButtonStage13v3 = (message: any) => {
     let response = "";
     if (message == "Upload Document at End of Chat") {
       response =
-        "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?";
+        "Have you considered the cost of education and taken that into account regarding maintenance?";
     }
     if (message == "Yes, specify detail") {
       response =
@@ -4229,7 +4189,7 @@ const handleButtonStage13v3 = (message: any) => {
     }
     if (message == "Continue") {
       response =
-        "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?";
+        "Have you considered the cost of education and taken that into account regarding maintenance?";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -4254,7 +4214,7 @@ const handleButtonStage13v3 = (message: any) => {
     let response = "";
     if (message == "Continue") {
       response =
-        "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?";
+        "Have you considered the cost of education and taken that into account regarding maintenance?";
     }
     if (message == "Yes") {
       response =
@@ -4262,7 +4222,7 @@ const handleButtonStage13v3 = (message: any) => {
     }
     if (message == "No") {
       response =
-        "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?";
+        "Have you considered the cost of education and taken that into account regarding maintenance?";
     }
     if (message == "Maybe") {
       response =
@@ -4291,7 +4251,7 @@ const handleButtonStage13v3 = (message: any) => {
     let response = "";
     if (message == "Continue") {
       response =
-        "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?";
+        "Have you considered the cost of education and taken that into account regarding maintenance?";
     }
     if (message == "Yes") {
       response =
@@ -4299,12 +4259,40 @@ const handleButtonStage13v3 = (message: any) => {
     }
     if (message == "No") {
       response =
-        "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?";
+        "Have you considered the cost of education and taken that into account regarding maintenance?";
     }
     if (message == "Maybe") {
       response =
         "No problem. Whenever you're ready to provide the details about life insurance policy option, just let me know.";
     }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+  const handleButtonStage82LifeInsurancev1 = (message: any) => {
+    let response = "";
+    if (message == "Yes") {
+      response =
+        "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?"
+        }
+    if (message == "No") {
+      response =
+        "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?"
+       }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     const userMessage: Message = {
@@ -4881,7 +4869,7 @@ const handleButtonStage13v3 = (message: any) => {
       "I have capital available to generate an income for my dependents"
     ) {
       response =
-        "Additional life assurance can provide the capital required for the income needs of dependents. Have you considered obtaining additional life insurance for this purpose?";
+        "Additional life insurance can provide the capital required for the income needs of dependents. Do you have any life insurance that is linked to a purpose, i.e. Mortgage / bond life cover etc?";
     }
     if (
       message == "I have capital but unsure if it will generate enough income"
@@ -4922,7 +4910,7 @@ const handleButtonStage13v3 = (message: any) => {
     let response = "";
     if (message == "Continue") {
       response =
-        "Additional life assurance can provide the capital required for the income needs of dependents. Have you considered obtaining additional life insurance for this purpose?";
+        "Additional life insurance can provide the capital required for the income needs of dependents. Do you have any life insurance that is linked to a purpose, i.e. Mortgage / bond life cover etc?";
     }
     if (message == "Yes") {
       response =
@@ -4930,7 +4918,7 @@ const handleButtonStage13v3 = (message: any) => {
     }
     if (message == "No") {
       response =
-        "Additional life assurance can provide the capital required for the income needs of dependents. Have you considered obtaining additional life insurance for this purpose?";
+        "Additional life insurance can provide the capital required for the income needs of dependents. Do you have any life insurance that is linked to a purpose, i.e. Mortgage / bond life cover etc?";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -4955,7 +4943,7 @@ const handleButtonStage13v3 = (message: any) => {
     let response = "";
     if (message == "Continue") {
       response =
-        "Additional life assurance can provide the capital required for the income needs of dependents. Have you considered obtaining additional life insurance for this purpose?";
+        "Additional life insurance can provide the capital required for the income needs of dependents. Do you have any life insurance that is linked to a purpose, i.e. Mortgage / bond life cover etc?";
     }
     if (message == "Yes") {
       response =
@@ -4963,7 +4951,7 @@ const handleButtonStage13v3 = (message: any) => {
     }
     if (message == "No") {
       response =
-        "Additional life assurance can provide the capital required for the income needs of dependents. Have you considered obtaining additional life insurance for this purpose?";
+        "Additional life insurance can provide the capital required for the income needs of dependents. Do you have any life insurance that is linked to a purpose, i.e. Mortgage / bond life cover etc?";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -4988,7 +4976,7 @@ const handleButtonStage13v3 = (message: any) => {
     let response = "";
     if (message == "Continue") {
       response =
-        "Additional life assurance can provide the capital required for the income needs of dependents. Have you considered obtaining additional life insurance for this purpose?";
+        "Additional life insurance can provide the capital required for the income needs of dependents. Do you have any life insurance that is linked to a purpose, i.e. Mortgage / bond life cover etc?";
     }
     if (message == "Yes") {
       response =
@@ -4996,7 +4984,7 @@ const handleButtonStage13v3 = (message: any) => {
     }
     if (message == "No") {
       response =
-        "Additional life assurance can provide the capital required for the income needs of dependents. Have you considered obtaining additional life insurance for this purpose?";
+        "Additional life insurance can provide the capital required for the income needs of dependents. Do you have any life insurance that is linked to a purpose, i.e. Mortgage / bond life cover etc?";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -5016,6 +5004,42 @@ const handleButtonStage13v3 = (message: any) => {
     // Append both the user message and AI response to the existing messages
     setMessages([...messages, userMessage, aiMessage]);
   };
+
+  
+const handleButtonStage88Additionalv1 = (message: any) => {
+
+let response = "";
+    if (message == "Yes, specify details") {
+      response =
+        "Great! Please provide the above mentioned details about life insurance.";
+    }
+    if (
+      message ==
+      "No, let's move on"
+    ) {
+      response =
+        "Have you considered obtaining additional life insurance for providing capital required for income needs of dependents?";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+
 
   const handleButtonStage88Additional = (message: any) => {
     let response = "";
@@ -5163,13 +5187,12 @@ const handleButtonStage13v3 = (message: any) => {
     let response = "";
     if (message == "Yes") {
       response =
-        "Next, let's talk about trusts. A trust is an arrangement where property belonging to one party is managed by another party for the benefit of a third party. Are you familiar with trusts?";
+        "Next, let's talk about trusts. A trust is is a legal arrangement where one person (the trustee) holds and manages assets on behalf of another person or group (the beneficiaries). The person who created the trust is called the settlor. The trustee is responsible for managing the trust according to the terms set by the settlor, ensuring the assets benefit the beneficiaries. Are you familiar with trusts?";
     }
     if (message == "No") {
-      response =
-        "Absolutely! I'm here to assist. What would you like to ask?";
+      response = "Absolutely! I'm here to assist. What would you like to ask?";
       setNextResponse(
-        "Next, let's talk about trusts. A trust is an arrangement where property belonging to one party is managed by another party for the benefit of a third party. Are you familiar with trusts?"
+        "Next, let's talk about trusts. A trust is is a legal arrangement where one person (the trustee) holds and manages assets on behalf of another person or group (the beneficiaries). The person who created the trust is called the settlor. The trustee is responsible for managing the trust according to the terms set by the settlor, ensuring the assets benefit the beneficiaries. Are you familiar with trusts?"
       );
       isResponse.current = "1";
     }
@@ -5229,7 +5252,7 @@ const handleButtonStage13v3 = (message: any) => {
     let response = "";
     if (message == "Yes") {
       response =
-        "Next, let's talk about trusts. A trust is an arrangement where property belonging to one party is managed by another party for the benefit of a third party. Are you familiar with trusts?";
+        "Thank you for discussing insurance policies with me. Let’s proceed to the next part of your estate planning. Shall we continue?";
     }
     if (message == "No") {
       response =
@@ -5262,7 +5285,7 @@ const handleButtonStage13v3 = (message: any) => {
     let response = "";
     if (message == "Continue") {
       response =
-        "Next, let's talk about trusts. A trust is an arrangement where property belonging to one party is managed by another party for the benefit of a third party. Are you familiar with trusts?";
+        "Thank you for discussing insurance policies with me. Let’s proceed to the next part of your estate planning. Shall we continue?";
     }
     if (message == "Yes") {
       response =
@@ -5270,7 +5293,7 @@ const handleButtonStage13v3 = (message: any) => {
     }
     if (message == "No") {
       response =
-        "Next, let's talk about trusts. A trust is an arrangement where property belonging to one party is managed by another party for the benefit of a third party. Are you familiar with trusts?";
+        "Thank you for discussing insurance policies with me. Let’s proceed to the next part of your estate planning. Shall we continue?";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -5299,7 +5322,7 @@ const handleButtonStage13v3 = (message: any) => {
     }
     if (message == "No") {
       response =
-        "Next, let's talk about trusts. A trust is an arrangement where property belonging to one party is managed by another party for the benefit of a third party. Are you familiar with trusts?";
+        "Thank you for discussing insurance policies with me. Let’s proceed to the next part of your estate planning. Shall we continue?";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -5324,7 +5347,7 @@ const handleButtonStage13v3 = (message: any) => {
     let response = "";
     if (message == "Continue") {
       response =
-        "Next, let's talk about trusts. A trust is an arrangement where property belonging to one party is managed by another party for the benefit of a third party. Are you familiar with trusts?";
+        "Thank you for discussing insurance policies with me. Let’s proceed to the next part of your estate planning. Shall we continue?";
     }
     if (message == "Yes") {
       response =
@@ -5332,7 +5355,7 @@ const handleButtonStage13v3 = (message: any) => {
     }
     if (message == "No") {
       response =
-        "Next, let's talk about trusts. A trust is an arrangement where property belonging to one party is managed by another party for the benefit of a third party. Are you familiar with trusts?";
+        "Thank you for discussing insurance policies with me. Let’s proceed to the next part of your estate planning. Shall we continue?";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -5359,14 +5382,14 @@ const handleButtonStage13v3 = (message: any) => {
       response =
         "Sure, I’m here to help. What additional information or questions do you have?";
       setNextResponse(
-        "Next, let's talk about trusts. A trust is an arrangement where property belonging to one party is managed by another party for the benefit of a third party. Are you familiar with trusts?"
+        "Thank you for discussing insurance policies with me. Let’s proceed to the next part of your estate planning. Shall we continue?"
       );
       isResponse.current = "1";
     }
 
     if (message == "No") {
       response =
-        "Next, let's talk about trusts. A trust is an arrangement where property belonging to one party is managed by another party for the benefit of a third party. Are you familiar with trusts?";
+        "Thank you for discussing insurance policies with me. Let’s proceed to the next part of your estate planning. Shall we continue?";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -5463,7 +5486,7 @@ const handleButtonStage13v3 = (message: any) => {
     }
     if (message == "No, I haven’t thought about setting up a trust yet") {
       response =
-        "No, I haven’t thought about setting up a trust yetSetting up a trust can be a valuable component of your estate plan, providing various benefits such as asset protection, wealth preservation, and efficient distribution of assets to beneficiaries. Would you like more information on how trusts can benefit your specific situation?";
+        "Setting up a trust can be a valuable component of your estate plan, providing various benefits such as asset protection, wealth preservation, and efficient distribution of assets to beneficiaries. Would you like more information on how trusts can benefit your specific situation?";
     }
 
     if (
@@ -5637,7 +5660,7 @@ const handleButtonStage13v3 = (message: any) => {
       "I’m primarily focused on other aspects of my estate planning right now"
     ) {
       response =
-        "Addressing specific concerns or questions about setting up a trust is crucial for making informed decisions about your estate plan. Whether you're unsure about the process, concerned about potential implications, or have questions about trust administration, I'm here to provide guidance and support. Feel free to share your concerns, and we can discuss them further.";
+        "Addressing specific concerns or questions about setting up a trust is crucial for making informed decisions about your estate plans. Whether you're unsure about the process, concerned about potential implications, or have questions about trust administration, I'm here to provide guidance and support. Feel free to share your concerns, and we can discuss them further.";
     }
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     const userMessage: Message = {
@@ -5712,11 +5735,11 @@ const handleButtonStage13v3 = (message: any) => {
     }
     if (message == "No") {
       response =
-        "Donations tax is a tax imposed on the transfer of assets to a trust or natural person without receiving adequate consideration in return. It's important to understand that while transferring assets to a trust can help reduce estate duty, it may trigger donations tax liabilities. The amount of donations tax payable depends on several factors, including the value of the assets transferred, any available exemptions or deductions, and the relationship between the donor and the recipient. The donations tax threshold is R100 000 per year.";
+        "Donations tax is a tax imposed on the transfer of assets to a trust or to any person (for example individuals, company or trust that is a SA tax resident) without receiving adequate consideration in return. It's important to understand that while transferring assets to a trust can help reduce estate duty, it may trigger donations tax liabilities. The amount of donations tax payable depends on several factors, including the value of the assets transferred, any available exemptions or deductions, and the relationship between the donor and the recipient. The donations tax threshold is R100 000 per year.";
     }
     if (message == "Tell me more") {
       response =
-        "Donations tax is a tax imposed on the transfer of assets to a trust or natural person without receiving adequate consideration in return. It's important to understand that while transferring assets to a trust can help reduce estate duty, it may trigger donations tax liabilities. The amount of donations tax payable depends on several factors, including the value of the assets transferred, any available exemptions or deductions, and the relationship between the donor and the recipient. The donations tax threshold is R100 000 per year.";
+        "Donations tax is a tax imposed on the transfer of assets to a trust or to any person (for example individuals, company or trust that is a SA tax resident) without receiving adequate consideration in return. It's important to understand that while transferring assets to a trust can help reduce estate duty, it may trigger donations tax liabilities. The amount of donations tax payable depends on several factors, including the value of the assets transferred, any available exemptions or deductions, and the relationship between the donor and the recipient. The donations tax threshold is R100 000 per year.";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -5766,7 +5789,7 @@ const handleButtonStage13v3 = (message: any) => {
     let response = "";
     if (message == "Continue") {
       response =
-        "Selling assets to the trust might reduce estate duty, but a sale and loan agreement should be in place if a loan account is to be created. Are you familiar with the terms and conditions of such agreements?";
+        "Selling assets to the trust might reduce estate duty, but a sale agreement should be in place if a loan account is to be created. Are you familiar with the terms and conditions of such agreements?";
     }
     if (message == "Yes, I’m interested in exploring this option") {
       response =
@@ -5936,11 +5959,11 @@ const handleButtonStage13v3 = (message: any) => {
     let response = "";
     if (message == "Continue") {
       response =
-        "Thanks! Do you have anything you’d like to add or any questions that I can help you with today?";
+        "We’ve now gathered all the relevant information to help create your estate plan. As one of the final steps, please upload the documents below. These will be securely stored and only shared with the financial adviser who will assist you in finalising your estate plan.";
     }
     if (message == "Yes") {
       response =
-        "Thanks! Do you have anything you’d like to add or any questions that I can help you with today?";
+        "We’ve now gathered all the relevant information to help create your estate plan. As one of the final steps, please upload the documents below. These will be securely stored and only shared with the financial adviser who will assist you in finalising your estate plan.";
     }
     if (message == "No") {
       response =
@@ -5975,13 +5998,13 @@ const handleButtonStage13v3 = (message: any) => {
       response =
         "Thanks! Do you have anything you’d like to add or any questions that I can help you with today?";
       setNextResponse(
-        "Thanks for your time today! Your information will be reviewed by a financial adviser, and you can expect to hear back soon with a detailed report.Have a great day, and we’re looking forward to helping you secure your future!"
+        "Thanks for your time today, "+userName+". Your information will be reviewed by an Old Mutual financial adviser, and you can expect to hear back soon with your estate plan. Have a great day, and we’re looking forward to helping you secure your future!"
       );
       isResponse.current = "1";
     }
     if (message == "No") {
       response =
-        "Thanks for your time today! Your information will be reviewed by a financial adviser, and you can expect to hear back soon with a detailed report.Have a great day, and we’re looking forward to helping you secure your future!";
+        "Thanks for your time today, "+userName+". Your information will be reviewed by an Old Mutual financial adviser, and you can expect to hear back soon with your estate plan. Have a great day, and we’re looking forward to helping you secure your future!";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -6001,6 +6024,95 @@ const handleButtonStage13v3 = (message: any) => {
     // Append both the user message and AI response to the existing messages
     setMessages([...messages, userMessage, aiMessage]);
   };
+
+const handleButtonStageDownloadReport = (message: any) => {
+    let response = "";
+  
+    if (message == "Download Report") {
+      response =
+        "Thanks, "+userName+". Do you have anything you would like to add or any questions that I can help you with today?";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+  const handleButtonStage101FinalUpload = (message: any) => {
+  let response = "";
+
+  if (message === "Continue") {
+    response = "Thank you for uploading your documents!";
+  } else {
+    // Trigger file input click to allow the user to upload a file
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.pdf,.doc,.docx'; // You can limit the file types here
+
+    // Handle file selection
+    fileInput.onchange = (event: any) => {
+      const file = event.target.files[0];
+      if (file) {
+        // Simulate file upload process (you can integrate an actual upload API here)
+        console.log("Uploading file:", file.name);
+        response = `File "${file.name}" uploaded successfully!`;
+
+        // Append the assistant response for successful upload
+        const aiMessage: Message = {
+          id: Date.now().toString(),
+          role: "assistant",
+          content: response,
+        };
+
+        // Update the messages
+        setMessages([...messages, aiMessage]);
+      } else {
+        response = "No file selected!";
+        const aiMessage: Message = {
+          id: Date.now().toString(),
+          role: "assistant",
+          content: response,
+        };
+        setMessages([...messages, aiMessage]);
+      }
+    };
+
+    // Programmatically trigger the file input click to open the file picker
+    fileInput.click();
+
+    return; // Stop further execution in the else block
+  }
+
+  // Append the user message first (this simulates the user's selection being displayed on the right side)
+  const userMessage: Message = {
+    id: Date.now().toString(),
+    role: "user",
+    content: message,
+  };
+
+  // Then append the assistant response
+  const aiMessage: Message = {
+    id: Date.now().toString(),
+    role: "assistant",
+    content: response,
+  };
+
+  // Append both the user message and AI response to the existing messages
+  setMessages([...messages, userMessage, aiMessage]);
+};
+
 
   const saveUserProfile = async (update: any) => {
     let retries = 0;
@@ -6059,8 +6171,8 @@ const handleButtonStage13v3 = (message: any) => {
         id: Date.now().toString(),
         role: "assistant",
         content:
-        "Before we start the chat, we want to ensure you’re comfortable with us collecting and storing your personal information securely. This data will only be used to help create your estate plan. Do you consent to this?"
-         // "Hello 😊 and welcome to Moneyversity's Estate Planning Consultant 🤖. I'm here to help you navigate the estate planning process with ease. Together, we'll ensure your assets and wishes are well- documented and protected. Ready to get started on this important journey?",
+          "Before we start the chat, we want to ensure you’re comfortable with us collecting and storing your personal information securely. This data will only be used to help create your estate plan. Do you consent to this?",
+        // "Hello 😊 and welcome to Moneyversity's Estate Planning Consultant 🤖. I'm here to help you navigate the estate planning process with ease. Together, we'll ensure your assets and wishes are well- documented and protected. Ready to get started on this important journey?",
       },
     ]);
   }, [setMessages]);
@@ -6176,9 +6288,11 @@ const handleButtonStage13v3 = (message: any) => {
     await saveUserProfile({ checkboxesAsset: updatedCheckboxesAsset });
   };
 
-    // Handle checkbox change
-  const handleCheckboxChangeTerms = (event: React.ChangeEvent<HTMLInputElement>) => {
-     const term = event.target.value;
+  // Handle checkbox change
+  const handleCheckboxChangeTerms = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const term = event.target.value;
     if (selectedTerms.includes(term)) {
       setSelectedTerms(selectedTerms.filter((item) => item !== term));
     } else {
@@ -6186,9 +6300,11 @@ const handleButtonStage13v3 = (message: any) => {
     }
   };
 
-    // Handle checkbox change
-  const handleCheckboxChangeScenario = (event: React.ChangeEvent<HTMLInputElement>) => {
-     const Scenario = event.target.value;
+  // Handle checkbox change
+  const handleCheckboxChangeScenario = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const Scenario = event.target.value;
     if (selectedScenario.includes(Scenario)) {
       setSelectedScenario(selectedScenario.filter((item) => item !== Scenario));
     } else {
@@ -6196,20 +6312,28 @@ const handleButtonStage13v3 = (message: any) => {
     }
   };
 
-      // Handle checkbox change
-  const handleCheckboxChangeStrategies = (event: React.ChangeEvent<HTMLInputElement>) => {
-     const Strategies = event.target.value;
+  // Handle checkbox change
+  const handleCheckboxChangeStrategies = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const Strategies = event.target.value;
     if (selectedStrategies.includes(Strategies)) {
-      setSelectedStrategies(selectedStrategies.filter((item) => item !== Strategies));
+      setSelectedStrategies(
+        selectedStrategies.filter((item) => item !== Strategies)
+      );
     } else {
       setSelectedStrategies([...selectedStrategies, Strategies]);
     }
   };
 
-    const handleCheckboxChangeStrategiesv2 = (event: React.ChangeEvent<HTMLInputElement>) => {
-     const Strategiesv2 = event.target.value;
+  const handleCheckboxChangeStrategiesv2 = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const Strategiesv2 = event.target.value;
     if (selectedStrategiesv2.includes(Strategiesv2)) {
-      setSelectedStrategiesv2(selectedStrategiesv2.filter((item) => item !== Strategiesv2));
+      setSelectedStrategiesv2(
+        selectedStrategiesv2.filter((item) => item !== Strategiesv2)
+      );
     } else {
       setSelectedStrategiesv2([...selectedStrategiesv2, Strategiesv2]);
     }
@@ -6628,7 +6752,6 @@ const handleButtonStage13v3 = (message: any) => {
             <>
               <div className="flex items-start mb-4">
                 {/* SVG Icon */}
-                
 
                 {/* AI Message Bubble */}
                 <p className="bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
@@ -6636,71 +6759,57 @@ const handleButtonStage13v3 = (message: any) => {
                 </p>
               </div>
               <div className="flex space-x-2 mt-2">
-              <div className="space-y-2 mt-2">
-  {/* Yes, I consent checkbox */}
-  <div
-  onClick={() =>  handleButtonStage64ThirdParties("Yes, I have it in my current will")}  // Add onClick event
-  className={`flex items-center space-x-2 px-4 py-2 w-[400px] rounded-md border cursor-pointer ${
-    consent === "Yes, I consent"
-      ? "bg-[#8DC63F] text-white border-transparent"
-      : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
-  }`}
->
-  <input
-    type="checkbox"
-    id="consentYes"
-    name="consent"
-    value="Yes, I consent"
-    checked={consent === "Yes, I consent"}
-    // onChange={() => handleButtonConsent("Yes, I consent")}
-    className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
-  />
-  
-     &nbsp;&nbsp;&nbsp;Yes, I consent
-  
-</div>
+                <div className="space-y-2 mt-2">
+                  {/* Yes, I consent checkbox */}
+                  <div
+                    onClick={() => handleButtonConsent("Yes, I consent")} // Add onClick event
+                    className={`flex items-center space-x-2 px-4 py-2 w-[400px] rounded-md border cursor-pointer ${
+                      consent === "Yes, I consent"
+                        ? "bg-[#8DC63F] text-white border-transparent"
+                        : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      id="consentYes"
+                      name="consent"
+                      value="Yes, I consent"
+                      checked={consent === "Yes, I consent"}
+                      // onChange={() => handleButtonConsent("Yes, I consent")}
+                      className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
+                    />
+                    &nbsp;&nbsp;&nbsp;Yes, I consent
+                  </div>
 
-{/* No, I do not consent checkbox */}
-<div
-  onClick={() => handleButtonConsent("No, I do not consent")} // Add onClick event
-  className={`flex items-center space-x-2 px-4 py-2 rounded-md border cursor-pointer ${
-    consent === "No, I do not consent"
-      ? "bg-[#8DC63F] text-white border-transparent"
-      : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
-  }`}
->
-  <input
-    type="checkbox"
-    id="consentNo"
-    name="consent"
-    value="No, I do not consent"
-    checked={consent === "No, I do not consent"}
-    // onChange={() => handleButtonConsent("No, I do not consent")}
-    className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
-  />
- 
-    &nbsp;&nbsp;&nbsp;No, I do not consent
- 
-</div>
-</div>
-
-
+                  {/* No, I do not consent checkbox */}
+                  <div
+                    onClick={() => handleButtonConsent("No, I do not consent")} // Add onClick event
+                    className={`flex items-center space-x-2 px-4 py-2 rounded-md border cursor-pointer ${
+                      consent === "No, I do not consent"
+                        ? "bg-[#8DC63F] text-white border-transparent"
+                        : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      id="consentNo"
+                      name="consent"
+                      value="No, I do not consent"
+                      checked={consent === "No, I do not consent"}
+                      // onChange={() => handleButtonConsent("No, I do not consent")}
+                      className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
+                    />
+                    &nbsp;&nbsp;&nbsp;No, I do not consent
+                  </div>
+                </div>
               </div>
             </>
           ) : (
-            
             <div
               className={
                 message.role === "user" ? "mb-2 text-right mt-4" : "mb-2"
               }
             >
-            
-
-
-
-            
-            
-              
               {isVideoTrigger ? (
                 <>
                   <p className="bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
@@ -6768,82 +6877,104 @@ const handleButtonStage13v3 = (message: any) => {
                   </button>
                 </div>
               )}
-               {message.content.includes(
+              {message.content.includes(
                 "Are you ready to explore some potential outcomes of different estate planning choices?"
               ) && (
                 <>
-                <div className="space-x-2 mt-2">
-                  <button
-                    onClick={() => handleButtonStage13v1("Yes, I’m ready to move on")}
-                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                  >
-                    Yes, I’m ready to move on
-                  </button>
-                  <button
-                    onClick={() => handleButtonStage13v1("Skip")}
-                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                  >
-                    Skip
-                  </button>
-                </div>
-                </>)}
+                  <div className="space-x-2 mt-2">
+                    <button
+                      onClick={() =>
+                        handleButtonStage13v1("Yes, I’m ready to move on")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Yes, I’m ready to move on
+                    </button>
+                    <button
+                      onClick={() => handleButtonStage13v1("Skip")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Skip
+                    </button>
+                  </div>
+                </>
+              )}
               {message.content.includes(
                 "Let’s check out some examples to understand these options better. Here are a few examples we can simulate:"
               ) && (
                 <>
-                <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-      <b>Scenario 1</b>: 📜 How will setting up a trust affect the management and distribution of your assets?
-      <br />
-      Setting up a trust can provide asset protection, control, and tax benefits. It allows you to transfer assets to a trustee who manages them according to the trust's terms. This can ensure that your beneficiaries receive assets at appropriate times, minimizing delays and potential conflicts in estate administration.
-      <br />
-      <br />
-      <b>Scenario 2</b>: ⚖️ What happens if you pass away without a will (intestate)?
-      <br />
-      If you pass away without a will, the Intestate Succession Act will govern the distribution of your assets. This may not align with your wishes and can result in assets being distributed to heirs according to law, potentially leading to disputes or unintended consequences.
-      <br />
-      <br />
-      <b>Scenario 3</b>: 🖋️ How will appointing a power of attorney impact your estate during your lifetime?
-      <br />
-      Appointing a power of attorney allows someone you trust to make decisions on your behalf if you become incapacitated. This can cover financial, legal, and healthcare matters. It ensures your estate and personal matters are managed according to your wishes during your lifetime.
-      <br />
-      <br />
-      <b>Scenario 4</b>: 💼 What are the potential tax implications of your estate planning decisions?
-      <br /><br />
-      Choose a scenario you’d like to explore, and I’ll show you the potential outcomes:
-      <br />
-    </div>
-     <br /> 
-                {scenario.map((scenarios) => (
-  <>
-    <br /> {/* Adjust margin as needed */}
-    <label
-      key={scenarios}
-      htmlFor={scenarios}
-      className={`flex items-center space-x-2 px-4 py-2 w-[400px] -my-2 rounded-md border cursor-pointer ${
-        selectedScenario.includes(scenarios)
-          ? "bg-[#8DC63F] text-white border-transparent"
-          : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
-      }`}
-    >
-      <input
-        type="checkbox"
-        id={scenarios}
-        onChange={handleCheckboxChangeScenario}
-        name={scenarios}
-        value={scenarios}
-        checked={selectedScenario.includes(scenarios)}
-        className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
-      />
-      &nbsp;&nbsp;&nbsp;{scenarios}
-    </label>
-  </>
-))}
-<button
-        onClick={handleProceedScenario}
-        className="mt-4 px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition"
-      >
-        Proceed
-      </button>
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    <b>Scenario 1</b>: 📜 How will setting up a trust affect the
+                    management and distribution of your assets?
+                    <br />
+                    Setting up a trust can provide asset protection, control,
+                    and tax benefits. It allows you to transfer assets to a
+                    trustee who manages them according to the trust's terms.
+                    This can ensure that your beneficiaries receive assets at
+                    appropriate times, minimizing delays and potential conflicts
+                    in estate administration.
+                    <br />
+                    <br />
+                    <b>Scenario 2</b>: ⚖️ What happens if you pass away without
+                    a will (intestate)?
+                    <br />
+                    If you pass away without a will, the Intestate Succession
+                    Act will govern the distribution of your assets. This may
+                    not align with your wishes and can result in assets being
+                    distributed to heirs according to law, potentially leading
+                    to disputes or unintended consequences.
+                    <br />
+                    <br />
+                    <b>Scenario 3</b>: 🖋️ How will appointing a power of
+                    attorney impact your estate during your lifetime?
+                    <br />
+                    Appointing a power of attorney allows someone you trust to
+                    make decisions on your behalf if you become incapacitated.
+                    This can cover financial, legal, and healthcare matters. It
+                    ensures your estate and personal matters are managed
+                    according to your wishes during your lifetime.
+                    <br />
+                    <br />
+                    <b>Scenario 4</b>: 💼 What are the potential tax
+                    implications of your estate planning decisions?
+                    <br />
+                    <br />
+                    Choose a scenario you’d like to explore, and I’ll show you
+                    the potential outcomes:
+                    <br />
+                  </div>
+                  <br />
+                  {scenario.map((scenarios) => (
+                    <>
+                      <br /> {/* Adjust margin as needed */}
+                      <label
+                        key={scenarios}
+                        htmlFor={scenarios}
+                        className={`flex items-center space-x-2 px-4 py-2 w-[400px] -my-2 rounded-md border cursor-pointer ${
+                          selectedScenario.includes(scenarios)
+                            ? "bg-[#8DC63F] text-white border-transparent"
+                            : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          id={scenarios}
+                          onChange={handleCheckboxChangeScenario}
+                          name={scenarios}
+                          value={scenarios}
+                          checked={selectedScenario.includes(scenarios)}
+                          className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
+                        />
+                        &nbsp;&nbsp;&nbsp;{scenarios}
+                      </label>
+                    </>
+                  ))}
+                  <button
+                    onClick={handleProceedScenario}
+                    className="mt-4 px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition"
+                  >
+                    Proceed
+                  </button>
                 </>
               )}
 
@@ -6870,7 +7001,8 @@ const handleButtonStage13v3 = (message: any) => {
                     templates?
                   </div>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage15("No, let's move on")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -6891,7 +7023,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage18Component("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -6921,12 +7054,13 @@ const handleButtonStage13v3 = (message: any) => {
                     • Phone: Call us at [insert phone number] to speak with an
                     adviser.
                     <br />
-                    <br />
-                    • Email: Send us an email at [insert email address] with
-                    your contact details, and we’ll get back to you promptly.
+                    <br />• Email: Send us an email at [insert email address]
+                    with your contact details, and we’ll get back to you
+                    promptly.
                   </div>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage15v1("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -7023,8 +7157,6 @@ const handleButtonStage13v3 = (message: any) => {
                 </>
               )} */}
 
-              
-
               {/* {templateButton && (
                 <>
                   <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
@@ -7108,9 +7240,10 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Here are some templates to help you get started with your estate planning documents:
-                    <br/>
-                    📝 <b>Will:</b> 
+                    Here are some templates to help you get started with your
+                    estate planning documents:
+                    <br />
+                    📝 <b>Will:</b>
                     <br />
                     A basic template for drafting your will.
                     <br />
@@ -7120,17 +7253,21 @@ const handleButtonStage13v3 = (message: any) => {
                     <br />
                     🤝 <b>Power of Attorney: </b>
                     <br />
-                    A template for appointing a power of
-                    attorney.
+                    A template for appointing a power of attorney.
                     <br />
                     💉 <b>Living Will: </b>
-                    <br/>
+                    <br />
                     A template to specify your medical treatment preferences.
-                    <br/><br/>
-                    These templates are for your perusal, you can either fill them in and share at the end of this chat or simply store the copy for reference at any point in your estate planning journey.
+                    <br />
+                    <br />
+                    These templates are for your perusal, you can either fill
+                    them in and share at the end of this chat or simply store
+                    the copy for reference at any point in your estate planning
+                    journey.
                   </div>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage14Template("Download Will Template")
                       }
@@ -7174,10 +7311,8 @@ const handleButtonStage13v3 = (message: any) => {
                     >
                       Download All Templates
                     </button>
-                     <button
-                      onClick={() =>
-                        handleButtonStage14Template("Skip")
-                      }
+                    <button
+                      onClick={() => handleButtonStage14Template("Skip")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Skip
@@ -7191,7 +7326,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage15Component("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -7223,7 +7359,8 @@ const handleButtonStage13v3 = (message: any) => {
                   </div>
                   <>
                     <div className="space-x-2">
-                    <br/><button
+                      <br />
+                      <button
                         onClick={() => handleButtonStage15Financial("Yes")}
                         className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                       >
@@ -7250,7 +7387,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage15Financial("No")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -7264,7 +7402,10 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/>  <BusinessImportanceSlider onProceed={handleButtonStage16Business} />
+                    <br />{" "}
+                    <BusinessImportanceSlider
+                      onProceed={handleButtonStage16Business}
+                    />
                   </div>
                 </>
               )}
@@ -7274,7 +7415,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage17Strategies("No, let's move on")
                       }
@@ -7291,41 +7433,38 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/>
-                      {strategies.map((strategy) => (
-  <>
-    <br /> {/* Adjust margin as needed */}
-    <label
-      key={strategy}
-      htmlFor={strategy}
-      className={`flex items-center space-x-2 px-4 py-2 w-[600px] -my-2 rounded-md border cursor-pointer ${
-        selectedStrategies.includes(strategy)
-          ? "bg-[#8DC63F] text-white border-transparent"
-          : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
-      }`}
-    >
-      <input
-        type="checkbox"
-        id={strategy}
-        onChange={handleCheckboxChangeStrategies}
-        name={strategy}
-        value={strategy}
-        checked={selectedStrategies.includes(strategy)}
-        className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
-      />
-      &nbsp;&nbsp;&nbsp;{strategy}
-    </label>
-  </>
-))}
-                  <button
-        onClick={handleProceedStrategy}
-        className="mt-4 px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition"
-      >
-        Proceed
-      </button>  
-                    
-                    
-                    
+                    <br />
+                    {strategies.map((strategy) => (
+                      <>
+                        <br /> {/* Adjust margin as needed */}
+                        <label
+                          key={strategy}
+                          htmlFor={strategy}
+                          className={`flex items-center space-x-2 px-4 py-2 w-[600px] -my-2 rounded-md border cursor-pointer ${
+                            selectedStrategies.includes(strategy)
+                              ? "bg-[#8DC63F] text-white border-transparent"
+                              : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            id={strategy}
+                            onChange={handleCheckboxChangeStrategies}
+                            name={strategy}
+                            value={strategy}
+                            checked={selectedStrategies.includes(strategy)}
+                            className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
+                          />
+                          &nbsp;&nbsp;&nbsp;{strategy}
+                        </label>
+                      </>
+                    ))}
+                    <button
+                      onClick={handleProceedStrategy}
+                      className="mt-4 px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition"
+                    >
+                      Proceed
+                    </button>
                   </div>
                 </>
               )}
@@ -7335,35 +7474,40 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    🏦 <b>Establish a Trust:</b> <br />Protects your assets and ensures they
-                    are distributed according to your wishes.
+                    🏦 <b>Establish a Trust:</b> <br />
+                    Protects your assets and ensures they are distributed
+                    according to your wishes.
                     <br />
-                    🛡️ <b>Set Up Insurance Policies:</b> <br />Provides financial security in
-                    case of unforeseen events.
+                    🛡️ <b>Set Up Insurance Policies:</b> <br />
+                    Provides financial security in case of unforeseen events.
                     <br />
-                    📜 <b>Legal Agreements:</b> <br />Formalizes arrangements to manage and
-                    protect your business interests.
+                    📜 <b>Legal Agreements:</b> <br />
+                    Formalizes arrangements to manage and protect your business
+                    interests.
                     <br />
-                    🤝 <b>Buy-Sell Agreement:</b> <br />Ensures smooth transition and fair
-                    value if a business partner exits.
+                    🤝 <b>Buy-Sell Agreement:</b> <br />
+                    Ensures smooth transition and fair value if a business
+                    partner exits.
                     <br />
-                    🏢 <b>Contingent Liability Insurance:</b> <br />Covers potential business
-                    liabilities.
+                    🏢 <b>Contingent Liability Insurance:</b> <br />
+                    Covers potential business liabilities.
                     <br />
-                    📊 <b>Diversified Investment Strategy:</b> <br />Spreads risk across
-                    different investments.
+                    📊 <b>Diversified Investment Strategy:</b> <br />
+                    Spreads risk across different investments.
                     <br />
-                    🔄 <b>Regular Financial Reviews:</b> <br />Keeps your financial plan up
-                    to date with your current situation.
+                    🔄 <b>Regular Financial Reviews:</b> <br />
+                    Keeps your financial plan up to date with your current
+                    situation.
                     <br />
-                    💳 <b>Business Succession Plan:</b> 
-                    <br />A business strategy companies use to pass leadership roles down to another employee or group of employees
+                    💳 <b>Business Succession Plan:</b>
+                    <br />A business strategy companies use to pass leadership
+                    roles down to another employee or group of employees
                     <br />
-                    🛡️ <b>Asset Protection Planning:</b> <br />Safeguards your personal and
-                    business assets from risks.
+                    🛡️ <b>Asset Protection Planning:</b> <br />
+                    Safeguards your personal and business assets from risks.
                     <br />
-                    🔄 <b>Separation of Personal & Business Finances:</b> <br />Keeps your
-                    personal and business finances distinct to avoid
+                    🔄 <b>Separation of Personal & Business Finances:</b> <br />
+                    Keeps your personal and business finances distinct to avoid
                     complications.
                     <br />
                     <br />
@@ -7371,37 +7515,38 @@ const handleButtonStage13v3 = (message: any) => {
                     do you need more details on any specific measure?
                   </div>
                   <div className="space-x-2">
-                    <br/>  {strategiesv2.map((strategyv2) => (
-  <>
-    <br /> {/* Adjust margin as needed */}
-    <label
-      key={strategyv2}
-      htmlFor={strategyv2}
-      className={`flex items-center space-x-2 px-4 py-2 w-[600px] -my-2 rounded-md border cursor-pointer ${
-        selectedStrategiesv2.includes(strategyv2)
-          ? "bg-[#8DC63F] text-white border-transparent"
-          : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
-      }`}
-    >
-      <input
-        type="checkbox"
-        id={strategyv2}
-        onChange={handleCheckboxChangeStrategiesv2}
-        name={strategyv2}
-        value={strategyv2}
-        checked={selectedStrategiesv2.includes(strategyv2)}
-        className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
-      />
-      &nbsp;&nbsp;&nbsp;{strategyv2}
-    </label>
-  </>
-))}
-                  <button
-        onClick={handleProceedStrategyv2}
-        className="mt-4 px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition"
-      >
-        Proceed
-      </button>  
+                    <br />{" "}
+                    {strategiesv2.map((strategyv2) => (
+                      <>
+                        <br /> {/* Adjust margin as needed */}
+                        <label
+                          key={strategyv2}
+                          htmlFor={strategyv2}
+                          className={`flex items-center space-x-2 px-4 py-2 w-[600px] -my-2 rounded-md border cursor-pointer ${
+                            selectedStrategiesv2.includes(strategyv2)
+                              ? "bg-[#8DC63F] text-white border-transparent"
+                              : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            id={strategyv2}
+                            onChange={handleCheckboxChangeStrategiesv2}
+                            name={strategyv2}
+                            value={strategyv2}
+                            checked={selectedStrategiesv2.includes(strategyv2)}
+                            className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
+                          />
+                          &nbsp;&nbsp;&nbsp;{strategyv2}
+                        </label>
+                      </>
+                    ))}
+                    <button
+                      onClick={handleProceedStrategyv2}
+                      className="mt-4 px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition"
+                    >
+                      Proceed
+                    </button>
                   </div>
                 </>
               )}
@@ -7411,7 +7556,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage15Financial("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -7505,11 +7651,11 @@ const handleButtonStage13v3 = (message: any) => {
                     <br />
                     ✅ Inform your executor and loved ones where to find your
                     documents
-                    <br />
-                    ✅ Keep a copy with a trusted person or legal adviser
+                    <br />✅ Keep a copy with a trusted person or legal adviser
                   </div>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage14Checklist("Download Checklist")
                       }
@@ -7591,7 +7737,8 @@ const handleButtonStage13v3 = (message: any) => {
                     might be the best fit for your situation?
                   </div>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage18Component("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -7606,7 +7753,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonQuestion(
                           "Is there anything else you'd like to ask?"
@@ -7631,11 +7779,11 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/>
-                    <BusinessImportanceSlider onProceed={handleButtonStage19Capital} />
-                    
-                    
-                    
+                    <br />
+                    <BusinessImportanceSlider
+                      onProceed={handleButtonStage19Capital}
+                    />
+
                     {/* <button
                       onClick={() =>
                         handleButtonStage19Capital("Not important")
@@ -7669,25 +7817,36 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Do you own any real estate properties, such as houses, apartments, or land? If so, could you provide details about each property, including location, estimated current market value, outstanding mortgage amount (if any), and any significant improvements made? 🏡
+                    Do you own any real estate properties, such as houses,
+                    apartments, or land? If so, could you provide details about
+                    each property, including location, estimated current market
+                    value, outstanding mortgage amount (if any), and any
+                    significant improvements made? 🏡
                   </div>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
-                        handleButtonStage21Asset("Upload Document at End of Chat")
+                        handleButtonStage21Asset(
+                          "Upload Document at End of Chat"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Upload Document at End of Chat
                     </button>
                     <button
-                      onClick={() => handleButtonStage21Asset("Yes, specify detail")}
+                      onClick={() =>
+                        handleButtonStage21Asset("Yes, specify detail")
+                      }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Yes, specify detail
                     </button>
                     <button
-                      onClick={() => handleButtonStage21Asset("No, let’s move on")}
+                      onClick={() =>
+                        handleButtonStage21Asset("No, let’s move on")
+                      }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       No, let’s move on
@@ -7704,23 +7863,24 @@ const handleButtonStage13v3 = (message: any) => {
                 </>
               )}
 
-{message.content.includes(
+              {message.content.includes(
                 "To help you estimate the value of your property, let’s go through a few simple steps. This will give you a rough idea of what your property could be worth."
               ) && (
                 <>
                   <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                   First, please specify the type of property you have (e.g. house, apartment, land).
+                    First, please specify the type of property you have (e.g.
+                    house, apartment, land).
                   </div>
                 </>
               )}
-              
 
               {message.content.includes(
                 "No problem. Whenever you're ready to provide the details of any of your real estate, just let me know."
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage21Asset("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -7737,8 +7897,8 @@ const handleButtonStage13v3 = (message: any) => {
                   <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     (value displayed)
                     <br />
-                    <b>Please note</b> that this is a rough estimate and should not
-                    be considered an official appraisal. The actual value of
+                    <b>Please note</b> that this is a rough estimate and should
+                    not be considered an official appraisal. The actual value of
                     your property may vary based on additional factors such as
                     market conditions, recent sales data, and property- specific
                     details not accounted for in this calculation. For a precise
@@ -7746,7 +7906,8 @@ const handleButtonStage13v3 = (message: any) => {
                     real estate agent
                   </div>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage21Calculator("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -7761,20 +7922,29 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
-                      onClick={() => handleButtonStage22Farm("Upload Document at End of Chat")}
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage22Farm(
+                          "Upload Document at End of Chat"
+                        )
+                      }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Upload Document at End of Chat
                     </button>
                     <button
-                      onClick={() => handleButtonStage22Farm("Yes, specify detail")}
+                      onClick={() =>
+                        handleButtonStage22Farm("Yes, specify detail")
+                      }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Yes, specify detail
                     </button>
                     <button
-                      onClick={() => handleButtonStage22Farm("No, let’s move on")}
+                      onClick={() =>
+                        handleButtonStage22Farm("No, let’s move on")
+                      }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       No, let’s move on
@@ -7788,22 +7958,29 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
-                        handleButtonStage22Vehicle("Upload Document at End of Chat")
+                        handleButtonStage22Vehicle(
+                          "Upload Document at End of Chat"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Upload Document at End of Chat
                     </button>
                     <button
-                      onClick={() => handleButtonStage22Vehicle("Yes, specify detail")}
+                      onClick={() =>
+                        handleButtonStage22Vehicle("Yes, specify detail")
+                      }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Yes, specify detail
                     </button>
                     <button
-                      onClick={() => handleButtonStage22Vehicle("No, let’s move on")}
+                      onClick={() =>
+                        handleButtonStage22Vehicle("No, let’s move on")
+                      }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       No, let’s move on
@@ -7817,22 +7994,29 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
-                        handleButtonStage23Jewelry("Upload Document at End of Chat")
+                        handleButtonStage23Jewelry(
+                          "Upload Document at End of Chat"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Upload Document at End of Chat
                     </button>
                     <button
-                      onClick={() => handleButtonStage23Jewelry("Yes, specify detail")}
+                      onClick={() =>
+                        handleButtonStage23Jewelry("Yes, specify detail")
+                      }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Yes, specify detail
                     </button>
                     <button
-                      onClick={() => handleButtonStage23Jewelry("No, let’s move on")}
+                      onClick={() =>
+                        handleButtonStage23Jewelry("No, let’s move on")
+                      }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       No, let’s move on
@@ -7846,16 +8030,21 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
-                        handleButtonStage24Household("Upload Document at End of Chat")
+                        handleButtonStage24Household(
+                          "Upload Document at End of Chat"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Upload Document at End of Chat
                     </button>
                     <button
-                      onClick={() => handleButtonStage24Household("Yes, specify detail")}
+                      onClick={() =>
+                        handleButtonStage24Household("Yes, specify detail")
+                      }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Yes, specify detail
@@ -7877,16 +8066,21 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
-                        handleButtonStage25Portfolio("Upload Document at End of Chat")
+                        handleButtonStage25Portfolio(
+                          "Upload Document at End of Chat"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Upload Document at End of Chat
                     </button>
                     <button
-                      onClick={() => handleButtonStage25Portfolio("Yes, specify detail")}
+                      onClick={() =>
+                        handleButtonStage25Portfolio("Yes, specify detail")
+                      }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Yes, specify detail
@@ -7907,20 +8101,29 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
-                      onClick={() => handleButtonStage25Cash("Upload Document at End of Chat")}
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage25Cash(
+                          "Upload Document at End of Chat"
+                        )
+                      }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Upload Document at End of Chat
                     </button>
                     <button
-                      onClick={() => handleButtonStage25Cash("Yes, specify detail")}
+                      onClick={() =>
+                        handleButtonStage25Cash("Yes, specify detail")
+                      }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Yes, specify detail
                     </button>
                     <button
-                      onClick={() => handleButtonStage25Cash("No, let’s move on")}
+                      onClick={() =>
+                        handleButtonStage25Cash("No, let’s move on")
+                      }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       No, let’s move on
@@ -7934,9 +8137,12 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
-                        handleButtonStage26BusinessInterest("Upload Document at End of Chat")
+                        handleButtonStage26BusinessInterest(
+                          "Upload Document at End of Chat"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -7944,7 +8150,9 @@ const handleButtonStage13v3 = (message: any) => {
                     </button>
                     <button
                       onClick={() =>
-                        handleButtonStage26BusinessInterest("Yes, specify detail")
+                        handleButtonStage26BusinessInterest(
+                          "Yes, specify detail"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -7967,9 +8175,12 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
-                        handleButtonStage27SignificantAssets("Upload Document at End of Chat")
+                        handleButtonStage27SignificantAssets(
+                          "Upload Document at End of Chat"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -7977,7 +8188,9 @@ const handleButtonStage13v3 = (message: any) => {
                     </button>
                     <button
                       onClick={() =>
-                        handleButtonStage27SignificantAssets("Yes, specify detail")
+                        handleButtonStage27SignificantAssets(
+                          "Yes, specify detail"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -7985,7 +8198,9 @@ const handleButtonStage13v3 = (message: any) => {
                     </button>
                     <button
                       onClick={() =>
-                        handleButtonStage27SignificantAssets("No, let’s move on")
+                        handleButtonStage27SignificantAssets(
+                          "No, let’s move on"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -8000,16 +8215,21 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
-                        handleButtonStage28Intellectual("Upload Document at End of Chat")
+                        handleButtonStage28Intellectual(
+                          "Upload Document at End of Chat"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Upload Document at End of Chat
                     </button>
                     <button
-                      onClick={() => handleButtonStage28Intellectual("Yes, specify detail")}
+                      onClick={() =>
+                        handleButtonStage28Intellectual("Yes, specify detail")
+                      }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Yes, specify detail
@@ -8031,9 +8251,12 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
-                        handleButtonStage29LegalEntities("Upload Document at End of Chat")
+                        handleButtonStage29LegalEntities(
+                          "Upload Document at End of Chat"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -8064,22 +8287,29 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
-                        handleButtonStage30Mortgage("Upload Document at End of Chat")
+                        handleButtonStage30Mortgage(
+                          "Upload Document at End of Chat"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Upload Document at End of Chat
                     </button>
                     <button
-                      onClick={() => handleButtonStage30Mortgage("Yes, specify detail")}
+                      onClick={() =>
+                        handleButtonStage30Mortgage("Yes, specify detail")
+                      }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Yes, specify detail
                     </button>
                     <button
-                      onClick={() => handleButtonStage30Mortgage("No, let’s move on")}
+                      onClick={() =>
+                        handleButtonStage30Mortgage("No, let’s move on")
+                      }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       No, let’s move on
@@ -8093,16 +8323,21 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
-                        handleButtonStage31PersonalLoan("Upload Document at End of Chat")
+                        handleButtonStage31PersonalLoan(
+                          "Upload Document at End of Chat"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Upload Document at End of Chat
                     </button>
                     <button
-                      onClick={() => handleButtonStage31PersonalLoan("Yes, specify detail")}
+                      onClick={() =>
+                        handleButtonStage31PersonalLoan("Yes, specify detail")
+                      }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Yes, specify detail
@@ -8124,9 +8359,12 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
-                        handleButtonStage32CreditCardDebt("Upload Document at End of Chat")
+                        handleButtonStage32CreditCardDebt(
+                          "Upload Document at End of Chat"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -8157,16 +8395,21 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
-                        handleButtonStage33VehicleLoan("Upload Document at End of Chat")
+                        handleButtonStage33VehicleLoan(
+                          "Upload Document at End of Chat"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Upload Document at End of Chat
                     </button>
                     <button
-                      onClick={() => handleButtonStage33VehicleLoan("Yes, specify detail")}
+                      onClick={() =>
+                        handleButtonStage33VehicleLoan("Yes, specify detail")
+                      }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Yes, specify detail
@@ -8188,9 +8431,12 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
-                        handleButtonStage34OutstandingDebt("Upload Document at End of Chat")
+                        handleButtonStage34OutstandingDebt(
+                          "Upload Document at End of Chat"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -8198,7 +8444,9 @@ const handleButtonStage13v3 = (message: any) => {
                     </button>
                     <button
                       onClick={() =>
-                        handleButtonStage34OutstandingDebt("Yes, specify detail")
+                        handleButtonStage34OutstandingDebt(
+                          "Yes, specify detail"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -8221,22 +8469,29 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
-                        handleButtonStage35Strategy("Upload Document at End of Chat")
+                        handleButtonStage35Strategy(
+                          "Upload Document at End of Chat"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Upload Document at End of Chat
                     </button>
                     <button
-                      onClick={() => handleButtonStage35Strategy("Yes, specify detail")}
+                      onClick={() =>
+                        handleButtonStage35Strategy("Yes, specify detail")
+                      }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Yes, specify detail
                     </button>
                     <button
-                      onClick={() => handleButtonStage35Strategy("No, let’s move on")}
+                      onClick={() =>
+                        handleButtonStage35Strategy("No, let’s move on")
+                      }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       No, let’s move on
@@ -8250,9 +8505,12 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
-                        handleButtonStage36SignificantChanges("Upload Document at End of Chat")
+                        handleButtonStage36SignificantChanges(
+                          "Upload Document at End of Chat"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -8260,7 +8518,9 @@ const handleButtonStage13v3 = (message: any) => {
                     </button>
                     <button
                       onClick={() =>
-                        handleButtonStage36SignificantChanges("Yes, specify detail")
+                        handleButtonStage36SignificantChanges(
+                          "Yes, specify detail"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -8268,7 +8528,9 @@ const handleButtonStage13v3 = (message: any) => {
                     </button>
                     <button
                       onClick={() =>
-                        handleButtonStage36SignificantChanges("No, let’s move on")
+                        handleButtonStage36SignificantChanges(
+                          "No, let’s move on"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -8283,9 +8545,12 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
-                        handleButtonStage37LifeInsurance("Upload Document at End of Chat")
+                        handleButtonStage37LifeInsurance(
+                          "Upload Document at End of Chat"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -8316,9 +8581,12 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
-                        handleButtonStage38HealthInsurance("Upload Document at End of Chat")
+                        handleButtonStage38HealthInsurance(
+                          "Upload Document at End of Chat"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -8326,7 +8594,9 @@ const handleButtonStage13v3 = (message: any) => {
                     </button>
                     <button
                       onClick={() =>
-                        handleButtonStage38HealthInsurance("Yes, specify detail")
+                        handleButtonStage38HealthInsurance(
+                          "Yes, specify detail"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -8349,9 +8619,12 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
-                        handleButtonStage39HoldingsInsured("Upload Document at End of Chat")
+                        handleButtonStage39HoldingsInsured(
+                          "Upload Document at End of Chat"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -8359,7 +8632,9 @@ const handleButtonStage13v3 = (message: any) => {
                     </button>
                     <button
                       onClick={() =>
-                        handleButtonStage39HoldingsInsured("Yes, specify detail")
+                        handleButtonStage39HoldingsInsured(
+                          "Yes, specify detail"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -8382,9 +8657,12 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
-                        handleButtonStage40VehicleInsured("Upload Document at End of Chat")
+                        handleButtonStage40VehicleInsured(
+                          "Upload Document at End of Chat"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -8415,7 +8693,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage41Disability("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -8442,7 +8721,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage41DisabilitySecurity("Yes")
                       }
@@ -8467,7 +8747,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage41DisabilitySecurity("Continue")
                       }
@@ -8484,7 +8765,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage41DisabilityInsurance(
                           "Single Capital Lump Sum"
@@ -8513,7 +8795,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage41DisabilityCoverage("Yes")
                       }
@@ -8548,7 +8831,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage41DisabilityCoverage("Continue")
                       }
@@ -8565,7 +8849,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage41ContingentInsurance("Yes")
                       }
@@ -8598,7 +8883,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage41ContingentInsurance("Continue")
                       }
@@ -8615,7 +8901,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage42BuyAndSell("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -8656,7 +8943,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage42BuyAndSell("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -8671,7 +8959,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage43BusinessOwner("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -8698,7 +8987,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage43BusinessOwner("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -8713,9 +9003,12 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
-                        handleButtonStage44InsuranceConvered("Upload Document at End of Chat")
+                        handleButtonStage44InsuranceConvered(
+                          "Upload Document at End of Chat"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -8723,7 +9016,9 @@ const handleButtonStage13v3 = (message: any) => {
                     </button>
                     <button
                       onClick={() =>
-                        handleButtonStage44InsuranceConvered("Yes, specify detail")
+                        handleButtonStage44InsuranceConvered(
+                          "Yes, specify detail"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -8731,7 +9026,9 @@ const handleButtonStage13v3 = (message: any) => {
                     </button>
                     <button
                       onClick={() =>
-                        handleButtonStage44InsuranceConvered("No, let’s move on")
+                        handleButtonStage44InsuranceConvered(
+                          "No, let’s move on"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -8746,7 +9043,7 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/>
+                    <br />
                     {/* <button
                       onClick={() =>
                         handleButtonStage45ReviewedInsurance("Upload Document at End of Chat")
@@ -8757,7 +9054,9 @@ const handleButtonStage13v3 = (message: any) => {
                     </button> */}
                     <button
                       onClick={() =>
-                        handleButtonStage45ReviewedInsurance("Yes, specify detail")
+                        handleButtonStage45ReviewedInsurance(
+                          "Yes, specify detail"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -8765,7 +9064,9 @@ const handleButtonStage13v3 = (message: any) => {
                     </button>
                     <button
                       onClick={() =>
-                        handleButtonStage45ReviewedInsurance("No, let’s move on")
+                        handleButtonStage45ReviewedInsurance(
+                          "No, let’s move on"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -8780,7 +9081,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage45ReviewedInsurance("Continue")
                       }
@@ -8796,7 +9098,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage44InsuranceConvered("Continue")
                       }
@@ -8812,7 +9115,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage40VehicleInsured("Continue")
                       }
@@ -8828,7 +9132,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage39HoldingsInsured("Continue")
                       }
@@ -8844,7 +9149,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage38HealthInsurance("Continue")
                       }
@@ -8860,7 +9166,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage37LifeInsurance("Continue")
                       }
@@ -8876,7 +9183,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage36SignificantChanges("Continue")
                       }
@@ -8892,7 +9200,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage35Strategy("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -8906,7 +9215,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage34OutstandingDebt("Continue")
                       }
@@ -8922,7 +9232,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage33VehicleLoan("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -8936,7 +9247,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage32CreditCardDebt("Continue")
                       }
@@ -8952,7 +9264,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage31PersonalLoan("Continue")
                       }
@@ -8968,7 +9281,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage30Mortgage("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -8982,7 +9296,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage29LegalEntities("Continue")
                       }
@@ -8998,7 +9313,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage28Intellectual("Continue")
                       }
@@ -9014,7 +9330,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage27SignificantAssets("Continue")
                       }
@@ -9030,7 +9347,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage26BusinessInterest("Continue")
                       }
@@ -9046,7 +9364,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage25Cash("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -9060,7 +9379,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage25Portfolio("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -9074,7 +9394,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage24Household("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -9088,7 +9409,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage23Jewelry("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -9102,7 +9424,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage22Vehicle("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -9116,7 +9439,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage22Farm("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -9130,7 +9454,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage46Continue("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -9158,9 +9483,12 @@ const handleButtonStage13v3 = (message: any) => {
                     <br />
                   </div>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
-                        handleButtonStage47InvestmentHolding("Upload Document at End of Chat")
+                        handleButtonStage47InvestmentHolding(
+                          "Upload Document at End of Chat"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -9168,7 +9496,9 @@ const handleButtonStage13v3 = (message: any) => {
                     </button>
                     <button
                       onClick={() =>
-                        handleButtonStage47InvestmentHolding("Yes, specify detail")
+                        handleButtonStage47InvestmentHolding(
+                          "Yes, specify detail"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -9176,7 +9506,9 @@ const handleButtonStage13v3 = (message: any) => {
                     </button>
                     <button
                       onClick={() =>
-                        handleButtonStage47InvestmentHolding("No, let’s move on")
+                        handleButtonStage47InvestmentHolding(
+                          "No, let’s move on"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -9191,7 +9523,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage47InvestmentHolding("Continue")
                       }
@@ -9208,16 +9541,21 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
-                        handleButtonStage48FixedIncome("Upload Document at End of Chat")
+                        handleButtonStage48FixedIncome(
+                          "Upload Document at End of Chat"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Upload Document at End of Chat
                     </button>
                     <button
-                      onClick={() => handleButtonStage48FixedIncome("Yes, specify detail")}
+                      onClick={() =>
+                        handleButtonStage48FixedIncome("Yes, specify detail")
+                      }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Yes, specify detail
@@ -9239,7 +9577,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage48FixedIncome("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -9254,16 +9593,21 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
-                        handleButtonStage48MutualFunds("Upload Document at End of Chat")
+                        handleButtonStage48MutualFunds(
+                          "Upload Document at End of Chat"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Upload Document at End of Chat
                     </button>
                     <button
-                      onClick={() => handleButtonStage48MutualFunds("Yes, specify detail")}
+                      onClick={() =>
+                        handleButtonStage48MutualFunds("Yes, specify detail")
+                      }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Yes, specify detail
@@ -9285,7 +9629,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage48MutualFunds("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -9300,9 +9645,12 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
-                        handleButtonStage49RetirementFunds("Upload Document at End of Chat")
+                        handleButtonStage49RetirementFunds(
+                          "Upload Document at End of Chat"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -9310,7 +9658,9 @@ const handleButtonStage13v3 = (message: any) => {
                     </button>
                     <button
                       onClick={() =>
-                        handleButtonStage49RetirementFunds("Yes, specify detail")
+                        handleButtonStage49RetirementFunds(
+                          "Yes, specify detail"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -9333,7 +9683,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage49RetirementFunds("Continue")
                       }
@@ -9350,9 +9701,12 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
-                        handleButtonStage50EstateHoldings("Upload Document at End of Chat")
+                        handleButtonStage50EstateHoldings(
+                          "Upload Document at End of Chat"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -9383,7 +9737,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage50EstateHoldings("Continue")
                       }
@@ -9400,16 +9755,21 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
-                        handleButtonStage51AssetClasses("Upload Document at End of Chat")
+                        handleButtonStage51AssetClasses(
+                          "Upload Document at End of Chat"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Upload Document at End of Chat
                     </button>
                     <button
-                      onClick={() => handleButtonStage51AssetClasses("Yes, specify detail")}
+                      onClick={() =>
+                        handleButtonStage51AssetClasses("Yes, specify detail")
+                      }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Yes, specify detail
@@ -9431,7 +9791,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage51AssetClasses("Continue")
                       }
@@ -9448,7 +9809,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage52InvestmentGoals("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -9477,7 +9839,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage52InvestmentGoals("Continue")
                       }
@@ -9494,7 +9857,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage53SpecificChanges("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -9523,7 +9887,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage53SpecificChanges("Continue")
                       }
@@ -9540,7 +9905,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage54Final("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -9561,7 +9927,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage55EstateDuty("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -9582,7 +9949,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage56CurrentWill("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -9603,7 +9971,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage57ImportantStep("Continue")
                       }
@@ -9620,7 +9989,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage57ReviewedWill("Will is up to date")
                       }
@@ -9647,7 +10017,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage57ImportantStep("Continue")
                       }
@@ -9664,7 +10035,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage58EstateSpouse("Yes, my entire estate")
                       }
@@ -9682,7 +10054,7 @@ const handleButtonStage13v3 = (message: any) => {
                     >
                       Yes, a significant portion of my estate
                     </button>
-                     <button
+                    <button
                       onClick={() =>
                         handleButtonStage58EstateSpouse(
                           "No, estate divided among other beneficiaries"
@@ -9711,7 +10083,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage59Residue("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -9732,7 +10105,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage60Bequeath("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -9753,7 +10127,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage61PassAway("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -9774,7 +10149,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage62Bequeathed("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -9789,150 +10165,152 @@ const handleButtonStage13v3 = (message: any) => {
                   </div>
                 </>
               )}
-              {(message.content.includes(
-                "USEFUL TIP"
-              )) && (firstTip.current==1) && (
+              {message.content.includes(
+                "USEFUL TIP: For estate duty: When farms are bequeathed (whether to trust or natural person) and the farm was used for bona fide farming purposes, the market value less 30% is included as the value of the farm for estate duty purposes."
+              ) && (
                 <>
-                 <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    For estate duty: When farms are bequeathed (whether to trust or natural person) and the farm was used for bona fide farming purposes, the market value less 30% is included as the value of the farm for estate duty purposes.
+                  <div className="flex items-start space-x-4 mt-2">
+                    {/* Image on the left */}
+                    <Image
+                      src="/images/usefulTip.png" // Path to your image
+                      alt="Useful tip"
+                      width={500} // Adjust width
+                      height={300} // Adjust height
+                      className="rounded-md" // Adds rounded corners (5px)
+                    />
                   </div>
-                   <br/>
-                <div className="flex items-start space-x-4 mt-2">
-        {/* Image on the left */}
-        <Image
-          src="/images/usefulTip.png" // Path to your image
-          alt="Useful tip"
-          width={500} // Adjust width
-          height={300} // Adjust height
-          className="rounded-md" // Adds rounded corners (5px)
-        />
-      </div>
-                  
+
                   <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                  Please provide details of the trust.
+                    Please provide details of the trust.
                   </div>
-                  
                 </>
               )}
 
-              
               {message.content.includes(
                 "Upon your death, if massing takes place (combining assets from both spouses' estates), how should the assets be managed? For instance, if the surviving spouse's contribution is more valuable than the benefit received, should the difference be considered a loan to the specific beneficiary?"
               ) && (
                 <>
                   <div className="grid grid-cols-2 gap-2 mt-3">
-  <button
-    onClick={() =>
-      handleButtonStage63AssetsManaged(
-        "Yes, the difference should be considered a loan to the specific beneficiary"
-      )
-    }
-    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition text-left"
-  >
-    Yes, the difference should be considered a loan to the specific beneficiary
-  </button>
-  
-  <button
-    onClick={() =>
-      handleButtonStage63AssetsManaged(
-        "No, the difference should be considered a gift and not a loan"
-      )
-    }
-    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition text-left"
-  >
-    No, the difference should be considered a gift and not a loan
-  </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage63AssetsManaged(
+                          "Yes, the difference should be considered a loan to the specific beneficiary"
+                        )
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition text-left"
+                    >
+                      Yes, the difference should be considered a loan to the
+                      specific beneficiary
+                    </button>
 
-  <button
-    onClick={() =>
-      handleButtonStage63AssetsManaged(
-        "The difference should be treated as a loan with interest payable by the beneficiary"
-      )
-    }
-    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition text-left"
-  >
-    The difference should be treated as a loan with interest payable by the beneficiary
-  </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage63AssetsManaged(
+                          "No, the difference should be considered a gift and not a loan"
+                        )
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition text-left"
+                    >
+                      No, the difference should be considered a gift and not a
+                      loan
+                    </button>
 
-  <button
-    onClick={() =>
-      handleButtonStage63AssetsManaged(
-        "The difference should be adjusted through other assets or cash to balance the value"
-      )
-    }
-    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition text-left"
-  >
-    The difference should be adjusted through other assets or cash to balance the value
-  </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage63AssetsManaged(
+                          "The difference should be treated as a loan with interest payable by the beneficiary"
+                        )
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition text-left"
+                    >
+                      The difference should be treated as a loan with interest
+                      payable by the beneficiary
+                    </button>
 
-  <button
-    onClick={() =>
-      handleButtonStage63AssetsManaged(
-        "A family trust should manage the difference to ensure equitable distribution"
-      )
-    }
-    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition text-left"
-  >
-    A family trust should manage the difference to ensure equitable distribution
-  </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage63AssetsManaged(
+                          "The difference should be adjusted through other assets or cash to balance the value"
+                        )
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition text-left"
+                    >
+                      The difference should be adjusted through other assets or
+                      cash to balance the value
+                    </button>
 
-  <button
-    onClick={() =>
-      handleButtonStage63AssetsManaged(
-        "The surviving spouse should decide on how to manage the difference based on circumstance"
-      )
-    }
-    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition text-left"
-  >
-    The surviving spouse should decide on how to manage the difference based on circumstance
-  </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage63AssetsManaged(
+                          "A family trust should manage the difference to ensure equitable distribution"
+                        )
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition text-left"
+                    >
+                      A family trust should manage the difference to ensure
+                      equitable distribution
+                    </button>
 
-  <button
-    onClick={() =>
-      handleButtonStage63AssetsManaged(
-        "The difference should be documented but forgiven upon the death of the surviving spouse"
-      )
-    }
-    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition text-left"
-  >
-    The difference should be documented but forgiven upon the death of the surviving spouse
-  </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage63AssetsManaged(
+                          "The surviving spouse should decide on how to manage the difference based on circumstance"
+                        )
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition text-left"
+                    >
+                      The surviving spouse should decide on how to manage the
+                      difference based on circumstance
+                    </button>
 
-  <button
-    onClick={() =>
-      handleButtonStage63AssetsManaged(
-        "The estate should sell specific assets to cover the difference and distribute proceeds accordingly"
-      )
-    }
-    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition text-left"
-  >
-    The estate should sell specific assets to cover the difference and distribute proceeds accordingly
-  </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage63AssetsManaged(
+                          "The difference should be documented but forgiven upon the death of the surviving spouse"
+                        )
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition text-left"
+                    >
+                      The difference should be documented but forgiven upon the
+                      death of the surviving spouse
+                    </button>
 
-  <button
-    onClick={() =>
-      handleButtonStage63AssetsManaged(
-        "A clause should be added to the will to allow for flexibility in handling the difference"
-      )
-    }
-    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition text-left"
-  >
-    A clause should be added to the will to allow for flexibility in handling the difference
-  </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage63AssetsManaged(
+                          "The estate should sell specific assets to cover the difference and distribute proceeds accordingly"
+                        )
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition text-left"
+                    >
+                      The estate should sell specific assets to cover the
+                      difference and distribute proceeds accordingly
+                    </button>
 
-  <button
-    onClick={() =>
-      handleButtonStage63AssetsManaged(
-        "The difference should be split among all beneficiaries to evenly distribute the value"
-      )
-    }
-    className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition text-left"
-  >
-    The difference should be split among all beneficiaries to evenly distribute the value
-  </button>
-</div>
+                    <button
+                      onClick={() =>
+                        handleButtonStage63AssetsManaged(
+                          "A clause should be added to the will to allow for flexibility in handling the difference"
+                        )
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition text-left"
+                    >
+                      A clause should be added to the will to allow for
+                      flexibility in handling the difference
+                    </button>
 
-
+                    <button
+                      onClick={() =>
+                        handleButtonStage63AssetsManaged(
+                          "The difference should be split among all beneficiaries to evenly distribute the value"
+                        )
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition text-left"
+                    >
+                      The difference should be split among all beneficiaries to
+                      evenly distribute the value
+                    </button>
+                  </div>
                 </>
               )}
 
@@ -9941,7 +10319,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage64ThirdParties(
                           "Yes, I have it in my current will"
@@ -9965,32 +10344,32 @@ const handleButtonStage13v3 = (message: any) => {
                 </>
               )}
 
-              {(message.content.includes(
-                "USEFUL TIP"
-              )) && (firstTip.current!=1) && (
+              {message.content.includes(
+                "USEFUL TIP: If your spouse were to pass away immediately after you, there are specific estate duty implications and/or arrangements you would need to consider? All the more reason to get in touch with our Financial Advisors. This will be noted and added to the report supplied to you at the end of this chat."
+              ) && (
                 <>
-                <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                If your spouse were to pass away immediately after you, there are specific estate duty implications and/or arrangements you would need to consider? All the more reason to get in touch with our Financial Advisors. This will be noted and added to the report supplied to you at the end of this chat.
+                  <div className="flex items-start space-x-4 mt-2">
+                    {/* Image on the left */}
+                    <Image
+                      src="/images/investment.png" // Path to your image
+                      alt="Useful tip"
+                      width={500} // Adjust width
+                      height={300} // Adjust height
+                      className="rounded-md" // Adds rounded corners (5px)
+                    />
                   </div>
-                   <div className="flex items-start space-x-4 mt-2">
-        {/* Image on the left */}
-        <Image
-          src="/images/investment.png" // Path to your image
-          alt="Useful tip"
-          width={500} // Adjust width
-          height={300} // Adjust height
-          className="rounded-md" // Adds rounded corners (5px)
-        />
-      </div>
                   <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Thank you for providing all these details. This helps us
                     understand the estate duty implications of your current
                     will. Please share your current will. 🔐💼
                   </div>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
-                        handleButtonStage65CurrentWill("Upload Document at End of Chat")
+                        handleButtonStage65CurrentWill(
+                          "Upload Document at End of Chat"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -10013,7 +10392,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage65CurrentWill("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -10028,7 +10408,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage65PotentialOption("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -10049,14 +10430,17 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage65Stages("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Yes
                     </button>
                     <button
-                      onClick={() => handleButtonStage65Stages("No, let’s move on")}
+                      onClick={() =>
+                        handleButtonStage65Stages("No, let’s move on")
+                      }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       No
@@ -10070,7 +10454,7 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    <strong>DID YOU KNOW</strong>:
+                    <strong>USEFUL TIP</strong>:
                     <br />
                     💡 If your spouse were to pass away immediately after you,
                     there are specific estate duty implications and/or
@@ -10085,9 +10469,12 @@ const handleButtonStage13v3 = (message: any) => {
                     will. Please share your current will. 🔐💼
                   </div>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
-                        handleButtonStage65CurrentWill("Upload Document at End of Chat")
+                        handleButtonStage65CurrentWill(
+                          "Upload Document at End of Chat"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -10110,7 +10497,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage66EstateDutyCurrentWillFinal("Yes")
                       }
@@ -10135,26 +10523,22 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Now, let's discuss the fees that will be charged for the
-                    administration of your estate. The executor's fees can be a
-                    significant part of the costs, so it's important to
-                    understand how these are calculated.
-                    <br />
-                    <br />
+                 
                     💰 The maximum fee that can be charged for executor’s fees
                     is 3.5%, plus VAT (15%), which totals 4.03%. You can leave
                     instructions in your will to stipulate what percentage you
                     wish to set for the executor’s fees.
                     <br />
                     <br />
-                    <strong>DID YOU KNOW</strong>:
+                    <strong>USEFUL TIP</strong>:
                     <br />
                     👪 Family members are also entitled to executor’s fees. The
                     advantage of family members as executors is that they may be
                     open to waive or negotiate lower compensation.
                   </div>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage67ExecutorFee("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -10169,7 +10553,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage68Payable("Yes, specify")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -10186,11 +10571,12 @@ const handleButtonStage13v3 = (message: any) => {
               )}
 
               {message.content.includes(
-                "Thank you for providing these details. Now, we can move on to the next part of your estate planning. Ready to continue?"
+                "Now, we can move on to the next part of your estate planning. Ready to continue?"
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage69ExecutorFinal("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -10211,7 +10597,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage70Liquidity("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -10232,7 +10619,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage71LiquidityEssential("Yes, specify")
                       }
@@ -10269,7 +10657,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage71LiquidityEssential("Yes, specify")
                       }
@@ -10286,7 +10675,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage72Shortfall("Yes, with considerations")
                       }
@@ -10323,7 +10713,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage73FinancialImpact("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -10343,7 +10734,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage73FinancialImpact("Continue")
                       }
@@ -10360,7 +10752,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage74Shortfall("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -10381,9 +10774,7 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Excellent! Here are some details on the potential options:
-                    <br />
-                    <br />
+                    
                     💬 Negotiating Payment Terms with Creditors:
                     <br />
                     This involves discussing with creditors to extend payment
@@ -10412,7 +10803,8 @@ const handleButtonStage13v3 = (message: any) => {
                     conversation.
                   </div>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage74Shortfall("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -10427,7 +10819,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage75SellingAsset(
                           "I am open to selling assets"
@@ -10476,7 +10869,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage75SellingAsset("Continue")
                       }
@@ -10493,7 +10887,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage76Reservation("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -10542,7 +10937,8 @@ const handleButtonStage13v3 = (message: any) => {
                     conversation.
                   </div>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage76Reservation("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -10557,7 +10953,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage77BorrowingFunds(
                           "I am open to borrowing funds"
@@ -10606,7 +11003,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage77FinancialRisk("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -10654,7 +11052,8 @@ const handleButtonStage13v3 = (message: any) => {
                     shared at the end of this conversation.
                   </div>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage77FinancialRisk("Continue")
                       }
@@ -10671,7 +11070,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage77Alternative("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -10716,7 +11116,8 @@ const handleButtonStage13v3 = (message: any) => {
                     shared at the end of this conversation.
                   </div>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage77Alternative("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -10731,28 +11132,11 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
-                      onClick={() =>
-                        handleButtonStage78LifeInsurance("Against")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Against
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage78LifeInsurance("Considering")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Considering
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage78LifeInsurance("Agree")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Agree
-                    </button>
+                    <br />
+                    <LifeInsuranceSlider
+                      onProceed={handleButtonStage78LifeInsurance}
+                    />
+                    
                   </div>
                 </>
               )}
@@ -10762,7 +11146,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage79LiquidityEnd("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -10783,7 +11168,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage80Claims(
                           "I have court ordered maintenance obligations"
@@ -10833,16 +11219,21 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
-                        handleButtonStage81Obligations("Upload Document at End of Chat")
+                        handleButtonStage81Obligations(
+                          "Upload Document at End of Chat"
+                        )
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Upload Document at End of Chat
                     </button>
                     <button
-                      onClick={() => handleButtonStage81Obligations("Yes, specify detail")}
+                      onClick={() =>
+                        handleButtonStage81Obligations("Yes, specify detail")
+                      }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Yes, specify detail
@@ -10864,7 +11255,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage81Obligations("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -10879,7 +11271,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage81Agreements("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -10906,7 +11299,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage81Agreements("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -10921,7 +11315,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage81Complications("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -10948,7 +11343,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage81Complications("Continue")
                       }
@@ -10959,13 +11355,34 @@ const handleButtonStage13v3 = (message: any) => {
                   </div>
                 </>
               )}
+              {message.content.includes(
+                "Have you considered the cost of education and taken that into account regarding maintenance?"
+              ) && (
+                 <div className="space-x-2">
+                    <br />
+                    <button
+                      onClick={() => handleButtonStage82LifeInsurancev1("Yes")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Yes
+                    </button>
+                    <button
+                      onClick={() => handleButtonStage82LifeInsurancev1("Yes")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Yes
+                    </button>
+                    </div>
+              
+            )}
 
               {message.content.includes(
                 "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?"
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage82LifeInsurance("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -10992,7 +11409,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage83Proactive("I have set up a policy")
                       }
@@ -11019,7 +11437,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage83Proactive("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -11034,7 +11453,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage83Passing("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -11055,7 +11475,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage83Passing("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -11070,7 +11491,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage84Provision(
                           "I have provisions in place"
@@ -11119,7 +11541,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage84ExistingProvision("Yes")
                       }
@@ -11142,7 +11565,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage84ExistingProvision("Continue")
                       }
@@ -11159,7 +11583,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage84OptionProvision("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -11180,7 +11605,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage84OptionProvision("Continue")
                       }
@@ -11197,7 +11623,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage84CrucialProvision("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -11218,7 +11645,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage84CrucialProvision("Continue")
                       }
@@ -11235,7 +11663,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage85FactorsProvision(
                           "Yes, I have considered them and have factored them into my estate planning"
@@ -11286,7 +11715,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage85GoalsProvision("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -11307,7 +11737,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage85GoalsProvision("Continue")
                       }
@@ -11324,7 +11755,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage85UnderstandingProvision("Yes")
                       }
@@ -11349,7 +11781,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage85UnderstandingProvision("Continue")
                       }
@@ -11366,7 +11799,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage85ComprehensiveProvision("Yes")
                       }
@@ -11391,7 +11825,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage85ComprehensiveProvision("Continue")
                       }
@@ -11408,7 +11843,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage85EffectiveProvision("Yes")
                       }
@@ -11433,7 +11869,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage85EffectiveProvision("Continue")
                       }
@@ -11450,7 +11887,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage85MaintenanceProvision(
                           "Insurance policy with my spouse as the nominated beneficiary"
@@ -11510,7 +11948,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage85BenefitProvision("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -11546,7 +11985,8 @@ const handleButtonStage13v3 = (message: any) => {
                     funds according to your wishes.
                   </div>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage85BenefitProvision("Continue")
                       }
@@ -11563,7 +12003,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage86DeeperProvision("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -11584,7 +12025,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage86AnnuitiesProvision("Yes")
                       }
@@ -11629,7 +12071,8 @@ const handleButtonStage13v3 = (message: any) => {
                     potential tax benefits.
                   </div>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage86AnnuitiesProvision("Continue")
                       }
@@ -11670,7 +12113,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage87ShortFall(
                           "I have capital available to generate an income for my dependents"
@@ -11721,7 +12165,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage87Capital("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -11742,7 +12187,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage87Capital("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -11757,7 +12203,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage87Planning("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -11778,7 +12225,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage87Planning("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -11793,7 +12241,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage87Dependents("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -11814,7 +12263,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage87Dependents("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -11825,11 +12275,41 @@ const handleButtonStage13v3 = (message: any) => {
               )}
 
               {message.content.includes(
-                "Additional life assurance can provide the capital required for the income needs of dependents. Have you considered obtaining additional life insurance for this purpose?"
+                "Additional life insurance can provide the capital required for the income needs of dependents. Do you have any life insurance that is linked to a purpose, i.e. Mortgage / bond life cover etc?"
+                ) && (
+                <>
+                <div className="space-x-2">
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage88Additionalv1(
+                          "Yes, specify details"
+                        )
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Yes, specify details
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage88Additionalv1(
+                          "No, let's move on"
+                        )
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      No, let's move on
+                    </button>
+                    </div>
+                </>
+                )}
+              {message.content.includes(
+                "Have you considered obtaining additional life insurance for providing capital required for income needs of dependents?"
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage88Additional(
                           "My current life insurance coverage is sufficient"
@@ -11881,7 +12361,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage88Coverage("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -11902,7 +12383,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage88Coverage("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -11917,7 +12399,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage88LifeInsurance("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -11938,7 +12421,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage88LifeInsurance("Continue")
                       }
@@ -11955,7 +12439,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage88Assessment("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -11976,7 +12461,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage88Assessment("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -11991,7 +12477,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage89Final("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -12012,7 +12499,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage90FuneralCover(
                           "Yes, I have funeral cover in place"
@@ -12051,7 +12539,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage90NominateFuneralCover("Yes")
                       }
@@ -12086,7 +12575,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage90BeneficiaryFuneralCover("Yes")
                       }
@@ -12111,7 +12601,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage90BeneficiaryFuneralCover("Continue")
                       }
@@ -12128,7 +12619,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage90AssistanceFuneralCover("Yes")
                       }
@@ -12154,28 +12646,28 @@ const handleButtonStage13v3 = (message: any) => {
                 <>
                   <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     <br />
-                    💸 Immediate Financial Support:
+                    💸 <b>Immediate Financial Support:</b>
                     <br />
                     Funeral cover provides immediate funds to cover funeral
                     expenses, reducing the financial burden on your family
                     during a difficult time.
                     <br />
                     <br />
-                    🧘 Peace of Mind:
+                    🧘 <b>Peace of Mind:</b>
                     <br />
                     Knowing that funeral expenses are covered offers peace of
                     mind for you and your loved ones, ensuring that financial
                     concerns don’t add to the stress of planning a funeral.
                     <br />
                     <br />
-                    🏥 Comprehensive Coverage:
+                    🏥 <b>Comprehensive Coverage:</b>
                     <br />
                     Funeral cover often includes a range of services, such as
                     transportation, burial or cremation, and related expenses,
                     ensuring that all aspects of the funeral are taken care of.
                     <br />
                     <br />
-                    💼 Avoiding Financial Strain:
+                    💼 <b>Avoiding Financial Strain:</b>
                     <br />
                     By having a dedicated policy for funeral expenses, you
                     prevent your family from having to dip into savings or take
@@ -12183,21 +12675,21 @@ const handleButtonStage13v3 = (message: any) => {
                     financial strain.
                     <br />
                     <br />
-                    📜 Flexibility in Planning:
+                    📜 <b>Flexibility in Planning:</b>
                     <br />
                     Many funeral cover policies offer flexibility in terms of
                     benefits and services, allowing you to tailor the policy to
                     meet your specific wishes and needs.
                     <br />
                     <br />
-                    ⚡ Ease of Access:
+                    ⚡ <b>Ease of Access:</b>
                     <br />
                     Funeral cover typically provides a quick payout, ensuring
                     that funds are available when needed without lengthy
                     administrative delays.
                     <br />
                     <br />
-                    📈 Protection Against Rising Costs:
+                    📈 <b>Protection Against Rising Costs:</b>
                     <br />
                     With a funeral cover policy, you lock in a level of coverage
                     at today's rates, helping to protect against future
@@ -12209,7 +12701,8 @@ const handleButtonStage13v3 = (message: any) => {
                     suitable policy?
                   </div>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage90ImmediateFuneralCover("Yes")
                       }
@@ -12234,7 +12727,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage90ImmediateFuneralCover("Continue")
                       }
@@ -12251,7 +12745,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage90specificsFuneralCover(
                           "Yes, I have a question"
@@ -12274,11 +12769,12 @@ const handleButtonStage13v3 = (message: any) => {
               )}
 
               {message.content.includes(
-                "Next, let's talk about trusts. A trust is an arrangement where property belonging to one party is managed by another party for the benefit of a third party. Are you familiar with trusts?"
+                "Next, let's talk about trusts. A trust is is a legal arrangement where one person (the trustee) holds and manages assets on behalf of another person or group (the beneficiaries). The person who created the trust is called the settlor. The trustee is responsible for managing the trust according to the terms set by the settlor, ensuring the assets benefit the beneficiaries. Are you familiar with trusts?"
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage91Trust("Yes, I have a question")
                       }
@@ -12307,7 +12803,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage91Integral("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -12328,7 +12825,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage91Integral("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -12343,7 +12841,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage92Vivos(
                           "Yes, I have considered setting up a trust"
@@ -12415,7 +12914,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage92Setting("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -12430,7 +12930,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage92Setting("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -12445,7 +12946,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage92Setting("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -12460,7 +12962,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage92Setting("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -12475,7 +12978,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage92Setting("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -12490,7 +12994,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage93Beneficial(
                           "Yes, protecting my estate against insolvency is a priority for me"
@@ -12551,7 +13056,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage94Executor(
                           "Yes, saving on executor’s fees is an important consideration for me"
@@ -12637,7 +13143,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage94Executor("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -12652,7 +13159,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage94Executor("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -12667,22 +13175,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
-                      onClick={() => handleButtonStage94Executor("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Understanding the significance of advantages like saving on executor's fees and excluding assets from your estate for estate duty purposes is essential in crafting an effective estate plan. These benefits can have a significant impact on preserving your wealth and ensuring efficient asset distribution. If you're uncertain about their significance or how they apply to your estate planning, I can provide more details and clarify any questions you may have."
-              ) && (
-                <>
-                  <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage94Executor("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -12697,7 +13191,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage94Executor("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -12708,11 +13203,12 @@ const handleButtonStage13v3 = (message: any) => {
               )}
 
               {message.content.includes(
-                "Addressing specific concerns or questions about setting up a trust is crucial for making informed decisions about your estate plan. Whether you're unsure about the process, concerned about potential implications, or have questions about trust administration, I'm here to provide guidance and support. Feel free to share your concerns, and we can discuss them further."
+                "Addressing specific concerns or questions about setting up a trust is crucial for making informed decisions about your estate plans. Whether you're unsure about the process, concerned about potential implications, or have questions about trust administration, I'm here to provide guidance and support. Feel free to share your concerns, and we can discuss them further."
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage94Executor("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -12727,7 +13223,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage95Donation(
                           "Yes, I’m interested in exploring this option"
@@ -12778,7 +13275,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage95Donation("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -12793,7 +13291,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage95Donation("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -12808,7 +13307,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage96Strategy("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -12831,472 +13331,469 @@ const handleButtonStage13v3 = (message: any) => {
                   </div>
                 </>
               )}
-{message.content.includes("Hello and welcome to Moneyversity’s Estate Planning Consultant") && (
+
+{message.content.includes(
+                "Your information will be reviewed by an Old Mutual financial adviser, and you can expect to hear back soonwithyourestate plan."
+              ) && (
                 <>
                   <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    I'm here to help you navigate the estate planning process with ease 🛠️. 
-                    Together, we’ll ensure your assets and wishes are well-documented and protected 🛡️. 
-                    Ready to get started on this important journey? 🚀
-                  </div>
-                  <div className="space-x-2">
-                    <br/>
-                  <button
-                  onClick={() => handleButtonStage0("Absolutely")}
-                  className="px-4 py-2 mb-1 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                >
-                  Absolutely
-                </button>
-                <button
-                  onClick={() => handleButtonStage0("Tell me more")}
-                  className="px-4 py-2 mb-1 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                >
-                  Tell me more
-                </button>
-                <button
-                  onClick={() => handleButtonStage0("Not now")}
-                  className="px-4 py-2 mb-1 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                >
-                  Not now
-                </button>
+                   Have a great day, and we’re looking forwardtohelpingyou secure your future!
                   </div>
                 </>
               )}
-
-{message.content.includes("No problem at all. If you ever have questions or decide to start your estate planning, I’m here to help. Have a great day!") && (
-                <>
-                  
-                  <div className="space-x-2">
-                    <br/><button
-                  onClick={() => handleButtonStage0("Let's chat again!")}
-                  className="px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                >
-                  Let's chat again!
-                </button>
-                
-                  </div>
-                </>
-              )}
-              
-
-
-{message.content.includes("Let’s dive into the world of estate planning!") && (
-                <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Estate planning is the process of arranging how your assets will be managed and distributed after your death 🏡📜. It ensures that your wishes are respected, your loved ones are taken care of ❤️, and potential disputes are minimized ⚖️. <br/><br/> It’s important because it gives you peace of mind 🧘 knowing that your affairs are in order, and it can also help reduce taxes and legal costs in the future 💰📉.
-                  </div>
-                  <div className="space-x-2">
-                    <br/><button
-                  onClick={() => handleButtonStage1("Tell me more")}
-                  className="px-4 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                >
-                  Tell me more
-                </button>
-                <button
-                  onClick={() => handleButtonStage1("Skip Estate Planning Explanation")}
-                  className="px-4 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                >
-                 Skip Estate Planning Explanation
-                </button>
-                
-                  </div>
-                </>
-              )}
-
-  {message.content.includes("I know estate planning can be daunting") && (
-            <>
-              <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                Let’s get to know each other a bit better. What is your name?
-              </div>
-            </>
-          )}
-
-
-
-            {message.content.includes("When were you born?") && (
-            <>
-              <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                <Calendar onDateSelect={handleDateSelection} />
-              </div>
-            </>
-          )}
-
-{message.content.includes("Let’s talk about your family life quickly. Are you married or single?") && (
-            <>
-              
-                <div className="space-x-2 mt-2">
-                  <button
-                    onClick={() => handleButtonStage2("Married")}
-                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                  >
-                    Married
-                  </button>
-                   <button
-                    onClick={() => handleButtonStage2("Single")}
-                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                  >
-                    Single
-                  </button>
-                  </div>
-              
-            </>
-          )}
-          
-
-
-             
-
- {message.content.includes("Excellent. Are you married in or out of community of property? If married out of community of property, is it with or without the accrual system?") && (
-            <div className="space-x-2 mt-2">
-              <br/>
-              <button
-                onClick={() =>
-                  handleButtonStage3("In Community of Property")
-                }
-                className="px-2 py-2 mb-1 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-              >
-                In Community of Property
-              </button>
-              <button
-                onClick={() =>
-                  handleButtonStage3(
-                    "Out of Community of Property with Accrual"
-                  )
-                }
-                className="px-2 py-2 mb-1 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-              >
-                Out of Community of Property with Accrual
-              </button>
-              <button
-                onClick={() =>
-                  handleButtonStage3(
-                    "Out of Community of Property without Accrual"
-                  )
-                }
-                className="px-2 py-2 rounded-md mb-1 border border-[#8DC63F] text-[#8DC63F]"
-              >
-                Out of Community of Property without Accrual
-              </button>
-              <button
-                onClick={() => handleButtonStage3("I can't remember")}
-                className="px-2 py-2 rounded-md mb-1 border border-[#8DC63F] text-[#8DC63F]"
-              >
-                I can't remember
-              </button>
-              <button
-                onClick={() => handleButtonStage3("What is Accrual?")}
-                className="px-2 py-2 rounded-md mb-1 border border-[#8DC63F] text-[#8DC63F]"
-              >
-                What is Accrual?
-              </button>
-              
-            </div>
-          )}
-
-{message.content.includes("Excellent. In order to calculate the accrual, we need to know the specifics of your antenuptial contract (ANC). We will ask for your antenuptial contract at the end of this chat.") && (
-            <div className="space-x-2">
-              <br/><button
-                onClick={() =>
-                  handleButtonStage3("Continue")
-                }
-                className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-              >
-               Continue
-              </button>
-              
-            </div>
-          )}
-
-{message.content.includes("No worries! Here’s a brief description of each type to help you remember:") && (
-            <>
-            <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-              👫⚖️ <b>In Community of Property:</b> All assets and debts are shared equally between spouses.<br/>
-              📈🏠 <b>Out of Community of Property with Accrual:</b> Each spouse retains separate ownership of their assets, but they share the growth in value of their estates during the marriage<br/>
-              🏡❌ <b>Out of Community of Property without Accrual:</b> Each spouse retains separate ownership of their assets, and there is no sharing of assets or growth in value <br/>
-              If you are married out of community of property, you would have consulted with an attorney (or notary) and signed documents (antenuptial contract) before your wedding 📝💍. 
-              <br/>Please check your marital contract or consult with your spouse to confirm ✅
-            </div>
-            <div className="space-x-2">
-              <br/><button
-                onClick={() =>
-                  handleButtonStage3("In Community of Property")
-                }
-                className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-              >
-                In Community of Property
-              </button>
-              <button
-                onClick={() =>
-                  handleButtonStage3(
-                    "Out of Community of Property with Accrual"
-                  )
-                }
-                className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-              >
-                Out of Community of Property with Accrual
-              </button>
-              <button
-                onClick={() =>
-                  handleButtonStage3(
-                    "Out of Community of Property without Accrual"
-                  )
-                }
-                className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-              >
-                Out of Community of Property without Accrual
-              </button>
-              <button
-                onClick={() => handleButtonStage3("I can't remember")}
-                className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-              >
-                I can't remember
-              </button>
-            </div>
-            </>
-          )}
-
-{message.content.includes("Accrual is a concept in marriage where the growth in wealth during the marriage is shared between spouses. When a couple marries under the accrual system, each spouse keeps the assets they had before the marriage. However, any increase in their respective estates during the marriage is shared equally when the marriage ends, either through divorce or death.") && (
-            <>
-            <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-              For example, if one spouse's estate grows significantly while the other’s does not 📈💼, the spouse with the smaller growth may be entitled to a portion of the increase in the other’s estate 💰. This ensures fairness and protects both parties 🤝🛡️.<br/>
-            </div>
-            <div className="space-x-2">
-              <br/><button
-                onClick={() =>
-                  handleButtonStage3("In Community of Property")
-                }
-                className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-              >
-                In Community of Property
-              </button>
-              <button
-                onClick={() =>
-                  handleButtonStage3(
-                    "Out of Community of Property with Accrual"
-                  )
-                }
-                className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-              >
-                Out of Community of Property with Accrual
-              </button>
-              <button
-                onClick={() =>
-                  handleButtonStage3(
-                    "Out of Community of Property without Accrual"
-                  )
-                }
-                className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-              >
-                Out of Community of Property without Accrual
-              </button>
-              <button
-                onClick={() => handleButtonStage3("I can't remember")}
-                className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-              >
-                I can't remember
-              </button>
-            </div>
-            </>
-          )}
-
-{message.content.includes("Do you currently have a will in place?") && (
-            <>
-            
-            <div className="space-x-2">
-              <br/><button
-                onClick={() =>
-                  handleButtonStage4("Yes")
-                }
-                className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-              >
-                Yes
-              </button>
-              <button
-                onClick={() =>
-                  handleButtonStage4("No")
-                }
-                className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-              >
-               No
-              </button>
-            </div>
-            </>
-          )}
-
-          {message.content.includes("Creating a will is an important step in securing your assets and ensuring your wishes are followed. We can start drafting your will right here by answering a few questions about your estate and preferences a little later in the chat.") && (
-            <>
-            
-            <div className="space-x-2">
-              <br/><button
-                onClick={() =>
-                  handleButtonStage4("Continue")
-                }
-                className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-              >
-                Continue
-              </button>
-             
-            </div>
-            </>
-          )}
-          
-{message.content.includes("When was the last time you reviewed your will? It’s a good idea to keep it up-to-date with any changes in your life") && (
-            <>
-            
-            <div className="space-x-2">
-              <br/><button
-                onClick={() =>
-                  handleButtonStage5("Will is up to date")
-                }
-                className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-              >
-                Will is up to date
-              </button>
-             <button
-                onClick={() =>
-                  handleButtonStage5("Will needs to be reviewed & updated")
-                }
-                className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-              >
-                Will needs to be reviewed & updated
-              </button>
-            </div>
-            </>
-          )}
-
-{message.content.includes("Do you currently have a trust in place") && (
-            <>
-            
-            <div className="space-x-2">
-              <br/><button
-                onClick={() =>
-                  handleButtonStage6("Yes")
-                }
-                className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-              >
-                Yes
-              </button>
-             <button
-                onClick={() =>
-                  handleButtonStage6("No")
-                }
-                className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-              >
-                No
-              </button>
-            </div>
-            </>
-          )}
-
-
-{message.content.includes("Do you have any dependents?") && (
-  <div className="flex flex-col space-y-2 mt-2">
-    <label className="text-white">Please select your dependents:</label>
-    {Object.entries(checkboxes).map(([key, value]) => {
-      // Convert camelCase to separate words
-      const labelText = key
-        .replace(/([A-Z])/g, ' $1')  // Add space before capital letters
-        .replace(/^./, (str) => str.toUpperCase()); // Capitalize the first letter
-
-      return (
-        <div
-          key={key}
-          className={`${
-            value ? "bg-[#8DC63F]" : ""
-          } flex items-center ps-4 border border-[#8DC63F] rounded mt-2 text-white`}
-        >
-          <CustomCheckBox
-            id={key}
-            name="dependents"
-            className="w-4 h-4 rounded"
-            value={key.charAt(0).toUpperCase() + key.slice(1)}
-            checked={value}
-            onChange={handleCheckboxChange}
-          />
-          <label
-            htmlFor={key}
-            className="w-full py-4 ms-2 text-sm font-medium text-white"
-          >
-            {labelText}
-          </label>
-        </div>
-      );
-    })}
-  </div>
-)}
-
-
-
-{message.content.includes("Is there anything else you’d like to add about your personal particulars or any questions you have at this stage?") && (
-               <div className="space-x-2">
-              <br/><button
-                onClick={() =>
-                  handleButtonStage7("Yes, I have a question")
-                }
-                className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-              >
-                Yes, I have a question
-              </button>
-             <button
-                onClick={() =>
-                  handleButtonStage7("No, let’s move on")
-                }
-                className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-              >
-                No, let’s move on
-              </button>
-            </div>
-              )}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
 
               {message.content.includes(
-                "Donations tax is a tax imposed on the transfer of assets to a trust or natural person without receiving adequate consideration in return. It's important to understand that while transferring assets to a trust can help reduce estate duty, it may trigger donations tax liabilities. The amount of donations tax payable depends on several factors, including the value of the assets transferred, any available exemptions or deductions, and the relationship between the donor and the recipient. The donations tax threshold is R100 000 per year."
+                "Hello and welcome to Moneyversity’s Estate Planning Consultant"
+              ) && (
+                <>
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    I'm here to help you navigate the estate planning process
+                    with ease 🛠️. Together, we’ll ensure your assets and wishes
+                    are well-documented and protected 🛡️. Ready to get started
+                    on this important journey? 🚀
+                  </div>
+                  <div className="space-x-2">
+                    <br />
+                    <button
+                      onClick={() => handleButtonStage0("Absolutely")}
+                      className="px-4 py-2 mb-1 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Absolutely
+                    </button>
+                    <button
+                      onClick={() => handleButtonStage0("Tell me more")}
+                      className="px-4 py-2 mb-1 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Tell me more
+                    </button>
+                    <button
+                      onClick={() => handleButtonStage0("Not now")}
+                      className="px-4 py-2 mb-1 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Not now
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {message.content.includes(
+                "No problem at all. If you ever have questions or decide to start your estate planning, I’m here to help. Have a great day!"
+              ) && (
+                <>
+                  <div className="space-x-2">
+                    <br />
+                    <button
+                      onClick={() => handleButtonStage0("Let's chat again!")}
+                      className="px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Let's chat again!
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {message.content.includes(
+                "Let’s dive into the world of estate planning!"
+              ) && (
+                <>
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    Estate planning is the process of arranging how your assets
+                    will be managed and distributed after your death 🏡📜. It
+                    ensures that your wishes are respected, your loved ones are
+                    taken care of ❤️, and potential disputes are minimized ⚖️.{" "}
+                    <br />
+                    <br /> It’s important because it gives you peace of mind 🧘
+                    knowing that your affairs are in order, and it can also help
+                    reduce taxes and legal costs in the future 💰📉.
+                  </div>
+                  <div className="space-x-2">
+                    <br />
+                    <button
+                      onClick={() => handleButtonStage1("Tell me more")}
+                      className="px-4 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Tell me more
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage1("Skip Estate Planning Explanation")
+                      }
+                      className="px-4 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Skip Estate Planning Explanation
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {message.content.includes(
+                "I know estate planning can be daunting"
+              ) && (
+                <>
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    Let’s get to know each other a bit better. What is your
+                    name?
+                  </div>
+                </>
+              )}
+
+              {message.content.includes("When were you born?") && (
+                <>
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    <Calendar onDateSelect={handleDateSelection} />
+                  </div>
+                </>
+              )}
+
+              {message.content.includes(
+                "Let’s talk about your family life quickly. Are you married or single?"
+              ) && (
+                <>
+                  <div className="space-x-2 mt-2">
+                    <button
+                      onClick={() => handleButtonStage2("Married")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Married
+                    </button>
+                    <button
+                      onClick={() => handleButtonStage2("Single")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Single
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {message.content.includes(
+                "Excellent. Are you married in or out of community of property? If married out of community of property, is it with or without the accrual system?"
+              ) && (
+                <div className="space-x-2 mt-2">
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleButtonStage3("In Community of Property")
+                    }
+                    className="px-2 py-2 mb-1 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    In Community of Property
+                  </button>
+                  <button
+                    onClick={() =>
+                      handleButtonStage3(
+                        "Out of Community of Property with Accrual"
+                      )
+                    }
+                    className="px-2 py-2 mb-1 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Out of Community of Property with Accrual
+                  </button>
+                  <button
+                    onClick={() =>
+                      handleButtonStage3(
+                        "Out of Community of Property without Accrual"
+                      )
+                    }
+                    className="px-2 py-2 rounded-md mb-1 border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Out of Community of Property without Accrual
+                  </button>
+                  <button
+                    onClick={() => handleButtonStage3("I can't remember")}
+                    className="px-2 py-2 rounded-md mb-1 border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    I can't remember
+                  </button>
+                  <button
+                    onClick={() => handleButtonStage3("What is Accrual?")}
+                    className="px-2 py-2 rounded-md mb-1 border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    What is Accrual?
+                  </button>
+                </div>
+              )}
+
+              {message.content.includes(
+                "Excellent. In order to calculate the accrual, we need to know the specifics of your antenuptial contract (ANC). We will ask for your antenuptial contract at the end of this chat."
+              ) && (
+                <div className="space-x-2">
+                  <br />
+                  <button
+                    onClick={() => handleButtonStage3("Continue")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                  >
+                    Continue
+                  </button>
+                </div>
+              )}
+
+              {message.content.includes(
+                "No worries! Here’s a brief description of each type to help you remember:"
+              ) && (
+                <>
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    👫⚖️ <b>In Community of Property:</b> All assets and debts
+                    are shared equally between spouses.
+                    <br />
+                    📈🏠 <b>Out of Community of Property with Accrual:</b> Each
+                    spouse retains separate ownership of their assets, but they
+                    share the growth in value of their estates during the
+                    marriage
+                    <br />
+                    🏡❌ <b>
+                      Out of Community of Property without Accrual:
+                    </b>{" "}
+                    Each spouse retains separate ownership of their assets, and
+                    there is no sharing of assets or growth in value <br />
+                    If you are married out of community of property, you would
+                    have consulted with an attorney (or notary) and signed
+                    documents (antenuptial contract) before your wedding 📝💍.
+                    <br />
+                    Please check your marital contract or consult with your
+                    spouse to confirm ✅
+                  </div>
+                  <div className="space-x-2">
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage3("In Community of Property")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      In Community of Property
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage3(
+                          "Out of Community of Property with Accrual"
+                        )
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Out of Community of Property with Accrual
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage3(
+                          "Out of Community of Property without Accrual"
+                        )
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Out of Community of Property without Accrual
+                    </button>
+                    <button
+                      onClick={() => handleButtonStage3("I can't remember")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      I can't remember
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {message.content.includes(
+                "Accrual is a concept in marriage where the growth in wealth during the marriage is shared between spouses. When a couple marries under the accrual system, each spouse keeps the assets they had before the marriage. However, any increase in their respective estates during the marriage is shared equally when the marriage ends, either through divorce or death."
+              ) && (
+                <>
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    For example, if one spouse's estate grows significantly
+                    while the other’s does not 📈💼, the spouse with the smaller
+                    growth may be entitled to a portion of the increase in the
+                    other’s estate 💰. This ensures fairness and protects both
+                    parties 🤝🛡️.
+                    <br />
+                  </div>
+                  <div className="space-x-2">
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage3("In Community of Property")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      In Community of Property
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage3(
+                          "Out of Community of Property with Accrual"
+                        )
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Out of Community of Property with Accrual
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage3(
+                          "Out of Community of Property without Accrual"
+                        )
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Out of Community of Property without Accrual
+                    </button>
+                    <button
+                      onClick={() => handleButtonStage3("I can't remember")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      I can't remember
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {message.content.includes(
+                "Do you currently have a will in place?"
+              ) && (
+                <>
+                  <div className="space-x-2">
+                    <br />
+                    <button
+                      onClick={() => handleButtonStage4("Yes")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Yes
+                    </button>
+                    <button
+                      onClick={() => handleButtonStage4("No")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      No
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {message.content.includes(
+                "Creating a will is an important step in securing your assets and ensuring your wishes are followed. We can start drafting your will right here by answering a few questions about your estate and preferences a little later in the chat."
+              ) && (
+                <>
+                  <div className="space-x-2">
+                    <br />
+                    <button
+                      onClick={() => handleButtonStage4("Continue")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Continue
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {message.content.includes(
+                "When was the last time you reviewed your will? It’s a good idea to keep it up-to-date with any changes in your life"
+              ) && (
+                <>
+                  <div className="space-x-2">
+                    <br />
+                    <button
+                      onClick={() => handleButtonStage5("Will is up to date")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Will is up to date
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage5(
+                          "Will needs to be reviewed & updated"
+                        )
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Will needs to be reviewed & updated
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {message.content.includes(
+                "Do you currently have a trust in place"
+              ) && (
+                <>
+                  <div className="space-x-2">
+                    <br />
+                    <button
+                      onClick={() => handleButtonStage6("Yes")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Yes
+                    </button>
+                    <button
+                      onClick={() => handleButtonStage6("No")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      No
+                    </button>
+                  </div>
+                </>
+              )}
+
+              {message.content.includes("Do you have any dependents?") && (
+                <div className="flex flex-col space-y-2 mt-2">
+                  <label className="text-white">
+                    Please select your dependents:
+                  </label>
+                  {Object.entries(checkboxes).map(([key, value]) => {
+                    // Convert camelCase to separate words
+                    const labelText = key
+                      .replace(/([A-Z])/g, " $1") // Add space before capital letters
+                      .replace(/^./, (str) => str.toUpperCase()); // Capitalize the first letter
+
+                    return (
+                      <div
+                        key={key}
+                        className={`${
+                          value ? "bg-[#8DC63F]" : ""
+                        } flex items-center ps-4 border border-[#8DC63F] rounded mt-2 text-white`}
+                      >
+                        <CustomCheckBox
+                          id={key}
+                          name="dependents"
+                          className="w-4 h-4 rounded"
+                          value={key.charAt(0).toUpperCase() + key.slice(1)}
+                          checked={value}
+                          onChange={handleCheckboxChange}
+                        />
+                        <label
+                          htmlFor={key}
+                          className="w-full py-4 ms-2 text-sm font-medium text-white"
+                        >
+                          {labelText}
+                        </label>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+
+              {message.content.includes(
+                "Is there anything else you’d like to add about your personal particulars or any questions you have at this stage?"
+              ) && (
+                <div className="space-x-2">
+                  <br />
+                  <button
+                    onClick={() => handleButtonStage7("Yes, I have a question")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                  >
+                    Yes, I have a question
+                  </button>
+                  <button
+                    onClick={() => handleButtonStage7("No, let’s move on")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                  >
+                    No, let’s move on
+                  </button>
+                </div>
+              )}
+
+              {message.content.includes(
+                "Donations tax is a tax imposed on the transfer of assets to a trust or to any person (for example individuals, company or trust that is a SA tax resident) without receiving adequate consideration in return. It's important to understand that while transferring assets to a trust can help reduce estate duty, it may trigger donations tax liabilities. The amount of donations tax payable depends on several factors, including the value of the assets transferred, any available exemptions or deductions, and the relationship between the donor and the recipient. The donations tax threshold is R100 000 per year."
               ) && (
                 <>
                   <br />
@@ -13305,7 +13802,8 @@ const handleButtonStage13v3 = (message: any) => {
                   details to help you make informed decisions.
                   <br />
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage97Donation("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -13320,7 +13818,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage98Assets(
                           "Yes, I’m interested in exploring this option"
@@ -13371,7 +13870,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage98Assets("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -13386,7 +13886,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage98Assets("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -13401,7 +13902,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage98Assets("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -13412,11 +13914,12 @@ const handleButtonStage13v3 = (message: any) => {
               )}
 
               {message.content.includes(
-                "Selling assets to the trust might reduce estate duty, but a sale and loan agreement should be in place if a loan account is to be created. Are you familiar with the terms and conditions of such agreements?"
+                "Selling assets to the trust might reduce estate duty, but a sale agreement should be in place if a loan account is to be created. Are you familiar with the terms and conditions of such agreements?"
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage99Selling("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -13463,7 +13966,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage99Selling("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -13477,7 +13981,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage99Selling("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -13491,7 +13996,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage99Final("Yes, I am familiar")
                       }
@@ -13539,7 +14045,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage99Final("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -13554,7 +14061,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage99Final("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -13569,7 +14077,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage99Final("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -13584,7 +14093,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage100Investment("Yes, I’m interested")
                       }
@@ -13632,7 +14142,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage100Investment("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -13647,7 +14158,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage100Investment("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -13662,7 +14174,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage100Investment("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -13677,7 +14190,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage100Investment("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -13692,7 +14206,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage101InvestmentFlexibility("Yes")
                       }
@@ -13727,7 +14242,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage101InvestmentFlexibility("Continue")
                       }
@@ -13744,7 +14260,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage101InvestmentFlexibility("Continue")
                       }
@@ -13761,7 +14278,8 @@ const handleButtonStage13v3 = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage101Final("Yes, I have a question")
                       }
@@ -13779,25 +14297,347 @@ const handleButtonStage13v3 = (message: any) => {
                 </>
               )}
 
+
+
+
+
+{message.content.includes(
+                "We’ve now gathered all the relevant information to help create your estate plan. As one of the final steps, please upload the documents below. These will be securely stored and only shared with the financial adviser who will assist you in finalising your estate plan."
+              ) && (
+                <>
+                  <div className="space-x-2">
+                    <br/>
+                    <button
+                      onClick={() =>
+                        handleButtonStage101FinalUpload("Upload Your Antenuptual Contract (ANC)")
+                      }
+                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Upload Your Antenuptual Contract (ANC)
+                    </button>
+                    <button
+  onClick={() =>
+    handleButtonStage101FinalUpload("Upload Your Current Will")
+  }
+  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+>
+  Upload Your Current Will
+</button>
+
+<button
+  onClick={() =>
+    handleButtonStage101FinalUpload("Upload Your Trust Details")
+  }
+  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+>
+  Upload Your Trust Details
+</button>
+
+<button
+  onClick={() =>
+    handleButtonStage101FinalUpload("Upload Your Court Ordered Maintenance Obligations")
+  }
+  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+>
+  Upload Your Court Ordered Maintenance Obligations
+</button>
+<br/>
+<button
+  onClick={() =>
+    handleButtonStage101FinalUpload("Upload Your Antenuptual Contract (ANC)")
+  }
+  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+>
+  Upload Your Antenuptual Contract (ANC)
+</button>
+<br/>
+<button
+  onClick={() =>
+    handleButtonStage101FinalUpload("Upload Your Power of Attorney Details")
+  }
+  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+>
+  Upload Your Power of Attorney Details
+</button>
+<br/>
+<button
+  onClick={() =>
+    handleButtonStage101FinalUpload("Upload Your Living Will")
+  }
+  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+>
+  Upload Your Living Will
+</button>
+<br/>
+<button
+  onClick={() =>
+    handleButtonStage101FinalUpload("Upload Real Estate Property Detail")
+  }
+  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+>
+  Upload Real Estate Property Detail
+</button>
+<br/>
+<button
+  onClick={() =>
+    handleButtonStage101FinalUpload("Upload Your Farm Property Details")
+  }
+  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+>
+  Upload Your Farm Property Details
+</button>
+<br/>
+<button
+  onClick={() =>
+    handleButtonStage101FinalUpload("Upload Your Vehicle/s Details (cars, boats and motorcycles etc.)")
+  }
+  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+>
+  Upload Your Vehicle/s Details (cars, boats and motorcycles etc.)
+</button>
+<br/>
+<button
+  onClick={() =>
+    handleButtonStage101FinalUpload("Upload Your Valuable Possessions Details (artwork and jewellery etc.)")
+  }
+  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+>
+  Upload Your Valuable Possessions Details (artwork and jewellery etc.)
+</button>
+<br/>
+<button
+  onClick={() =>
+    handleButtonStage101FinalUpload("Upload Your Household Contents Value Details")
+  }
+  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+>
+  Upload Your Household Contents Value Details
+</button>
+<br/>
+<button
+  onClick={() =>
+    handleButtonStage101FinalUpload("Upload Your Investment Portfolio Details")
+  }
+  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+>
+  Upload Your Investment Portfolio Details
+</button>
+<br/>
+<button
+  onClick={() =>
+    handleButtonStage101FinalUpload("Upload Your Businesses Interests or Ownership Stake Details")
+  }
+  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+>
+  Upload Your Businesses Interests or Ownership Stake Details
+</button>
+<br/>
+<button
+  onClick={() =>
+    handleButtonStage101FinalUpload("Upload Your Intellectual Property Details")
+  }
+  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+>
+  Upload Your Intellectual Property Details
+</button>
+<br/>
+<button
+  onClick={() =>
+    handleButtonStage101FinalUpload("Upload Your Trust Asset Details")
+  }
+  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+>
+  Upload Your Trust Asset Details
+</button>
+<br/>
+<button
+  onClick={() =>
+    handleButtonStage101FinalUpload("Upload Your Mortgage Loan Details")
+  }
+  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+>
+  Upload Your Mortgage Loan Details
+</button>
+<br/>
+<button
+  onClick={() =>
+    handleButtonStage101FinalUpload("Upload Your Personal Loan Details")
+  }
+  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+>
+  Upload Your Personal Loan Details
+</button>
+<br/>
+<button
+  onClick={() =>
+    handleButtonStage101FinalUpload("Upload Vehicle Loan Details")
+  }
+  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+>
+  Upload Vehicle Loan Details
+</button>
+<br/>
+<button
+  onClick={() =>
+    handleButtonStage101FinalUpload("Upload Life Insurance Details")
+  }
+  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+>
+  Upload Life Insurance Details
+</button>
+<br/>
+<button
+  onClick={() =>
+    handleButtonStage101FinalUpload("Upload Your Health Insurance Policy Details")
+  }
+  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+>
+  Upload Your Health Insurance Policy Details
+</button>
+<br/>
+<button
+  onClick={() =>
+    handleButtonStage101FinalUpload("Upload Your Property Insurance Policy Detail")
+  }
+  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+>
+  Upload Your Property Insurance Policy Detail
+</button>
+<br/>
+<button
+  onClick={() =>
+    handleButtonStage101FinalUpload("Upload Your Vehicle Insurance Policy Details")
+  }
+  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+>
+  Upload Your Vehicle Insurance Policy Details
+</button>
+<br/>
+<button
+  onClick={() =>
+    handleButtonStage101FinalUpload("Upload Funeral Cover Policy Details")
+  }
+  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+>
+  Upload Funeral Cover Policy Details
+</button>
+<br/>
+<button
+  onClick={() =>
+    handleButtonStage101FinalUpload("Upload Your Investment Bond Details")
+  }
+  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+>
+  Upload Your Investment Bond Details
+</button>
+<br/>
+<button
+  onClick={() =>
+    handleButtonStage101FinalUpload("Upload Your Mutual Fund Details")
+  }
+  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+>
+  Upload Your Mutual Fund Details
+</button>
+<br/>
+<button
+  onClick={() =>
+    handleButtonStage101FinalUpload("Upload Your Retirement Fund Details")
+  }
+  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+>
+  Upload Your Retirement Fund Details
+</button>
+<br/>
+<button
+  onClick={() =>
+    handleButtonStage101FinalUpload("Upload Your Court Ordered Maintenance Obligations")
+  }
+  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+>
+  Upload Your Court Ordered Maintenance Obligations
+</button>
+<br/>
+<button
+  onClick={() =>
+    handleButtonStage101FinalUpload("Continue")
+  }
+  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+>
+  Continue
+</button>
+
+                  </div>
+                </>
+              )}
+
+
+   {message.content.includes(
+                "Thank you for uploading your documents!"
+              ) && (
+                <>
+ <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+Now before we wrap up, could you please share your email address with us? This will be used by an Old Mutual financial adviser who will contact you directly
+regarding your estate plan and provide any necessary guidance.
+  </div>
+  <br/>
+            <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+Please enter your email address.
+  </div>  
+    </>
+              )}
+
+   {message.content.includes(
+                "A report has been generated containing all the results from this chat. You can download a copy below."
+              ) && (
+                <>
+ <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+This report along with your documents will be shared with an Old Mutual financial adviser who will use this information to finalise your estate plan.
+  </div>
+  <br/>
+           <div className="space-x-2 my-2">
+                    <button
+                      onClick={() =>
+                        handleButtonStageDownloadReport("Download Report")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Download Report
+                    </button>
+                    </div>
+    </>
+              )}
+
+
+
+
+
+
+
+
+
+
+
               {message.content.includes(
                 "Thanks for sharing your thoughts,"
               ) && (
                 <>
-                <div className="space-x-2 my-2">
-                  <button
-                    onClick={() =>
-                      handleButtonStage20Final("Yes, I have a question")
-                    }
-                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                  >
-                    Yes, I have a question
-                  </button>
-                  <button
-                    onClick={() => handleButtonStage20Final("No")}
-                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F] ml-2"
-                  >
-                    No
-                  </button></div>
+                  <div className="space-x-2 my-2">
+                    <button
+                      onClick={() =>
+                        handleButtonStage20Final("Yes, I have a question")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Yes, I have a question
+                    </button>
+                    <button
+                      onClick={() => handleButtonStage20Final("No")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F] ml-2"
+                    >
+                      No
+                    </button>
+                  </div>
                 </>
               )}
 
@@ -13805,19 +14645,20 @@ const handleButtonStage13v3 = (message: any) => {
                 "The success of your estate plan relies on accurate information about your assets, liabilities, and clear communication of your wishes. How confident are you in the accuracy of the details you’ve provided so far? And would you be open to regularly reviewing and updating your estate plan to reflect any changes?"
               ) && (
                 <>
-                <div className="space-x-2 my-2">
-                  <button
-                    onClick={() => handleButtonStage20("Yes")}
-                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                  >
-                    Yes
-                  </button>
-                  <button
-                    onClick={() => handleButtonStage20("No")}
-                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                  >
-                    No
-                  </button></div>
+                  <div className="space-x-2 my-2">
+                    <button
+                      onClick={() => handleButtonStage20("Yes")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Yes
+                    </button>
+                    <button
+                      onClick={() => handleButtonStage20("No")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      No
+                    </button>
+                  </div>
                 </>
               )}
 
@@ -13825,7 +14666,7 @@ const handleButtonStage13v3 = (message: any) => {
                 "Reducing taxes and expenses payable upon your death can help maximise the value passed on to your heirs. How high a priority is it for you to minimise these costs?"
               ) && (
                 <>
-                <TaxesSlider onProceed={handleButtonStage20Payable} />
+                  <TaxesSlider onProceed={handleButtonStage20Payable} />
                   {/* <button
                     onClick={() => handleButtonStage20Payable("Low")}
                     className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
@@ -13852,9 +14693,13 @@ const handleButtonStage13v3 = (message: any) => {
               ) ||
                 message.content.includes("Checklist is downloaded")) && (
                 <>
-                <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                While these templates and checklists can help you get started, there are times when seeking professional legal advice is essential. Consider getting legal advice if the following applies to you:
-                  </div><br/>
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    While these templates and checklists can help you get
+                    started, there are times when seeking professional legal
+                    advice is essential. Consider getting legal advice if the
+                    following applies to you:
+                  </div>
+                  <br />
                   <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     🏦 <b>Complex Estates:</b>
                     <br />
@@ -13886,7 +14731,8 @@ const handleButtonStage13v3 = (message: any) => {
                     adviser.
                   </div>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage15("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -13906,13 +14752,13 @@ const handleButtonStage13v3 = (message: any) => {
                 </>
               )}
 
-              {(message.content.includes(
+              {message.content.includes(
                 "Great! Let’s move on to the next section where we’ll discuss your objectives for estate planning. Ready?"
-              )) && (
+              ) && (
                 <>
-                
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() => handleButtonStage15v2("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -13931,7 +14777,6 @@ const handleButtonStage13v3 = (message: any) => {
                   </div>
                 </>
               )}
-              
 
               {faqStage && (
                 <>
@@ -13984,7 +14829,8 @@ const handleButtonStage13v3 = (message: any) => {
                     I’m here to help! 🤝💬
                   </div>
                   <div className="space-x-2">
-                    <br/><button
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage14("Yes, I have a question")
                       }
@@ -14001,14 +14847,14 @@ const handleButtonStage13v3 = (message: any) => {
                   </div>
                 </>
               )}
-              
 
               {message.content.includes(
                 "Is there anything else you’d like to know about estate planning or any questions you have at this stage?"
               ) && (
                 <>
-                <div className="space-x-2">
-                    <br/><button
+                  <div className="space-x-2">
+                    <br />
+                    <button
                       onClick={() =>
                         handleButtonStage12("Yes, I have a question")
                       }
@@ -14026,329 +14872,379 @@ const handleButtonStage13v3 = (message: any) => {
                 </>
               )}
 
-
-
               {message.content.includes(
                 "It’s important to understand the legal requirements and considerations specific to South Africa:"
               ) && (
-                  <>
-                    <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                     <br />
-                      Here are some important acts and considerations:
-                    </div>
-                    <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                      <b>Wills Act 7 of 1953</b>📝
-                      <br />
-                      The Wills Act governs the creation and execution of wills.
-                      Your will must be in writing, signed by you, and witnessed
-                      by two people who are not beneficiaries.
-                      <br />
-                      <br />
-                      <b>Estate Duty Act 45 of 1955</b>💼
-                      <br />
-                      This Act imposes estate duty (a form of tax) on the estate
-                      of a deceased person. The first R3.5 million of an estate
-                      is exempt from estate duty.
-                      <br />
-                      <br />
-                      <b>Intestate Succession Act 81 of 1987</b>📋
-                      <br />
-                      If you die without a will, the Intestate Succession Act
-                      determines how your estate will be distributed. This may
-                      not align with your wishes, so having a will is crucial.
-                      <br />
-                      <br />
-                      <b>Marital Property Regimes</b>💍
-                      <br />
-                      Your marital status can affect your estate planning. South
-                      Africa recognises different marital property regimes, such
-                      as community of property, antenuptial contract (ANC), and
-                      ANC with accrual. It’s important to consider how these
-                      will impact your estate.
-                      <br />
-                      <br />
-                     <b>Master of the High Court</b>🏛️
-                      <br />
-                      The Master of the High Court oversees the administration
-                      of deceased estates. Executors of estates must be
-                      appointed and approved by the Master.
-                      <br />
-                      <br />
-                      Understanding these components and local laws can help
-                      ensure that your estate plan is comprehensive and legally
-                      sound. 📚✅
-                      <br />
-</div>
-<br />
- <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-  <br />
-  In South Africa, there are various types of marriages:
-  <br />
-  <br />
-  <b>Civil Marriage</b>📜
-  <br />
-  A formal marriage registered with Home Affairs, governed by the Marriage Act, 1961. 
-  (This is the most common and traditional form as we know it).
-  Can be in or out of community of property (with or without the accrual).
-  <ul>
-    <li>Requirements:</li>
-    <li> - Must be conducted by a marriage officer authorised by Home Affairs.</li>
-    <li> - Both parties must be at least 18 years old (or 16 with parental consent).</li>
-    <li> - Requires submission of documents such as identity documents and proof of dissolution of previous marriages, if applicable.</li>
-  </ul>
-  <br />
-  <b>Customary Marriage</b>🎎
-  <br />
-  A marriage conducted according to indigenous/black South African customs, recognised under the Recognition of Customary Marriages Act, 1998.
-  The default property regime is in community of property, but parties can decide on out of community of property.
-  <ul>
-    <li>Requirements:</li>
-    <li> - Must adhere to the customs of the community to which the parties belong.</li>
-    <li> - Typically involves rituals and ceremonies traditional to the community.</li>
-    <li> - Must be registered with the Department of Home Affairs to be legally recognised.</li>
-  </ul>
-  <br />
-  <b>Religious Marriage</b>
-  <br />
-  A marriage conducted according to religious rites but not necessarily registered with Home Affairs.
-  <ul>
-    <li>Requirements:</li>
-    <li> - Varies depending on the religion (e.g., temple wedding).</li>
-    <li> - Should be registered with the Department of Home Affairs to gain legal status.</li>
-    <li> - Not all religious marriages are recognised.</li>
-  </ul>
-  <br />
-  <b>Civil Union</b>🏳️‍🌈
-  <br />
-  Recognised under the Civil Union Act, 2006, and can be entered into by same-sex or opposite-sex couples.
-  Carries the same legal standing as persons married in terms of the Marriage Act.
-  <ul>
-    <li>Requirements:</li>
-    <li> - Must be performed by a registered civil union officer.</li>
-    <li> - Parties can choose between a marriage-like relationship or a domestic partnership.</li>
-  </ul>
-  <br />
-  <b>Co-habitation</b>🏡
-  <br />
-  Not legally recognised as marriage. There is no such thing as a common-law marriage in South African law.
-  Simply living together does not create a legal marriage-like status.
-  <ul>
-    <li>A marriage that is not recognised under civil law is not considered a legal marriage in South Africa, with a few exceptions.</li>
-    <li>This can have implications on your estate plan as you can be considered single/unmarried if your marriage is not registered with Home Affairs.</li>
-  </ul>
-                    </div>
-                    <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                      Do you have any questions regarding bequeathing a farm at this stage?
-                    </div>
-                    <div className="space-x-2 mt-2">
-                      <button
-                        onClick={() =>
-                          handleButtonStage13v2v1("Yes, I have a question.")
-                        }
-                        className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                      >
-                        Yes, I have a question.
-                      </button>
-                      <button
-                        onClick={() =>
-                          handleButtonStage13v2v1(
-                            "No, let’s move on"
-                          )
-                        }
-                        className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                      >
-                        No, let’s move on
-                      </button>
-                    </div>
-                  </>
-                )}
-
-                
-                {message.content.includes(
-                "Estate duty is a tax that has an impact on your estate. Do you want to explore estate duty further?"
-              ) && (
                 <>
-                <div className="space-x-2 mt-2">
-                      <button
-                        onClick={() =>
-                          handleButtonStage13EstateDuty("Yes")
-                        }
-                        className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                      >
-                        Yes
-                      </button>
-                      <button
-                        onClick={() =>
-                          handleButtonStage13EstateDuty(
-                            "No, let’s move on"
-                          )
-                        }
-                        className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                      >
-                        No, let’s move on
-                      </button>
-                    </div>
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    <br />
+                    Here are some important acts and considerations:
+                  </div>
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    <b>Wills Act 7 of 1953</b>📝
+                    <br />
+                    The Wills Act governs the creation and execution of wills.
+                    Your will must be in writing, signed by you, and witnessed
+                    by two people who are not beneficiaries.
+                    <br />
+                    <br />
+                    <b>Estate Duty Act 45 of 1955</b>💼
+                    <br />
+                    This Act imposes estate duty (a form of tax) on the estate
+                    of a deceased person. The first R3.5 million of an estate is
+                    exempt from estate duty.
+                    <br />
+                    <br />
+                    <b>Intestate Succession Act 81 of 1987</b>📋
+                    <br />
+                    If you die without a will, the Intestate Succession Act
+                    determines how your estate will be distributed. This may not
+                    align with your wishes, so having a will is crucial.
+                    <br />
+                    <br />
+                    <b>Marital Property Regimes</b>💍
+                    <br />
+                    Your marital status can affect your estate planning. South
+                    Africa recognises different marital property regimes, such
+                    as community of property, antenuptial contract (ANC), and
+                    ANC with accrual. It’s important to consider how these will
+                    impact your estate.
+                    <br />
+                    <br />
+                    <b>Master of the High Court</b>🏛️
+                    <br />
+                    The Master of the High Court oversees the administration of
+                    deceased estates. Executors of estates must be appointed and
+                    approved by the Master.
+                    <br />
+                    <br />
+                    Understanding these components and local laws can help
+                    ensure that your estate plan is comprehensive and legally
+                    sound. 📚✅
+                    <br />
+                  </div>
+                  <br />
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    <br />
+                    In South Africa, there are various types of marriages:
+                    <br />
+                    <br />
+                    <b>Civil Marriage</b>📜
+                    <br />A formal marriage registered with Home Affairs,
+                    governed by the Marriage Act, 1961. (This is the most common
+                    and traditional form as we know it). Can be in or out of
+                    community of property (with or without the accrual).
+                    <ul>
+                      <li>Requirements:</li>
+                      <li>
+                        {" "}
+                        - Must be conducted by a marriage officer authorised by
+                        Home Affairs.
+                      </li>
+                      <li>
+                        {" "}
+                        - Both parties must be at least 18 years old (or 16 with
+                        parental consent).
+                      </li>
+                      <li>
+                        {" "}
+                        - Requires submission of documents such as identity
+                        documents and proof of dissolution of previous
+                        marriages, if applicable.
+                      </li>
+                    </ul>
+                    <br />
+                    <b>Customary Marriage</b>🎎
+                    <br />A marriage conducted according to indigenous/black
+                    South African customs, recognised under the Recognition of
+                    Customary Marriages Act, 1998. The default property regime
+                    is in community of property, but parties can decide on out
+                    of community of property.
+                    <ul>
+                      <li>Requirements:</li>
+                      <li>
+                        {" "}
+                        - Must adhere to the customs of the community to which
+                        the parties belong.
+                      </li>
+                      <li>
+                        {" "}
+                        - Typically involves rituals and ceremonies traditional
+                        to the community.
+                      </li>
+                      <li>
+                        {" "}
+                        - Must be registered with the Department of Home Affairs
+                        to be legally recognised.
+                      </li>
+                    </ul>
+                    <br />
+                    <b>Religious Marriage</b>
+                    <br />A marriage conducted according to religious rites but
+                    not necessarily registered with Home Affairs.
+                    <ul>
+                      <li>Requirements:</li>
+                      <li>
+                        {" "}
+                        - Varies depending on the religion (e.g., temple
+                        wedding).
+                      </li>
+                      <li>
+                        {" "}
+                        - Should be registered with the Department of Home
+                        Affairs to gain legal status.
+                      </li>
+                      <li> - Not all religious marriages are recognised.</li>
+                    </ul>
+                    <br />
+                    <b>Civil Union</b>🏳️‍🌈
+                    <br />
+                    Recognised under the Civil Union Act, 2006, and can be
+                    entered into by same-sex or opposite-sex couples. Carries
+                    the same legal standing as persons married in terms of the
+                    Marriage Act.
+                    <ul>
+                      <li>Requirements:</li>
+                      <li>
+                        {" "}
+                        - Must be performed by a registered civil union officer.
+                      </li>
+                      <li>
+                        {" "}
+                        - Parties can choose between a marriage-like
+                        relationship or a domestic partnership.
+                      </li>
+                    </ul>
+                    <br />
+                    <b>Co-habitation</b>🏡
+                    <br />
+                    Not legally recognised as marriage. There is no such thing
+                    as a common-law marriage in South African law. Simply living
+                    together does not create a legal marriage-like status.
+                    <ul>
+                      <li>
+                        A marriage that is not recognised under civil law is not
+                        considered a legal marriage in South Africa, with a few
+                        exceptions.
+                      </li>
+                      <li>
+                        This can have implications on your estate plan as you
+                        can be considered single/unmarried if your marriage is
+                        not registered with Home Affairs.
+                      </li>
+                    </ul>
+                  </div>
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    Do you have any questions regarding bequeathing a farm at
+                    this stage?
+                  </div>
+                  <div className="space-x-2 mt-2">
+                    <button
+                      onClick={() =>
+                        handleButtonStage13v2v1("Yes, I have a question.")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Yes, I have a question.
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage13v2v1("No, let’s move on")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      No, let’s move on
+                    </button>
+                  </div>
                 </>
               )}
 
-{message.content.includes(
-  "This tax is levied on the total value of a deceased person’s estate. The conditions include:"
-) && (
-  <>
-   
-    <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-      <b>Threshold</b> 💰
-      <br />
-      There is a basic threshold (exemption limit) below which no estate duty is payable. In South Africa, as of 2024, this is R3.5 million. Meaning, only estates or portions of an estate that exceed R3.5 million are estate dutiable.
-      <br />
-      <br />
-      <b>Rates</b> 📊
-      <br />
-      The estate duty rate is generally 20% on the value above the threshold. For amounts exceeding R30 million, a higher rate of 25% applies.
-      <br />
-      <br />
-      <b>Example 1</b>: Peter’s estate is worth R5 million. His estate will be liable for estate duty as follows:
-      <br />
-      R5m - R3.5m = R1.5m
-      <br />
-      R1.5m x 20% = R300,000 payable.
-      <br />
-      <br />
-      <b>Example 2</b>: Peter’s estate is worth R50 million. His estate will be liable for estate duty as follows:
-      <br />
-      20% x R30m
-      <br />
-      25% x (R50m - R30m)
-      <br />
-      <br />
-      <b>Deductions</b> 📝
-      <br />
-      Certain deductions can be applied, such as liabilities and bequests to charities.
-      <br />
-      <br />
-      <b>Farm Property Exemption</b> 🚜
-      <br />
-      Farm valuation exemption for estate duty provides for a deduction of up to R30 million on the value of farm property from the estate duty calculation. The R30 million of the value of qualifying farm property is not subject to estate duty.
-      <br />
-      Example: If a farm is valued at R50 million and qualifies for the full exemption, only R20 million would be subject to estate duty, potentially reducing the estate duty payable.
-      <br />
-      <br />
-    </div>
-    <div className="space-x-2 mt-2">
-      <button
-        onClick={() => handleButtonStage13v2("Yes, I have a question")}
-        className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-      >
-        Yes, I have a question
-      </button>
-      <button
-        onClick={() => handleButtonStage13v2("No, let’s move on")}
-        className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-      >
-        No, let’s move on
-      </button>
-    </div>
-  </>
-)}
+              {message.content.includes(
+                "Estate duty is a tax that has an impact on your estate. Do you want to explore estate duty further?"
+              ) && (
+                <>
+                  <div className="space-x-2 mt-2">
+                    <button
+                      onClick={() => handleButtonStage13EstateDuty("Yes")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage13EstateDuty("No, let’s move on")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      No, let’s move on
+                    </button>
+                  </div>
+                </>
+              )}
 
-              
+              {message.content.includes(
+                "This tax is levied on the total value of a deceased person’s estate. The conditions include:"
+              ) && (
+                <>
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    <b>Threshold</b> 💰
+                    <br />
+                    There is a basic threshold (exemption limit) below which no
+                    estate duty is payable. In South Africa, as of 2024, this is
+                    R3.5 million. Meaning, only estates or portions of an estate
+                    that exceed R3.5 million are estate dutiable.
+                    <br />
+                    <br />
+                    <b>Rates</b> 📊
+                    <br />
+                    The estate duty rate is generally 20% on the value above the
+                    threshold. For amounts exceeding R30 million, a higher rate
+                    of 25% applies.
+                    <br />
+                    <br />
+                    <b>Example 1</b>: Peter’s estate is worth R5 million. His
+                    estate will be liable for estate duty as follows:
+                    <br />
+                    R5m - R3.5m = R1.5m
+                    <br />
+                    R1.5m x 20% = R300,000 payable.
+                    <br />
+                    <br />
+                    <b>Example 2</b>: Peter’s estate is worth R50 million. His
+                    estate will be liable for estate duty as follows:
+                    <br />
+                    20% x R30m
+                    <br />
+                    25% x (R50m - R30m)
+                    <br />
+                    <br />
+                    <b>Deductions</b> 📝
+                    <br />
+                    Certain deductions can be applied, such as liabilities and
+                    bequests to charities.
+                    <br />
+                    <br />
+                    <b>Farm Property Exemption</b> 🚜
+                    <br />
+                    Farm valuation exemption for estate duty provides for a
+                    deduction of up to R30 million on the value of farm property
+                    from the estate duty calculation. The R30 million of the
+                    value of qualifying farm property is not subject to estate
+                    duty.
+                    <br />
+                    Example: If a farm is valued at R50 million and qualifies
+                    for the full exemption, only R20 million would be subject to
+                    estate duty, potentially reducing the estate duty payable.
+                    <br />
+                    <br />
+                  </div>
+                  <div className="space-x-2 mt-2">
+                    <button
+                      onClick={() =>
+                        handleButtonStage13v2("Yes, I have a question")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Yes, I have a question
+                    </button>
+                    <button
+                      onClick={() => handleButtonStage13v2("No, let’s move on")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      No, let’s move on
+                    </button>
+                  </div>
+                </>
+              )}
 
-{message.content.includes(
+              {message.content.includes(
                 "Property is a common asset that is bequeathed in estate plans. Farms in particular have specific bequeathing conditions. Do you want to explore these conditions further?"
               ) && (
                 <>
                   <div className="space-x-2 mt-2">
-                      <button
-                        onClick={() =>
-                          handleButtonStage13v3("Yes")
-                        }
-                        className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                      >
-                        Yes
-                      </button>
-                      <button
-                        onClick={() =>
-                          handleButtonStage13v3(
-                            "No, does not apply to me"
-                          )
-                        }
-                        className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                      >
-                        No, does not apply to me
-                      </button>
-                    </div>
+                    <button
+                      onClick={() => handleButtonStage13v3("Yes")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Yes
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage13v3("No, does not apply to me")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      No, does not apply to me
+                    </button>
+                  </div>
                 </>
               )}
 
-{message.content.includes(
+              {message.content.includes(
                 "A farm may only be sold to one person or entity and as such, the offer to purchase cannot be made by more than one person. An exception to this would be if a couple is married in community of property as South African law views their estate as one."
               ) && (
                 <>
                   <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-  🌾 As with the case of agricultural land being bequeathed to multiple heirs, the consent of the Minister may be requested in order to grant permission for the sale of agricultural land to more than one person. This consent must be sought prior to the agreement of sale being concluded and therefore an offer to purchase by multiple purchasers can only be made after the owner has received the Minister's consent.
-  <br />
-  <br />
-  📜 Some title deeds (of farms) may include conditions about who can inherit the farm or whether the land can be sold or subdivided. This would be an instance of:
-  <br />
-  <br />
-  🔹 Fideicommissum
-  <br />
-  A legal arrangement where the owner of an asset leaves it to someone with the condition that, after their death, the asset will be passed on to another person or group.
-  <br />
-  📋 For example, you might leave your farm to your children with the condition that, after their death, it will go to your grandchildren.
-  <br />
-  <br />
-  🔹 Usufruct
-  <br />
-  Gives someone the right to use and benefit from an asset (like living in a house 🏠 or earning income from a property 💰) without owning it.
-  <br />
-  The person with usufruct has control over the asset for a certain period, but they can't sell or permanently alter it.
-  <br />
-  💡 For instance, if you have usufruct over a property, you can live in it or rent it out, but you can't sell the property.
-</div>
- <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                      Do you have any questions regarding bequeathing a farm at this stage?
-                    </div>
-                     <div className="space-x-2 mt-2">
-                      <button
-                        onClick={() =>
-                          handleButtonStage13("Yes, I have a question")
-                        }
-                        className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                      >
-                        Yes, I have a question
-                      </button>
-                      <button
-                        onClick={() =>
-                          handleButtonStage13(
-                            "No, let’s move on"
-                          )
-                        }
-                        className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                      >
-                        No, let’s move on
-                      </button>
-                    </div>
+                    🌾 As with the case of agricultural land being bequeathed to
+                    multiple heirs, the consent of the Minister may be requested
+                    in order to grant permission for the sale of agricultural
+                    land to more than one person. This consent must be sought
+                    prior to the agreement of sale being concluded and therefore
+                    an offer to purchase by multiple purchasers can only be made
+                    after the owner has received the Minister's consent.
+                    <br />
+                    <br />
+                    📜 Some title deeds (of farms) may include conditions about
+                    who can inherit the farm or whether the land can be sold or
+                    subdivided. This would be an instance of:
+                    <br />
+                    <br />
+                    🔹 Fideicommissum
+                    <br />
+                    A legal arrangement where the owner of an asset leaves it to
+                    someone with the condition that, after their death, the
+                    asset will be passed on to another person or group.
+                    <br />
+                    📋 For example, you might leave your farm to your children
+                    with the condition that, after their death, it will go to
+                    your grandchildren.
+                    <br />
+                    <br />
+                    🔹 Usufruct
+                    <br />
+                    Gives someone the right to use and benefit from an asset
+                    (like living in a house 🏠 or earning income from a property
+                    💰) without owning it.
+                    <br />
+                    The person with usufruct has control over the asset for a
+                    certain period, but they can't sell or permanently alter it.
+                    <br />
+                    💡 For instance, if you have usufruct over a property, you
+                    can live in it or rent it out, but you can't sell the
+                    property.
+                  </div>
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    Do you have any questions regarding bequeathing a farm at
+                    this stage?
+                  </div>
+                  <div className="space-x-2 mt-2">
+                    <button
+                      onClick={() =>
+                        handleButtonStage13("Yes, I have a question")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Yes, I have a question
+                    </button>
+                    <button
+                      onClick={() => handleButtonStage13("No, let’s move on")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      No, let’s move on
+                    </button>
+                  </div>
                 </>
               )}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
               {/* {educationInformation && (
                 <>
@@ -14465,303 +15361,366 @@ const handleButtonStage13v3 = (message: any) => {
                 </>
               )} */}
 
-{educationInformation && (
+              {educationInformation && (
                 <>
-                 
                   <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                   
                     📜 Wills
                     <br />
                     🔐 Trusts
                     <br />
                     🖋️ Power of Attorney
                     <br />
-                    🏥 Living Will 
+                    🏥 Living Will
                     <br />
                     🧑‍💼 Beneficiaries
                     <br />
-                    📑  Beneficiary Designation Forms
+                    📑 Beneficiary Designation Forms
                     <br />
                     ⚖️ Executor
                     <br />
                     🛡️ Guardian
                     <br />
-                    Would you like a detailed explanation of all or some of these terms?
+                    Would you like a detailed explanation of all or some of
+                    these terms?
                   </div>
                   <div className="space-x-2 mt-2">
-              {terms.map((term) => (
-  <>
-    <br /> {/* Adjust margin as needed */}
-    <label
-      key={term}
-      htmlFor={term}
-      className={`flex items-center space-x-2 px-4 py-2 w-[400px] -my-2 rounded-md border cursor-pointer ${
-        selectedTerms.includes(term)
-          ? "bg-[#8DC63F] text-white border-transparent"
-          : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
-      }`}
-    >
-      <input
-        type="checkbox"
-        id={term}
-        onChange={handleCheckboxChangeTerms}
-        name={term}
-        value={term}
-        checked={selectedTerms.includes(term)}
-        className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
-      />
-      &nbsp;&nbsp;&nbsp;{term}
-    </label>
-  </>
-))}
+                    {terms.map((term) => (
+                      <>
+                        <br /> {/* Adjust margin as needed */}
+                        <label
+                          key={term}
+                          htmlFor={term}
+                          className={`flex items-center space-x-2 px-4 py-2 w-[400px] -my-2 rounded-md border cursor-pointer ${
+                            selectedTerms.includes(term)
+                              ? "bg-[#8DC63F] text-white border-transparent"
+                              : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            id={term}
+                            onChange={handleCheckboxChangeTerms}
+                            name={term}
+                            value={term}
+                            checked={selectedTerms.includes(term)}
+                            className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
+                          />
+                          &nbsp;&nbsp;&nbsp;{term}
+                        </label>
+                      </>
+                    ))}
 
-
-
-      <button
-        onClick={handleProceed}
-        className="mt-4 px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition"
-      >
-        Proceed
-      </button>
-                    
+                    <button
+                      onClick={handleProceed}
+                      className="mt-4 px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition"
+                    >
+                      Proceed
+                    </button>
                   </div>
-                   
                 </>
               )}
 
-
-              
-
-{message.content.includes("Here are the definition of key terms:") && (
+              {message.content.includes(
+                "Here are the definition of key terms:"
+              ) && (
                 <>
-            
-      {selectedTerms.length > 0 && (
-  <>
-    <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-      {selectedTerms.includes("Wills") && (
-        <>
-          Wills 📜
-          <br />
-          A will is a legal document that says how you want your belongings, money, and assets to be divided after you pass away. 
-          It also names someone to carry out your wishes (an executor) and can appoint guardians for your children.
-          <br />
-          <br />
-        </>
-      )}
+                  {selectedTerms.length > 0 && (
+                    <>
+                      <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                        {selectedTerms.includes("Wills") && (
+                          <>
+                            Wills 📜
+                            <br />
+                            A will is a legal document that says how you want
+                            your belongings, money, and assets to be divided
+                            after you pass away. It also names someone to carry
+                            out your wishes (an executor) and can appoint
+                            guardians for your children.
+                            <br />
+                            <br />
+                          </>
+                        )}
 
-      {selectedTerms.includes("Trusts") && (
-        <>
-          Trusts 🔐
-          <br />
-          A trust is a legal arrangement where you (the founder/settlor) place assets, like money or property, into a separate entity managed by a person (the trustee) for the benefit of someone else (the beneficiary). 
-          The trustee manages these assets according to your instructions, often to provide for beneficiaries over time, such as children or loved ones.
-          A trust can be set up in your will and will come into existence when you pass away, or it can be set up while you are alive.
-          <br />
-          <br />
-        </>
-      )}
+                        {selectedTerms.includes("Trusts") && (
+                          <>
+                            Trusts 🔐
+                            <br />
+                            A trust is a legal arrangement where you (the
+                            founder/settlor) place assets, like money or
+                            property, into a separate entity managed by a person
+                            (the trustee) for the benefit of someone else (the
+                            beneficiary). The trustee manages these assets
+                            according to your instructions, often to provide for
+                            beneficiaries over time, such as children or loved
+                            ones. A trust can be set up in your will and will
+                            come into existence when you pass away, or it can be
+                            set up while you are alive.
+                            <br />
+                            <br />
+                          </>
+                        )}
 
-      {selectedTerms.includes("Power of Attorney") && (
-        <>
-          Power of Attorney 🖋️
-          <br />
-          A power of attorney is a legal document that allows you to give someone else the authority to make decisions for you. 
-          It could be about financial matters, health care, or other personal affairs, especially if you’re unable to handle them yourself.
-          <br />
-          <br />
-        </>
-      )}
+                        {selectedTerms.includes("Power of Attorney") && (
+                          <>
+                            Power of Attorney 🖋️
+                            <br />
+                            A power of attorney is a legal document that allows
+                            you to give someone else the authority to make
+                            decisions for you. It could be about financial
+                            matters, health care, or other personal affairs,
+                            especially if you’re unable to handle them yourself.
+                            <br />
+                            <br />
+                          </>
+                        )}
 
-      {selectedTerms.includes("Living Will") && (
-        <>
-          Living Will 🏥
-          <br />
-          A living will is a document where you write down your wishes about medical care if you’re unable to communicate. 
-          It’s about what kind of treatments you do or don’t want if you’re seriously ill or injured and can’t speak for yourself.
-          <br />
-          <br />
-        </>
-      )}
+                        {selectedTerms.includes("Living Will") && (
+                          <>
+                            Living Will 🏥
+                            <br />
+                            A living will is a document where you write down
+                            your wishes about medical care if you’re unable to
+                            communicate. It’s about what kind of treatments you
+                            do or don’t want if you’re seriously ill or injured
+                            and can’t speak for yourself.
+                            <br />
+                            <br />
+                          </>
+                        )}
 
-      {selectedTerms.includes("Beneficiaries") && (
-        <>
-          Beneficiaries 💼
-          <br />
-          Beneficiaries are the people you choose to receive your money, assets, or other benefits when you pass away. 
-          They are named in your insurance policies or retirement benefit forms.
-          <br />
-          <br />
-        </>
-      )}
+                        {selectedTerms.includes("Beneficiaries") && (
+                          <>
+                            Beneficiaries 💼
+                            <br />
+                            Beneficiaries are the people you choose to receive
+                            your money, assets, or other benefits when you pass
+                            away. They are named in your insurance policies or
+                            retirement benefit forms.
+                            <br />
+                            <br />
+                          </>
+                        )}
 
-      {selectedTerms.includes("Beneficiary Designation Forms") && (
-        <>
-          Beneficiary Designation Forms 📑
-          <br />
-          For assets like retirement accounts, life insurance, or certain bank accounts, you may need to fill out a form naming who gets those assets after you pass away. 
-          These forms typically override what’s written in a will or trust.
-          <br />
-          <br />
-        </>
-      )}
+                        {selectedTerms.includes(
+                          "Beneficiary Designation Forms"
+                        ) && (
+                          <>
+                            Beneficiary Designation Forms 📑
+                            <br />
+                            For assets like retirement accounts, life insurance,
+                            or certain bank accounts, you may need to fill out a
+                            form naming who gets those assets after you pass
+                            away. These forms typically override what’s written
+                            in a will or trust.
+                            <br />
+                            <br />
+                          </>
+                        )}
 
-      {selectedTerms.includes("Executor") && (
-        <>
-          Executor ⚖️
-          <br />
-          The person named in your will who is responsible for carrying out your wishes after you pass away, including paying debts and distributing assets to beneficiaries.
-          <br />
-          <br />
-        </>
-      )}
+                        {selectedTerms.includes("Executor") && (
+                          <>
+                            Executor ⚖️
+                            <br />
+                            The person named in your will who is responsible for
+                            carrying out your wishes after you pass away,
+                            including paying debts and distributing assets to
+                            beneficiaries.
+                            <br />
+                            <br />
+                          </>
+                        )}
 
-      {selectedTerms.includes("Guardian") && (
-        <>
-          Guardian 🛡️
-          <br />
-          If you have minor children, you can name a guardian in your will. 
-          This person will be responsible for taking care of your children if something happens to you.
-          <br />
-          <br />
-        </>
-      )}
-    </div>
+                        {selectedTerms.includes("Guardian") && (
+                          <>
+                            Guardian 🛡️
+                            <br />
+                            If you have minor children, you can name a guardian
+                            in your will. This person will be responsible for
+                            taking care of your children if something happens to
+                            you.
+                            <br />
+                            <br />
+                          </>
+                        )}
+                      </div>
+                    </>
+                  )}
 
-   
-  </>
-)}
-
-
-    <div className="space-x-2 mt-2">
-      <button
-        onClick={() => handleButtonStage12("Proceed")}
-        className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-      >
-        Proceed
-      </button>
-    </div>
-                </>
-              )}
-
-
-              
-
-
-
-{message.content.includes("Here are the potential outcomes of each scenario:") && (
-                <>
-            
-      {selectedScenario.length > 0 && (
-  <>
-    <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-
-      {selectedScenario.includes("All Scenarios") ? (
-  <>
-    <b>Scenario 1: Setting Up a Trust</b>
-    <br />
-    Imagine you set up a trust to manage your assets. The trust could be used to provide for your children’s education and care until they reach adulthood. This can protect the assets from being mismanaged or spent too quickly. Additionally, trusts can offer tax benefits and ensure a smoother transfer of assets to your beneficiaries.
-    <br />
-    <b>Scenario 2: Dying Intestate (Without a Will)</b>
-    <br />
-    Suppose you pass away without a will. According to South Africa’s Intestate Succession Act, your estate will be distributed to your surviving spouse and children, or other relatives if you have no spouse or children. This may not align with your personal wishes and could lead to disputes among family members.
-    <br />
-    <b>Scenario 3: Appointing a Power of Attorney</b>
-    <br />
-    Consider appointing a trusted person as your power of attorney. This individual can manage your financial and legal affairs if you become incapacitated. For example, they could pay your bills, manage your investments, or make medical decisions on your behalf. This ensures that your affairs are handled according to your wishes, even if you’re unable to communicate them.
-    <br />
-    <b>Scenario 4: Tax Implications of Estate Planning Decisions</b>
-    <br />
-    Imagine you decide to gift a portion of your assets to your children during your lifetime. While this can reduce the size of your taxable estate, it’s important to consider any potential gift taxes and how it might impact your overall estate plan. Consulting with a tax adviser can help you understand the best strategies for minimising tax liabilities while achieving your estate planning goals.
-    <br />
-    <br />
-  </>
-) : (
-  <>
-    {selectedScenario.includes("Scenario 1") && (
-      <>
-        <b>Scenario 1: Setting Up a Trust</b>
-        <br />
-        Imagine you set up a trust to manage your assets. The trust could be used to provide for your children’s education and care until they reach adulthood. This can protect the assets from being mismanaged or spent too quickly. Additionally, trusts can offer tax benefits and ensure a smoother transfer of assets to your beneficiaries.
-        <br />
-        <br />
-      </>
-    )}
-
-    {selectedScenario.includes("Scenario 2") && (
-      <>
-        <b>Scenario 2: Dying Intestate (Without a Will)</b>
-        <br />
-        Suppose you pass away without a will. According to South Africa’s Intestate Succession Act, your estate will be distributed to your surviving spouse and children, or other relatives if you have no spouse or children. This may not align with your personal wishes and could lead to disputes among family members.
-        <br />
-        <br />
-      </>
-    )}
-
-    {selectedScenario.includes("Scenario 3") && (
-      <>
-        <b>Scenario 3: Appointing a Power of Attorney</b>
-        <br />
-        Consider appointing a trusted person as your power of attorney. This individual can manage your financial and legal affairs if you become incapacitated. For example, they could pay your bills, manage your investments, or make medical decisions on your behalf. This ensures that your affairs are handled according to your wishes, even if you’re unable to communicate them.
-        <br />
-        <br />
-      </>
-    )}
-
-    {selectedScenario.includes("Scenario 4") && (
-      <>
-        <b>Scenario 4: Tax Implications of Estate Planning Decisions</b>
-        <br />
-        Imagine you decide to gift a portion of your assets to your children during your lifetime. While this can reduce the size of your taxable estate, it’s important to consider any potential gift taxes and how it might impact your overall estate plan. Consulting with a tax adviser can help you understand the best strategies for minimising tax liabilities while achieving your estate planning goals.
-        <br />
-        <br />
-      </>
-    )}
-  </>
-)}
-
-
-     
-    </div>
-    
-  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-Now that we’ve explored these scenarios, do you have any questions or need further information? I’m here to help!
-</div><br/><br/>
-
+                  <div className="space-x-2 mt-2">
                     <button
-                      onClick={() => handleButtonStage13Component("Yes, I have a question")}
+                      onClick={() => handleButtonStage12("Proceed")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
-                      Yes, I have a question
+                      Proceed
                     </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage13Component(
-                          "No, let's move on"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No, let's move on
-                    </button>
-                    
-
-  
-   
-  </>
-)}
-
-
+                  </div>
                 </>
               )}
 
+              {message.content.includes(
+                "Here are the potential outcomes of each scenario:"
+              ) && (
+                <>
+                  {selectedScenario.length > 0 && (
+                    <>
+                      <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                        {selectedScenario.includes("All Scenarios") ? (
+                          <>
+                            <b>Scenario 1: Setting Up a Trust</b>
+                            <br />
+                            Imagine you set up a trust to manage your assets.
+                            The trust could be used to provide for your
+                            children’s education and care until they reach
+                            adulthood. This can protect the assets from being
+                            mismanaged or spent too quickly. Additionally,
+                            trusts can offer tax benefits and ensure a smoother
+                            transfer of assets to your beneficiaries.
+                            <br />
+                            <b>Scenario 2: Dying Intestate (Without a Will)</b>
+                            <br />
+                            Suppose you pass away without a will. According to
+                            South Africa’s Intestate Succession Act, your estate
+                            will be distributed to your surviving spouse and
+                            children, or other relatives if you have no spouse
+                            or children. This may not align with your personal
+                            wishes and could lead to disputes among family
+                            members.
+                            <br />
+                            <b>Scenario 3: Appointing a Power of Attorney</b>
+                            <br />
+                            Consider appointing a trusted person as your power
+                            of attorney. This individual can manage your
+                            financial and legal affairs if you become
+                            incapacitated. For example, they could pay your
+                            bills, manage your investments, or make medical
+                            decisions on your behalf. This ensures that your
+                            affairs are handled according to your wishes, even
+                            if you’re unable to communicate them.
+                            <br />
+                            <b>
+                              Scenario 4: Tax Implications of Estate Planning
+                              Decisions
+                            </b>
+                            <br />
+                            Imagine you decide to gift a portion of your assets
+                            to your children during your lifetime. While this
+                            can reduce the size of your taxable estate, it’s
+                            important to consider any potential gift taxes and
+                            how it might impact your overall estate plan.
+                            Consulting with a tax adviser can help you
+                            understand the best strategies for minimising tax
+                            liabilities while achieving your estate planning
+                            goals.
+                            <br />
+                            <br />
+                          </>
+                        ) : (
+                          <>
+                            {selectedScenario.includes("Scenario 1") && (
+                              <>
+                                <b>Scenario 1: Setting Up a Trust</b>
+                                <br />
+                                Imagine you set up a trust to manage your
+                                assets. The trust could be used to provide for
+                                your children’s education and care until they
+                                reach adulthood. This can protect the assets
+                                from being mismanaged or spent too quickly.
+                                Additionally, trusts can offer tax benefits and
+                                ensure a smoother transfer of assets to your
+                                beneficiaries.
+                                <br />
+                                <br />
+                              </>
+                            )}
 
+                            {selectedScenario.includes("Scenario 2") && (
+                              <>
+                                <b>
+                                  Scenario 2: Dying Intestate (Without a Will)
+                                </b>
+                                <br />
+                                Suppose you pass away without a will. According
+                                to South Africa’s Intestate Succession Act, your
+                                estate will be distributed to your surviving
+                                spouse and children, or other relatives if you
+                                have no spouse or children. This may not align
+                                with your personal wishes and could lead to
+                                disputes among family members.
+                                <br />
+                                <br />
+                              </>
+                            )}
 
+                            {selectedScenario.includes("Scenario 3") && (
+                              <>
+                                <b>
+                                  Scenario 3: Appointing a Power of Attorney
+                                </b>
+                                <br />
+                                Consider appointing a trusted person as your
+                                power of attorney. This individual can manage
+                                your financial and legal affairs if you become
+                                incapacitated. For example, they could pay your
+                                bills, manage your investments, or make medical
+                                decisions on your behalf. This ensures that your
+                                affairs are handled according to your wishes,
+                                even if you’re unable to communicate them.
+                                <br />
+                                <br />
+                              </>
+                            )}
 
+                            {selectedScenario.includes("Scenario 4") && (
+                              <>
+                                <b>
+                                  Scenario 4: Tax Implications of Estate
+                                  Planning Decisions
+                                </b>
+                                <br />
+                                Imagine you decide to gift a portion of your
+                                assets to your children during your lifetime.
+                                While this can reduce the size of your taxable
+                                estate, it’s important to consider any potential
+                                gift taxes and how it might impact your overall
+                                estate plan. Consulting with a tax adviser can
+                                help you understand the best strategies for
+                                minimising tax liabilities while achieving your
+                                estate planning goals.
+                                <br />
+                                <br />
+                              </>
+                            )}
+                          </>
+                        )}
+                      </div>
 
+                      <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                        Now that we’ve explored these scenarios, do you have any
+                        questions or need further information? I’m here to help!
+                      </div>
+                      <br />
+                      <br />
 
-              
-              
-              
+                      <button
+                        onClick={() =>
+                          handleButtonStage13Component("Yes, I have a question")
+                        }
+                        className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                      >
+                        Yes, I have a question
+                      </button>
+                      <button
+                        onClick={() =>
+                          handleButtonStage13Component("No, let's move on")
+                        }
+                        className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                      >
+                        No, let's move on
+                      </button>
+                    </>
+                  )}
+                </>
+              )}
 
               {/* {askingConsent && (
                 <div className="space-x-2 mt-2">
@@ -14932,8 +15891,6 @@ Now that we’ve explored these scenarios, do you have any questions or need fur
                   </button>
                 </div>
               )}
-              
-             
 
               {uploadDocumentANC && (
                 <div className="flex space-x-2 mt-2">
@@ -15029,18 +15986,14 @@ Now that we’ve explored these scenarios, do you have any questions or need fur
                   </div>
                 </>
               )}
-             
-          
             </div>
           )}
-          
         </div>
       );
     });
   };
 
-  
-const handleAdvisorModalToggle = () => {
+  const handleAdvisorModalToggle = () => {
     setIsAdvisorModalOpen(!isAdvisorModalOpen);
   };
   const handleModalToggle = () => {
@@ -15066,150 +16019,185 @@ const handleAdvisorModalToggle = () => {
 
               {/* Button Section */}
               <div className="flex justify-center mt-4 space-x-4">
-                <button className="bg-[#009677] text-white px-4 py-2 rounded-md" onClick={handleModalToggle}>
+                <button
+                  className="bg-[#009677] text-white px-4 py-2 rounded-md"
+                  onClick={handleModalToggle}
+                >
                   FAQs
                 </button>
-                <button className="bg-[#009677] text-white px-4 py-2 rounded-md" onClick={handleAdvisorModalToggle}>
+                <button
+                  className="bg-[#009677] text-white px-4 py-2 rounded-md"
+                  onClick={handleAdvisorModalToggle}
+                >
                   Contact a Financial Adviser
                 </button>
               </div>
-               {/* Modal Popup */}
-      {isModalOpen && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-  <div className="bg-[#2f2f2f] text-white rounded-lg w-[90%] max-w-3xl p-8">
-    <div className="flex justify-between items-center mb-6">
-      <h2 className="text-3xl font-bold leading-tight">Estate Planning FAQs</h2> {/* H2 should be 36px according to Adobe XD */}
-      <button
-        className="text-white text-2xl hover:text-gray-300"
-        onClick={handleModalToggle}
-      >
-        ✖
-      </button>
-    </div>
-    <p className="mb-6 text-base leading-relaxed">
-      Here are some frequently asked questions about estate planning in South Africa:
-    </p>
+              {/* Modal Popup */}
+              {isModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                  <div className="bg-[#2f2f2f] text-white rounded-lg w-[90%] max-w-3xl p-8">
+                    <div className="flex justify-between items-center mb-6">
+                      <h2 className="text-3xl font-bold leading-tight">
+                        Estate Planning FAQs
+                      </h2>{" "}
+                      {/* H2 should be 36px according to Adobe XD */}
+                      <button
+                        className="text-white text-2xl hover:text-gray-300"
+                        onClick={handleModalToggle}
+                      >
+                        ✖
+                      </button>
+                    </div>
+                    <p className="mb-6 text-base leading-relaxed">
+                      Here are some frequently asked questions about estate
+                      planning in South Africa:
+                    </p>
 
-    {/* Scrollable FAQ Content with custom scrollbar */}
-    <div className="space-y-4 text-sm max-h-[60vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[#8DC63F] scrollbar-track-[#2f2f2f]">
-      <div>
-        <p className="font-semibold text-lg">What is estate planning? 🧾</p> {/* Change to 24px (text-lg) */}
-        <p>
-          Estate planning is the process of arranging for the management
-          and disposal of a person’s estate during their life and after
-          death. It involves creating documents like wills, trusts, and
-          powers of attorney.
-        </p>
-      </div>
-      <div>
-        <p className="font-semibold text-lg">Why is having a will important? 📄</p>
-        <p>
-          A will ensures your assets are distributed according to your
-          wishes, names guardians for minor children, and can help
-          reduce estate taxes and legal fees.
-        </p>
-      </div>
-      <div>
-        <p className="font-semibold text-lg">What happens if I die without a will? ⚖️</p>
-        <p>
-          If you die intestate (without a will), your estate will be
-          distributed according to South Africa’s Intestate Succession
-          Act, which may not align with your wishes.
-        </p>
-      </div>
-      <div>
-        <p className="font-semibold text-lg">Can I change my will after it’s been created? 💼</p>
-        <p>
-          Yes, you can update your will as often as you like. It’s
-          recommended to review and update it after major life events,
-          such as marriage, divorce, or the birth of a child.
-        </p>
-      </div>
-      <div>
-        <p className="font-semibold text-lg">What is a trust and why would I need one? 🔒</p>
-        <p>
-          A trust is a legal arrangement where a trustee manages assets
-          on behalf of beneficiaries. Trusts can help manage assets,
-          reduce estate taxes, and provide for beneficiaries according
-          to your wishes.
-        </p>
-      </div>
-      <div>
-        <p className="font-semibold text-lg">When should I seek legal advice for estate planning? 🏛️</p>
-        <p>
-          It’s advisable to seek legal advice if you have a large or
-          complex estate, anticipate family disputes, own a business, or
-          need to stay updated with changing laws.
-        </p>
-      </div>
-    </div>
-  </div>
-</div>
-
-      )}
-
-          {/* Modal Popup for Financial Advisor */}
-      {/* Modal Popup for Financial Advisor */}
-      {isAdvisorModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-          <div className="bg-[#2f2f2f] text-white rounded-lg w-[90%] max-w-3xl p-8">
-            <div className="flex justify-between items-center mb-6">
-              <h2 className="text-4xl font-bold">Contact a Financial Adviser</h2>
-              <button
-                className="text-white text-2xl hover:text-gray-300"
-                onClick={handleAdvisorModalToggle}
-              >
-                ✖
-              </button>
-            </div>
-            <p className="mb-6 text-xl">
-              Fantastic! Our financial advisers at Old Mutual are ready to assist you in filling out these templates. Please reach out to us directly to schedule a consultation and receive personalised guidance. Here's how you can get in touch:
-            </p>
-
-            {/* Contact Information */}
-            <div className="flex justify-between items-start text-lg">
-              {/* Phone Section */}
-              <div className="flex flex-col items-start w-1/2">
-                {/* Same size Phone Icon */}
-                <Image
-                  src="/images/phoneIcon.svg"
-                  alt="Phone Icon"
-                  width={22}
-                  height={22}
-                  className="mb-2"
-                />
-                <div className="text-left">
-                  <p className="font-semibold">Phone</p>
-                  <p>[insert phone number]</p>
-                  <p>Call us to speak with an adviser.</p>
+                    {/* Scrollable FAQ Content with custom scrollbar */}
+                    <div className="space-y-4 text-sm max-h-[60vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[#8DC63F] scrollbar-track-[#2f2f2f]">
+                      <div>
+                        <p className="font-semibold text-lg">
+                          What is estate planning? 🧾
+                        </p>{" "}
+                        {/* Change to 24px (text-lg) */}
+                        <p>
+                          Estate planning is the process of arranging for the
+                          management and disposal of a person’s estate during
+                          their life and after death. It involves creating
+                          documents like wills, trusts, and powers of attorney.
+                        </p>
+                      </div>
+                      <div>
+                        <p className="font-semibold text-lg">
+                          Why is having a will important? 📄
+                        </p>
+                        <p>
+                          A will ensures your assets are distributed according
+                          to your wishes, names guardians for minor children,
+                          and can help reduce estate taxes and legal fees.
+                        </p>
+                      </div>
+                      <div>
+                        <p className="font-semibold text-lg">
+                          What happens if I die without a will? ⚖️
+                        </p>
+                        <p>
+                          If you die intestate (without a will), your estate
+                          will be distributed according to South Africa’s
+                          Intestate Succession Act, which may not align with
+                          your wishes.
+                        </p>
+                      </div>
+                      <div>
+                        <p className="font-semibold text-lg">
+                          Can I change my will after it’s been created? 💼
+                        </p>
+                        <p>
+                          Yes, you can update your will as often as you like.
+                          It’s recommended to review and update it after major
+                          life events, such as marriage, divorce, or the birth
+                          of a child.
+                        </p>
+                      </div>
+                      <div>
+                        <p className="font-semibold text-lg">
+                          What is a trust and why would I need one? 🔒
+                        </p>
+                        <p>
+                          A trust is a legal arrangement where a trustee manages
+                          assets on behalf of beneficiaries. Trusts can help
+                          manage assets, reduce estate taxes, and provide for
+                          beneficiaries according to your wishes.
+                        </p>
+                      </div>
+                      <div>
+                        <p className="font-semibold text-lg">
+                          When should I seek legal advice for estate planning?
+                          🏛️
+                        </p>
+                        <p>
+                          It’s advisable to seek legal advice if you have a
+                          large or complex estate, anticipate family disputes,
+                          own a business, or need to stay updated with changing
+                          laws.
+                        </p>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
 
-              {/* Email Section */}
-              <div className="flex flex-col items-start w-1/2">
-                {/* Same size Email Icon */}
-                <Image
-                  src="/images/emailIcon.svg"
-                  alt="Email Icon"
-                  width={40}
-                  height={40}
-                  className="mb-2"
-                />
-                <div className="text-left">
-                  <p className="font-semibold">Email</p>
-                  <p>[insert email address]</p>
-                  <p>Send us an email with your contact details, and we'll get back to you promptly.</p>
+              {/* Modal Popup for Financial Advisor */}
+              {/* Modal Popup for Financial Advisor */}
+              {isAdvisorModalOpen && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                  <div className="bg-[#2f2f2f] text-white rounded-lg w-[90%] max-w-3xl p-8">
+                    <div className="flex justify-between items-center mb-6">
+                      <h2 className="text-4xl font-bold">
+                        Contact a Financial Adviser
+                      </h2>
+                      <button
+                        className="text-white text-2xl hover:text-gray-300"
+                        onClick={handleAdvisorModalToggle}
+                      >
+                        ✖
+                      </button>
+                    </div>
+                    <p className="mb-6 text-xl">
+                      Fantastic! Our financial advisers at Old Mutual are ready
+                      to assist you in filling out these templates. Please reach
+                      out to us directly to schedule a consultation and receive
+                      personalised guidance. Here's how you can get in touch:
+                    </p>
+
+                    {/* Contact Information */}
+                    <div className="flex justify-between items-start text-lg">
+                      {/* Phone Section */}
+                      <div className="flex flex-col items-start w-1/2">
+                        {/* Same size Phone Icon */}
+                        <Image
+                          src="/images/phoneIcon.svg"
+                          alt="Phone Icon"
+                          width={22}
+                          height={22}
+                          className="mb-2"
+                        />
+                        <div className="text-left">
+                          <p className="font-semibold">Phone</p>
+                          <p>[insert phone number]</p>
+                          <p>Call us to speak with an adviser.</p>
+                        </div>
+                      </div>
+
+                      {/* Email Section */}
+                      <div className="flex flex-col items-start w-1/2">
+                        {/* Same size Email Icon */}
+                        <Image
+                          src="/images/emailIcon.svg"
+                          alt="Email Icon"
+                          width={40}
+                          height={40}
+                          className="mb-2"
+                        />
+                        <div className="text-left">
+                          <p className="font-semibold">Email</p>
+                          <p>[insert email address]</p>
+                          <p>
+                            Send us an email with your contact details, and
+                            we'll get back to you promptly.
+                          </p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
             </div>
-          </div>
-        </div>
-      )}
-    </div>
 
             <div
               id="chatbox"
-              className="p-4 h-[calc(100vh-250px)] overflow-y-auto" ref={chatboxRef}
+              className="p-4 h-[calc(100vh-250px)] overflow-y-auto"
+              ref={chatboxRef}
             >
               {renderMessages() || <div className="italic">typing...</div>}
             </div>
@@ -15266,25 +16254,7 @@ const handleAdvisorModalToggle = () => {
                   handleAddAIResponse(
                     "Are there any valuable possessions such as artwork, jewellery, or collectibles that you own? If so, could you describe each item and estimate its value?"
                   );
-                }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                else if (
+                } else if (
                   messageData.current.includes(
                     "I know estate planning can be daunting"
                   )
@@ -15293,35 +16263,25 @@ const handleAdvisorModalToggle = () => {
                   setUserName(inputStr);
                   userProfile(inputStr);
                   handleAddAIResponse(
-                    "Nice to meet you, "+inputStr+". When were you born?"
+                    "Nice to meet you, " + inputStr + ". When were you born?"
                   );
-                }
-
-                else if (
-                  messageData.current.includes(
-                    "When were you born?"
-                  )
+                } else if (
+                  messageData.current.includes("When were you born?")
                 ) {
                   e.preventDefault();
                   saveDateOfBirth(inputStr);
                   handleAddAIResponse(
                     "Let’s talk about your family life quickly. Are you married or single?"
                   );
-                }
-
-                else if (
-                  messageData.current.includes(
-                    "Do you have any dependents?"
-                  )
+                } else if (
+                  messageData.current.includes("Do you have any dependents?")
                 ) {
                   e.preventDefault();
-                  
+
                   handleAddAIResponse(
                     "Got it. How many dependents over the age of 18 do you have?"
                   );
-                }
-
-                 else if (
+                } else if (
                   messageData.current.includes(
                     "Got it. How many dependents over the age of 18 do you have?"
                   )
@@ -15331,10 +16291,7 @@ const handleAdvisorModalToggle = () => {
                   handleAddAIResponse(
                     "And how many dependents under the age of 18 do you have?"
                   );
-                }
-
-
-                 else if (
+                } else if (
                   messageData.current.includes(
                     "And how many dependents under the age of 18 do you have?"
                   )
@@ -15342,32 +16299,11 @@ const handleAdvisorModalToggle = () => {
                   e.preventDefault();
                   saveDependentsUnder(inputStr);
                   handleAddAIResponse(
-                    "Thank you for sharing, "+userName+". Is there anything else you’d like to add about your personal particulars or any questions you have at this stage?"
+                    "Thank you for sharing, " +
+                      userName +
+                      ". Is there anything else you’d like to add about your personal particulars or any questions you have at this stage?"
                   );
                 }
-
-                
-
-
-
-
-
-
-
-
-                
-                
-
-
-
-
-
-
-
-
-
-
-
 
                 //ASSET
                 else if (
@@ -15880,7 +16816,9 @@ const handleAdvisorModalToggle = () => {
                   )
                 ) {
                   e.preventDefault();
-                  handleAddAIResponse("Do you bequeath your estate to your spouse?");
+                  handleAddAIResponse(
+                    "Do you bequeath your estate to your spouse?"
+                  );
                 } else if (
                   messageData.current.includes(
                     "That's a significant decision. To ensure we capture your wishes accurately, could you specify if there are any conditions or limitations attached to this bequest?"
@@ -15935,11 +16873,7 @@ const handleAdvisorModalToggle = () => {
                   handleAddAIResponse(
                     "Do you have a farm or any specific property bequeathed to a trust?"
                   );
-                } else if (
-                  messageData.current.includes(
-                    "USEFUL TIP"
-                  )
-                ) {
+                } else if (messageData.current.includes("USEFUL TIP")) {
                   e.preventDefault();
                   handleAddAIResponse(
                     "Do you bequeath any farm implements, equipment, tools, vehicles, transport vehicles, or livestock? If so, to whom?"
@@ -15969,7 +16903,7 @@ const handleAdvisorModalToggle = () => {
                 ) {
                   e.preventDefault();
                   handleAddAIResponse(
-                    "Thank you for providing these details. Now, we can move on to the next part of your estate planning. Ready to continue?"
+                    "Thank you for providing these details,"+userName+". Now, we can move on to the next part of your estate planning. Ready to continue?"
                   );
                 } else if (
                   messageData.current.includes(
@@ -15996,7 +16930,7 @@ const handleAdvisorModalToggle = () => {
                 ) {
                   e.preventDefault();
                   handleAddAIResponse(
-                    "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?"
+                    "Have you considered the cost of education and taken that into account regarding maintenance?"
                   );
                 } else if (
                   messageData.current.includes(
@@ -16005,7 +16939,7 @@ const handleAdvisorModalToggle = () => {
                 ) {
                   e.preventDefault();
                   handleAddAIResponse(
-                    "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?"
+                    "Have you considered the cost of education and taken that into account regarding maintenance?"
                   );
                 } else if (
                   messageData.current.includes(
@@ -16014,7 +16948,7 @@ const handleAdvisorModalToggle = () => {
                 ) {
                   e.preventDefault();
                   handleAddAIResponse(
-                    "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?"
+                    "Have you considered the cost of education and taken that into account regarding maintenance?"
                   );
                 } else if (
                   messageData.current.includes(
@@ -16023,7 +16957,7 @@ const handleAdvisorModalToggle = () => {
                 ) {
                   e.preventDefault();
                   handleAddAIResponse(
-                    "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?"
+                    "Have you considered the cost of education and taken that into account regarding maintenance?"
                   );
                 } else if (
                   messageData.current.includes(
@@ -16032,7 +16966,7 @@ const handleAdvisorModalToggle = () => {
                 ) {
                   e.preventDefault();
                   handleAddAIResponse(
-                    "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?"
+                    "Have you considered the cost of education and taken that into account regarding maintenance?"
                   );
                 } else if (
                   messageData.current.includes(
@@ -16099,7 +17033,7 @@ const handleAdvisorModalToggle = () => {
                   );
                 } else if (
                   messageData.current.includes(
-                    "Donations tax is a tax imposed on the transfer of assets to a trust or natural person without receiving adequate consideration in return. It's important to understand that while transferring assets to a trust can help reduce estate duty, it may trigger donations tax liabilities. The amount of donations tax payable depends on several factors, including the value of the assets transferred, any available exemptions or deductions, and the relationship between the donor and the recipient. The donations tax threshold is R100 000 per year."
+                    "Donations tax is a tax imposed on the transfer of assets to a trust or to any person (for example individuals, company or trust that is a SA tax resident) without receiving adequate consideration in return. It's important to understand that while transferring assets to a trust can help reduce estate duty, it may trigger donations tax liabilities. The amount of donations tax payable depends on several factors, including the value of the assets transferred, any available exemptions or deductions, and the relationship between the donor and the recipient. The donations tax threshold is R100 000 per year."
                   )
                 ) {
                   e.preventDefault();
@@ -16144,7 +17078,9 @@ const handleAdvisorModalToggle = () => {
                   handleAddAIResponse(
                     "How many bedrooms and bathrooms does your property have?"
                   );
-                } else if (
+                } 
+                
+                else if (
                   messageData.current.includes(
                     "How many bedrooms and bathrooms does your property have?"
                   )
@@ -16153,7 +17089,45 @@ const handleAdvisorModalToggle = () => {
                   handleAddAIResponse(
                     "Describe the condition of your property (new, good, fair, needs renovation). Also, mention any special features (e.g., swimming pool, garden, garage)."
                   );
-                } else if (
+                } 
+
+                else if (
+                  messageData.current.includes(
+                    "Great! Please provide the above mentioned details about life insurance."
+                  )
+                ) {
+                  e.preventDefault();
+                  handleAddAIResponse(
+                    "Have you considered obtaining additional life insurance for providing capital required for income needs of dependents?"
+                  );
+                } 
+
+                 else if (
+                  messageData.current.includes(
+                    "Thank you for uploading your documents!"
+                  )
+                ) {
+                  e.preventDefault();
+                  handleAddAIResponse(
+                    "A report has been generated containing all the results from this chat. You can download a copy below."
+                  );
+                }
+
+                else if (
+                  messageData.current.includes(
+                    "Do you have anything you would like to add or any questions that I can help you with today?"
+                  )
+                ) {
+                  e.preventDefault();
+                  handleAddAIResponse(
+                    "Thanks for your time today, "+userName+"! Your information will be reviewed by an Old Mutual financial adviser, and you can expect to hear back soonwithyourestate plan."
+                  );
+                }
+                
+                
+               
+                
+                else if (
                   messageData.current.includes(
                     "Describe the condition of your property (new, good, fair, needs renovation). Also, mention any special features (e.g., swimming pool, garden, garage)."
                   )
@@ -16180,16 +17154,15 @@ const handleAdvisorModalToggle = () => {
                   handleAddAIResponse(
                     "Great! Here are a few key considerations to keep in mind while planning your estate. I’ll ask you some questions to get a better understanding of your specific needs and goals."
                   );
-                } else 
+                }
                 // if (!trigger.current) {
                 //   e.preventDefault();
                 //   handleAddAIResponse(
                 //     "Let's dive into the world of estate planning!"
                 //   );
                 //   trigger.current = !trigger.current;
-                // } else 
-                
-                {
+                // } else
+                else {
                   e.preventDefault();
 
                   let currentInputStr = inputStr.trim();
@@ -16300,14 +17273,12 @@ const handleAdvisorModalToggle = () => {
                     // Clear other related states or handle post-submission logic
                     setAllCheckboxesFalse();
                   } else {
-                  handleSubmit(e); // Let the AI respond freely if no conditions are met
-                }
+                    handleSubmit(e); // Let the AI respond freely if no conditions are met
+                  }
                 }
               }}
             >
-              
               <div className="p-4 flex rounded bg-[#303134]">
-                
                 <CustomInput
                   className="send-input bg-[#303134] text-white border-none focus:outline-none w-full "
                   id="user-input"
@@ -16328,14 +17299,17 @@ const handleAdvisorModalToggle = () => {
                       No user found
                     </div>
                   )}
-               <button
-  id="send-button"
-  type="submit"
-  className=" text-white px-4 rounded-md ml-2 flex items-center justify-center"
->
-  <img src="/images/sendButton.png" alt="Send Icon" className="h-[60px] w-[70px]" />
-</button>
-
+                <button
+                  id="send-button"
+                  type="submit"
+                  className=" text-white px-4 rounded-md ml-2 flex items-center justify-center"
+                >
+                  <img
+                    src="/images/sendButton.png"
+                    alt="Send Icon"
+                    className="h-[60px] w-[70px]"
+                  />
+                </button>
               </div>
             </form>
             {/* {loading && (
