@@ -145,6 +145,7 @@ export default function Chat() {
   const [showQuestionButtons, setShowQuestionButtons] = useState(false); // Controls when to show question buttons
 
   const [deletionRequestData, setDeletionRequestData] = useState("");
+  const lastMessageRef = useRef<HTMLDivElement | null>(null);
 
   const chatboxRef = useRef<HTMLDivElement | null>(null);
   useEffect(() => {
@@ -152,6 +153,11 @@ export default function Chat() {
       chatboxRef.current.scrollTop = chatboxRef.current.scrollHeight;
     }
   }, [messages]);
+  useEffect(() => {
+  if (lastMessageRef.current) {
+    lastMessageRef.current.scrollIntoView({ behavior: 'smooth' });
+  }
+}, [messages]);
 
   // Function to handle the button click and append the "Hello" response
   const handleAddAIResponse = (message: any) => {
@@ -3665,7 +3671,9 @@ export default function Chat() {
 
     if (message == "No") {
       response =
-        "Thank you for providing these details,"+userName+". Now, we can move on to the next part of your estate planning. Ready to continue?";
+        "Thank you for providing these details," +
+        userName +
+        ". Now, we can move on to the next part of your estate planning. Ready to continue?";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -4287,12 +4295,12 @@ export default function Chat() {
     let response = "";
     if (message == "Yes") {
       response =
-        "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?"
-        }
+        "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?";
+    }
     if (message == "No") {
       response =
-        "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?"
-       }
+        "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?";
+    }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     const userMessage: Message = {
@@ -5005,18 +5013,13 @@ export default function Chat() {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-  
-const handleButtonStage88Additionalv1 = (message: any) => {
-
-let response = "";
+  const handleButtonStage88Additionalv1 = (message: any) => {
+    let response = "";
     if (message == "Yes, specify details") {
       response =
         "Great! Please provide the above mentioned details about life insurance.";
     }
-    if (
-      message ==
-      "No, let's move on"
-    ) {
+    if (message == "No, let's move on") {
       response =
         "Have you considered obtaining additional life insurance for providing capital required for income needs of dependents?";
     }
@@ -5038,8 +5041,6 @@ let response = "";
     // Append both the user message and AI response to the existing messages
     setMessages([...messages, userMessage, aiMessage]);
   };
-
-
 
   const handleButtonStage88Additional = (message: any) => {
     let response = "";
@@ -5998,13 +5999,17 @@ let response = "";
       response =
         "Thanks! Do you have anything you’d like to add or any questions that I can help you with today?";
       setNextResponse(
-        "Thanks for your time today, "+userName+". Your information will be reviewed by an Old Mutual financial adviser, and you can expect to hear back soon with your estate plan. Have a great day, and we’re looking forward to helping you secure your future!"
+        "Thanks for your time today, " +
+          userName +
+          ". Your information will be reviewed by an Old Mutual financial adviser, and you can expect to hear back soon with your estate plan. Have a great day, and we’re looking forward to helping you secure your future!"
       );
       isResponse.current = "1";
     }
     if (message == "No") {
       response =
-        "Thanks for your time today, "+userName+". Your information will be reviewed by an Old Mutual financial adviser, and you can expect to hear back soon with your estate plan. Have a great day, and we’re looking forward to helping you secure your future!";
+        "Thanks for your time today, " +
+        userName +
+        ". Your information will be reviewed by an Old Mutual financial adviser, and you can expect to hear back soon with your estate plan. Have a great day, and we’re looking forward to helping you secure your future!";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -6025,12 +6030,14 @@ let response = "";
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-const handleButtonStageDownloadReport = (message: any) => {
+  const handleButtonStageDownloadReport = (message: any) => {
     let response = "";
-  
+
     if (message == "Download Report") {
       response =
-        "Thanks, "+userName+". Do you have anything you would like to add or any questions that I can help you with today?";
+        "Thanks, " +
+        userName +
+        ". Do you have anything you would like to add or any questions that I can help you with today?";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -6051,68 +6058,67 @@ const handleButtonStageDownloadReport = (message: any) => {
     setMessages([...messages, userMessage, aiMessage]);
   };
   const handleButtonStage101FinalUpload = (message: any) => {
-  let response = "";
+    let response = "";
 
-  if (message === "Continue") {
-    response = "Thank you for uploading your documents!";
-  } else {
-    // Trigger file input click to allow the user to upload a file
-    const fileInput = document.createElement('input');
-    fileInput.type = 'file';
-    fileInput.accept = '.pdf,.doc,.docx'; // You can limit the file types here
+    if (message === "Continue") {
+      response = "Thank you for uploading your documents!";
+    } else {
+      // Trigger file input click to allow the user to upload a file
+      const fileInput = document.createElement("input");
+      fileInput.type = "file";
+      fileInput.accept = ".pdf,.doc,.docx"; // You can limit the file types here
 
-    // Handle file selection
-    fileInput.onchange = (event: any) => {
-      const file = event.target.files[0];
-      if (file) {
-        // Simulate file upload process (you can integrate an actual upload API here)
-        console.log("Uploading file:", file.name);
-        response = `File "${file.name}" uploaded successfully!`;
+      // Handle file selection
+      fileInput.onchange = (event: any) => {
+        const file = event.target.files[0];
+        if (file) {
+          // Simulate file upload process (you can integrate an actual upload API here)
+          console.log("Uploading file:", file.name);
+          response = `File "${file.name}" uploaded successfully!`;
 
-        // Append the assistant response for successful upload
-        const aiMessage: Message = {
-          id: Date.now().toString(),
-          role: "assistant",
-          content: response,
-        };
+          // Append the assistant response for successful upload
+          const aiMessage: Message = {
+            id: Date.now().toString(),
+            role: "assistant",
+            content: response,
+          };
 
-        // Update the messages
-        setMessages([...messages, aiMessage]);
-      } else {
-        response = "No file selected!";
-        const aiMessage: Message = {
-          id: Date.now().toString(),
-          role: "assistant",
-          content: response,
-        };
-        setMessages([...messages, aiMessage]);
-      }
+          // Update the messages
+          setMessages([...messages, aiMessage]);
+        } else {
+          response = "No file selected!";
+          const aiMessage: Message = {
+            id: Date.now().toString(),
+            role: "assistant",
+            content: response,
+          };
+          setMessages([...messages, aiMessage]);
+        }
+      };
+
+      // Programmatically trigger the file input click to open the file picker
+      fileInput.click();
+
+      return; // Stop further execution in the else block
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      role: "user",
+      content: message,
     };
 
-    // Programmatically trigger the file input click to open the file picker
-    fileInput.click();
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(),
+      role: "assistant",
+      content: response,
+    };
 
-    return; // Stop further execution in the else block
-  }
-
-  // Append the user message first (this simulates the user's selection being displayed on the right side)
-  const userMessage: Message = {
-    id: Date.now().toString(),
-    role: "user",
-    content: message,
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
   };
-
-  // Then append the assistant response
-  const aiMessage: Message = {
-    id: Date.now().toString(),
-    role: "assistant",
-    content: response,
-  };
-
-  // Append both the user message and AI response to the existing messages
-  setMessages([...messages, userMessage, aiMessage]);
-};
-
 
   const saveUserProfile = async (update: any) => {
     let retries = 0;
@@ -6622,6 +6628,7 @@ const handleButtonStageDownloadReport = (message: any) => {
   }, [inputStr]);
   const renderMessages = () => {
     return messages.map((message, index) => {
+      const isLastMessage = index === messages.length - 1;
       const isVideoTrigger = message.id === videoTriggerMessageId;
       const questionResponseStage12 = message.content.includes(
         "Is there anything else you’d like to know about estate planning, or any questions you have at this stage?"
@@ -6746,6 +6753,7 @@ const handleButtonStageDownloadReport = (message: any) => {
       return (
         <div
           key={message.id}
+          ref={isLastMessage ? lastMessageRef : null}
           className={message.role === "user" ? "text-white" : "text-white"}
         >
           {message.role === "assistant" && index === 0 ? (
@@ -6848,7 +6856,11 @@ const handleButtonStageDownloadReport = (message: any) => {
               {questionResponse1 && (
                 <div className="space-x-2 mt-2">
                   <button
-                    onClick={() => handleButtonFunFact("No, I have some questions about the above")}
+                    onClick={() =>
+                      handleButtonFunFact(
+                        "No, I have some questions about the above"
+                      )
+                    }
                     className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                   >
                     No, I have some questions about the above
@@ -6857,7 +6869,7 @@ const handleButtonStageDownloadReport = (message: any) => {
                     onClick={() => handleButtonFunFact("Yes, I'm ready.")}
                     className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                   >
-                   Yes, I'm ready to move on.
+                    Yes, I'm ready to move on.
                   </button>
                 </div>
               )}
@@ -10523,7 +10535,6 @@ const handleButtonStageDownloadReport = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                 
                     💰 The maximum fee that can be charged for executor’s fees
                     is 3.5%, plus VAT (15%), which totals 4.03%. You can leave
                     instructions in your will to stipulate what percentage you
@@ -10774,7 +10785,6 @@ const handleButtonStageDownloadReport = (message: any) => {
               ) && (
                 <>
                   <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    
                     💬 Negotiating Payment Terms with Creditors:
                     <br />
                     This involves discussing with creditors to extend payment
@@ -11136,7 +11146,6 @@ const handleButtonStageDownloadReport = (message: any) => {
                     <LifeInsuranceSlider
                       onProceed={handleButtonStage78LifeInsurance}
                     />
-                    
                   </div>
                 </>
               )}
@@ -11358,23 +11367,22 @@ const handleButtonStageDownloadReport = (message: any) => {
               {message.content.includes(
                 "Have you considered the cost of education and taken that into account regarding maintenance?"
               ) && (
-                 <div className="space-x-2">
-                    <br />
-                    <button
-                      onClick={() => handleButtonStage82LifeInsurancev1("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage82LifeInsurancev1("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    </div>
-              
-            )}
+                <div className="space-x-2">
+                  <br />
+                  <button
+                    onClick={() => handleButtonStage82LifeInsurancev1("Yes")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                  >
+                    Yes
+                  </button>
+                  <button
+                    onClick={() => handleButtonStage82LifeInsurancev1("Yes")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                  >
+                    Yes
+                  </button>
+                </div>
+              )}
 
               {message.content.includes(
                 "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?"
@@ -12276,15 +12284,13 @@ const handleButtonStageDownloadReport = (message: any) => {
 
               {message.content.includes(
                 "Additional life insurance can provide the capital required for the income needs of dependents. Do you have any life insurance that is linked to a purpose, i.e. Mortgage / bond life cover etc?"
-                ) && (
+              ) && (
                 <>
-                <div className="space-x-2">
+                  <div className="space-x-2">
                     <br />
                     <button
                       onClick={() =>
-                        handleButtonStage88Additionalv1(
-                          "Yes, specify details"
-                        )
+                        handleButtonStage88Additionalv1("Yes, specify details")
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -12292,17 +12298,15 @@ const handleButtonStageDownloadReport = (message: any) => {
                     </button>
                     <button
                       onClick={() =>
-                        handleButtonStage88Additionalv1(
-                          "No, let's move on"
-                        )
+                        handleButtonStage88Additionalv1("No, let's move on")
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       No, let's move on
                     </button>
-                    </div>
+                  </div>
                 </>
-                )}
+              )}
               {message.content.includes(
                 "Have you considered obtaining additional life insurance for providing capital required for income needs of dependents?"
               ) && (
@@ -12681,8 +12685,7 @@ const handleButtonStageDownloadReport = (message: any) => {
                     benefits and services, allowing you to tailor the policy to
                     meet your specific wishes and needs.
                     <br />
-                    <br />
-                    ⚡ <b>Ease of Access:</b>
+                    <br />⚡ <b>Ease of Access:</b>
                     <br />
                     Funeral cover typically provides a quick payout, ensuring
                     that funds are available when needed without lengthy
@@ -13332,18 +13335,16 @@ const handleButtonStageDownloadReport = (message: any) => {
                 </>
               )}
 
-{message.content.includes(
+              {message.content.includes(
                 "Your information will be reviewed by an Old Mutual financial adviser, and you can expect to hear back soonwithyourestate plan."
               ) && (
                 <>
                   <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                   Have a great day, and we’re looking forwardtohelpingyou secure your future!
+                    Have a great day, and we’re looking forwardtohelpingyou
+                    secure your future!
                   </div>
                 </>
               )}
-
-
-
 
               {message.content.includes(
                 "Hello and welcome to Moneyversity’s Estate Planning Consultant"
@@ -14297,305 +14298,362 @@ const handleButtonStageDownloadReport = (message: any) => {
                 </>
               )}
 
-
-
-
-
-{message.content.includes(
+              {message.content.includes(
                 "We’ve now gathered all the relevant information to help create your estate plan. As one of the final steps, please upload the documents below. These will be securely stored and only shared with the financial adviser who will assist you in finalising your estate plan."
               ) && (
                 <>
                   <div className="space-x-2">
-                    <br/>
+                    <br />
                     <button
                       onClick={() =>
-                        handleButtonStage101FinalUpload("Upload Your Antenuptual Contract (ANC)")
+                        handleButtonStage101FinalUpload(
+                          "Upload Your Antenuptual Contract (ANC)"
+                        )
                       }
                       className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
                     >
                       Upload Your Antenuptual Contract (ANC)
                     </button>
                     <button
-  onClick={() =>
-    handleButtonStage101FinalUpload("Upload Your Current Will")
-  }
-  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
->
-  Upload Your Current Will
-</button>
+                      onClick={() =>
+                        handleButtonStage101FinalUpload(
+                          "Upload Your Current Will"
+                        )
+                      }
+                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Upload Your Current Will
+                    </button>
 
-<button
-  onClick={() =>
-    handleButtonStage101FinalUpload("Upload Your Trust Details")
-  }
-  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
->
-  Upload Your Trust Details
-</button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage101FinalUpload(
+                          "Upload Your Trust Details"
+                        )
+                      }
+                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Upload Your Trust Details
+                    </button>
 
-<button
-  onClick={() =>
-    handleButtonStage101FinalUpload("Upload Your Court Ordered Maintenance Obligations")
-  }
-  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
->
-  Upload Your Court Ordered Maintenance Obligations
-</button>
-<br/>
-<button
-  onClick={() =>
-    handleButtonStage101FinalUpload("Upload Your Antenuptual Contract (ANC)")
-  }
-  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
->
-  Upload Your Antenuptual Contract (ANC)
-</button>
-<br/>
-<button
-  onClick={() =>
-    handleButtonStage101FinalUpload("Upload Your Power of Attorney Details")
-  }
-  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
->
-  Upload Your Power of Attorney Details
-</button>
-<br/>
-<button
-  onClick={() =>
-    handleButtonStage101FinalUpload("Upload Your Living Will")
-  }
-  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
->
-  Upload Your Living Will
-</button>
-<br/>
-<button
-  onClick={() =>
-    handleButtonStage101FinalUpload("Upload Real Estate Property Detail")
-  }
-  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
->
-  Upload Real Estate Property Detail
-</button>
-<br/>
-<button
-  onClick={() =>
-    handleButtonStage101FinalUpload("Upload Your Farm Property Details")
-  }
-  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
->
-  Upload Your Farm Property Details
-</button>
-<br/>
-<button
-  onClick={() =>
-    handleButtonStage101FinalUpload("Upload Your Vehicle/s Details (cars, boats and motorcycles etc.)")
-  }
-  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
->
-  Upload Your Vehicle/s Details (cars, boats and motorcycles etc.)
-</button>
-<br/>
-<button
-  onClick={() =>
-    handleButtonStage101FinalUpload("Upload Your Valuable Possessions Details (artwork and jewellery etc.)")
-  }
-  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
->
-  Upload Your Valuable Possessions Details (artwork and jewellery etc.)
-</button>
-<br/>
-<button
-  onClick={() =>
-    handleButtonStage101FinalUpload("Upload Your Household Contents Value Details")
-  }
-  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
->
-  Upload Your Household Contents Value Details
-</button>
-<br/>
-<button
-  onClick={() =>
-    handleButtonStage101FinalUpload("Upload Your Investment Portfolio Details")
-  }
-  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
->
-  Upload Your Investment Portfolio Details
-</button>
-<br/>
-<button
-  onClick={() =>
-    handleButtonStage101FinalUpload("Upload Your Businesses Interests or Ownership Stake Details")
-  }
-  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
->
-  Upload Your Businesses Interests or Ownership Stake Details
-</button>
-<br/>
-<button
-  onClick={() =>
-    handleButtonStage101FinalUpload("Upload Your Intellectual Property Details")
-  }
-  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
->
-  Upload Your Intellectual Property Details
-</button>
-<br/>
-<button
-  onClick={() =>
-    handleButtonStage101FinalUpload("Upload Your Trust Asset Details")
-  }
-  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
->
-  Upload Your Trust Asset Details
-</button>
-<br/>
-<button
-  onClick={() =>
-    handleButtonStage101FinalUpload("Upload Your Mortgage Loan Details")
-  }
-  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
->
-  Upload Your Mortgage Loan Details
-</button>
-<br/>
-<button
-  onClick={() =>
-    handleButtonStage101FinalUpload("Upload Your Personal Loan Details")
-  }
-  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
->
-  Upload Your Personal Loan Details
-</button>
-<br/>
-<button
-  onClick={() =>
-    handleButtonStage101FinalUpload("Upload Vehicle Loan Details")
-  }
-  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
->
-  Upload Vehicle Loan Details
-</button>
-<br/>
-<button
-  onClick={() =>
-    handleButtonStage101FinalUpload("Upload Life Insurance Details")
-  }
-  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
->
-  Upload Life Insurance Details
-</button>
-<br/>
-<button
-  onClick={() =>
-    handleButtonStage101FinalUpload("Upload Your Health Insurance Policy Details")
-  }
-  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
->
-  Upload Your Health Insurance Policy Details
-</button>
-<br/>
-<button
-  onClick={() =>
-    handleButtonStage101FinalUpload("Upload Your Property Insurance Policy Detail")
-  }
-  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
->
-  Upload Your Property Insurance Policy Detail
-</button>
-<br/>
-<button
-  onClick={() =>
-    handleButtonStage101FinalUpload("Upload Your Vehicle Insurance Policy Details")
-  }
-  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
->
-  Upload Your Vehicle Insurance Policy Details
-</button>
-<br/>
-<button
-  onClick={() =>
-    handleButtonStage101FinalUpload("Upload Funeral Cover Policy Details")
-  }
-  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
->
-  Upload Funeral Cover Policy Details
-</button>
-<br/>
-<button
-  onClick={() =>
-    handleButtonStage101FinalUpload("Upload Your Investment Bond Details")
-  }
-  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
->
-  Upload Your Investment Bond Details
-</button>
-<br/>
-<button
-  onClick={() =>
-    handleButtonStage101FinalUpload("Upload Your Mutual Fund Details")
-  }
-  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
->
-  Upload Your Mutual Fund Details
-</button>
-<br/>
-<button
-  onClick={() =>
-    handleButtonStage101FinalUpload("Upload Your Retirement Fund Details")
-  }
-  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
->
-  Upload Your Retirement Fund Details
-</button>
-<br/>
-<button
-  onClick={() =>
-    handleButtonStage101FinalUpload("Upload Your Court Ordered Maintenance Obligations")
-  }
-  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
->
-  Upload Your Court Ordered Maintenance Obligations
-</button>
-<br/>
-<button
-  onClick={() =>
-    handleButtonStage101FinalUpload("Continue")
-  }
-  className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
->
-  Continue
-</button>
-
+                    <button
+                      onClick={() =>
+                        handleButtonStage101FinalUpload(
+                          "Upload Your Court Ordered Maintenance Obligations"
+                        )
+                      }
+                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Upload Your Court Ordered Maintenance Obligations
+                    </button>
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage101FinalUpload(
+                          "Upload Your Antenuptual Contract (ANC)"
+                        )
+                      }
+                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Upload Your Antenuptual Contract (ANC)
+                    </button>
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage101FinalUpload(
+                          "Upload Your Power of Attorney Details"
+                        )
+                      }
+                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Upload Your Power of Attorney Details
+                    </button>
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage101FinalUpload(
+                          "Upload Your Living Will"
+                        )
+                      }
+                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Upload Your Living Will
+                    </button>
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage101FinalUpload(
+                          "Upload Real Estate Property Detail"
+                        )
+                      }
+                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Upload Real Estate Property Detail
+                    </button>
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage101FinalUpload(
+                          "Upload Your Farm Property Details"
+                        )
+                      }
+                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Upload Your Farm Property Details
+                    </button>
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage101FinalUpload(
+                          "Upload Your Vehicle/s Details (cars, boats and motorcycles etc.)"
+                        )
+                      }
+                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Upload Your Vehicle/s Details (cars, boats and motorcycles
+                      etc.)
+                    </button>
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage101FinalUpload(
+                          "Upload Your Valuable Possessions Details (artwork and jewellery etc.)"
+                        )
+                      }
+                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Upload Your Valuable Possessions Details (artwork and
+                      jewellery etc.)
+                    </button>
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage101FinalUpload(
+                          "Upload Your Household Contents Value Details"
+                        )
+                      }
+                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Upload Your Household Contents Value Details
+                    </button>
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage101FinalUpload(
+                          "Upload Your Investment Portfolio Details"
+                        )
+                      }
+                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Upload Your Investment Portfolio Details
+                    </button>
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage101FinalUpload(
+                          "Upload Your Businesses Interests or Ownership Stake Details"
+                        )
+                      }
+                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Upload Your Businesses Interests or Ownership Stake
+                      Details
+                    </button>
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage101FinalUpload(
+                          "Upload Your Intellectual Property Details"
+                        )
+                      }
+                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Upload Your Intellectual Property Details
+                    </button>
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage101FinalUpload(
+                          "Upload Your Trust Asset Details"
+                        )
+                      }
+                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Upload Your Trust Asset Details
+                    </button>
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage101FinalUpload(
+                          "Upload Your Mortgage Loan Details"
+                        )
+                      }
+                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Upload Your Mortgage Loan Details
+                    </button>
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage101FinalUpload(
+                          "Upload Your Personal Loan Details"
+                        )
+                      }
+                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Upload Your Personal Loan Details
+                    </button>
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage101FinalUpload(
+                          "Upload Vehicle Loan Details"
+                        )
+                      }
+                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Upload Vehicle Loan Details
+                    </button>
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage101FinalUpload(
+                          "Upload Life Insurance Details"
+                        )
+                      }
+                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Upload Life Insurance Details
+                    </button>
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage101FinalUpload(
+                          "Upload Your Health Insurance Policy Details"
+                        )
+                      }
+                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Upload Your Health Insurance Policy Details
+                    </button>
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage101FinalUpload(
+                          "Upload Your Property Insurance Policy Detail"
+                        )
+                      }
+                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Upload Your Property Insurance Policy Detail
+                    </button>
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage101FinalUpload(
+                          "Upload Your Vehicle Insurance Policy Details"
+                        )
+                      }
+                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Upload Your Vehicle Insurance Policy Details
+                    </button>
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage101FinalUpload(
+                          "Upload Funeral Cover Policy Details"
+                        )
+                      }
+                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Upload Funeral Cover Policy Details
+                    </button>
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage101FinalUpload(
+                          "Upload Your Investment Bond Details"
+                        )
+                      }
+                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Upload Your Investment Bond Details
+                    </button>
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage101FinalUpload(
+                          "Upload Your Mutual Fund Details"
+                        )
+                      }
+                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Upload Your Mutual Fund Details
+                    </button>
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage101FinalUpload(
+                          "Upload Your Retirement Fund Details"
+                        )
+                      }
+                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Upload Your Retirement Fund Details
+                    </button>
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage101FinalUpload(
+                          "Upload Your Court Ordered Maintenance Obligations"
+                        )
+                      }
+                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Upload Your Court Ordered Maintenance Obligations
+                    </button>
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage101FinalUpload("Continue")
+                      }
+                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                    >
+                      Continue
+                    </button>
                   </div>
                 </>
               )}
 
-
-   {message.content.includes(
+              {message.content.includes(
                 "Thank you for uploading your documents!"
               ) && (
                 <>
- <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-Now before we wrap up, could you please share your email address with us? This will be used by an Old Mutual financial adviser who will contact you directly
-regarding your estate plan and provide any necessary guidance.
-  </div>
-  <br/>
-            <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-Please enter your email address.
-  </div>  
-    </>
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    Now before we wrap up, could you please share your email
+                    address with us? This will be used by an Old Mutual
+                    financial adviser who will contact you directly regarding
+                    your estate plan and provide any necessary guidance.
+                  </div>
+                  <br />
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    Please enter your email address.
+                  </div>
+                </>
               )}
 
-   {message.content.includes(
+              {message.content.includes(
                 "A report has been generated containing all the results from this chat. You can download a copy below."
               ) && (
                 <>
- <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-This report along with your documents will be shared with an Old Mutual financial adviser who will use this information to finalise your estate plan.
-  </div>
-  <br/>
-           <div className="space-x-2 my-2">
+                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    This report along with your documents will be shared with an
+                    Old Mutual financial adviser who will use this information
+                    to finalise your estate plan.
+                  </div>
+                  <br />
+                  <div className="space-x-2 my-2">
                     <button
                       onClick={() =>
                         handleButtonStageDownloadReport("Download Report")
@@ -14604,19 +14662,9 @@ This report along with your documents will be shared with an Old Mutual financia
                     >
                       Download Report
                     </button>
-                    </div>
-    </>
+                  </div>
+                </>
               )}
-
-
-
-
-
-
-
-
-
-
 
               {message.content.includes(
                 "Thanks for sharing your thoughts,"
@@ -16902,7 +16950,9 @@ This report along with your documents will be shared with an Old Mutual financia
                 ) {
                   e.preventDefault();
                   handleAddAIResponse(
-                    "Thank you for providing these details,"+userName+". Now, we can move on to the next part of your estate planning. Ready to continue?"
+                    "Thank you for providing these details," +
+                      userName +
+                      ". Now, we can move on to the next part of your estate planning. Ready to continue?"
                   );
                 } else if (
                   messageData.current.includes(
@@ -17077,9 +17127,7 @@ This report along with your documents will be shared with an Old Mutual financia
                   handleAddAIResponse(
                     "How many bedrooms and bathrooms does your property have?"
                   );
-                } 
-                
-                else if (
+                } else if (
                   messageData.current.includes(
                     "How many bedrooms and bathrooms does your property have?"
                   )
@@ -17088,9 +17136,7 @@ This report along with your documents will be shared with an Old Mutual financia
                   handleAddAIResponse(
                     "Describe the condition of your property (new, good, fair, needs renovation). Also, mention any special features (e.g., swimming pool, garden, garage)."
                   );
-                } 
-
-                else if (
+                } else if (
                   messageData.current.includes(
                     "Great! Please provide the above mentioned details about life insurance."
                   )
@@ -17099,9 +17145,7 @@ This report along with your documents will be shared with an Old Mutual financia
                   handleAddAIResponse(
                     "Have you considered obtaining additional life insurance for providing capital required for income needs of dependents?"
                   );
-                } 
-
-                 else if (
+                } else if (
                   messageData.current.includes(
                     "Thank you for uploading your documents!"
                   )
@@ -17110,23 +17154,18 @@ This report along with your documents will be shared with an Old Mutual financia
                   handleAddAIResponse(
                     "A report has been generated containing all the results from this chat. You can download a copy below."
                   );
-                }
-
-                else if (
+                } else if (
                   messageData.current.includes(
                     "Do you have anything you would like to add or any questions that I can help you with today?"
                   )
                 ) {
                   e.preventDefault();
                   handleAddAIResponse(
-                    "Thanks for your time today, "+userName+"! Your information will be reviewed by an Old Mutual financial adviser, and you can expect to hear back soonwithyourestate plan."
+                    "Thanks for your time today, " +
+                      userName +
+                      "! Your information will be reviewed by an Old Mutual financial adviser, and you can expect to hear back soonwithyourestate plan."
                   );
-                }
-                
-                
-               
-                
-                else if (
+                } else if (
                   messageData.current.includes(
                     "Describe the condition of your property (new, good, fair, needs renovation). Also, mention any special features (e.g., swimming pool, garden, garage)."
                   )
@@ -17276,9 +17315,7 @@ This report along with your documents will be shared with an Old Mutual financia
                   }
                 }
                 setInputStr("");
-              }
-            
-            }
+              }}
             >
               <div className="p-4 flex rounded bg-[#303134]">
                 <CustomInput
