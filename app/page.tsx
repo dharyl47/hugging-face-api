@@ -309,7 +309,7 @@ export default function Chat() {
   const handleButtonQuestion = (message: any) => {
     let response = "";
     if (message == "Is there anything else you'd like to ask?") {
-      response = "What is your question?";
+      response = "Absolutely! I'm here to assist. What would you like to ask?";
       isResponse.current = "1";
     }
 
@@ -635,8 +635,8 @@ export default function Chat() {
 
   const handleButtonStage12 = (message: any) => {
     let response = "";
-    if (message == "I have a question.") {
-      response = "What is your question?";
+    if (message == "Yes, I have a question") {
+      response = "Absolutely! I'm here to assist. What would you like to ask?";
 
       setNextResponse(
         "It’s important to understand the legal requirements and considerations specific to South Africa:"
@@ -6848,16 +6848,16 @@ const handleButtonStageDownloadReport = (message: any) => {
               {questionResponse1 && (
                 <div className="space-x-2 mt-2">
                   <button
-                    onClick={() => handleButtonFunFact("I have a question.")}
+                    onClick={() => handleButtonFunFact("No, I have some questions about the above")}
                     className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                   >
-                    I have a question.
+                    No, I have some questions about the above
                   </button>
                   <button
                     onClick={() => handleButtonFunFact("Yes, I'm ready.")}
                     className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                   >
-                    Yes, I'm ready.
+                   Yes, I'm ready to move on.
                   </button>
                 </div>
               )}
@@ -7762,7 +7762,7 @@ const handleButtonStageDownloadReport = (message: any) => {
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
-                      Is there anything else you?
+                      Is there anything else you'd like to ask?
                     </button>
                     <button
                       onClick={() => handleButtonQuestion("Continue")}
@@ -14877,7 +14877,6 @@ This report along with your documents will be shared with an Old Mutual financia
               ) && (
                 <>
                   <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    <br />
                     Here are some important acts and considerations:
                   </div>
                   <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
@@ -17276,7 +17275,10 @@ This report along with your documents will be shared with an Old Mutual financia
                     handleSubmit(e); // Let the AI respond freely if no conditions are met
                   }
                 }
-              }}
+                setInputStr("");
+              }
+            
+            }
             >
               <div className="p-4 flex rounded bg-[#303134]">
                 <CustomInput
@@ -17289,7 +17291,7 @@ This report along with your documents will be shared with an Old Mutual financia
                     // if(messageData.current.includes("Can you please provide your user name so I can assist you with deleting")){
                     // checkUserExists(e.target.value);}
                   }}
-                  placeholder="Type a message"
+                  placeholder="Type a question"
                 />
                 {!userExists &&
                   messageData.current.includes(
