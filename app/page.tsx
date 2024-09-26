@@ -62,6 +62,7 @@ export default function Chat() {
     "Beneficiary Designation Forms",
     "Executor",
     "Guardian",
+    "All Key Terms"
   ];
 
   const [selectedScenario, setSelectedScenario] = useState<string[]>([]);
@@ -998,46 +999,70 @@ export default function Chat() {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-  const handleButtonStage14Template = (message: any) => {
-    let response = "";
+  const handleButtonStage14Template = async (message: any) => {
+  let response = "";
+  let updateField: any = {}; // Object to store the field to update
 
-    if (message == "Download Will Template") {
-      response = "Templates are downloaded";
-    }
-    if (message == "Download Trust Template") {
-      response = "Templates are downloaded";
-    }
-    if (message == "Download Power of Attorney Template") {
-      response = "Templates are downloaded";
-    }
-    if (message == "Download Living Will Template") {
-      response = "Templates are downloaded";
-    }
-    if (message == "Download All Templates") {
-      response = "Templates are downloaded";
-    }
-    if (message == "Skip") {
-      response =
-        "Now that we’ve covered your personal details, let’s talk about your objectives for estate planning. Understanding your goals will help us create a plan that fits your needs perfectly. Ready to dive in?";
-    }
+  if (message === "Download Will Template") {
+   response = "Templates are downloaded";
+    updateField = { 'templatesDownloaded.will': true }; // Mark will template as downloaded
+  }
+  if (message === "Download Trust Template") {
+    response = "Templates are downloaded";
+    updateField = { 'templatesDownloaded.trust': true }; // Mark trust template as downloaded
+  }
+  if (message === "Download Power of Attorney Template") {
+   response = "Templates are downloaded";
+    updateField = { 'templatesDownloaded.powerOfAttorney': true }; // Mark power of attorney template as downloaded
+  }
+  if (message === "Download Living Will Template") {
+   response = "Templates are downloaded";
+    updateField = { 'templatesDownloaded.livingWill': true }; // Mark living will template as downloaded
+  }
+  if (message === "Download All Templates") {
+   response = "Templates are downloaded";
+    updateField = {
+      'templatesDownloaded.will': true,
+      'templatesDownloaded.trust': true,
+      'templatesDownloaded.powerOfAttorney': true,
+      'templatesDownloaded.livingWill': true,
+    }; // Mark all templates as downloaded
+  }
+  if (message === "Skip") {
+    response =
+      "Now that we’ve covered your personal details, let’s talk about your objectives for estate planning. Understanding your goals will help us create a plan that fits your needs perfectly. Ready to dive in?";
+  }
 
-    // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
-
-    // Then append the assistant response
-    const aiMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "assistant", // Assistant response role
-      content: response, // Message content (the AI response)
-    };
-
-    // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+  // Append the user message first (this simulates the user's selection being displayed on the right side)
+  const userMessage: Message = {
+    id: Date.now().toString(), // Unique ID
+    role: "user", // User message role
+    content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
   };
+
+  // Then append the assistant response
+  const aiMessage: Message = {
+    id: Date.now().toString(), // Unique ID
+    role: "assistant", // Assistant response role
+    content: response, // Message content (the AI response)
+  };
+
+  // Append both the user message and AI response to the existing messages
+  setMessages([...messages, userMessage, aiMessage]);
+
+  // Check if there is something to update
+  if (Object.keys(updateField).length > 0) {
+    try {
+      // Call the saveUserProfile function to update the database
+      await saveUserProfile(updateField);
+      console.log("Profile updated with:", updateField);
+    } catch (error) {
+      console.error("Failed to update user profile:", error);
+    }
+  }
+};
+
+
 
   const handleButtonStage14Checklist = (message: any) => {
     let response = "";
@@ -1760,7 +1785,7 @@ export default function Chat() {
     }
     if (message == "Yes, specify detail") {
       response =
-        "Great! Please provide the above mentioned details of your vehicle";
+        "Great! Please provide the above mentioned details of your vehicle with their estimated values.";
     }
     if (message == "No, let’s move on") {
       response =
@@ -2205,7 +2230,7 @@ export default function Chat() {
     }
     if (message == "Yes, specify detail") {
       response =
-        "Great! Please provide the above mentioned details of your vehicle loan";
+        "Great! Please provide the above mentioned details of your vehicle loan23443234";
     }
     if (message == "No, let’s move on") {
       response =
@@ -6770,7 +6795,7 @@ export default function Chat() {
                 <div className="space-y-2 mt-2">
                   {/* Yes, I consent checkbox */}
                   <div
-                    onClick={() => handleButtonConsent("Yes, I consent")} // Add onClick event
+                    onClick={() => handleButtonStage21Asset("Continue")} // Add onClick event
                     className={`flex items-center space-x-2 px-4 py-2 w-[400px] rounded-md border cursor-pointer ${
                       consent === "Yes, I consent"
                         ? "bg-[#8DC63F] text-white border-transparent"
@@ -14921,190 +14946,94 @@ export default function Chat() {
               )}
 
               {message.content.includes(
-                "It’s important to understand the legal requirements and considerations specific to South Africa:"
-              ) && (
-                <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Here are some important acts and considerations:
-                  </div>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    <b>Wills Act 7 of 1953</b>📝
-                    <br />
-                    The Wills Act governs the creation and execution of wills.
-                    Your will must be in writing, signed by you, and witnessed
-                    by two people who are not beneficiaries.
-                    <br />
-                    <br />
-                    <b>Estate Duty Act 45 of 1955</b>💼
-                    <br />
-                    This Act imposes estate duty (a form of tax) on the estate
-                    of a deceased person. The first R3.5 million of an estate is
-                    exempt from estate duty.
-                    <br />
-                    <br />
-                    <b>Intestate Succession Act 81 of 1987</b>📋
-                    <br />
-                    If you die without a will, the Intestate Succession Act
-                    determines how your estate will be distributed. This may not
-                    align with your wishes, so having a will is crucial.
-                    <br />
-                    <br />
-                    <b>Marital Property Regimes</b>💍
-                    <br />
-                    Your marital status can affect your estate planning. South
-                    Africa recognises different marital property regimes, such
-                    as community of property, antenuptial contract (ANC), and
-                    ANC with accrual. It’s important to consider how these will
-                    impact your estate.
-                    <br />
-                    <br />
-                    <b>Master of the High Court</b>🏛️
-                    <br />
-                    The Master of the High Court oversees the administration of
-                    deceased estates. Executors of estates must be appointed and
-                    approved by the Master.
-                    <br />
-                    <br />
-                    Understanding these components and local laws can help
-                    ensure that your estate plan is comprehensive and legally
-                    sound. 📚✅
-                    <br />
-                  </div>
-                  <br />
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    <br />
-                    In South Africa, there are various types of marriages:
-                    <br />
-                    <br />
-                    <b>Civil Marriage</b>📜
-                    <br />A formal marriage registered with Home Affairs,
-                    governed by the Marriage Act, 1961. (This is the most common
-                    and traditional form as we know it). Can be in or out of
-                    community of property (with or without the accrual).
-                    <ul>
-                      <li>Requirements:</li>
-                      <li>
-                        {" "}
-                        - Must be conducted by a marriage officer authorised by
-                        Home Affairs.
-                      </li>
-                      <li>
-                        {" "}
-                        - Both parties must be at least 18 years old (or 16 with
-                        parental consent).
-                      </li>
-                      <li>
-                        {" "}
-                        - Requires submission of documents such as identity
-                        documents and proof of dissolution of previous
-                        marriages, if applicable.
-                      </li>
-                    </ul>
-                    <br />
-                    <b>Customary Marriage</b>🎎
-                    <br />A marriage conducted according to indigenous/black
-                    South African customs, recognised under the Recognition of
-                    Customary Marriages Act, 1998. The default property regime
-                    is in community of property, but parties can decide on out
-                    of community of property.
-                    <ul>
-                      <li>Requirements:</li>
-                      <li>
-                        {" "}
-                        - Must adhere to the customs of the community to which
-                        the parties belong.
-                      </li>
-                      <li>
-                        {" "}
-                        - Typically involves rituals and ceremonies traditional
-                        to the community.
-                      </li>
-                      <li>
-                        {" "}
-                        - Must be registered with the Department of Home Affairs
-                        to be legally recognised.
-                      </li>
-                    </ul>
-                    <br />
-                    <b>Religious Marriage</b>
-                    <br />A marriage conducted according to religious rites but
-                    not necessarily registered with Home Affairs.
-                    <ul>
-                      <li>Requirements:</li>
-                      <li>
-                        {" "}
-                        - Varies depending on the religion (e.g., temple
-                        wedding).
-                      </li>
-                      <li>
-                        {" "}
-                        - Should be registered with the Department of Home
-                        Affairs to gain legal status.
-                      </li>
-                      <li> - Not all religious marriages are recognised.</li>
-                    </ul>
-                    <br />
-                    <b>Civil Union</b>🏳️‍🌈
-                    <br />
-                    Recognised under the Civil Union Act, 2006, and can be
-                    entered into by same-sex or opposite-sex couples. Carries
-                    the same legal standing as persons married in terms of the
-                    Marriage Act.
-                    <ul>
-                      <li>Requirements:</li>
-                      <li>
-                        {" "}
-                        - Must be performed by a registered civil union officer.
-                      </li>
-                      <li>
-                        {" "}
-                        - Parties can choose between a marriage-like
-                        relationship or a domestic partnership.
-                      </li>
-                    </ul>
-                    <br />
-                    <b>Co-habitation</b>🏡
-                    <br />
-                    Not legally recognised as marriage. There is no such thing
-                    as a common-law marriage in South African law. Simply living
-                    together does not create a legal marriage-like status.
-                    <ul>
-                      <li>
-                        A marriage that is not recognised under civil law is not
-                        considered a legal marriage in South Africa, with a few
-                        exceptions.
-                      </li>
-                      <li>
-                        This can have implications on your estate plan as you
-                        can be considered single/unmarried if your marriage is
-                        not registered with Home Affairs.
-                      </li>
-                    </ul>
-                  </div>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Do you have any questions regarding bequeathing a farm at
-                    this stage?
-                  </div>
-                  <div className="space-x-2 mt-2">
-                    <button
-                      onClick={() =>
-                        handleButtonStage13v2v1("Yes, I have a question.")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, I have a question.
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage13v2v1("No, let’s move on")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No, let’s move on
-                    </button>
-                  </div>
-                </>
-              )}
+  "It’s important to understand the legal requirements and considerations specific to South Africa:"
+) && (
+  <>
+    <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+      Here are some important acts and considerations:
+    </div>
+    <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+      <b className="block mb-2">Wills Act 7 of 1953 📝</b>
+      The Wills Act governs the creation and execution of wills. Your will must be in writing, signed by you, and witnessed by two people who are not beneficiaries.
+      <br /><br />
+      <b style={{marginLeft: "-1px"}} className="block mb-2">Estate Duty Act 45 of 1955 💼</b>
+      This Act imposes estate duty (a form of tax) on the estate of a deceased person. The first R3.5 million of an estate is exempt from estate duty.
+      <br /><br />
+      <b style={{marginLeft: "-1px"}} className="block mb-2">Intestate Succession Act 81 of 1987 📋</b>
+      If you die without a will, the Intestate Succession Act determines how your estate will be distributed. This may not align with your wishes, so having a will is crucial.
+      <br /><br />
+      <b style={{marginLeft: "-1px"}} className="block mb-2">Marital Property Regimes 💍</b>
+      Your marital status can affect your estate planning. South Africa recognises different marital property regimes, such as community of property, antenuptial contract (ANC), and ANC with accrual. It’s important to consider how these will impact your estate.
+      <br /><br />
+      <b style={{marginLeft: "-1px"}} className="block mb-2">Master of the High Court 🏛️</b>
+      The Master of the High Court oversees the administration of deceased estates. Executors of estates must be appointed and approved by the Master.
+      <br /><br />
+      Understanding these components and local laws can help ensure that your estate plan is comprehensive and legally sound. 📚✅
+      <br />
+    </div>
+    <br />
+    <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+      <br />
+      In South Africa, there are various types of marriages:
+      <br /><br />
+      <b style={{marginLeft: "-1px"}} className="block mb-2">Civil Marriage 📜</b>
+      A formal marriage registered with Home Affairs, governed by the Marriage Act, 1961. (This is the most common and traditional form as we know it). Can be in or out of community of property (with or without the accrual).
+      <ul className="list-disc list-inside">
+        <li>Must be conducted by a marriage officer authorised by Home Affairs.</li>
+        <li>Both parties must be at least 18 years old (or 16 with parental consent).</li>
+        <li>Requires submission of documents such as identity documents and proof of dissolution of previous marriages, if applicable.</li>
+      </ul>
+      <br />
+      <b style={{marginLeft: "-1px"}} className="block mb-2">Customary Marriage 🎎</b>
+      A marriage conducted according to indigenous/black South African customs, recognised under the Recognition of Customary Marriages Act, 1998. The default property regime is in community of property, but parties can decide on out of community of property.
+      <ul className="list-disc list-inside">
+        <li>Must adhere to the customs of the community to which the parties belong.</li>
+        <li>Typically involves rituals and ceremonies traditional to the community.</li>
+        <li>Must be registered with the Department of Home Affairs to be legally recognised.</li>
+      </ul>
+      <br />
+      <b style={{marginLeft: "-1px"}} className="block mb-2">Religious Marriage</b>
+      A marriage conducted according to religious rites but not necessarily registered with Home Affairs.
+      <ul className="list-disc list-inside">
+        <li>Varies depending on the religion (e.g., temple wedding).</li>
+        <li>Should be registered with the Department of Home Affairs to gain legal status.</li>
+        <li>Not all religious marriages are recognised.</li>
+      </ul>
+      <br />
+      <b style={{marginLeft: "-1px"}} className="block mb-2">Civil Union 🏳️‍🌈</b>
+      Recognised under the Civil Union Act, 2006, and can be entered into by same-sex or opposite-sex couples. Carries the same legal standing as persons married in terms of the Marriage Act.
+      <ul className="list-disc list-inside">
+        <li>Must be performed by a registered civil union officer.</li>
+        <li>Parties can choose between a marriage-like relationship or a domestic partnership.</li>
+      </ul>
+      <br />
+      <b style={{marginLeft: "-1px"}} className="block mb-2">Co-habitation 🏡</b>
+      Not legally recognised as marriage. There is no such thing as a common-law marriage in South African law. Simply living together does not create a legal marriage-like status.
+      <ul className="list-disc list-inside">
+        <li>A marriage that is not recognised under civil law is not considered a legal marriage in South Africa, with a few exceptions.</li>
+        <li>This can have implications on your estate plan as you can be considered single/unmarried if your marriage is not registered with Home Affairs.</li>
+      </ul>
+    </div>
+    <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+      Do you have any questions at this stage?
+    </div>
+    <div className="space-x-2 mt-2">
+      <button
+        onClick={() => handleButtonStage13v2v1("Yes, I have a question.")}
+        className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+      >
+        Yes, I have a question.
+      </button>
+      <button
+        onClick={() => handleButtonStage13v2v1("No, let’s move on")}
+        className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+      >
+        No, let’s move on
+      </button>
+    </div>
+  </>
+)}
+
 
               {message.content.includes(
                 "Estate duty is a tax that has an impact on your estate. Do you want to explore estate duty further?"
@@ -15426,7 +15355,7 @@ export default function Chat() {
                     ⚖️ Executor
                     <br />
                     🛡️ Guardian
-                    <br />
+                    <br /><br />
                     Would you like a detailed explanation of all or some of
                     these terms?
                   </div>
@@ -15467,142 +15396,138 @@ export default function Chat() {
                 </>
               )}
 
-              {message.content.includes(
-                "Here are the definition of key terms:"
-              ) && (
+             {message.content.includes("Here are the definition of key terms:") && (
+  <>
+    {selectedTerms.length > 0 && (
+      <>
+        <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+          {/* If 'All Key Terms' is selected, show all definitions */}
+          {selectedTerms.includes("All Key Terms") ? (
+            <>
+              {/* Show all terms at once */}
+              Wills 📜
+              <br />
+              A will is a legal document that says how you want your belongings, money, and assets to be divided after you pass away. It also names someone to carry out your wishes (an executor) and can appoint guardians for your children.
+              <br /><br />
+              Trusts 🔐
+              <br />
+              A trust is a legal arrangement where you (the founder/settlor) place assets, like money or property, into a separate entity managed by a person (the trustee) for the benefit of someone else (the beneficiary). The trustee manages these assets according to your instructions, often to provide for beneficiaries over time, such as children or loved ones. A trust can be set up in your will and will come into existence when you pass away, or it can be set up while you are alive.
+              <br /><br />
+              Power of Attorney 🖋️
+              <br />
+              A power of attorney is a legal document that allows you to give someone else the authority to make decisions for you. It could be about financial matters, health care, or other personal affairs, especially if you’re unable to handle them yourself.
+              <br /><br />
+              Living Will 🏥
+              <br />
+              A living will is a document where you write down your wishes about medical care if you’re unable to communicate. It’s about what kind of treatments you do or don’t want if you’re seriously ill or injured and can’t speak for yourself.
+              <br /><br />
+              Beneficiaries 💼
+              <br />
+              Beneficiaries are the people you choose to receive your money, assets, or other benefits when you pass away. They are named in your insurance policies or retirement benefit forms.
+              <br /><br />
+              Beneficiary Designation Forms 📑
+              <br />
+              For assets like retirement accounts, life insurance, or certain bank accounts, you may need to fill out a form naming who gets those assets after you pass away. These forms typically override what’s written in a will or trust.
+              <br /><br />
+              Executor ⚖️
+              <br />
+              The person named in your will who is responsible for carrying out your wishes after you pass away, including paying debts and distributing assets to beneficiaries.
+              <br /><br />
+              Guardian 🛡️
+              <br />
+              If you have minor children, you can name a guardian in your will. This person will be responsible for taking care of your children if something happens to you.
+              <br /><br />
+            </>
+          ) : (
+            <>
+              {/* Show individual terms if 'All Key Terms' is not selected */}
+              {selectedTerms.includes("Wills") && (
                 <>
-                  {selectedTerms.length > 0 && (
-                    <>
-                      <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                        {selectedTerms.includes("Wills") && (
-                          <>
-                            Wills 📜
-                            <br />
-                            A will is a legal document that says how you want
-                            your belongings, money, and assets to be divided
-                            after you pass away. It also names someone to carry
-                            out your wishes (an executor) and can appoint
-                            guardians for your children.
-                            <br />
-                            <br />
-                          </>
-                        )}
-
-                        {selectedTerms.includes("Trusts") && (
-                          <>
-                            Trusts 🔐
-                            <br />
-                            A trust is a legal arrangement where you (the
-                            founder/settlor) place assets, like money or
-                            property, into a separate entity managed by a person
-                            (the trustee) for the benefit of someone else (the
-                            beneficiary). The trustee manages these assets
-                            according to your instructions, often to provide for
-                            beneficiaries over time, such as children or loved
-                            ones. A trust can be set up in your will and will
-                            come into existence when you pass away, or it can be
-                            set up while you are alive.
-                            <br />
-                            <br />
-                          </>
-                        )}
-
-                        {selectedTerms.includes("Power of Attorney") && (
-                          <>
-                            Power of Attorney 🖋️
-                            <br />
-                            A power of attorney is a legal document that allows
-                            you to give someone else the authority to make
-                            decisions for you. It could be about financial
-                            matters, health care, or other personal affairs,
-                            especially if you’re unable to handle them yourself.
-                            <br />
-                            <br />
-                          </>
-                        )}
-
-                        {selectedTerms.includes("Living Will") && (
-                          <>
-                            Living Will 🏥
-                            <br />
-                            A living will is a document where you write down
-                            your wishes about medical care if you’re unable to
-                            communicate. It’s about what kind of treatments you
-                            do or don’t want if you’re seriously ill or injured
-                            and can’t speak for yourself.
-                            <br />
-                            <br />
-                          </>
-                        )}
-
-                        {selectedTerms.includes("Beneficiaries") && (
-                          <>
-                            Beneficiaries 💼
-                            <br />
-                            Beneficiaries are the people you choose to receive
-                            your money, assets, or other benefits when you pass
-                            away. They are named in your insurance policies or
-                            retirement benefit forms.
-                            <br />
-                            <br />
-                          </>
-                        )}
-
-                        {selectedTerms.includes(
-                          "Beneficiary Designation Forms"
-                        ) && (
-                          <>
-                            Beneficiary Designation Forms 📑
-                            <br />
-                            For assets like retirement accounts, life insurance,
-                            or certain bank accounts, you may need to fill out a
-                            form naming who gets those assets after you pass
-                            away. These forms typically override what’s written
-                            in a will or trust.
-                            <br />
-                            <br />
-                          </>
-                        )}
-
-                        {selectedTerms.includes("Executor") && (
-                          <>
-                            Executor ⚖️
-                            <br />
-                            The person named in your will who is responsible for
-                            carrying out your wishes after you pass away,
-                            including paying debts and distributing assets to
-                            beneficiaries.
-                            <br />
-                            <br />
-                          </>
-                        )}
-
-                        {selectedTerms.includes("Guardian") && (
-                          <>
-                            Guardian 🛡️
-                            <br />
-                            If you have minor children, you can name a guardian
-                            in your will. This person will be responsible for
-                            taking care of your children if something happens to
-                            you.
-                            <br />
-                            <br />
-                          </>
-                        )}
-                      </div>
-                    </>
-                  )}
-
-                  <div className="space-x-2 mt-2">
-                    <button
-                      onClick={() => handleButtonStage12("Proceed")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Proceed
-                    </button>
-                  </div>
+                  Wills 📜
+                  <br />
+                  A will is a legal document that says how you want your belongings, money, and assets to be divided after you pass away. It also names someone to carry out your wishes (an executor) and can appoint guardians for your children.
+                  <br /><br />
                 </>
               )}
+
+              {selectedTerms.includes("Trusts") && (
+                <>
+                  Trusts 🔐
+                  <br />
+                  A trust is a legal arrangement where you (the founder/settlor) place assets, like money or property, into a separate entity managed by a person (the trustee) for the benefit of someone else (the beneficiary). The trustee manages these assets according to your instructions, often to provide for beneficiaries over time, such as children or loved ones. A trust can be set up in your will and will come into existence when you pass away, or it can be set up while you are alive.
+                  <br /><br />
+                </>
+              )}
+
+              {selectedTerms.includes("Power of Attorney") && (
+                <>
+                  Power of Attorney 🖋️
+                  <br />
+                  A power of attorney is a legal document that allows you to give someone else the authority to make decisions for you. It could be about financial matters, health care, or other personal affairs, especially if you’re unable to handle them yourself.
+                  <br /><br />
+                </>
+              )}
+
+              {selectedTerms.includes("Living Will") && (
+                <>
+                  Living Will 🏥
+                  <br />
+                  A living will is a document where you write down your wishes about medical care if you’re unable to communicate. It’s about what kind of treatments you do or don’t want if you’re seriously ill or injured and can’t speak for yourself.
+                  <br /><br />
+                </>
+              )}
+
+              {selectedTerms.includes("Beneficiaries") && (
+                <>
+                  Beneficiaries 💼
+                  <br />
+                  Beneficiaries are the people you choose to receive your money, assets, or other benefits when you pass away. They are named in your insurance policies or retirement benefit forms.
+                  <br /><br />
+                </>
+              )}
+
+              {selectedTerms.includes("Beneficiary Designation Forms") && (
+                <>
+                  Beneficiary Designation Forms 📑
+                  <br />
+                  For assets like retirement accounts, life insurance, or certain bank accounts, you may need to fill out a form naming who gets those assets after you pass away. These forms typically override what’s written in a will or trust.
+                  <br /><br />
+                </>
+              )}
+
+              {selectedTerms.includes("Executor") && (
+                <>
+                  Executor ⚖️
+                  <br />
+                  The person named in your will who is responsible for carrying out your wishes after you pass away, including paying debts and distributing assets to beneficiaries.
+                  <br /><br />
+                </>
+              )}
+
+              {selectedTerms.includes("Guardian") && (
+                <>
+                  Guardian 🛡️
+                  <br />
+                  If you have minor children, you can name a guardian in your will. This person will be responsible for taking care of your children if something happens to you.
+                  <br /><br />
+                </>
+              )}
+            </>
+          )}
+        </div>
+      </>
+    )}
+
+    <div className="space-x-2 mt-2">
+      <button
+        onClick={() => handleButtonStage12("Proceed")}
+        className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+      >
+        Proceed
+      </button>
+    </div>
+  </>
+)}
 
               {message.content.includes(
                 "Here are the potential outcomes of each scenario:"
@@ -16243,13 +16168,13 @@ export default function Chat() {
 
             <div
               id="chatbox"
-              className="p-4 h-[calc(100vh-250px)] overflow-y-auto"
+              className="p-4 h-[calc(100vh-250px)]  overflow-y-auto"
               ref={chatboxRef}
             >
               {renderMessages() || <div className="italic">typing...</div>}
             </div>
             <form
-              className="w-full"
+              className="w-full rounded-3xl"
               onSubmit={(e) => {
                 e.preventDefault();
 
@@ -16283,15 +16208,190 @@ export default function Chat() {
                   handleAddAIResponse(
                     "How many vehicles (cars, boats, caravans, motorcycles etc) do you own, and what are their makes, models, and estimated values?"
                   );
-                } else if (
+                } 
+                
+                else if (
                   messageData.current.includes(
-                    "Great! Please provide the above mentioned details of your vehicle"
+                    "How many vehicles (cars, boats, caravans, motorcycles etc) do you own, and what are their makes, models, and estimated values?"
                   )
                 ) {
                   e.preventDefault();
                   handleAddAIResponse(
                     "Are there any valuable possessions such as artwork, jewellery, or collectibles that you own? If so, could you describe each item and estimate its value?"
                   );
+                }
+
+                else if (
+                  messageData.current.includes(
+                    "Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan."
+                  )
+                ) {
+                  e.preventDefault();
+                  handleAddAIResponse(
+                    "How many vehicles (cars, boats, caravans, motorcycles etc) do you own, and what are their makes, models, and estimated values?"
+                  );
+                }
+
+                else if (
+                  messageData.current.includes(
+                    "Are there any valuable possessions such as artwork, jewellery, or collectibles that you own? If so, could you describe each item and estimate its value?"
+                  )
+                ) {
+                  e.preventDefault();
+                  handleAddAIResponse(
+                    "What is the estimated value of your household effects/content e.g. furniture, appliances etc. Your short-term insurance cover amount for household content can be used. If yes, please provide details about each item, including its type, estimated value, and any notable items you would like to include in your estate plan."
+                  );
+                }
+
+                else if (
+                  messageData.current.includes(
+                    "What is the estimated value of your household effects/content e.g. furniture, appliances etc. Your short-term insurance cover amount for household content can be used. If yes, please provide details about each item, including its type, estimated value, and any notable items you would like to include in your estate plan."
+                  )
+                ) {
+                  e.preventDefault();
+                  handleAddAIResponse(
+                    "Can you provide details about your investment portfolio, including stocks, bonds, mutual funds, retirement accounts, and any other investment holdings? Please specify the quantity, type, and current value of each investment."
+                  );
+                }
+                
+                else if (
+                  messageData.current.includes(
+                    "Can you provide details about your investment portfolio, including stocks, bonds, mutual funds, retirement accounts, and any other investment holdings? Please specify the quantity, type, and current value of each investment."
+                  )
+                ) {
+                  e.preventDefault();
+                  handleAddAIResponse(
+                    "Do you have any cash savings or deposits in bank accounts? If yes, please provide the approximate balances for each account."
+                  );
+                }
+
+
+                else if (
+                  messageData.current.includes(
+                    "Do you have any cash savings or deposits in bank accounts? If yes, please provide the approximate balances for each account."
+                  )
+                ) {
+                  e.preventDefault();
+                  handleAddAIResponse(
+                    "Do you have any business interests or ownership stakes in companies? If yes, please provide details about each business, including its type, ownership percentage, and estimated value."
+                  );
+                }
+                
+                else if (
+                  messageData.current.includes(
+                    "Do you have any business interests or ownership stakes in companies? If yes, please provide details about each business, including its type, ownership percentage, and estimated value."
+                  )
+                ) {
+                  e.preventDefault();
+                  handleAddAIResponse(
+                    "Are there any other significant assets not mentioned that you would like to include in your estate plan? If so, please describe them and provide their estimated values."
+                  );
+                }
+
+                else if (
+                  messageData.current.includes(
+                    "Are there any other significant assets not mentioned that you would like to include in your estate plan? If so, please describe them and provide their estimated values."
+                  )
+                ) {
+                  e.preventDefault();
+                  handleAddAIResponse(
+                    "Do you own any intellectual property rights, such as patents, trademarks, or copyrights? If yes, please provide details about each intellectual property asset."
+                  );
+                }
+
+                else if (
+                  messageData.current.includes(
+                    "Do you own any intellectual property rights, such as patents, trademarks, or copyrights? If yes, please provide details about each intellectual property asset."
+                  )
+                ) {
+                  e.preventDefault();
+                  handleAddAIResponse(
+                    "Are there any assets held in trust or other legal entities? If yes, please specify the nature of the trust or entity and describe the assets held within."
+                  );
+                }
+                
+                else if (
+                  messageData.current.includes(
+                    "Are there any assets held in trust or other legal entities? If yes, please specify the nature of the trust or entity and describe the assets held within."
+                  )
+                ) {
+                  e.preventDefault();
+                  handleAddAIResponse(
+                    "Do you have any outstanding mortgage loans? If yes, please specify the outstanding balance and the property/assets mortgaged."
+                  );
+                }
+
+
+                else if (
+                  messageData.current.includes(
+                    "Do you have any outstanding mortgage loans? If yes, please specify the outstanding balance and the property/assets mortgaged."
+                  )
+                ) {
+                  e.preventDefault();
+                  handleAddAIResponse(
+                    "Are there any personal loans you currently owe? If so, please provide details on the outstanding amount and the purpose of the loan."
+                  );
+                }
+                
+
+                else if (
+                  messageData.current.includes(
+                    "Are there any personal loans you currently owe? If so, please provide details on the outstanding amount and the purpose of the loan."
+                  )
+                ) {
+                  e.preventDefault();
+                  handleAddAIResponse(
+                    "Do you have any credit card debt? If yes, please specify the total amount owed and the interest rates associated with each card."
+                  );
+                }
+
+                else if (
+                  messageData.current.includes(
+                    "Do you have any credit card debt? If yes, please specify the total amount owed and the interest rates associated with each card."
+                  )
+                ) {
+                  e.preventDefault();
+                  handleAddAIResponse(
+                    "Are there any loans for vehicles you own? If so, please provide details on the outstanding balance and the vehicles financed."
+                  );
+                }
+
+                else if (
+                  messageData.current.includes(
+                    "Are there any loans for vehicles you own? If so, please provide details on the outstanding balance and the vehicles financed."
+                  )
+                ) {
+                  e.preventDefault();
+                  handleAddAIResponse(
+                    "Are there any other outstanding debts or financial obligations that you have? This may include student loans, medical bills, or any other loans or accounts. Please specify the type of debt and the outstanding amount."
+                  );
+                }
+
+
+                
+
+               
+
+                
+                
+
+
+
+
+
+                
+
+
+                
+                else if (
+                  messageData.current.includes(
+                    "Great! Please provide the above mentioned details of your vehicle with their estimated values."
+                  )
+                ) {
+                  e.preventDefault();
+                 handleAddAIResponse(
+                 "Are there any valuable possessions such as artwork, jewellery, or collectibles that you own? If so, could you describe each item and estimate its value?"
+                 );
                 } else if (
                   messageData.current.includes(
                     "No problem. Whenever you're ready to provide the details of your vehicle, just let me know."
@@ -16352,7 +16452,24 @@ export default function Chat() {
                   );
                 }
 
+
+
+
                 //ASSET
+                else if (
+                  messageData.current.includes(
+                    "Great! Please provide the above mentioned details of your vehicle loan23443234"
+                  )
+                ) {
+                  e.preventDefault();
+                  handleAddAIResponse(
+                    "Are there any other outstanding debts or financial obligations that you have? This may include student loans, medical bills, or any other loans or accounts. Please specify the type of debt and the outstanding amount."
+                  );
+                }
+
+
+
+
                 else if (
                   messageData.current.includes(
                     "To help you estimate the value of your property, let’s go through a few simple steps. This will give you a rough idea of what your property could be worth."
@@ -16560,16 +16677,7 @@ export default function Chat() {
                   handleAddAIResponse(
                     "Are there any loans for vehicles you own? If so, please provide details on the outstanding balance and the vehicles financed."
                   );
-                } else if (
-                  messageData.current.includes(
-                    "Great! Please provide the above mentioned details of your vehicle loan"
-                  )
-                ) {
-                  e.preventDefault();
-                  handleAddAIResponse(
-                    "Are there any other outstanding debts or financial obligations that you have? This may include student loans, medical bills, or any other loans or accounts. Please specify the type of debt and the outstanding amount."
-                  );
-                } else if (
+                }  else if (
                   messageData.current.includes(
                     "No problem. Whenever you're ready to provide the details of your vehicle loan"
                   )
@@ -17341,12 +17449,12 @@ export default function Chat() {
                 <button
                   id="send-button"
                   type="submit"
-                  className=" text-white px-4 rounded-md ml-2 flex items-center justify-center"
+                  className=" text-white  rounded-md ml-2 flex items-center justify-center"
                 >
                   <img
                     src="/images/sendButton.png"
                     alt="Send Icon"
-                    className="h-[60px] w-[70px]"
+                    className="h-[50px] w-[50px] object-contain"
                   />
                 </button>
               </div>

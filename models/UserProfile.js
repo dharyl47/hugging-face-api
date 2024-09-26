@@ -36,6 +36,12 @@ const userProfileSchema = new mongoose.Schema({
     highRisk: { type: Boolean, default: false },
   },
   mvID: { type: String, required: true },
+  templatesDownloaded: {
+    will: { type: Boolean, default: false },
+    trust: { type: Boolean, default: false },
+    powerOfAttorney: { type: Boolean, default: false },
+    livingWill: { type: Boolean, default: false },
+  },
 });
 
 // Use the collection name in lowercase to match MongoDB collection
