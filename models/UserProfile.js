@@ -15,9 +15,9 @@ const userProfileSchema = new mongoose.Schema({
   dependants: {
     spouse: { type: Boolean, default: false },
     children: { type: Boolean, default: false },
-    stepChildren: { type: Boolean, default: false },
-     factualDependents: { type: Boolean, default: false },
+    stepChildren: { type: Boolean, default: false }, 
     grandChildren: { type: Boolean, default: false },
+    factualDependents: { type: Boolean, default: false },
     other: { type: Boolean, default: false },
   },
   asset: {

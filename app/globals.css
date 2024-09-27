@@ -19,6 +19,96 @@
   overflow-y: auto;
 }
 
+@media (max-width: 640px) {
+  .custom-mobile-font {
+    font-size: 0.25rem; /* Adjust as needed, e.g., 12px */
+  }
+}
+
+/* Assistant message container */
+/* Assistant message container */
+.assistant-message {
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+  padding-left: 65px; /* Ensure there's space for the icon */
+}
+
+/* AI icon added before each assistant message */
+.assistant-message::before {
+  content: ''; /* Empty content for the pseudo-element */
+  background-image: url('/images/chatIconAI.png'); /* Use background-image */
+  background-size: contain; /* Scale the image */
+  background-repeat: no-repeat;
+  position: absolute;
+  top: 0;
+  left: -10px; /* Set the gap to 2px from the left */
+  width: 45px; /* Control the width */
+  height: 45px; /* Control the height */
+}
+
+/* Message bubble for assistant */
+.assistant-message p {
+  background-color: #2f2f2f;
+  color: white;
+  border-radius: 10px;
+  padding: 10px 15px;
+  display: inline-block;
+  margin: 0;
+  margin-left: -10px; /* Ensure 15px gap between icon and message */
+}
+
+
+/* Assistant message container without image */
+.assistant-message-no-image {
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+  margin-bottom: -30px !important;
+  padding-left: 65px; /* Same padding as the message with icon */
+}
+
+/* Message bubble for assistant without image */
+
+
+
+.custom-checkbox {
+  /* Remove default checkbox appearance */
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  margin-right: 8px;
+  border: 3px solid #707070; /* Default border color */
+  border-radius: 3px;
+  background-color: transparent; /* Transparent background */
+  cursor: pointer;
+  position: relative;
+}
+
+.custom-checkbox:checked {
+  background-color: #8DC63F; /* Green background when checked */
+  border-color: white; /* White border when checked */
+}
+
+.custom-checkbox:checked::before {
+  content: '';
+  position: absolute;
+  top: -1px;
+  left: 4px;
+  width: 6px;
+  height: 12px;
+  border: solid white;
+  border-width: 0 3px 3px 0;
+  transform: rotate(45deg); /* Create a checkmark */
+}
+
+
+
+
+
 /* Input form fixed at the bottom */
 form {
   position: sticky;

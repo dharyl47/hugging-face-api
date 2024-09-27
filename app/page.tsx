@@ -779,8 +779,8 @@ export default function Chat() {
   const handleButtonStage13v2 = (message: any) => {
     let response = "";
 
-    if (message == "Yes, I have a question.") {
-      response = "What is your question?";
+    if (message == "Yes, I have a question") {
+      response = "Absolutely! I'm here to assist. What would you like to ask?";
 
       setNextResponse(
         "Property is a common asset that is bequeathed in estate plans. Farms in particular have specific bequeathing conditions. Do you want to explore these conditions further?"
@@ -846,7 +846,7 @@ export default function Chat() {
     let response = "";
 
     if (message == "Yes, I have a question") {
-      response = "What is your question?";
+      response = "Absolutely! I'm here to assist. What would you like to ask?";
 
       setNextResponse(
         "Would you like to see how different scenarios could impact your estate? Here are a few examples we can simulate:"
@@ -1101,7 +1101,7 @@ export default function Chat() {
       message == "Get in touch with an Old Mutual Financial Advisor"
     ) {
       response =
-        "Fantastic! Our financial advisors at Old Mutual are ready to assist you in filling out these templates. Please reach out to us directly to schedule a consultation and receive personalised guidance. Here’s how you can get in touch:";
+        "Fantastic! Our financial advisers at Old Mutual are ready to assist you in filling out these templates. Please reach out to us directly to schedule a consultation and receive personalised guidance. Here’s how you can get in touch:";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -1610,14 +1610,14 @@ export default function Chat() {
         "Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan.";
     }
     if (message == "Upload Document at End of Chat") {
-      response = "Estate Document Uploaded";
+      response = "Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan.";
     }
     if (message == "Yes, specify detail") {
       response = "Great! Please provide the above mentioned details.";
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready to provide the details of any of your real estate, just let me know.";
+        "Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan.";
     }
     if (message == "I’m unsure of the details") {
       response =
@@ -1752,7 +1752,7 @@ export default function Chat() {
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready to provide the details of the farm, just let me know.";
+        "How many vehicles (cars, boats, caravans, motorcycles etc) do you own, and what are their makes, models, and estimated values?";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -1789,7 +1789,7 @@ export default function Chat() {
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready to provide the details of your vehicle, just let me know.";
+        "Are there any valuable possessions such as artwork, jewellery, or collectibles that you own? If so, could you describe each item and estimate its value?";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -1826,7 +1826,7 @@ export default function Chat() {
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready to provide the details of your valuable possessions, just let me know.";
+        "What is the estimated value of your household effects/content e.g. furniture, appliances etc. Your short-term insurance cover amount for household content can be used. If yes, please provide details about each item, including its type, estimated value, and any notable items you would like to include in your estate plan.?";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -1863,7 +1863,7 @@ export default function Chat() {
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready to provide the details of your household";
+        "Can you provide details about your investment portfolio, including stocks, bonds, mutual funds, retirement accounts, and any other investment holdings? Please specify the quantity, type, and current value of each investment.";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -1901,7 +1901,7 @@ export default function Chat() {
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready to provide the details of your investment portfolio";
+        "Do you have any cash savings or deposits in bank accounts? If yes, please provide the approximate balances for each account.";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -1938,7 +1938,7 @@ export default function Chat() {
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready to provide the details of your cash savings or deposits in bank accounts";
+        "Do you have any business interests or ownership stakes in companies? If yes, please provide details about each business, including its type, ownership percentage, and estimated value.";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -1975,7 +1975,7 @@ export default function Chat() {
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready to provide the details of your business interest";
+        "Are there any other significant assets not mentioned that you would like to include in your estate plan? If so, please describe them and provide their estimated values.";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -2012,7 +2012,7 @@ export default function Chat() {
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready to provide the details of your significant assets";
+        "Do you own any intellectual property rights, such as patents, trademarks, or copyrights? If yes, please provide details about each intellectual property asset.";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -2049,7 +2049,7 @@ export default function Chat() {
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready to provide the details of your intellectual property rights";
+        "Are there any assets held in trust or other legal entities? If yes, please specify the nature of the trust or entity and describe the assets held within.";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -2086,7 +2086,7 @@ export default function Chat() {
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready to provide the details of your legal entities";
+        "Do you have any outstanding mortgage loans? If yes, please specify the outstanding balance and the property/assets mortgaged.";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -2123,7 +2123,7 @@ export default function Chat() {
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready to provide the details of your outstanding mortgage loan";
+        "Are there any personal loans you currently owe? If so, please provide details on the outstanding amount and the purpose of the loan.";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -2160,7 +2160,7 @@ export default function Chat() {
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready to provide the details of your current personal loan";
+        "Do you have any credit card debt? If yes, please specify the total amount owed and the interest rates associated with each card.";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -2197,7 +2197,7 @@ export default function Chat() {
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready to provide the details of your credit card debt";
+        "Are there any loans for vehicles you own? If so, please provide details on the outstanding balance and the vehicles financed.";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -2234,7 +2234,7 @@ export default function Chat() {
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready to provide the details of your vehicle loan";
+        "Are there any other outstanding debts or financial obligations that you have? This may include student loans, medical bills, or any other loans or accounts. Please specify the type of debt and the outstanding amount.";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -2271,7 +2271,7 @@ export default function Chat() {
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready to provide the details of your outstanding debt";
+        "Do you have a strategy in place for managing and reducing your liabilities over time?";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -2308,7 +2308,7 @@ export default function Chat() {
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready to provide the details of your strategy";
+        "Are there any significant changes expected in your liabilities in the foreseeable future?";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -2345,7 +2345,7 @@ export default function Chat() {
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready to provide the details of your significant changes expected in your liabilities";
+        "Do you currently have any life insurance policies in place? If yes, please specify the type of policy, the coverage amount, the beneficiaries, and any additional riders or features.";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -2382,7 +2382,7 @@ export default function Chat() {
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready to provide the details of your life insurance policies";
+        "Are you covered by any health insurance policies/plans that is not a Medical Aid? If so, please specify the type of coverage, the insurance provider, and any details about co-pays, deductibles, and coverage limits.";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -2420,7 +2420,7 @@ export default function Chat() {
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready to provide the details of your health insurance policies";
+        "Are your properties, including your primary residence and any other real estate holdings, adequately insured? Please specify the insurance provider, coverage amount, and any additional coverage options.";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -2458,7 +2458,7 @@ export default function Chat() {
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready to provide the details of your insurance provider";
+        "Are your vehicles insured? If yes, please specify the insurance provider, coverage type (e.g., comprehensive, liability), and any details about the insured vehicles.";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -2496,7 +2496,7 @@ export default function Chat() {
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready to provide the details of your vehicle insurance provider";
+        "Disability insurance is crucial in case you're unable to work due to illness or injury. Do you currently have disability insurance?";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -2560,7 +2560,7 @@ export default function Chat() {
 
     if (message == "Yes") {
       response =
-        "Great, I will have one of our financial advisors get in touch regarding obtaining disability insurance";
+        "Great, I will have one of our financial advisers get in touch regarding obtaining disability insurance";
     }
     if (message == "No") {
       response =
@@ -2788,7 +2788,7 @@ export default function Chat() {
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready to provide the details about any other type of insurance you have, just let me know.";
+        "Have you reviewed your insurance policies recently to ensure they align with your current needs and circumstances?";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -2822,11 +2822,13 @@ export default function Chat() {
     }
     if (message == "Yes, specify detail") {
       response =
-        "Now, let's discuss funeral cover. Funeral cover provides liquidity to your beneficiaries within a short time frame after submitting a claim. Have you considered obtaining funeral cover?";
-    }
+        "Great! Please provide the above mentioned details of your insurance policies";
+        //Great! Please provide the above mentioned details
+    
+      }
     if (message == "No, let’s move on") {
       response =
-        "Now, let's discuss funeral cover. Funeral cover provides liquidity to your beneficiaries within a short time frame after submitting a claim. Have you considered obtaining funeral cover?";
+        "Thank you for discussing insurance policies with me. Let’s proceed to the next part of your estate planning. Shall we continue?";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -2898,7 +2900,7 @@ export default function Chat() {
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready to provide the details of your stocks or equities";
+        "Are you invested in any bonds or fixed-income securities? If so, please provide details about the types of bonds (government, corporate, municipal), the face value of each bond, the interest rate, and the maturity date.";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -2935,7 +2937,7 @@ export default function Chat() {
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready, please provide the types of bonds you are interested in.";
+        "Do you have investments in mutual funds? If yes, please specify the names of the funds, the fund managers, the investment objectives, and the current value of your holdings in each fund.";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -2973,7 +2975,7 @@ export default function Chat() {
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready to provide the details of your investments in mutual funds.";
+        "Are you contributing to a retirement fund such as retirement annuity fund, employer sponsored pension fund or provident fund? Please provide details about the type of retirement account, the current balance, and any investment options available within the account.";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -3011,7 +3013,7 @@ export default function Chat() {
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready to provide the details of your type of retirement account.";
+        "Do you own any investment properties or real estate holdings? If yes, please specify the properties, their current market value, any rental income generated, and any outstanding mortgages or loans against the properties.";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -3049,7 +3051,7 @@ export default function Chat() {
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready to provide the details of your investment properties or real estate holdings";
+        "Are you invested in any other asset classes such as commodities, alternative investments, or cryptocurrencies? If so, please provide details about the specific investments and their current value.";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -3087,7 +3089,7 @@ export default function Chat() {
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready to provide the details of your asset classes.";
+        "Have you defined your investment goals and risk tolerance to guide your investment decisions effectively?";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -3540,11 +3542,11 @@ export default function Chat() {
 
     if (message == "Yes") {
       response =
-        "Great, one of our financial advisors will be in touch in this regard.";
+        "Great, one of our financial advisers will be in touch in this regard.";
     }
     if (message == "No") {
       response =
-        "Great, one of our financial advisors will be in touch in this regard.";
+        "Great, one of our financial advisers will be in touch in this regard.";
     }
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     const userMessage: Message = {
@@ -3577,7 +3579,7 @@ export default function Chat() {
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready to provide the details, just let me know.";
+        "Great! Next, we’ll look at the executor’s fees. Shall we continue?";
     }
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     const userMessage: Message = {
@@ -3696,7 +3698,7 @@ export default function Chat() {
 
     if (message == "No") {
       response =
-        "Thank you for providing these details," +
+        "Thank you for providing these details, " +
         userName +
         ". Now, we can move on to the next part of your estate planning. Ready to continue?";
     }
@@ -3868,7 +3870,7 @@ export default function Chat() {
     }
     if (message == "Yes") {
       response =
-        "Great! Our financial advisors at Old Mutual can help you and your heirs understand the financial implications and create a fair strategy. They can assist in evaluating each heir’s ability to contribute, ensure clear communication among all parties, and develop a plan that respects everyone's circumstances. We'll include this information in the report shared at the end of this conversation.";
+        "Great! Our financial advisers at Old Mutual can help you and your heirs understand the financial implications and create a fair strategy. They can assist in evaluating each heir’s ability to contribute, ensure clear communication among all parties, and develop a plan that respects everyone's circumstances. We'll include this information in the report shared at the end of this conversation.";
     }
     if (message == "No") {
       response =
@@ -3945,7 +3947,7 @@ export default function Chat() {
     }
     if (message == "I’d like to explore alternative financing options") {
       response =
-        "Absolutely! When facing a shortfall, selling assets isn't the only option available. Alternative financing strategies, such as securing loans against estate assets, negotiating payment terms with creditors, or utilising existing insurance policies, can provide additional flexibility without compromising your long-term goals for asset distribution. Each option comes with its own set of considerations and implications, so it's essential to weigh them carefully. Our financial advisors can help you set this up.";
+        "Absolutely! When facing a shortfall, selling assets isn't the only option available. Alternative financing strategies, such as securing loans against estate assets, negotiating payment terms with creditors, or utilising existing insurance policies, can provide additional flexibility without compromising your long-term goals for asset distribution. Each option comes with its own set of considerations and implications, so it's essential to weigh them carefully. Our financial advisers can help you set this up.";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -4218,7 +4220,7 @@ export default function Chat() {
     }
     if (message == "No, let’s move on") {
       response =
-        "No problem. Whenever you're ready, please provide the details about your life insurance policy.";
+        "Have you considered the cost of education and taken that into account regarding maintenance?";
     }
     if (message == "Continue") {
       response =
@@ -4423,7 +4425,7 @@ export default function Chat() {
     }
     if (message == "Yes") {
       response =
-        "Setting up a life insurance policy payable to a testamentary trust can ensure that maintenance obligations are met without burdening your estate. This approach provides a reliable income stream for your beneficiaries. Our financial advisors at Old Mutual can provide detailed guidance and help you explore this option further.";
+        "Setting up a life insurance policy payable to a testamentary trust can ensure that maintenance obligations are met without burdening your estate. This approach provides a reliable income stream for your beneficiaries. Our financial advisers at Old Mutual can provide detailed guidance and help you explore this option further.";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -4522,7 +4524,7 @@ export default function Chat() {
     }
     if (message == "Yes") {
       response =
-        "Providing for your surviving spouse can be done through various means, such as setting up a trust, designating life insurance benefits, or specifying direct bequests in your will. Our financial advisors at Old Mutual can guide you through these options to find the best solution for your needs. We will include this information in the report shared at the end of this conversation.";
+        "Providing for your surviving spouse can be done through various means, such as setting up a trust, designating life insurance benefits, or specifying direct bequests in your will. Our financial advisers at Old Mutual can guide you through these options to find the best solution for your needs. We will include this information in the report shared at the end of this conversation.";
     }
     if (message == "No") {
       response =
@@ -4555,7 +4557,7 @@ export default function Chat() {
     }
     if (message == "Yes") {
       response =
-        "Incorporating provisions for your surviving spouse can be an essential part of a comprehensive estate plan. Understanding the legal and financial implications will help you make an informed decision. Our financial advisors at Old Mutual can provide you with the necessary information and advice. We will include this information in the report shared at the end of this conversation.";
+        "Incorporating provisions for your surviving spouse can be an essential part of a comprehensive estate plan. Understanding the legal and financial implications will help you make an informed decision. Our financial advisers at Old Mutual can provide you with the necessary information and advice. We will include this information in the report shared at the end of this conversation.";
     }
     if (message == "No") {
       response =
@@ -5859,13 +5861,13 @@ export default function Chat() {
     }
     if (message == "I have some understanding but need more clarity") {
       response =
-        "It’s great that you have some understanding of sale and loan agreements. These agreements outline the sale terms and the loan's repayment terms if a loan account is created. If you need more clarity or have questions about specific aspects of these agreements, feel free to ask. I’m here to help provide additional information and support your understanding.";
+        "It’s great that you have some understanding of sale agreements. These agreements outline the sale terms and the loan's repayment terms if a loan account is created. If you need more clarity or have questions about specific aspects of these agreements, feel free to ask. I’m here to help provide additional information and support your understanding.";
     }
     if (
       message == "I need assistance in understanding the terms and conditions"
     ) {
       response =
-        "Sale and loan agreements can be complex, especially when transferring assets to a trust. These agreements detail the sale transaction and the loan terms, if applicable. If you need help understanding these terms and conditions, or have questions about how they apply to your situation, I’m here to provide guidance and support.";
+        "Sale agreements can be complex, especially when transferring assets to a trust. These agreements detail the sale transaction and the loan terms, if applicable. If you need help understanding these terms and conditions, or have questions about how they apply to your situation, I’m here to provide guidance and support.";
     }
     if (
       message ==
@@ -6235,6 +6237,7 @@ export default function Chat() {
     factualDependents: false,
     other: false,
   });
+  
 
   // Function to format camelCase keys into readable text
   const formatLabel = (key: string) => {
@@ -6370,18 +6373,35 @@ export default function Chat() {
     }
   };
 
-  const handleCheckboxChange = async (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const { id, checked } = e.target;
-    const updatedCheckboxes = { ...checkboxes, [id]: checked };
-    console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkboxes
+ const handleCheckboxChange = async (
+  e: React.ChangeEvent<HTMLInputElement>
+) => {
+  const { id, checked } = e.target;
+  const updatedCheckboxes = { ...checkboxes, [id]: checked };
+  console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkboxes
 
-    setCheckboxes(updatedCheckboxes);
-    updateInputStr(checkboxesAsset, updatedCheckboxes);
+  // Create a copy of updatedCheckboxes for updating InputStr
+  const updatedForDisplay: { [key: string]: boolean } = { ...updatedCheckboxes };
 
-    await saveUserProfile({ checkboxes: updatedCheckboxes });
-  };
+  // Change 'factualDependents' key to 'Factual Dependents' in the display data
+  if (id === "factualDependents") {
+    updatedForDisplay["Factual Dependents"] = updatedForDisplay["factualDependents"];
+    delete updatedForDisplay["factualDependents"]; // Safely remove key now
+  }
+
+  setCheckboxes(updatedCheckboxes);
+
+  // Pass the modified object to updateInputStr for display
+  updateInputStr(checkboxesAsset, updatedForDisplay);
+
+  // Save the original checkboxes state to the database (without display modifications)
+  await saveUserProfile({ checkboxes: updatedCheckboxes });
+};
+
+
+
+
+
   const handleButtonPrivacy = async (message: any) => {
     setPrivacyPolicy(true);
     handleInputChange({
@@ -6783,59 +6803,58 @@ export default function Chat() {
         >
           {message.role === "assistant" && index === 0 ? (
             <>
-              <div className="flex items-start mb-4">
+              <div className="flex items-start mb-4 assistant-message">
                 {/* SVG Icon */}
-
+              
                 {/* AI Message Bubble */}
                 <p className="bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                   {filteredContent.replace(/<\|endoftext\|>/g, "")}
                 </p>
               </div>
-              <div className="flex space-x-2 mt-2">
-                <div className="space-y-2 mt-2">
-                  {/* Yes, I consent checkbox */}
-                  <div
-                    onClick={() => handleButtonConsent("Yes, I consent")} // Add onClick event
-                    className={`flex items-center space-x-2 px-4 py-2 w-[400px] rounded-md border cursor-pointer ${
-                      consent === "Yes, I consent"
-                        ? "bg-[#8DC63F] text-white border-transparent"
-                        : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
-                    }`}
-                  >
-                    <input
-                      type="checkbox"
-                      id="consentYes"
-                      name="consent"
-                      value="Yes, I consent"
-                      checked={consent === "Yes, I consent"}
-                      // onChange={() => handleButtonConsent("Yes, I consent")}
-                      className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
-                    />
-                    &nbsp;&nbsp;&nbsp;Yes, I consent
-                  </div>
+              <div className="flex space-x-2 ml-11">
+  <div className="space-y-2">
+    {/* Yes, I consent checkbox */}
+    <div
+      onClick={() => handleButtonConsent("Yes, I consent")}
+      className={`flex items-center space-x-2 px-4 py-2 w-[400px] rounded-md border cursor-pointer ${
+        consent === "Yes, I consent"
+          ? "bg-[#8DC63F] text-white border-transparent"
+          : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
+      }`}
+    >
+      <input
+        type="checkbox"
+        id="consentYes"
+        name="consent"
+        value="Yes, I consent"
+        checked={consent === "Yes, I consent"}
+        className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
+      />
+      &nbsp;&nbsp;&nbsp;Yes, I consent
+    </div>
 
-                  {/* No, I do not consent checkbox */}
-                  <div
-                    onClick={() => handleButtonConsent("No, I do not consent")} // Add onClick event
-                    className={`flex items-center space-x-2 px-4 py-2 rounded-md border cursor-pointer ${
-                      consent === "No, I do not consent"
-                        ? "bg-[#8DC63F] text-white border-transparent"
-                        : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
-                    }`}
-                  >
-                    <input
-                      type="checkbox"
-                      id="consentNo"
-                      name="consent"
-                      value="No, I do not consent"
-                      checked={consent === "No, I do not consent"}
-                      // onChange={() => handleButtonConsent("No, I do not consent")}
-                      className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
-                    />
-                    &nbsp;&nbsp;&nbsp;No, I do not consent
-                  </div>
-                </div>
-              </div>
+    {/* No, I do not consent checkbox */}
+    <div
+      onClick={() => handleButtonConsent("No, I do not consent")}
+      className={`flex items-center space-x-2 px-4 py-2 rounded-md border cursor-pointer ${
+        consent === "No, I do not consent"
+          ? "bg-[#8DC63F] text-white border-transparent"
+          : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
+      }`}
+    >
+      <input
+        type="checkbox"
+        id="consentNo"
+        name="consent"
+        value="No, I do not consent"
+        checked={consent === "No, I do not consent"}
+        className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
+      />
+      &nbsp;&nbsp;&nbsp;No, I do not consent
+    </div>
+  </div>
+</div>
+
             </>
           ) : (
             <div
@@ -6867,19 +6886,17 @@ export default function Chat() {
                   </button>
                 </>
               ) : (
-                <p
-                  className={
-                    message.role === "user"
-                      ? "bg-[#8dc63f] text-white rounded-lg py-2 px-4 inline-block"
-                      : "bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block"
-                  }
-                >
-                  {` ${filteredContent.replace(/<\|endoftext\|>/g, "")}`}
-                </p>
+                //AI CHAT BUBBLE IS HERE
+                <div className={message.role === "user"? "bg-[#8dc63f] text-white rounded-lg py-2 px-4 inline-block":
+                  "flex items-start mb-2 assistant-message"}>
+                  <p className={message.role === "user"? "":"bg-[#2f2f2f] text-white rounded-lg inline-block"}>
+                   {` ${filteredContent.replace(/<\|endoftext\|>/g, "")}`}</p>
+                </div>
+
               )}
 
               {questionResponse1 && (
-                <div className="space-x-2 mt-2">
+                <div className="space-x-2 ml-11 mt-4">
                   <button
                     onClick={() =>
                       handleButtonFunFact(
@@ -6899,7 +6916,7 @@ export default function Chat() {
                 </div>
               )}
               {questionResponseStage12 && (
-                <div className="space-x-2 mt-2">
+                <div className="space-x-2 ml-11 mt-4">
                   <button
                     onClick={() => handleButtonStage12("I have a question.")}
                     className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
@@ -6918,7 +6935,7 @@ export default function Chat() {
                 "Are you ready to explore some potential outcomes of different estate planning choices?"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 ml-11 mt-4">
                     <button
                       onClick={() =>
                         handleButtonStage13v1("Yes, I’m ready to move on")
@@ -6940,7 +6957,7 @@ export default function Chat() {
                 "Let’s check out some examples to understand these options better. Here are a few examples we can simulate:"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     <b>Scenario 1</b>: 📜 How will setting up a trust affect the
                     management and distribution of your assets?
                     <br />
@@ -6982,30 +6999,31 @@ export default function Chat() {
                   </div>
                   <br />
                   {scenario.map((scenarios) => (
-                    <>
-                      <br /> {/* Adjust margin as needed */}
-                      <label
-                        key={scenarios}
-                        htmlFor={scenarios}
-                        className={`flex items-center space-x-2 px-4 py-2 w-[400px] -my-2 rounded-md border cursor-pointer ${
-                          selectedScenario.includes(scenarios)
-                            ? "bg-[#8DC63F] text-white border-transparent"
-                            : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
-                        }`}
-                      >
-                        <input
-                          type="checkbox"
-                          id={scenarios}
-                          onChange={handleCheckboxChangeScenario}
-                          name={scenarios}
-                          value={scenarios}
-                          checked={selectedScenario.includes(scenarios)}
-                          className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
-                        />
-                        &nbsp;&nbsp;&nbsp;{scenarios}
-                      </label>
-                    </>
-                  ))}
+  <>
+    <br /> {/* Adjust margin as needed */}
+    <label
+      key={scenarios}
+      htmlFor={scenarios}
+      className={`flex items-center space-x-2 px-4 py-2 w-[400px] -my-2 rounded-md border cursor-pointer ${
+        selectedScenario.includes(scenarios)
+          ? "bg-[#8DC63F] text-white border-transparent"
+          : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
+      }`}
+    >
+      <input
+        type="checkbox"
+        id={scenarios}
+        onChange={handleCheckboxChangeScenario}
+        name={scenarios}
+        value={scenarios}
+        checked={selectedScenario.includes(scenarios)}
+        className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
+      />
+      &nbsp;&nbsp;&nbsp;{scenarios}
+    </label>
+  </>
+))}
+
                   <button
                     onClick={handleProceedScenario}
                     className="mt-4 px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition"
@@ -7016,7 +7034,7 @@ export default function Chat() {
               )}
 
               {/* {message.content.includes("Do you have any other questions or need further information? I’m here to help!") && (
-                <div className="space-x-2">
+                <div className="space-x-2 ml-9">
                     <br/><button
                       onClick={() => handleButtonStage14("Yes, I have a question")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
@@ -7033,11 +7051,11 @@ export default function Chat() {
                 )} */}
               {message.content.includes("Templates are downloaded") && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Would you like any assistance filling out any of these
                     templates?
                   </div>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage15("No, let's move on")}
@@ -7059,7 +7077,7 @@ export default function Chat() {
                 "Are you concerned about protecting your assets from potential insolvency issues, either for yourself or your heirs?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage18Component("Yes")}
@@ -7084,10 +7102,10 @@ export default function Chat() {
               )}
 
               {message.content.includes(
-                "Fantastic! Our financial advisors at Old Mutual are ready to assist you in filling out these templates. Please reach out to us directly to schedule a consultation and receive personalised guidance. Here’s how you can get in touch:"
+                "Fantastic! Our financial advisers at Old Mutual are ready to assist you in filling out these templates. Please reach out to us directly to schedule a consultation and receive personalised guidance. Here’s how you can get in touch:"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     • Phone: Call us at [insert phone number] to speak with an
                     adviser.
                     <br />
@@ -7095,7 +7113,7 @@ export default function Chat() {
                     with your contact details, and we’ll get back to you
                     promptly.
                   </div>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage15v1("Continue")}
@@ -7109,7 +7127,7 @@ export default function Chat() {
 
               {/* {message.content.includes("Here are the all scenario") && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Scenario 1 - Setting Up a Trust: Imagine you set up a trust
                     to manage your assets. The trust could be used to provide
                     for your children’s education and care until they reach
@@ -7149,7 +7167,7 @@ export default function Chat() {
                     understand the best strategies for minimising tax
                     liabilities while achieving your estate planning goals. 💰📊
                   </div>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br/><button
                       onClick={() => handleButtonStage13Component("Scenario 1")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
@@ -7196,7 +7214,7 @@ export default function Chat() {
 
               {/* {templateButton && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Based on your profile, here’s a suggested plan:
                     <br />
                     <br />
@@ -7228,7 +7246,7 @@ export default function Chat() {
               )}
               {stepByStep && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Based on your profile, here’s a suggested plan:
                     <br />
                     <br />
@@ -7253,7 +7271,7 @@ export default function Chat() {
                     Would you like me to share some templates to help you get
                     started? I’m here to help! 🤝💬
                   </div>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br/><button
                       onClick={() =>
                         handleButtonStage14Component("No, let's move on")
@@ -7276,7 +7294,7 @@ export default function Chat() {
                 "Now that I have some basic information about you, let’s create a customised estate planning process tailored to your needs!"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Here are some templates to help you get started with your
                     estate planning documents:
                     <br />
@@ -7302,7 +7320,7 @@ export default function Chat() {
                     the copy for reference at any point in your estate planning
                     journey.
                   </div>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -7362,7 +7380,7 @@ export default function Chat() {
                 "Now that we’ve covered your personal details, let’s talk about your objectives for estate planning. Understanding your goals will help us create a plan that fits your needs perfectly. Ready to dive in?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage15Component("Yes")}
@@ -7385,7 +7403,7 @@ export default function Chat() {
               ) && (
                 <>
                   <br />
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Firstly, how important is it for your estate plan to be
                     flexible and adapt to changes in your personal, financial,
                     and legislative environment?
@@ -7395,7 +7413,7 @@ export default function Chat() {
                     there are changes in laws or your financial situation?
                   </div>
                   <>
-                    <div className="space-x-2">
+                    <div className="space-x-2 ml-9">
                       <br />
                       <button
                         onClick={() => handleButtonStage15Financial("Yes")}
@@ -7423,7 +7441,7 @@ export default function Chat() {
                 "No problem, I understand that estate planning can be a lot to think about. Is there something specific you'd like to discuss or any concerns you have that I can address?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage15Financial("No")}
@@ -7438,7 +7456,7 @@ export default function Chat() {
                 "Do you own a business? If so, how important is it to you that your estate plan protects your business interests, especially in terms of its continuation if you were to pass away or become disabled"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />{" "}
                     <BusinessImportanceSlider
                       onProceed={handleButtonStage16Business}
@@ -7451,7 +7469,7 @@ export default function Chat() {
                 "Please provide details of your arrangement."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -7466,51 +7484,53 @@ export default function Chat() {
               )}
 
               {message.content.includes(
-                "What strategies and measures would you like to have in place to ensure the financial resources set aside for retirement are safeguarded, particularly regarding your business assets or investments?"
-              ) && (
-                <>
-                  <div className="space-x-2">
-                    <br />
-                    {strategies.map((strategy) => (
-                      <>
-                        <br /> {/* Adjust margin as needed */}
-                        <label
-                          key={strategy}
-                          htmlFor={strategy}
-                          className={`flex items-center space-x-2 px-4 py-2 w-[600px] -my-2 rounded-md border cursor-pointer ${
-                            selectedStrategies.includes(strategy)
-                              ? "bg-[#8DC63F] text-white border-transparent"
-                              : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
-                          }`}
-                        >
-                          <input
-                            type="checkbox"
-                            id={strategy}
-                            onChange={handleCheckboxChangeStrategies}
-                            name={strategy}
-                            value={strategy}
-                            checked={selectedStrategies.includes(strategy)}
-                            className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
-                          />
-                          &nbsp;&nbsp;&nbsp;{strategy}
-                        </label>
-                      </>
-                    ))}
-                    <button
-                      onClick={handleProceedStrategy}
-                      className="mt-4 px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition"
-                    >
-                      Proceed
-                    </button>
-                  </div>
-                </>
-              )}
+  "What strategies and measures would you like to have in place to ensure the financial resources set aside for retirement are safeguarded, particularly regarding your business assets or investments?"
+) && (
+  <>
+    <div className="space-x-2 ml-9">
+      <br />
+      {strategies.map((strategy) => (
+  <>
+    <br /> {/* Adjust margin as needed */}
+    <label
+      key={strategy}
+      htmlFor={strategy}
+      className={`flex items-start space-x-4 px-4 py-2 w-full sm:w-[600px] min-h-[60px] rounded-md border cursor-pointer ${
+        selectedStrategies.includes(strategy)
+          ? "bg-[#8DC63F] text-white border-transparent"
+          : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
+      }`}
+    >
+      <input
+        type="checkbox"
+        id={strategy}
+        onChange={handleCheckboxChangeStrategies}
+        name={strategy}
+        value={strategy}
+        checked={selectedStrategies.includes(strategy)}
+        className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
+      />
+      <span className="flex-1 leading-tight">{strategy}</span>
+    </label>
+  </>
+))}
+
+      <button
+        onClick={handleProceedStrategy}
+        className="mt-4 px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition"
+      >
+        Proceed
+      </button>
+    </div>
+  </>
+)}
+
 
               {message.content.includes(
                 "That's okay! It can be overwhelming to decide on the best measures without more information. Here’s a brief overview to help you:"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     🏦 <b>Establish a Trust:</b> <br />
                     Protects your assets and ensures they are distributed
                     according to your wishes.
@@ -7551,33 +7571,34 @@ export default function Chat() {
                     Would you like to discuss any of these options further, or
                     do you need more details on any specific measure?
                   </div>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />{" "}
                     {strategiesv2.map((strategyv2) => (
-                      <>
-                        <br /> {/* Adjust margin as needed */}
-                        <label
-                          key={strategyv2}
-                          htmlFor={strategyv2}
-                          className={`flex items-center space-x-2 px-4 py-2 w-[600px] -my-2 rounded-md border cursor-pointer ${
-                            selectedStrategiesv2.includes(strategyv2)
-                              ? "bg-[#8DC63F] text-white border-transparent"
-                              : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
-                          }`}
-                        >
-                          <input
-                            type="checkbox"
-                            id={strategyv2}
-                            onChange={handleCheckboxChangeStrategiesv2}
-                            name={strategyv2}
-                            value={strategyv2}
-                            checked={selectedStrategiesv2.includes(strategyv2)}
-                            className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
-                          />
-                          &nbsp;&nbsp;&nbsp;{strategyv2}
-                        </label>
-                      </>
-                    ))}
+  <>
+    <br /> {/* Adjust margin as needed */}
+    <label
+      key={strategyv2}
+      htmlFor={strategyv2}
+      className={`flex items-center space-x-2 px-4 py-2 w-[600px] -my-2 rounded-md border cursor-pointer ${
+        selectedStrategiesv2.includes(strategyv2)
+          ? "bg-[#8DC63F] text-white border-transparent"
+          : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
+      }`}
+    >
+      <input
+        type="checkbox"
+        id={strategyv2}
+        onChange={handleCheckboxChangeStrategiesv2}
+        name={strategyv2}
+        value={strategyv2}
+        checked={selectedStrategiesv2.includes(strategyv2)}
+        className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
+      />
+      &nbsp;&nbsp;&nbsp;{strategyv2}
+    </label>
+  </>
+))}
+
                     <button
                       onClick={handleProceedStrategyv2}
                       className="mt-4 px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition"
@@ -7592,7 +7613,7 @@ export default function Chat() {
                 "Flexibility in an estate plan means it can be adjusted without major legal hurdles if your circumstances change. For instance,"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage15Financial("Yes")}
@@ -7614,7 +7635,7 @@ export default function Chat() {
                 "When it comes to the administration of your estate after your passing, how important is it to you that the process is smooth and straightforward for your heirs?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br/><button
                       onClick={() =>
                         handleButtonStage18Administration("Not important")
@@ -7647,7 +7668,7 @@ export default function Chat() {
                 "Great! To help you stay organised throughout the estate planning process, here are some checklists for different stages:"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     <b>Initial Stage:</b>
                     <br />
                     ✅ Gather personal information (name, age, marital status,
@@ -7690,7 +7711,7 @@ export default function Chat() {
                     documents
                     <br />✅ Keep a copy with a trusted person or legal adviser
                   </div>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -7716,7 +7737,7 @@ export default function Chat() {
                 "Describe the condition of your property (new, good, fair, needs renovation). Also, mention any special features (e.g., swimming pool, garden, garage)"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     🏘️ Describe the condition of your property (new, good, fair,
                     needs renovation).
                     <br />
@@ -7738,7 +7759,7 @@ export default function Chat() {
                     For a precise valuation, we recommend consulting a property
                     appraiser or real estate agent.
                   </div>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br/><button
                       onClick={() => handleButtonStage21Calculator("Continue")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
@@ -7753,7 +7774,7 @@ export default function Chat() {
                 "It's understandable to be uncertain about this. Protecting assets from potential insolvency can be crucial for maintaining financial stability. Here are some points to consider"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     🏦 Trusts: Placing assets in a trust can shield them from
                     creditors.
                     <br />
@@ -7773,7 +7794,7 @@ export default function Chat() {
                     Would you like to explore these options further to see which
                     might be the best fit for your situation?
                   </div>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage18Component("Continue")}
@@ -7789,7 +7810,7 @@ export default function Chat() {
                 "Is there anything else you'd like to ask?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -7815,7 +7836,7 @@ export default function Chat() {
                 "To prevent any cash shortfall in your estate, how important is it to have provisions in place for your dependants' maintenance? For instance, would you want to ensure there’s enough capital to cover any immediate expenses and ongoing support for your dependants?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <BusinessImportanceSlider
                       onProceed={handleButtonStage19Capital}
@@ -7853,14 +7874,14 @@ export default function Chat() {
                 "Let’s dive into the details of what you own to ensure we have a comprehensive understanding of your estate. Your assets play a crucial role in your estate plan."
               ) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Do you own any real estate properties, such as houses,
                     apartments, or land? If so, could you provide details about
                     each property, including location, estimated current market
                     value, outstanding mortgage amount (if any), and any
                     significant improvements made? 🏡
                   </div>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -7904,7 +7925,7 @@ export default function Chat() {
                 "To help you estimate the value of your property, let’s go through a few simple steps. This will give you a rough idea of what your property could be worth."
               ) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     First, please specify the type of property you have (e.g.
                     house, apartment, land).
                   </div>
@@ -7915,7 +7936,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready to provide the details of any of your real estate, just let me know."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage21Asset("Continue")}
@@ -7931,7 +7952,7 @@ export default function Chat() {
                 "The estimated value of your property based on the information you provided is"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     (value displayed)
                     <br />
                     <b>Please note</b> that this is a rough estimate and should
@@ -7942,7 +7963,7 @@ export default function Chat() {
                     valuation, we recommend consulting a property appraiser or
                     real estate agent
                   </div>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage21Calculator("Continue")}
@@ -7958,7 +7979,7 @@ export default function Chat() {
                 "Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -7994,7 +8015,7 @@ export default function Chat() {
                 "How many vehicles (cars, boats, caravans, motorcycles etc) do you own, and what are their makes, models, and estimated values?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -8030,7 +8051,7 @@ export default function Chat() {
                 "Are there any valuable possessions such as artwork, jewellery, or collectibles that you own? If so, could you describe each item and estimate its value?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -8066,7 +8087,7 @@ export default function Chat() {
                 "What is the estimated value of your household effects/content e.g. furniture, appliances etc. Your short-term insurance cover amount for household content can be used. If yes, please provide details about each item, including its type, estimated value, and any notable items you would like to include in your estate plan."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -8102,7 +8123,7 @@ export default function Chat() {
                 "Can you provide details about your investment portfolio, including stocks, bonds, mutual funds, retirement accounts, and any other investment holdings? Please specify the quantity, type, and current value of each investment."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -8137,7 +8158,7 @@ export default function Chat() {
                 "Do you have any cash savings or deposits in bank accounts? If yes, please provide the approximate balances for each account."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -8173,7 +8194,7 @@ export default function Chat() {
                 "Do you have any business interests or ownership stakes in companies? If yes, please provide details about each business, including its type, ownership percentage, and estimated value."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -8211,7 +8232,7 @@ export default function Chat() {
                 "Are there any other significant assets not mentioned that you would like to include in your estate plan? If so, please describe them and provide their estimated values."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -8251,7 +8272,7 @@ export default function Chat() {
                 "Do you own any intellectual property rights, such as patents, trademarks, or copyrights? If yes, please provide details about each intellectual property asset."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -8287,7 +8308,7 @@ export default function Chat() {
                 "Are there any assets held in trust or other legal entities? If yes, please specify the nature of the trust or entity and describe the assets held within."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -8323,7 +8344,7 @@ export default function Chat() {
                 "Do you have any outstanding mortgage loans? If yes, please specify the outstanding balance and the property/assets mortgaged."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -8359,7 +8380,7 @@ export default function Chat() {
                 "Are there any personal loans you currently owe? If so, please provide details on the outstanding amount and the purpose of the loan."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -8395,7 +8416,7 @@ export default function Chat() {
                 "Do you have any credit card debt? If yes, please specify the total amount owed and the interest rates associated with each card."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -8431,7 +8452,7 @@ export default function Chat() {
                 "Are there any loans for vehicles you own? If so, please provide details on the outstanding balance and the vehicles financed."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -8467,7 +8488,7 @@ export default function Chat() {
                 "Are there any other outstanding debts or financial obligations that you have? This may include student loans, medical bills, or any other loans or accounts. Please specify the type of debt and the outstanding amount."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -8505,7 +8526,7 @@ export default function Chat() {
                 "Do you have a strategy in place for managing and reducing your liabilities over time?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -8541,7 +8562,7 @@ export default function Chat() {
                 "Are there any significant changes expected in your liabilities in the foreseeable future?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -8581,7 +8602,7 @@ export default function Chat() {
                 "Do you currently have any life insurance policies in place? If yes, please specify the type of policy, the coverage amount, the beneficiaries, and any additional riders or features."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -8617,7 +8638,7 @@ export default function Chat() {
                 "Are you covered by any health insurance policies/plans that is not a Medical Aid? If so, please specify the type of coverage, the insurance provider, and any details about co-pays, deductibles, and coverage limits."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -8655,7 +8676,7 @@ export default function Chat() {
                 "Are your properties, including your primary residence and any other real estate holdings, adequately insured? Please specify the insurance provider, coverage amount, and any additional coverage options"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -8693,7 +8714,7 @@ export default function Chat() {
                 "Are your vehicles insured? If yes, please specify the insurance provider, coverage type (e.g., comprehensive, liability), and any details about the insured vehicles."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -8729,7 +8750,7 @@ export default function Chat() {
                 "Disability insurance is crucial in case you're unable to work due to illness or injury. Do you currently have disability insurance?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage41Disability("Yes")}
@@ -8757,7 +8778,7 @@ export default function Chat() {
                 "Disability insurance can provide financial security if you’re unable to work due to illness or injury. It ensures that you have a source of income to cover living expenses and maintain your standard of living. Would you like more information or assistance in obtaining disability insurance and understanding its benefits?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -8780,10 +8801,10 @@ export default function Chat() {
               )}
 
               {message.content.includes(
-                "Great, I will have one of our financial advisors get in touch regarding obtaining disability insurance"
+                "Great, I will have one of our financial advisers get in touch regarding obtaining disability insurance"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -8801,7 +8822,7 @@ export default function Chat() {
                 "Disability insurance can be structured as a single capital lump sum or monthly income replacer. Which type of disability insurance do you currently have, or are you considering?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -8831,7 +8852,7 @@ export default function Chat() {
                 "It's important to note that the coverage you can take may be limited. Are you aware of any limitations on your disability insurance coverage?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -8867,7 +8888,7 @@ export default function Chat() {
                 "I recommend reviewing your current disability insurance policy to understand any limitations it may have. Checking details like maximum benefit amounts, coverage duration, and specific conditions that are excluded will help ensure you have adequate protection. Please get back to me once you've reviewed your policy."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -8885,7 +8906,7 @@ export default function Chat() {
                 "Do you have contingent liability insurance to cover unexpected liabilities that may arise?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -8919,7 +8940,7 @@ export default function Chat() {
                 "I recommend considering contingent liability insurance as it can protect you against unexpected financial obligations. It’s especially useful if you've provided personal guarantees or securities for business obligations. Please think about whether this might be a valuable addition to your insurance portfolio and let me know if you have any questions or need assistance with this."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -8937,7 +8958,7 @@ export default function Chat() {
                 "If you own a business, have you considered buy and sell insurance to protect your business partners and family?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage42BuyAndSell("Yes")}
@@ -8979,7 +9000,7 @@ export default function Chat() {
                 "Buy and sell insurance is designed to ensure that, in the event of your death or disability, your business can continue to operate smoothly. It provides funds to your business partners to buy out your share, protecting both your family’s financial interests and the business’s continuity. It might be worth exploring this option to safeguard your business and your loved ones. Please review your current situation and get back to me if you have any questions or need further assistance."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage42BuyAndSell("Continue")}
@@ -8995,7 +9016,7 @@ export default function Chat() {
                 "For business owners, key person insurance can help the business survive the loss of a crucial employee. Do you have this in place?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage43BusinessOwner("Yes")}
@@ -9023,7 +9044,7 @@ export default function Chat() {
                 "Key person insurance provides financial support to your business if a key employee, whose expertise and skills are critical to the company's success, passes away or becomes disabled. It can help cover the cost of finding and training a replacement, as well as mitigate potential financial losses. If you think this could benefit your business, consider discussing it further with our financial adviser to ensure your business is protected."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage43BusinessOwner("Yes")}
@@ -9039,7 +9060,7 @@ export default function Chat() {
                 "Do you have any other types of insurance not already covered? Please provide details about the type of coverage and the insurance provider."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -9079,7 +9100,7 @@ export default function Chat() {
                 "Have you reviewed your insurance policies recently to ensure they align with your current needs and circumstances?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     {/* <button
                       onClick={() =>
@@ -9117,7 +9138,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready to provide the details of your insurance policies"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -9134,7 +9155,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready to provide the details about any other type of insurance you have, just let me know."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -9151,7 +9172,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready to provide the details of your vehicle insurance provider"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -9168,7 +9189,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready to provide the details of your insurance provider"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -9185,7 +9206,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready to provide the details of your health insurance policies"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -9202,7 +9223,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready to provide the details of your life insurance policies"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -9219,7 +9240,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready to provide the details of your significant changes expected in your liabilities"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -9236,7 +9257,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready to provide the details of your strategy"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage35Strategy("Continue")}
@@ -9251,7 +9272,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready to provide the details of your outstanding debt"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -9268,7 +9289,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready to provide the details of your vehicle loan"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage33VehicleLoan("Continue")}
@@ -9283,7 +9304,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready to provide the details of your credit card debt"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -9300,7 +9321,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready to provide the details of your current personal loan"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -9317,7 +9338,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready to provide the details of your outstanding mortgage loan"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage30Mortgage("Continue")}
@@ -9332,7 +9353,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready to provide the details of your legal entities"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -9349,7 +9370,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready to provide the details of your intellectual property rights"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -9366,7 +9387,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready to provide the details of your significant assets"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -9383,7 +9404,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready to provide the details of your business interest"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -9400,7 +9421,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready to provide the details of your cash savings or deposits in bank accounts"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage25Cash("Continue")}
@@ -9415,7 +9436,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready to provide the details of your investment portfolio"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage25Portfolio("Continue")}
@@ -9430,7 +9451,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready to provide the details of your household"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage24Household("Continue")}
@@ -9445,7 +9466,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready to provide the details of your valuable possessions, just let me know."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage23Jewelry("Continue")}
@@ -9460,7 +9481,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready to provide the details of your vehicle, just let me know."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage22Vehicle("Continue")}
@@ -9475,7 +9496,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready to provide the details of the farm, just let me know."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage22Farm("Continue")}
@@ -9490,7 +9511,7 @@ export default function Chat() {
                 "Thank you for discussing insurance policies with me. Let’s proceed to the next part of your estate planning. Shall we continue?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage46Continue("Yes")}
@@ -9512,14 +9533,14 @@ export default function Chat() {
                 "Understanding your investment holdings helps us assess your overall financial position and develop strategies to maximise the value of your estate. Please provide as much detail as possible for each of the following questions"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Do you currently hold any stocks or equities in your
                     investment portfolio? If yes, please specify the name of the
                     stocks, the number of shares held, and the current market
                     value of each stock 🔐💼
                     <br />
                   </div>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -9559,7 +9580,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready to provide the details of your stocks or equities"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -9577,7 +9598,7 @@ export default function Chat() {
                 "Are you invested in any bonds or fixed-income securities? If so, please provide details about the types of bonds (government, corporate, municipal), the face value of each bond, the interest rate, and the maturity date."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -9613,7 +9634,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready, please provide the types of bonds you are interested in."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage48FixedIncome("Continue")}
@@ -9629,7 +9650,7 @@ export default function Chat() {
                 "Do you have investments in mutual funds? If yes, please specify the names of the funds, the fund managers, the investment objectives, and the current value of your holdings in each fund."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -9665,7 +9686,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready to provide the details of your investments in mutual funds."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage48MutualFunds("Continue")}
@@ -9681,7 +9702,7 @@ export default function Chat() {
                 "Are you contributing to a retirement fund such as retirement annuity fund, employer sponsored pension fund or provident fund? Please provide details about the type of retirement account, the current balance, and any investment options available within the account."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -9719,7 +9740,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready to provide the details of your type of retirement account."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -9737,7 +9758,7 @@ export default function Chat() {
                 "Do you own any investment properties or real estate holdings? If yes, please specify the properties, their current market value, any rental income generated, and any outstanding mortgages or loans against the properties."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -9773,7 +9794,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready to provide the details of your investment properties or real estate holdings"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -9791,7 +9812,7 @@ export default function Chat() {
                 "Are you invested in any other asset classes such as commodities, alternative investments, or cryptocurrencies? If so, please provide details about the specific investments and their current value."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -9827,7 +9848,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready to provide the details of your asset classes."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -9845,7 +9866,7 @@ export default function Chat() {
                 "Have you defined your investment goals and risk tolerance to guide your investment decisions effectively?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage52InvestmentGoals("Yes")}
@@ -9875,7 +9896,7 @@ export default function Chat() {
                 "Understanding your investment goals and risk tolerance is essential for making informed decisions that align with your financial objectives and comfort with risk. Consider identifying your short-term and long-term goals, such as saving for retirement, purchasing a home, or funding education. Additionally, assess your risk tolerance by considering how much risk you're willing to take and how you react to market fluctuations. If you need assistance, our financial adviser can help you define these parameters and create a tailored investment strategy."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -9893,7 +9914,7 @@ export default function Chat() {
                 "Are there any specific changes or adjustments you're considering making to your investment portfolio in the near future?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage53SpecificChanges("Yes")}
@@ -9923,7 +9944,7 @@ export default function Chat() {
                 "It's always a good idea to periodically review your investment portfolio to ensure it aligns with your financial goals and risk tolerance. If you're not currently considering any changes, it might be helpful to schedule a regular review with a financial adviser to stay informed about potential opportunities or necessary adjustments based on market conditions and your evolving financial situation."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -9941,7 +9962,7 @@ export default function Chat() {
                 "Great! Next, we’ll discuss estate duty. Shall we continue?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage54Final("Yes")}
@@ -9963,7 +9984,7 @@ export default function Chat() {
                 "Now let's discuss estate duty, the tax on the total value of your estate if you were to pass away today with your current will or distribution wishes in place. Understanding this helps us ensure your estate plan minimises taxes and maximises what is passed on to your heirs. Ready to get started?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage55EstateDuty("Yes")}
@@ -9985,7 +10006,7 @@ export default function Chat() {
                 "Do you have a current will in place?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage56CurrentWill("Yes")}
@@ -10007,7 +10028,7 @@ export default function Chat() {
                 "Creating a will is an important step in securing your assets and ensuring your wishes are followed. We can start drafting your will right here by answering a few questions about your estate and preferences."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -10025,7 +10046,7 @@ export default function Chat() {
                 "When was the last time you reviewed your will? It’s a good idea to keep it up to date with any changes in your life."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -10053,7 +10074,7 @@ export default function Chat() {
                 "Let's go over the details of your current will. How are your assets distributed according to your current will? Here are some specific questions to help clarify this:"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -10068,58 +10089,59 @@ export default function Chat() {
               )}
 
               {message.content.includes(
-                "Do you bequeath your estate to your spouse?"
-              ) && (
-                <>
-                  <div className="space-x-2">
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage58EstateSpouse("Yes, my entire estate")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, my entire estate
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage58EstateSpouse(
-                          "Yes, a significant portion of my estate"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, a significant portion of my estate
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage58EstateSpouse(
-                          "No, estate divided among other beneficiaries"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No, estate divided among other beneficiaries
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage58EstateSpouse(
-                          "No, spouse receives only a specific portion"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No, spouse receives only a specific portion
-                    </button>
-                  </div>
-                </>
-              )}
+  "Do you bequeath your estate to your spouse?"
+) && (
+  <>
+    <div className="space-x-2 ml-9">
+      <br />
+      <button
+        onClick={() =>
+          handleButtonStage58EstateSpouse("Yes, my entire estate")
+        }
+        className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F] text-left"
+      >
+        Yes, my entire estate
+      </button>
+      <button
+        onClick={() =>
+          handleButtonStage58EstateSpouse(
+            "Yes, a significant portion of my estate"
+          )
+        }
+        className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F] text-left"
+      >
+        Yes, a significant portion of my estate
+      </button>
+      <button
+        onClick={() =>
+          handleButtonStage58EstateSpouse(
+            "No, estate divided among other beneficiaries"
+          )
+        }
+        className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F] text-left"
+      >
+        No, estate divided among other beneficiaries
+      </button>
+      <button
+        onClick={() =>
+          handleButtonStage58EstateSpouse(
+            "No, spouse receives only a specific portion"
+          )
+        }
+        className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F] text-left"
+      >
+        No, spouse receives only a specific portion
+      </button>
+    </div>
+  </>
+)}
+
 
               {message.content.includes(
                 "What happens to the residue (remainder) of your estate after all debts, expenses, taxes, and specific bequests (gifts of particular assets) are settled? Is it bequeathed to your spouse?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage59Residue("Yes")}
@@ -10141,7 +10163,7 @@ export default function Chat() {
                 "Do you bequeath any portion of your estate to the Trustees of any specific trust?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage60Bequeath("Yes")}
@@ -10163,7 +10185,7 @@ export default function Chat() {
                 "Does your will include a plan for setting up a trust after you pass away?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage61PassAway("Yes")}
@@ -10185,7 +10207,7 @@ export default function Chat() {
                 "Do you have a farm or any specific property bequeathed to a trust?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage62Bequeathed("Yes")}
@@ -10217,7 +10239,7 @@ export default function Chat() {
                     />
                   </div>
 
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Please provide details of the trust.
                   </div>
                 </>
@@ -10355,7 +10377,7 @@ export default function Chat() {
                 "Certain third parties may be responsible for estate duty based on the assets they receive. Do you have any specific instructions or details about third-party liability for estate duty in your current will?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -10395,12 +10417,12 @@ export default function Chat() {
                       className="rounded-md" // Adds rounded corners (5px)
                     />
                   </div>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Thank you for providing all these details. This helps us
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    Thank you for providing all these details. {userName}. This helps us
                     understand the estate duty implications of your current
                     will. Please share your current will. 🔐💼
                   </div>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -10428,7 +10450,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready to provide the details, just let me know."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage65CurrentWill("Continue")}
@@ -10444,7 +10466,7 @@ export default function Chat() {
                 "Understood. It's crucial to consider this aspect carefully. Would you like to discuss potential options for addressing third-party liability in your estate plan?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage65PotentialOption("Yes")}
@@ -10466,7 +10488,7 @@ export default function Chat() {
                 "Excellent! There are several strategies we can explore to address third-party liability in your estate plan. One option is to include specific provisions in your will outlining how estate duty should be handled for third parties. We can also consider setting up trusts or other structures to manage these liabilities effectively. Would you like to explore these options further?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage65Stages("Yes")}
@@ -10487,25 +10509,25 @@ export default function Chat() {
               )}
 
               {message.content.includes(
-                "Great, one of our financial advisors will be in touch in this regard."
+                "Great, one of our financial advisers will be in touch in this regard."
               ) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    <strong>USEFUL TIP</strong>:
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    <strong>💡 USEFUL TIP</strong>:
                     <br />
-                    💡 If your spouse were to pass away immediately after you,
+                    If your spouse were to pass away immediately after you,
                     there are specific estate duty implications and/or
                     arrangements you would need to consider? All the more reason
                     to get in touch with our Financial Advisors. This will be
                     noted and added to the report supplied to you at the end of
                     this chat.
                   </div>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Thank you for providing all these details. This helps us
                     understand the estate duty implications of your current
                     will. Please share your current will. 🔐💼
                   </div>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -10533,7 +10555,7 @@ export default function Chat() {
                 "Great! Next, we’ll look at the executor’s fees. Shall we continue?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -10559,7 +10581,7 @@ export default function Chat() {
                 "Now, let's discuss the fees that will be charged for the administration of your estate. The executor's fees can be a significant part of the costs, so it's important to understand how these are calculated."
               ) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     💰 The maximum fee that can be charged for executor’s fees
                     is 3.5%, plus VAT (15%), which totals 4.03%. You can leave
                     instructions in your will to stipulate what percentage you
@@ -10572,7 +10594,7 @@ export default function Chat() {
                     advantage of family members as executors is that they may be
                     open to waive or negotiate lower compensation.
                   </div>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage67ExecutorFee("Continue")}
@@ -10588,7 +10610,7 @@ export default function Chat() {
                 "Remember, no executor’s fees are payable on proceeds from policies with a beneficiary nomination, as these are paid directly to the nominated beneficiary by the insurance company. Do you have any such policies?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage68Payable("Yes, specify")}
@@ -10610,7 +10632,7 @@ export default function Chat() {
                 "Now, we can move on to the next part of your estate planning. Ready to continue?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage69ExecutorFinal("Yes")}
@@ -10632,7 +10654,7 @@ export default function Chat() {
                 "Now, let's talk about the liquidity position of your estate. This helps us understand if there are enough liquid assets available to cover estate costs without having to sell off assets. Ready to proceed?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage70Liquidity("Yes")}
@@ -10654,7 +10676,7 @@ export default function Chat() {
                 "Liquidity is essential to cover estate costs without having to sell assets. Are you aware of any sources of liquidity in your estate, such as cash reserves or liquid investments?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -10692,7 +10714,7 @@ export default function Chat() {
                 "Great! Based on the information you've provided earlier, we can review your existing financial assets and investments to assess their liquidity. We will include this information in the report shared at the end of this conversation."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -10710,7 +10732,7 @@ export default function Chat() {
                 "If there's a shortfall, there are a few options. The executor may ask heirs to contribute cash to prevent asset sales. Are you open to this option?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -10748,7 +10770,7 @@ export default function Chat() {
                 "Thank you for your openness to this option. When considering this approach, it's essential to assess the financial impact on each heir and ensure fairness in the distribution of responsibilities. Factors such as each heir's financial situation, willingness to contribute, and the impact on their inheritance should be carefully considered. Would you like guidance on how to navigate these considerations?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage73FinancialImpact("Yes")}
@@ -10766,10 +10788,10 @@ export default function Chat() {
                 </>
               )}
               {message.content.includes(
-                "Great! Our financial advisors at Old Mutual can help you and your heirs understand the financial implications and create a fair strategy. They can assist in evaluating each heir’s ability to contribute, ensure clear communication among all parties, and develop a plan that respects everyone's circumstances. We'll include this information in the report shared at the end of this conversation."
+                "Great! Our financial advisers at Old Mutual can help you and your heirs understand the financial implications and create a fair strategy. They can assist in evaluating each heir’s ability to contribute, ensure clear communication among all parties, and develop a plan that respects everyone's circumstances. We'll include this information in the report shared at the end of this conversation."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -10787,7 +10809,7 @@ export default function Chat() {
                 "Sure! In the event of a shortfall, the executor may explore various options to cover expenses without liquidating assets prematurely. These options could include negotiating payment terms with creditors, utilising existing insurance policies, or securing a loan against estate assets. Each option comes with its own set of considerations and implications. Would you like further details on these options to help you make an informed decision?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage74Shortfall("Yes")}
@@ -10809,7 +10831,7 @@ export default function Chat() {
                 "Excellent! Here are some details on the potential options:"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     💬 Negotiating Payment Terms with Creditors:
                     <br />
                     This involves discussing with creditors to extend payment
@@ -10831,13 +10853,13 @@ export default function Chat() {
                     while preserving the estate's value.
                     <br />
                     <br />
-                    Our financial advisors at Old Mutual can provide more
+                    Our financial advisers at Old Mutual can provide more
                     in-depth information and help you evaluate these options
                     based on your specific situation. We will include this
                     information in the report shared at the end of this
                     conversation.
                   </div>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage74Shortfall("Continue")}
@@ -10853,7 +10875,7 @@ export default function Chat() {
                 "Selling assets could impact your wishes for asset distribution and family business continuation. How do you feel about selling assets to cover a shortfall?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -10900,10 +10922,10 @@ export default function Chat() {
               )}
 
               {message.content.includes(
-                "Absolutely! When facing a shortfall, selling assets isn't the only option available. Alternative financing strategies, such as securing loans against estate assets, negotiating payment terms with creditors, or utilising existing insurance policies, can provide additional flexibility without compromising your long-term goals for asset distribution. Each option comes with its own set of considerations and implications, so it's essential to weigh them carefully. Our financial advisors can help you set this up."
+                "Absolutely! When facing a shortfall, selling assets isn't the only option available. Alternative financing strategies, such as securing loans against estate assets, negotiating payment terms with creditors, or utilising existing insurance policies, can provide additional flexibility without compromising your long-term goals for asset distribution. Each option comes with its own set of considerations and implications, so it's essential to weigh them carefully. Our financial advisers can help you set this up."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -10921,7 +10943,7 @@ export default function Chat() {
                 "It's understandable to have reservations about selling assets, especially if it affects your long-term plans for asset distribution or business continuity. Selling assets can impact the legacy you wish to leave behind and may disrupt the stability of family businesses. However, it's essential to balance these concerns with the immediate need to cover a shortfall. Exploring alternative financing options or negotiating payment terms with creditors could help alleviate the need for asset liquidation. Would you like to explore these alternatives further?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage76Reservation("Yes")}
@@ -10943,7 +10965,7 @@ export default function Chat() {
                 "Great! Here are some alternative options you might consider:"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     💬 Negotiating Payment Terms with Creditors:
                     <br />
                     This involves discussing with creditors to extend payment
@@ -10965,13 +10987,13 @@ export default function Chat() {
                     while preserving the estate's value.
                     <br />
                     <br />
-                    Our financial advisors at Old Mutual can provide more
+                    Our financial advisers at Old Mutual can provide more
                     in-depth information and help you evaluate these options
                     based on your specific situation. We will include this
                     information in the report shared at the end of this
                     conversation.
                   </div>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage76Reservation("Continue")}
@@ -10987,7 +11009,7 @@ export default function Chat() {
                 "Borrowing funds is another option, but it could be costly and limit asset use if assets are used as security. Have you considered this option?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -11037,7 +11059,7 @@ export default function Chat() {
                 "Absolutely, it's essential to fully understand the implications before making a decision. Borrowing funds can indeed be costly, especially if assets are used as security, as it may limit their use and potentially increase financial risk. I can provide more detailed information on the costs involved, potential risks, and alternative financing options to help you make an informed decision. Would you like to explore these aspects further?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage77FinancialRisk("Yes")}
@@ -11059,7 +11081,7 @@ export default function Chat() {
                 "Great! Here are some important aspects to consider:"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     💸 Costs Involved:
                     <br />
                     Borrowing funds often comes with interest rates and fees,
@@ -11081,12 +11103,12 @@ export default function Chat() {
                     might be more beneficial and less risky.
                     <br />
                     <br />
-                    Our financial advisors at Old Mutual can provide a thorough
+                    Our financial advisers at Old Mutual can provide a thorough
                     analysis and personalized advice to help you make the best
                     decision. We will include this information in the report
                     shared at the end of this conversation.
                   </div>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -11104,7 +11126,7 @@ export default function Chat() {
                 "Exploring alternative financing options is a prudent approach to ensure you make the best decision for your estate. There are various strategies available, such as negotiating payment terms with creditors, utilising existing insurance policies, or seeking financial assistance from family members or business partners. Each option has its pros and cons, so it's essential to weigh them carefully. Would you like more information on these alternative financing options?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage77Alternative("Yes")}
@@ -11126,7 +11148,7 @@ export default function Chat() {
                 "Great! Here are some alternative financing options to consider:"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     💬 Negotiating Payment Terms with Creditors:
                     <br />
                     You can often arrange for more favorable payment terms,
@@ -11145,12 +11167,12 @@ export default function Chat() {
                     partners can provide a flexible and low-cost solution.
                     <br />
                     <br />
-                    Our financial advisors at Old Mutual can provide a thorough
+                    Our financial advisers at Old Mutual can provide a thorough
                     analysis and personalized advice to help you make the best
                     decision. We will include this information in the report
                     shared at the end of this conversation.
                   </div>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage77Alternative("Continue")}
@@ -11166,7 +11188,7 @@ export default function Chat() {
                 "Have you considered life assurance as a way to address any cash shortfall? Life assurance provides immediate cash without income tax or capital gains tax. How willing are you to go this route?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <LifeInsuranceSlider
                       onProceed={handleButtonStage78LifeInsurance}
@@ -11179,7 +11201,7 @@ export default function Chat() {
                 "Thank you for discussing your estate's liquidity position. Let's discuss maintenance claims. Ready?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage79LiquidityEnd("Yes")}
@@ -11201,7 +11223,7 @@ export default function Chat() {
                 "Let's discuss maintenance claims in terms of court orders. If you pass away while there are maintenance obligations towards children or a former spouse, they will have a maintenance claim against your estate. Are you aware of any existing maintenance obligations or court orders?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -11252,7 +11274,7 @@ export default function Chat() {
                 "It's crucial to consider these maintenance obligations in your estate planning to ensure they are adequately addressed. Court-ordered maintenance obligations typically take precedence and must be factored into your estate plan to avoid potential disputes or legal complications. Would you like assistance in incorporating these obligations into your estate plan? If so, please provide the details of the court order."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -11288,7 +11310,7 @@ export default function Chat() {
                 "No problem. Whenever you're ready, please provide the details about your life insurance policy."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage81Obligations("Continue")}
@@ -11304,7 +11326,7 @@ export default function Chat() {
                 "While informal agreements may not have the same legal standing as court orders, they are still important to consider in your estate planning. Even informal arrangements could result in maintenance claims against your estate if not addressed properly. Would you like guidance on how to formalise these agreements or ensure they are appropriately accounted for in your estate plan?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage81Agreements("Yes")}
@@ -11332,7 +11354,7 @@ export default function Chat() {
                 "We will include this information about life insurance policy in the report shared at the end of this conversation."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage81Agreements("Continue")}
@@ -11348,7 +11370,7 @@ export default function Chat() {
                 "It's essential to assess any potential maintenance claims in relation to your estate to avoid unexpected complications for your heirs. Even if you haven't formalised maintenance obligations through court orders or agreements, they may still arise based on legal obligations. Would you like assistance in evaluating and addressing any potential maintenance claims in your estate planning?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage81Complications("Yes")}
@@ -11376,7 +11398,7 @@ export default function Chat() {
                 "We will include this information about life insurance policy in the report shared at the end of this conversation."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -11392,7 +11414,7 @@ export default function Chat() {
               {message.content.includes(
                 "Have you considered the cost of education and taken that into account regarding maintenance?"
               ) && (
-                <div className="space-x-2">
+                <div className="space-x-2 ml-9">
                   <br />
                   <button
                     onClick={() => handleButtonStage82LifeInsurancev1("Yes")}
@@ -11401,10 +11423,10 @@ export default function Chat() {
                     Yes
                   </button>
                   <button
-                    onClick={() => handleButtonStage82LifeInsurancev1("Yes")}
+                    onClick={() => handleButtonStage82LifeInsurancev1("No")}
                     className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                   >
-                    Yes
+                    No
                   </button>
                 </div>
               )}
@@ -11413,7 +11435,7 @@ export default function Chat() {
                 "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage82LifeInsurance("Yes")}
@@ -11441,7 +11463,7 @@ export default function Chat() {
                 "That's a proactive approach to ensuring adequate provision for maintenance obligations. Have you already taken steps to set up such a policy, or would you like assistance in exploring this option further?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -11469,7 +11491,7 @@ export default function Chat() {
                 "We will include information about assistance with setting up a policy in the report that will be shared at the end of this conversation."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage83Proactive("Continue")}
@@ -11485,7 +11507,7 @@ export default function Chat() {
                 "It's an important consideration to ensure that your loved ones are provided for in the event of your passing. If you'd like, we can discuss the benefits and implications of setting up a life insurance policy payable to a testamentary trust to cover maintenance obligations. Would you like more information on this option?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage83Passing("Yes")}
@@ -11504,10 +11526,10 @@ export default function Chat() {
               )}
 
               {message.content.includes(
-                "Setting up a life insurance policy payable to a testamentary trust can ensure that maintenance obligations are met without burdening your estate. This approach provides a reliable income stream for your beneficiaries. Our financial advisors at Old Mutual can provide detailed guidance and help you explore this option further."
+                "Setting up a life insurance policy payable to a testamentary trust can ensure that maintenance obligations are met without burdening your estate. This approach provides a reliable income stream for your beneficiaries. Our financial advisers at Old Mutual can provide detailed guidance and help you explore this option further."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage83Passing("Continue")}
@@ -11523,7 +11545,7 @@ export default function Chat() {
                 "Next, let's talk about maintenance for the surviving spouse. If you don't make provision for maintenance for the surviving spouse, they can institute a claim against your estate in terms of the Maintenance of Surviving Spouse’s Act. Are you considering provisions for your surviving spouse?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -11573,7 +11595,7 @@ export default function Chat() {
                 "It's great that you've already made provisions for your surviving spouse. Would you like to review your existing provisions to ensure they align with your current goals and circumstances?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -11597,7 +11619,7 @@ export default function Chat() {
                 "Reviewing your existing provisions can ensure they are still appropriate and effective given your current situation and goals. We will include this information in the report shared at the end of this conversation."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -11615,7 +11637,7 @@ export default function Chat() {
                 "Making provisions for your surviving spouse ensures their financial security after you're gone. We can discuss various options for including these provisions in your estate plan. Would you like more information on this?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage84OptionProvision("Yes")}
@@ -11634,10 +11656,10 @@ export default function Chat() {
               )}
 
               {message.content.includes(
-                "Providing for your surviving spouse can be done through various means, such as setting up a trust, designating life insurance benefits, or specifying direct bequests in your will. Our financial advisors at Old Mutual can guide you through these options to find the best solution for your needs. We will include this information in the report shared at the end of this conversation."
+                "Providing for your surviving spouse can be done through various means, such as setting up a trust, designating life insurance benefits, or specifying direct bequests in your will. Our financial advisers at Old Mutual can guide you through these options to find the best solution for your needs. We will include this information in the report shared at the end of this conversation."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -11655,7 +11677,7 @@ export default function Chat() {
                 "Sure, understanding the implications and options for provisions for your surviving spouse is crucial. Would you like more information on how this can be incorporated into your estate planning?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage84CrucialProvision("Yes")}
@@ -11674,10 +11696,10 @@ export default function Chat() {
               )}
 
               {message.content.includes(
-                "Incorporating provisions for your surviving spouse can be an essential part of a comprehensive estate plan. Understanding the legal and financial implications will help you make an informed decision. Our financial advisors at Old Mutual can provide you with the necessary information and advice. We will include this information in the report shared at the end of this conversation."
+                "Incorporating provisions for your surviving spouse can be an essential part of a comprehensive estate plan. Understanding the legal and financial implications will help you make an informed decision. Our financial advisers at Old Mutual can provide you with the necessary information and advice. We will include this information in the report shared at the end of this conversation."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -11695,7 +11717,7 @@ export default function Chat() {
                 "Factors considered by the court when assessing the claim include the duration of the marriage, the spouse's age and earning capacity, and the size of your assets. Have you thought about these factors in your estate planning?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -11747,7 +11769,7 @@ export default function Chat() {
                 "It's excellent that you've already considered these factors in your estate planning. Would you like to discuss how they can further inform your decisions and ensure your plan aligns with your goals?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage85GoalsProvision("Yes")}
@@ -11769,7 +11791,7 @@ export default function Chat() {
                 "Great! When these factors are considered, it helps ensure that your estate plan is tailored to meet your specific circumstances. For example, longer marriages or significant disparities in earning capacity might necessitate larger or longer-term maintenance provisions. Keeping your plan flexible and periodically reviewing it can help accommodate any changes in your situation. Would you like to delve deeper into any particular area?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -11787,7 +11809,7 @@ export default function Chat() {
                 "Understanding these factors is essential for effective estate planning. Would you like assistance in incorporating them into your estate plan to ensure it reflects your wishes and circumstances?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -11813,7 +11835,7 @@ export default function Chat() {
                 "Excellent! Incorporating these factors into your estate plan ensures a fair and well-thought-out approach to maintenance and asset distribution. For instance, ensuring that your plan addresses the financial needs of a surviving spouse based on their age and earning capacity can provide long-term security. We will include this information in the report shared at the end of this conversation."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -11831,7 +11853,7 @@ export default function Chat() {
                 "No worries, considering these factors can help you create a more comprehensive estate plan. Would you like assistance in understanding how they may impact your estate planning decisions?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -11857,7 +11879,7 @@ export default function Chat() {
                 "Wonderful! Understanding how these factors impact your estate planning can help you make more informed decisions. For example, considering the spouse's earning capacity can guide how much and how long maintenance should be provided, and knowing the size of your assets helps in deciding the distribution method. We will include this information in the report shared at the end of this conversation."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -11875,7 +11897,7 @@ export default function Chat() {
                 "Sure, understanding these factors is crucial for effective estate planning. Would you like more information on how they can influence your estate planning decisions before you respond?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -11901,7 +11923,7 @@ export default function Chat() {
                 "Perfect! Knowing how these factors influence your estate planning can help ensure your plan is both fair and effective. For instance, a longer marriage might lead to more substantial maintenance claims, and a larger estate might require more detailed planning to minimize tax implications. We will include this information in the report shared at the end of this conversation."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -11919,7 +11941,7 @@ export default function Chat() {
                 "You can make provision for maintenance through an insurance policy where your surviving spouse is the nominated beneficiary or stipulate in the will that the proceeds will be paid to a testamentary trust for the spouse's benefit. What are your preferences regarding this?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -11980,7 +12002,7 @@ export default function Chat() {
                 "Both options have their advantages. With an insurance policy, the benefit is usually paid out quickly and directly to your spouse, providing immediate financial support. On the other hand, setting up a testamentary trust in your will offers more control over how the funds are managed and distributed, ensuring long-term financial security for your spouse and potential tax benefits. We can discuss the specifics of each option further and tailor the solution to best meet your needs. Would you like to explore these options in more detail?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage85BenefitProvision("Yes")}
@@ -12002,22 +12024,22 @@ export default function Chat() {
                 "Great! Here’s a brief overview of each option:"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    🛡️ Insurance Policy:
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    <b>🛡️ Insurance Policy:</b>
                     <br />
                     Provides immediate liquidity to your spouse upon your
                     passing, typically without the need for probate. This can be
                     beneficial for addressing urgent financial needs.
                     <br />
                     <br />
-                    🏦 Testamentary Trust:
+                    <b style={{marginLeft: "-1px"}}>🏦 Testamentary Trust:</b>
                     <br />
                     Allows for greater control over the distribution of assets,
                     potentially offering ongoing support and protection for your
                     spouse. It can also provide tax benefits and help manage the
                     funds according to your wishes.
                   </div>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -12035,7 +12057,7 @@ export default function Chat() {
                 "Absolutely! Let's delve deeper into both options. An insurance policy with your spouse as the nominated beneficiary provides immediate liquidity and financial support to your spouse upon your passing. However, a testamentary trust outlined in your will can offer ongoing financial security, asset protection, and control over how the funds are used and distributed. We can discuss the benefits, considerations, and implications of each option to help you make an informed decision. How does that sound?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage86DeeperProvision("Yes")}
@@ -12057,7 +12079,7 @@ export default function Chat() {
                 "Certainly! Besides the options mentioned, there are alternative ways to provision for maintenance, such as setting up annuities, creating specific bequests in your will, or establishing a family trust. Each option has its unique advantages and considerations. We can explore these alternatives further and tailor a solution that aligns with your estate planning goals. Would you like to discuss these options in more detail?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -12083,7 +12105,7 @@ export default function Chat() {
                 "Certainly! Besides insurance policies and testamentary trusts, you might consider options such as:"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     <br />
                     💰 Annuities:
                     <br />
@@ -12103,7 +12125,7 @@ export default function Chat() {
                     according to your wishes, providing flexibility and
                     potential tax benefits.
                   </div>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -12119,7 +12141,7 @@ export default function Chat() {
 
               {/* {message.content.includes("Do your dependents require any income per month for maintenance?") && (
                 <>  
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br/><button
                       onClick={() =>
                         handleButtonStage86AnnuitiesProvision("Yes")
@@ -12145,7 +12167,7 @@ export default function Chat() {
                 "It's important to provide for the shortfall in household income after your death. Have you assessed the capital available to your spouse/family/dependents from which to generate an income?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -12197,7 +12219,7 @@ export default function Chat() {
                 "It's essential to ensure that the capital you have can generate sufficient income to support your dependents after your passing. We can work together to assess your current financial situation, projected expenses, and income needs to determine if any adjustments or additional planning are necessary to bridge any potential income shortfalls. Would you like to review your financial situation in more detail?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage87Capital("Yes")}
@@ -12219,7 +12241,7 @@ export default function Chat() {
                 "We will include this information about your financial situation and any necessary adjustments in the report shared at the end of this conversation."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage87Capital("Continue")}
@@ -12235,7 +12257,7 @@ export default function Chat() {
                 "Planning for the financial well-being of your dependents is a crucial aspect of estate planning. We can assist you in evaluating your current financial situation, projected expenses, and income needs to ensure that your loved ones are adequately provided for in the event of your passing. Would you like to explore this aspect of financial planning further?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage87Planning("Yes")}
@@ -12257,7 +12279,7 @@ export default function Chat() {
                 "We'll include this financial planning information in the report shared at the end of this conversation."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage87Planning("Continue")}
@@ -12273,7 +12295,7 @@ export default function Chat() {
                 "Understanding the capital available to your dependents and its potential to generate income is essential for effective estate planning. We can help you gather the necessary information and provide guidance to evaluate your current financial situation, projected expenses, and income needs. Together, we can determine the most suitable strategies to ensure financial security for your loved ones. Would you like assistance in assessing your financial situation?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage87Dependents("Yes")}
@@ -12295,7 +12317,7 @@ export default function Chat() {
                 "We will include this information about your financial situation and strategies in the report shared at the end of this conversation."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage87Dependents("Continue")}
@@ -12311,7 +12333,7 @@ export default function Chat() {
                 "Additional life insurance can provide the capital required for the income needs of dependents. Do you have any life insurance that is linked to a purpose, i.e. Mortgage / bond life cover etc?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -12336,7 +12358,7 @@ export default function Chat() {
                 "Have you considered obtaining additional life insurance for providing capital required for income needs of dependents?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -12389,7 +12411,7 @@ export default function Chat() {
                 "It's prudent to periodically review your life insurance coverage to ensure that it aligns with your current financial situation and the needs of your dependents. We can assist you in evaluating your insurance needs and exploring suitable options for additional coverage based on your evolving circumstances. Would you like guidance in assessing your life insurance needs and exploring available options?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage88Coverage("Yes")}
@@ -12411,7 +12433,7 @@ export default function Chat() {
                 "We will include this information about your life insurance needs and options in the report shared at the end of this conversation."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage88Coverage("Continue")}
@@ -12427,7 +12449,7 @@ export default function Chat() {
                 "Life insurance can play a vital role in providing financial security for your dependents in the event of your passing. If you haven't considered obtaining additional coverage, it may be worthwhile to explore your options and ensure that your loved ones are adequately protected. We can help you evaluate your insurance needs and identify suitable coverage options. Would you like assistance in exploring the benefits of additional life insurance?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage88LifeInsurance("Yes")}
@@ -12449,7 +12471,7 @@ export default function Chat() {
                 "We will include this information about your life insurance needs and coverage options in the report shared at the end of this conversation."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -12467,7 +12489,7 @@ export default function Chat() {
                 "Understanding the necessity of additional life insurance coverage requires a thorough assessment of your current financial situation and the future needs of your dependents. We can assist you in evaluating your financial circumstances and determining whether additional coverage is warranted based on your specific situation. Would you like to review your financial situation and assess the potential benefits of additional life insurance?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage88Assessment("Yes")}
@@ -12489,7 +12511,7 @@ export default function Chat() {
                 "We will include this information about your financial situation and potential life insurance needs in the report shared at the end of this conversation."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage88Assessment("Continue")}
@@ -12505,7 +12527,7 @@ export default function Chat() {
                 "Excellent! Now, let's continue with your estate planning. Ready?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage89Final("Yes")}
@@ -12527,7 +12549,7 @@ export default function Chat() {
                 "Now, let's discuss funeral cover. Funeral cover provides liquidity to your beneficiaries within a short time frame after submitting a claim. Have you considered obtaining funeral cover?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -12567,7 +12589,7 @@ export default function Chat() {
                 "It's recommended to nominate a beneficiary on the funeral cover to ensure prompt payment to your beneficiaries. Have you nominated a beneficiary on your funeral cover policy?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -12603,7 +12625,7 @@ export default function Chat() {
                 "Nominating a beneficiary on your funeral cover policy ensures that the benefit is paid directly to the intended recipient without delays. It's a simple step that can provide peace of mind to your loved ones during a difficult time. Would you like assistance in nominating a beneficiary on your funeral cover policy?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -12629,7 +12651,7 @@ export default function Chat() {
                 "We will include this information about nominating a beneficiary on your funeral cover policy in the report shared at the end of this conversation."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -12647,7 +12669,7 @@ export default function Chat() {
                 "Funeral cover can offer peace of mind by providing financial assistance to your loved ones during a challenging time. If you haven't considered obtaining funeral cover, it may be worth exploring to ensure that your family is financially prepared to cover funeral expenses. We can help you understand the benefits of funeral cover and assist you in finding a suitable policy that meets your needs. Would you like more information on the benefits of funeral cover and how it can benefit your family?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -12673,7 +12695,7 @@ export default function Chat() {
                 "Here’s an outline of the benefits of funeral cover:"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     <br />
                     💸 <b>Immediate Financial Support:</b>
                     <br />
@@ -12728,7 +12750,7 @@ export default function Chat() {
                     tailored to your specific needs or assistance in finding a
                     suitable policy?
                   </div>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -12754,7 +12776,7 @@ export default function Chat() {
                 "We will include details on tailoring funeral cover to your needs or finding a suitable policy in the report shared at the end of this conversation."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -12772,7 +12794,7 @@ export default function Chat() {
                 "Understanding the specifics of funeral cover and its benefits can help you make an informed decision about whether it's the right choice for you. We're here to provide you with all the information you need to assess the value of funeral cover and its relevance to your financial planning. Is there any specific information you'd like to know about funeral cover to help you make a decision?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -12800,15 +12822,15 @@ export default function Chat() {
                 "Next, let's talk about trusts. A trust is is a legal arrangement where one person (the trustee) holds and manages assets on behalf of another person or group (the beneficiaries). The person who created the trust is called the settlor. The trustee is responsible for managing the trust according to the terms set by the settlor, ensuring the assets benefit the beneficiaries. Are you familiar with trusts?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
-                        handleButtonStage91Trust("Yes, I have a question")
+                        handleButtonStage91Trust("Yes")
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
-                      Yes, I have a question
+                      Yes
                     </button>
                     <button
                       onClick={() => handleButtonStage91Trust("No")}
@@ -12830,7 +12852,7 @@ export default function Chat() {
                 "Trusts are an integral part of estate planning and can offer various benefits such as asset protection, tax efficiency, and control over asset distribution. They involve a legal arrangement where a trustee holds and manages assets for the benefit of beneficiaries. Trusts can be useful for preserving wealth, providing for loved ones, and ensuring your wishes are carried out. Would you like to explore how trusts can be tailored to meet your specific needs?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage91Integral("Yes")}
@@ -12852,7 +12874,7 @@ export default function Chat() {
                 "We will include information on how trusts can be tailored to your specific needs in the report shared at the end of this conversation."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage91Integral("Continue")}
@@ -12868,7 +12890,7 @@ export default function Chat() {
                 "There are two types of trusts: inter vivos trusts and testamentary trusts. Inter vivos trusts are established during your lifetime, while testamentary trusts are created in your will and come into effect after your death. Have you considered setting up a trust?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -12941,7 +12963,7 @@ export default function Chat() {
                 "Setting up a trust can be a valuable component of your estate plan, providing various benefits such as asset protection, wealth preservation, and efficient distribution of assets to beneficiaries. Would you like more information on how trusts can benefit your specific situation?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage92Setting("Continue")}
@@ -12957,7 +12979,7 @@ export default function Chat() {
                 "Exploring the possibility of setting up a trust is a proactive step in your estate planning journey. Trusts offer numerous advantages, including privacy, control over asset distribution, and tax efficiency. If you have any questions or need guidance on this process, feel free to ask."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage92Setting("Continue")}
@@ -12973,7 +12995,7 @@ export default function Chat() {
                 "It's understandable to have reservations or uncertainty about setting up a trust. Trusts can be customised to suit your unique needs and goals, offering flexibility and protection for your assets. If you're unsure about whether a trust is right for you, we can discuss your concerns and explore alternative options."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage92Setting("Continue")}
@@ -12989,7 +13011,7 @@ export default function Chat() {
                 "Having some knowledge about trusts is a great starting point. However, it's essential to have a clear understanding of how trusts work and how they can benefit your estate planning strategy. If you need more information or have specific questions, feel free to ask, and I'll be happy to assist you."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage92Setting("Continue")}
@@ -13005,7 +13027,7 @@ export default function Chat() {
                 "Addressing specific concerns or questions about setting up a trust is crucial for making informed decisions about your estate plan. Whether you're unsure about the process, concerned about potential implications, or have questions about trust administration, I'm here to provide guidance and support. Feel free to share your concerns, and we can discuss them further."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage92Setting("Continue")}
@@ -13021,7 +13043,7 @@ export default function Chat() {
                 "Trusts can be beneficial for various reasons. They can protect your estate against insolvency, safeguard assets in the event of divorce, and peg growth in your estate. Are any of these reasons relevant to your estate planning?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -13083,7 +13105,7 @@ export default function Chat() {
                 "Additionally, transferring assets to a trust can save on executor's fees and exclude assets from your estate for estate duty purposes. Have you thought about these advantages in relation to your estate planning?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -13170,7 +13192,7 @@ export default function Chat() {
                 "Exploring how transferring assets to a trust could benefit you is a wise decision in estate planning. It offers various advantages, such as reducing executor's fees and estate duty obligations, as well as providing asset protection and efficient distribution to beneficiaries. If you're interested in learning more about these benefits and how they apply to your specific situation, I am here to provide further information and guidance."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage94Executor("Continue")}
@@ -13186,7 +13208,7 @@ export default function Chat() {
                 "Understanding the significance of advantages like saving on executor's fees and excluding assets from your estate for estate duty purposes is essential in crafting an effective estate plan. These benefits can have a significant impact on preserving your wealth and ensuring efficient asset distribution. If you're uncertain about their significance or how they apply to your estate planning, I can provide more details and clarify any questions you may have."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage94Executor("Continue")}
@@ -13202,7 +13224,7 @@ export default function Chat() {
                 "Exploring how transferring assets to a trust could benefit you is a wise decision in estate planning. It offers various advantages, such as reducing executor's fees and estate duty obligations, as well as providing asset protection and efficient distribution to beneficiaries. If you're interested in learning more about these benefits and how they apply to your specific situation, I'm here to provide further information and guidance."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage94Executor("Continue")}
@@ -13218,7 +13240,7 @@ export default function Chat() {
                 "It's understandable to need more information to fully grasp how the advantages of transferring assets to a trust would apply to your situation. These advantages, such as saving on executor's fees and estate duty obligations, can vary depending on individual circumstances. If you require further clarification or personalised insights into how these benefits would impact your estate planning, I'm here to assist you and provide the information you need."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage94Executor("Continue")}
@@ -13234,7 +13256,7 @@ export default function Chat() {
                 "Addressing specific concerns or questions about setting up a trust is crucial for making informed decisions about your estate plans. Whether you're unsure about the process, concerned about potential implications, or have questions about trust administration, I'm here to provide guidance and support. Feel free to share your concerns, and we can discuss them further."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage94Executor("Continue")}
@@ -13250,7 +13272,7 @@ export default function Chat() {
                 "Donation of assets to a trust. This can remove assets from your estate and allow further growth within the trust and not increasing the value of your personal estate. Are you considering donating assets to a trust?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -13302,7 +13324,7 @@ export default function Chat() {
                 "Understanding how donating assets to a trust aligns with your estate planning goals is crucial for making informed decisions. Donating assets to a trust can offer various benefits, including asset protection, estate tax reduction, and efficient wealth transfer. However, it's essential to ensure that this strategy aligns with your overall estate planning objectives. If you're unsure about its compatibility with your goals, I can provide more information and help you evaluate whether it's the right choice for your estate plan."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage95Donation("Continue")}
@@ -13318,7 +13340,7 @@ export default function Chat() {
                 "Gathering more information before deciding on donating assets to a trust is a prudent approach. This strategy involves transferring assets to a trust, which can have implications for asset protection, tax planning, and wealth preservation. If you require additional details about how this option works, its potential benefits, and any considerations specific to your situation, I'm here to provide the necessary information and support your decision-making process."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage95Donation("Continue")}
@@ -13334,7 +13356,7 @@ export default function Chat() {
                 "It's important to note that while this strategy can reduce estate duty, there may be tax implications. Are you aware of the potential donations tax liability?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage96Strategy("Yes")}
@@ -13361,11 +13383,11 @@ export default function Chat() {
               )}
 
               {message.content.includes(
-                "Your information will be reviewed by an Old Mutual financial adviser, and you can expect to hear back soonwithyourestate plan."
+                "Your information will be reviewed by an Old Mutual financial adviser, and you can expect to hear back soon with your estate plan."
               ) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Have a great day, and we’re looking forwardtohelpingyou
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    Have a great day, and we’re looking forward to helping you
                     secure your future!
                   </div>
                 </>
@@ -13375,13 +13397,13 @@ export default function Chat() {
                 "Hello and welcome to Moneyversity’s Estate Planning Consultant"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 -mb-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     I'm here to help you navigate the estate planning process
-                    with ease 🛠️. Together, we’ll ensure your assets and wishes
+                    with ease 🛠️. Together, we’ll ensure your assets and wishes 
                     are well-documented and protected 🛡️. Ready to get started
                     on this important journey? 🚀
                   </div>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage0("Absolutely")}
@@ -13409,7 +13431,7 @@ export default function Chat() {
                 "No problem at all. If you ever have questions or decide to start your estate planning, I’m here to help. Have a great day!"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage0("Let's chat again!")}
@@ -13425,7 +13447,7 @@ export default function Chat() {
                 "Let’s dive into the world of estate planning!"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 -mb-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Estate planning is the process of arranging how your assets
                     will be managed and distributed after your death 🏡📜. It
                     ensures that your wishes are respected, your loved ones are
@@ -13435,7 +13457,7 @@ export default function Chat() {
                     knowing that your affairs are in order, and it can also help
                     reduce taxes and legal costs in the future 💰📉.
                   </div>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage1("Tell me more")}
@@ -13459,7 +13481,7 @@ export default function Chat() {
                 "I know estate planning can be daunting"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Let’s get to know each other a bit better. What is your
                     name?
                   </div>
@@ -13468,7 +13490,7 @@ export default function Chat() {
 
               {message.content.includes("When were you born?") && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     <Calendar onDateSelect={handleDateSelection} />
                   </div>
                 </>
@@ -13478,7 +13500,7 @@ export default function Chat() {
                 "Let’s talk about your family life quickly. Are you married or single?"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 ml-11 mt-4">
                     <button
                       onClick={() => handleButtonStage2("Married")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
@@ -13498,7 +13520,7 @@ export default function Chat() {
               {message.content.includes(
                 "Excellent. Are you married in or out of community of property? If married out of community of property, is it with or without the accrual system?"
               ) && (
-                <div className="space-x-2 mt-2">
+                <div className="space-x-2 ml-11 mt-4">
                   <br />
                   <button
                     onClick={() =>
@@ -13546,7 +13568,7 @@ export default function Chat() {
               {message.content.includes(
                 "Excellent. In order to calculate the accrual, we need to know the specifics of your antenuptial contract (ANC). We will ask for your antenuptial contract at the end of this chat."
               ) && (
-                <div className="space-x-2">
+                <div className="space-x-2 ml-9">
                   <br />
                   <button
                     onClick={() => handleButtonStage3("Continue")}
@@ -13561,28 +13583,30 @@ export default function Chat() {
                 "No worries! Here’s a brief description of each type to help you remember:"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    👫⚖️ <b>In Community of Property:</b> All assets and debts
-                    are shared equally between spouses.
-                    <br />
-                    📈🏠 <b>Out of Community of Property with Accrual:</b> Each
-                    spouse retains separate ownership of their assets, but they
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    <b>👫⚖️ In Community of Property:</b> 
+                    <br/>
+                    All assets and debts
+                    are shared equally between spouses. 
+                    <br /><br />
+                    <b style={{marginLeft: "-1px"}}>📈🏠 Out of Community of Property with Accrual:</b> 
+                    <br/>
+                    Each spouse retains separate ownership of their assets, but they
                     share the growth in value of their estates during the
-                    marriage
-                    <br />
-                    🏡❌ <b>
-                      Out of Community of Property without Accrual:
-                    </b>{" "}
+                    marriage  
+                    <br /><br />
+                    <b style={{marginLeft: "-1px"}}>🏡❌ Out of Community of Property without Accrual:</b>
+                    <br/>
                     Each spouse retains separate ownership of their assets, and
-                    there is no sharing of assets or growth in value <br />
+                    there is no sharing of assets or growth in value.  <br />
                     If you are married out of community of property, you would
                     have consulted with an attorney (or notary) and signed
                     documents (antenuptial contract) before your wedding 📝💍.
-                    <br />
+                    <br /><br />
                     Please check your marital contract or consult with your
                     spouse to confirm ✅
                   </div>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -13626,7 +13650,7 @@ export default function Chat() {
                 "Accrual is a concept in marriage where the growth in wealth during the marriage is shared between spouses. When a couple marries under the accrual system, each spouse keeps the assets they had before the marriage. However, any increase in their respective estates during the marriage is shared equally when the marriage ends, either through divorce or death."
               ) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     For example, if one spouse's estate grows significantly
                     while the other’s does not 📈💼, the spouse with the smaller
                     growth may be entitled to a portion of the increase in the
@@ -13634,7 +13658,7 @@ export default function Chat() {
                     parties 🤝🛡️.
                     <br />
                   </div>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -13678,7 +13702,7 @@ export default function Chat() {
                 "Do you currently have a will in place?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage4("Yes")}
@@ -13700,7 +13724,7 @@ export default function Chat() {
                 "Creating a will is an important step in securing your assets and ensuring your wishes are followed. We can start drafting your will right here by answering a few questions about your estate and preferences a little later in the chat."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage4("Continue")}
@@ -13716,7 +13740,7 @@ export default function Chat() {
                 "When was the last time you reviewed your will? It’s a good idea to keep it up-to-date with any changes in your life"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage5("Will is up to date")}
@@ -13742,7 +13766,7 @@ export default function Chat() {
                 "Do you currently have a trust in place"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage6("Yes")}
@@ -13801,7 +13825,7 @@ export default function Chat() {
               {message.content.includes(
                 "Is there anything else you’d like to add about your personal particulars or any questions you have at this stage?"
               ) && (
-                <div className="space-x-2">
+                <div className="space-x-2 ml-9">
                   <br />
                   <button
                     onClick={() => handleButtonStage7("Yes, I have a question")}
@@ -13823,11 +13847,13 @@ export default function Chat() {
               ) && (
                 <>
                   <br />
+                   <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                   📜 If you'd like to learn more about donations tax and its
                   implications for your estate planning, I can provide further
                   details to help you make informed decisions.
+                  </div>
                   <br />
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage97Donation("Continue")}
@@ -13843,7 +13869,7 @@ export default function Chat() {
                 "Next, let's talk about selling assets to the trust. This can be a strategic way to remove assets from your estate. However, it’s important to note that a loan account is not automaticaaly created unless there’s a difference between the sale price and the value of the asset. Have you considered selling assets to the trust in this way?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -13895,7 +13921,7 @@ export default function Chat() {
                 "Selling assets to a trust can help minimize estate duty and protect your assets. However, remember that if the sale price matches the asset's value, a loan account won't be created. Additionally, capital gains tax and transfer duty may apply if the asset is a capital asset like property. We can discuss how this option fits with your estate planning goals."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage98Assets("Continue")}
@@ -13911,7 +13937,7 @@ export default function Chat() {
                 "It's crucial to align your estate planning strategies with your goals. Selling assets to a trust can offer benefits, such as reducing estate duty, but it also comes with implications like capital gains tax and transfer duty. If you're unsure whether this strategy is right for you, we can discuss it further to ensure it aligns with your specific needs and circumstances."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage98Assets("Continue")}
@@ -13927,7 +13953,7 @@ export default function Chat() {
                 "Understanding the full implications of selling assets to a trust is key. While it can offer estate planning benefits, it's important to consider the potential tax implications, like capital gains tax and transfer duty. If you need more information on how this works and its impact on your estate planning, I’m here to provide the necessary details."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage98Assets("Continue")}
@@ -13943,7 +13969,7 @@ export default function Chat() {
                 "Selling assets to the trust might reduce estate duty, but a sale agreement should be in place if a loan account is to be created. Are you familiar with the terms and conditions of such agreements?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage99Selling("Continue")}
@@ -13988,10 +14014,10 @@ export default function Chat() {
               )}
 
               {message.content.includes(
-                "Sale and loan agreements can be complex, especially when transferring assets to a trust. These agreements detail the sale transaction and the loan terms, if applicable. If you need help understanding these terms and conditions, or have questions about how they apply to your situation, I’m here to provide guidance and support."
+                "Sale agreements can be complex, especially when transferring assets to a trust. These agreements detail the sale transaction and the loan terms, if applicable. If you need help understanding these terms and conditions, or have questions about how they apply to your situation, I’m here to provide guidance and support."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage99Selling("Continue")}
@@ -14006,7 +14032,7 @@ export default function Chat() {
                 "It’s great that you have some understanding of sale and loan agreements. These agreements outline the sale terms and the loan's repayment terms if a loan account is created. If you need more clarity or have questions about specific aspects of these agreements, feel free to ask. I’m here to help provide additional information and support your understanding."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage99Selling("Continue")}
@@ -14021,7 +14047,7 @@ export default function Chat() {
                 "Lastly, let's discuss the costs and tax consequences of transferring assets to a trust. This may include capital gains tax, transfer duty (for immovable property), and possible donations tax. Have you taken these factors into account?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -14070,7 +14096,7 @@ export default function Chat() {
                 "Selling assets to a trust can be a strategic way to transfer assets out of your estate, potentially reducing estate duty and protecting your wealth. However, it’s important to consider the potential tax implications, such as capital gains tax and transfer duty, and whether a loan account will actually be created. If you’re interested in exploring this option further, we can dive into the specifics and see how it aligns with your overall estate planning goals."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage99Final("Continue")}
@@ -14086,7 +14112,7 @@ export default function Chat() {
                 "It's good to hear that you have some understanding of the costs and tax consequences associated with transferring assets to a trust. These factors can indeed be complex, and it's important to have a clear understanding to make informed decisions. If you need more clarity on any specific aspects of these costs and tax implications or if you have any questions about how they may impact your estate planning, feel free to ask. I'm here to provide additional information and support your understanding."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage99Final("Continue")}
@@ -14102,7 +14128,7 @@ export default function Chat() {
                 "Understanding the costs and tax implications of transferring assets to a trust is crucial for making informed decisions in your estate planning. If you need more information before deciding, I'm here to help. We can discuss these factors in more detail, clarify any questions you may have, and ensure that you have a comprehensive understanding of how they may affect your estate plan. Feel free to ask any questions or raise any concerns you may have."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage99Final("Continue")}
@@ -14118,7 +14144,7 @@ export default function Chat() {
                 "Now, let's explore the concept of an investment trust. This structure allows for annual donations to the trust, reducing your estate over time. Are you interested in setting up an investment trust?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -14167,7 +14193,7 @@ export default function Chat() {
                 "Setting up an investment trust can be a strategic way to manage your assets and reduce your estate over time. It allows for annual donations to the trust, which can have various benefits for your estate planning. If you're interested in exploring this option further, we can discuss the specifics of how an investment trust could align with your estate planning goals and tailor a plan to suit your needs."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage100Investment("Continue")}
@@ -14183,7 +14209,7 @@ export default function Chat() {
                 "It's understandable to have questions about whether an investment trust aligns with your estate planning goals. An investment trust can offer unique advantages, but it's essential to ensure that it fits your specific needs and objectives. If you're uncertain, we can delve deeper into how an investment trust works and explore whether it's the right option for you."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage100Investment("Continue")}
@@ -14199,7 +14225,7 @@ export default function Chat() {
                 "Exploring different options is an important part of estate planning, and it's essential to find the approach that best suits your needs and objectives. If you prefer to explore other options besides setting up an investment trust, we can discuss alternative strategies and find the solution that aligns most closely with your estate planning goals."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage100Investment("Continue")}
@@ -14215,7 +14241,7 @@ export default function Chat() {
                 "Making an informed decision about whether to set up an investment trust requires a clear understanding of how it works and how it may impact your estate planning goals. If you need more information before deciding, feel free to ask any questions you may have. We can discuss the specifics of an investment trust, its benefits, and how it may fit into your overall estate plan."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage100Investment("Continue")}
@@ -14231,7 +14257,7 @@ export default function Chat() {
                 "An investment trust can provide flexibility for the trust beneficiaries to receive income and borrow funds. Does this align with your estate planning goals?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -14267,7 +14293,7 @@ export default function Chat() {
                 "If an investment trust doesn't align with your estate planning goals, we can explore other options that may better suit your needs. Estate planning is a personalised process, and it's essential to find strategies that align closely with your objectives and preferences. Let's discuss alternative approaches to ensure your estate plan reflects your wishes and priorities."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -14285,7 +14311,7 @@ export default function Chat() {
                 "An investment trust offers flexibility for beneficiaries to receive income and borrow funds, providing potential advantages for estate planning. With an investment trust, you can structure distributions in a way that aligns with your goals and preferences. If you're interested in learning more about how an investment trust could benefit your estate plan, I can provide further details on how it works and its potential advantages."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -14303,7 +14329,7 @@ export default function Chat() {
                 "Thanks! Do you have anything you’d like to add or any questions that I can help you with today?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -14327,7 +14353,7 @@ export default function Chat() {
                 "We’ve now gathered all the relevant information to help create your estate plan. As one of the final steps, please upload the documents below. These will be securely stored and only shared with the financial adviser who will assist you in finalising your estate plan."
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -14655,14 +14681,14 @@ export default function Chat() {
                 "Thank you for uploading your documents!"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Now before we wrap up, could you please share your email
                     address with us? This will be used by an Old Mutual
                     financial adviser who will contact you directly regarding
                     your estate plan and provide any necessary guidance.
                   </div>
                   <br />
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Please enter your email address.
                   </div>
                 </>
@@ -14672,13 +14698,13 @@ export default function Chat() {
                 "A report has been generated containing all the results from this chat. You can download a copy below."
               ) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     This report along with your documents will be shared with an
                     Old Mutual financial adviser who will use this information
                     to finalise your estate plan.
                   </div>
                   <br />
-                  <div className="space-x-2 my-2">
+                  <div className="space-x-2 ml-11 my-2">
                     <button
                       onClick={() =>
                         handleButtonStageDownloadReport("Download Report")
@@ -14695,7 +14721,7 @@ export default function Chat() {
                 "Thanks for sharing your thoughts,"
               ) && (
                 <>
-                  <div className="space-x-2 my-2">
+                  <div className="space-x-2 ml-11 my-2">
                     <button
                       onClick={() =>
                         handleButtonStage20Final("Yes, I have a question")
@@ -14718,7 +14744,7 @@ export default function Chat() {
                 "The success of your estate plan relies on accurate information about your assets, liabilities, and clear communication of your wishes. How confident are you in the accuracy of the details you’ve provided so far? And would you be open to regularly reviewing and updating your estate plan to reflect any changes?"
               ) && (
                 <>
-                  <div className="space-x-2 my-2">
+                  <div className="space-x-2 ml-11 my-2">
                     <button
                       onClick={() => handleButtonStage20("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
@@ -14766,14 +14792,7 @@ export default function Chat() {
               ) ||
                 message.content.includes("Checklist is downloaded")) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    While these templates and checklists can help you get
-                    started, there are times when seeking professional legal
-                    advice is essential. Consider getting legal advice if the
-                    following applies to you:
-                  </div>
-                  <br />
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     🏦 <b>Complex Estates:</b>
                     <br />
                     If you have a large or complex estate, a lawyer can help
@@ -14803,7 +14822,7 @@ export default function Chat() {
                     assist, free of charge when consulting via financial
                     adviser.
                   </div>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage15("Continue")}
@@ -14829,7 +14848,7 @@ export default function Chat() {
                 "Great! Let’s move on to the next section where we’ll discuss your objectives for estate planning. Ready?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() => handleButtonStage15v2("Continue")}
@@ -14853,7 +14872,7 @@ export default function Chat() {
 
               {faqStage && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     ❓ What is estate planning?
                     <br />
                     Estate planning is the process of arranging for the
@@ -14901,7 +14920,7 @@ export default function Chat() {
                     Do you have any other questions or need further information?
                     I’m here to help! 🤝💬
                   </div>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9">
                     <br />
                     <button
                       onClick={() =>
@@ -14925,7 +14944,7 @@ export default function Chat() {
                 "Is there anything else you’d like to know about estate planning or any questions you have at this stage?"
               ) && (
                 <>
-                  <div className="space-x-2">
+                  <div className="space-x-2 ml-9 -mt-4">
                     <br />
                     <button
                       onClick={() =>
@@ -14949,10 +14968,10 @@ export default function Chat() {
   "It’s important to understand the legal requirements and considerations specific to South Africa:"
 ) && (
   <>
-    <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+    <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
       Here are some important acts and considerations:
     </div>
-    <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+    <div className="space-x-2 ml-11 mt-4 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
       <b className="block mb-2">Wills Act 7 of 1953 📝</b>
       The Wills Act governs the creation and execution of wills. Your will must be in writing, signed by you, and witnessed by two people who are not beneficiaries.
       <br /><br />
@@ -14972,7 +14991,7 @@ export default function Chat() {
       <br />
     </div>
     <br />
-    <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+    <div className="space-x-2 ml-11 mt-4 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
       <br />
       In South Africa, there are various types of marriages:
       <br /><br />
@@ -15014,10 +15033,10 @@ export default function Chat() {
         <li>This can have implications on your estate plan as you can be considered single/unmarried if your marriage is not registered with Home Affairs.</li>
       </ul>
     </div>
-    <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+    <div className="space-x-2 ml-11 mt-4 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
       Do you have any questions at this stage?
     </div>
-    <div className="space-x-2 mt-2">
+    <div className="space-x-2 ml-11 mt-4">
       <button
         onClick={() => handleButtonStage13v2v1("Yes, I have a question.")}
         className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
@@ -15039,7 +15058,7 @@ export default function Chat() {
                 "Estate duty is a tax that has an impact on your estate. Do you want to explore estate duty further?"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 ml-11 mt-4">
                     <button
                       onClick={() => handleButtonStage13EstateDuty("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
@@ -15062,7 +15081,7 @@ export default function Chat() {
                 "This tax is levied on the total value of a deceased person’s estate. The conditions include:"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     <b>Threshold</b> 💰
                     <br />
                     There is a basic threshold (exemption limit) below which no
@@ -15071,36 +15090,39 @@ export default function Chat() {
                     that exceed R3.5 million are estate dutiable.
                     <br />
                     <br />
-                    <b>Rates</b> 📊
+                    <b style={{marginLeft: "-1px"}}>Rates</b> 📊
                     <br />
                     The estate duty rate is generally 20% on the value above the
                     threshold. For amounts exceeding R30 million, a higher rate
                     of 25% applies.
                     <br />
                     <br />
-                    <b>Example 1</b>: Peter’s estate is worth R5 million. His
-                    estate will be liable for estate duty as follows:
+                   <em>
+  <b style={{ marginLeft: "-1px" }}>Example 1</b>: Peter’s estate is worth R5 million. His
+  estate will be liable for estate duty as follows:
+  <br />
+  R5m - R3.5m = R1.5m
+  <br />
+  R1.5m x 20% = R300,000 payable.
+  <br />
+  <br />
+  <b style={{ marginLeft: "-1px" }}>Example 2</b>: Peter’s estate is worth R50 million. His
+  estate will be liable for estate duty as follows:
+  <br />
+  20% x R30m
+  <br />
+  25% x (R50m - R30m)
+</em>
+
                     <br />
-                    R5m - R3.5m = R1.5m
                     <br />
-                    R1.5m x 20% = R300,000 payable.
-                    <br />
-                    <br />
-                    <b>Example 2</b>: Peter’s estate is worth R50 million. His
-                    estate will be liable for estate duty as follows:
-                    <br />
-                    20% x R30m
-                    <br />
-                    25% x (R50m - R30m)
-                    <br />
-                    <br />
-                    <b>Deductions</b> 📝
+                    <b style={{marginLeft: "-1px"}}>Deductions</b> 📝
                     <br />
                     Certain deductions can be applied, such as liabilities and
                     bequests to charities.
                     <br />
                     <br />
-                    <b>Farm Property Exemption</b> 🚜
+                    <b style={{marginLeft: "-1px"}}>Farm Property Exemption</b> 🚜
                     <br />
                     Farm valuation exemption for estate duty provides for a
                     deduction of up to R30 million on the value of farm property
@@ -15108,13 +15130,17 @@ export default function Chat() {
                     value of qualifying farm property is not subject to estate
                     duty.
                     <br />
+                    <em>
                     Example: If a farm is valued at R50 million and qualifies
                     for the full exemption, only R20 million would be subject to
                     estate duty, potentially reducing the estate duty payable.
+                    </em>
                     <br />
                     <br />
                   </div>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Do you have any questions regarding estate duty at this stage?</div>
+                  <div className="space-x-2 ml-11 mt-4">
                     <button
                       onClick={() =>
                         handleButtonStage13v2("Yes, I have a question")
@@ -15137,7 +15163,7 @@ export default function Chat() {
                 "Property is a common asset that is bequeathed in estate plans. Farms in particular have specific bequeathing conditions. Do you want to explore these conditions further?"
               ) && (
                 <>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 ml-11 mt-4">
                     <button
                       onClick={() => handleButtonStage13v3("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
@@ -15160,33 +15186,34 @@ export default function Chat() {
                 "A farm may only be sold to one person or entity and as such, the offer to purchase cannot be made by more than one person. An exception to this would be if a couple is married in community of property as South African law views their estate as one."
               ) && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    🌾 As with the case of agricultural land being bequeathed to
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    As with the case of agricultural land being bequeathed to
                     multiple heirs, the consent of the Minister may be requested
                     in order to grant permission for the sale of agricultural
                     land to more than one person. This consent must be sought
                     prior to the agreement of sale being concluded and therefore
                     an offer to purchase by multiple purchasers can only be made
-                    after the owner has received the Minister's consent.
+                    after the owner has received the Minister's consent. 🌾
                     <br />
                     <br />
-                    📜 Some title deeds (of farms) may include conditions about
+                    Some title deeds (of farms) may include conditions about
                     who can inherit the farm or whether the land can be sold or
-                    subdivided. This would be an instance of:
+                    subdivided. This would be an instance of: 📜
                     <br />
                     <br />
-                    🔹 Fideicommissum
+                    <b style={{marginLeft: "-1px"}}>Fideicommissum</b>🔹
                     <br />
                     A legal arrangement where the owner of an asset leaves it to
                     someone with the condition that, after their death, the
                     asset will be passed on to another person or group.
                     <br />
-                    📋 For example, you might leave your farm to your children
+                    <em style={{marginLeft: "-1px"}}>
+                    For example, you might leave your farm to your children
                     with the condition that, after their death, it will go to
-                    your grandchildren.
+                    your grandchildren. 📋</em>
                     <br />
                     <br />
-                    🔹 Usufruct
+                    <b style={{marginLeft: "-1px"}}>Usufruct</b>🔹
                     <br />
                     Gives someone the right to use and benefit from an asset
                     (like living in a house 🏠 or earning income from a property
@@ -15195,15 +15222,16 @@ export default function Chat() {
                     The person with usufruct has control over the asset for a
                     certain period, but they can't sell or permanently alter it.
                     <br />
-                    💡 For instance, if you have usufruct over a property, you
+                    <em style={{marginLeft: "-1px"}}>
+                    For instance, if you have usufruct over a property, you
                     can live in it or rent it out, but you can't sell the
-                    property.
+                    property. 💡</em>
                   </div>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Do you have any questions regarding bequeathing a farm at
                     this stage?
                   </div>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 ml-11 mt-4">
                     <button
                       onClick={() =>
                         handleButtonStage13("Yes, I have a question")
@@ -15225,7 +15253,7 @@ export default function Chat() {
               {/* {educationInformation && (
                 <>
                  
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 ml-11 mt-4">
                     There are 9 key components of estate planning:
                     <br />
                     📜 Wills
@@ -15249,7 +15277,7 @@ export default function Chat() {
                     Would you like a detailed explanation of all or some of
                     these components?
                   </div>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 ml-11 mt-4">
                     <button
                       onClick={() => handleButtonComponent("Wills")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
@@ -15339,7 +15367,7 @@ export default function Chat() {
 
               {educationInformation && (
                 <>
-                  <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 -mb-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     📜 Wills
                     <br />
                     🔐 Trusts
@@ -15359,32 +15387,33 @@ export default function Chat() {
                     Would you like a detailed explanation of all or some of
                     these terms?
                   </div>
-                  <div className="space-x-2 mt-2">
-                    {terms.map((term) => (
-                      <>
-                        <br /> {/* Adjust margin as needed */}
-                        <label
-                          key={term}
-                          htmlFor={term}
-                          className={`flex items-center space-x-2 px-4 py-2 w-[400px] -my-2 rounded-md border cursor-pointer ${
-                            selectedTerms.includes(term)
-                              ? "bg-[#8DC63F] text-white border-transparent"
-                              : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
-                          }`}
-                        >
-                          <input
-                            type="checkbox"
-                            id={term}
-                            onChange={handleCheckboxChangeTerms}
-                            name={term}
-                            value={term}
-                            checked={selectedTerms.includes(term)}
-                            className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
-                          />
-                          &nbsp;&nbsp;&nbsp;{term}
-                        </label>
-                      </>
-                    ))}
+                  <div className="space-x-2 ml-9 mt-2">
+                   {terms.map((term) => (
+  <>
+    <br /> {/* Adjust margin as needed */}
+    <label
+      key={term}
+      htmlFor={term}
+      className={`flex items-center space-x-2 px-4 py-2 w-[400px] -my-2 rounded-md border cursor-pointer ${
+        selectedTerms.includes(term)
+          ? "bg-[#8DC63F] text-white border-transparent"
+          : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
+      }`}
+    >
+      <input
+        type="checkbox"
+        id={term}
+        onChange={handleCheckboxChangeTerms}
+        name={term}
+        value={term}
+        checked={selectedTerms.includes(term)}
+        className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
+      />
+      &nbsp;&nbsp;&nbsp;{term}
+    </label>
+  </>
+))}
+
 
                     <button
                       onClick={handleProceed}
@@ -15400,40 +15429,40 @@ export default function Chat() {
   <>
     {selectedTerms.length > 0 && (
       <>
-        <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+        <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
           {/* If 'All Key Terms' is selected, show all definitions */}
           {selectedTerms.includes("All Key Terms") ? (
             <>
               {/* Show all terms at once */}
-              Wills 📜
+              📜 Wills
               <br />
               A will is a legal document that says how you want your belongings, money, and assets to be divided after you pass away. It also names someone to carry out your wishes (an executor) and can appoint guardians for your children.
               <br /><br />
-              Trusts 🔐
+              🔐 Trusts
               <br />
               A trust is a legal arrangement where you (the founder/settlor) place assets, like money or property, into a separate entity managed by a person (the trustee) for the benefit of someone else (the beneficiary). The trustee manages these assets according to your instructions, often to provide for beneficiaries over time, such as children or loved ones. A trust can be set up in your will and will come into existence when you pass away, or it can be set up while you are alive.
               <br /><br />
-              Power of Attorney 🖋️
+              🖋️ Power of Attorney
               <br />
               A power of attorney is a legal document that allows you to give someone else the authority to make decisions for you. It could be about financial matters, health care, or other personal affairs, especially if you’re unable to handle them yourself.
               <br /><br />
-              Living Will 🏥
+              🏥 Living Will
               <br />
               A living will is a document where you write down your wishes about medical care if you’re unable to communicate. It’s about what kind of treatments you do or don’t want if you’re seriously ill or injured and can’t speak for yourself.
               <br /><br />
-              Beneficiaries 💼
+              💼 Beneficiaries
               <br />
               Beneficiaries are the people you choose to receive your money, assets, or other benefits when you pass away. They are named in your insurance policies or retirement benefit forms.
               <br /><br />
-              Beneficiary Designation Forms 📑
+              📑 Beneficiary Designation Forms
               <br />
               For assets like retirement accounts, life insurance, or certain bank accounts, you may need to fill out a form naming who gets those assets after you pass away. These forms typically override what’s written in a will or trust.
               <br /><br />
-              Executor ⚖️
+              ⚖️ xecutor
               <br />
               The person named in your will who is responsible for carrying out your wishes after you pass away, including paying debts and distributing assets to beneficiaries.
               <br /><br />
-              Guardian 🛡️
+              🛡️ Guardian
               <br />
               If you have minor children, you can name a guardian in your will. This person will be responsible for taking care of your children if something happens to you.
               <br /><br />
@@ -15443,7 +15472,7 @@ export default function Chat() {
               {/* Show individual terms if 'All Key Terms' is not selected */}
               {selectedTerms.includes("Wills") && (
                 <>
-                  Wills 📜
+                  📜 Wills
                   <br />
                   A will is a legal document that says how you want your belongings, money, and assets to be divided after you pass away. It also names someone to carry out your wishes (an executor) and can appoint guardians for your children.
                   <br /><br />
@@ -15452,7 +15481,7 @@ export default function Chat() {
 
               {selectedTerms.includes("Trusts") && (
                 <>
-                  Trusts 🔐
+                  🔐 Trusts
                   <br />
                   A trust is a legal arrangement where you (the founder/settlor) place assets, like money or property, into a separate entity managed by a person (the trustee) for the benefit of someone else (the beneficiary). The trustee manages these assets according to your instructions, often to provide for beneficiaries over time, such as children or loved ones. A trust can be set up in your will and will come into existence when you pass away, or it can be set up while you are alive.
                   <br /><br />
@@ -15461,7 +15490,7 @@ export default function Chat() {
 
               {selectedTerms.includes("Power of Attorney") && (
                 <>
-                  Power of Attorney 🖋️
+                  🖋️ Power of Attorney
                   <br />
                   A power of attorney is a legal document that allows you to give someone else the authority to make decisions for you. It could be about financial matters, health care, or other personal affairs, especially if you’re unable to handle them yourself.
                   <br /><br />
@@ -15470,7 +15499,7 @@ export default function Chat() {
 
               {selectedTerms.includes("Living Will") && (
                 <>
-                  Living Will 🏥
+                  🏥 Living Will
                   <br />
                   A living will is a document where you write down your wishes about medical care if you’re unable to communicate. It’s about what kind of treatments you do or don’t want if you’re seriously ill or injured and can’t speak for yourself.
                   <br /><br />
@@ -15479,7 +15508,7 @@ export default function Chat() {
 
               {selectedTerms.includes("Beneficiaries") && (
                 <>
-                  Beneficiaries 💼
+                  💼 Beneficiaries
                   <br />
                   Beneficiaries are the people you choose to receive your money, assets, or other benefits when you pass away. They are named in your insurance policies or retirement benefit forms.
                   <br /><br />
@@ -15488,7 +15517,7 @@ export default function Chat() {
 
               {selectedTerms.includes("Beneficiary Designation Forms") && (
                 <>
-                  Beneficiary Designation Forms 📑
+                  📑 Beneficiary Designation Forms
                   <br />
                   For assets like retirement accounts, life insurance, or certain bank accounts, you may need to fill out a form naming who gets those assets after you pass away. These forms typically override what’s written in a will or trust.
                   <br /><br />
@@ -15497,7 +15526,7 @@ export default function Chat() {
 
               {selectedTerms.includes("Executor") && (
                 <>
-                  Executor ⚖️
+                  ⚖️ Executor
                   <br />
                   The person named in your will who is responsible for carrying out your wishes after you pass away, including paying debts and distributing assets to beneficiaries.
                   <br /><br />
@@ -15506,7 +15535,7 @@ export default function Chat() {
 
               {selectedTerms.includes("Guardian") && (
                 <>
-                  Guardian 🛡️
+                  🛡️ Guardian
                   <br />
                   If you have minor children, you can name a guardian in your will. This person will be responsible for taking care of your children if something happens to you.
                   <br /><br />
@@ -15518,7 +15547,7 @@ export default function Chat() {
       </>
     )}
 
-    <div className="space-x-2 mt-2">
+    <div className="space-x-2 ml-11 mt-4">
       <button
         onClick={() => handleButtonStage12("Proceed")}
         className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
@@ -15535,7 +15564,7 @@ export default function Chat() {
                 <>
                   {selectedScenario.length > 0 && (
                     <>
-                      <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                      <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                         {selectedScenario.includes("All Scenarios") ? (
                           <>
                             <b>Scenario 1: Setting Up a Trust</b>
@@ -15547,8 +15576,8 @@ export default function Chat() {
                             mismanaged or spent too quickly. Additionally,
                             trusts can offer tax benefits and ensure a smoother
                             transfer of assets to your beneficiaries.
-                            <br />
-                            <b>Scenario 2: Dying Intestate (Without a Will)</b>
+                            <br /> <br />
+                            <b style={{marginLeft: "-1px"}}>Scenario 2: Dying Intestate (Without a Will)</b>
                             <br />
                             Suppose you pass away without a will. According to
                             South Africa’s Intestate Succession Act, your estate
@@ -15557,8 +15586,8 @@ export default function Chat() {
                             or children. This may not align with your personal
                             wishes and could lead to disputes among family
                             members.
-                            <br />
-                            <b>Scenario 3: Appointing a Power of Attorney</b>
+                            <br /> <br />
+                            <b style={{marginLeft: "-1px"}}>Scenario 3: Appointing a Power of Attorney</b>
                             <br />
                             Consider appointing a trusted person as your power
                             of attorney. This individual can manage your
@@ -15568,8 +15597,8 @@ export default function Chat() {
                             decisions on your behalf. This ensures that your
                             affairs are handled according to your wishes, even
                             if you’re unable to communicate them.
-                            <br />
-                            <b>
+                            <br /> <br />
+                            <b style={{marginLeft: "-1px"}}>
                               Scenario 4: Tax Implications of Estate Planning
                               Decisions
                             </b>
@@ -15583,7 +15612,6 @@ export default function Chat() {
                             understand the best strategies for minimising tax
                             liabilities while achieving your estate planning
                             goals.
-                            <br />
                             <br />
                           </>
                         ) : (
@@ -15666,7 +15694,7 @@ export default function Chat() {
                         )}
                       </div>
 
-                      <div className="space-x-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                      <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                         Now that we’ve explored these scenarios, do you have any
                         questions or need further information? I’m here to help!
                       </div>
@@ -15695,7 +15723,7 @@ export default function Chat() {
               )}
 
               {/* {askingConsent && (
-                <div className="space-x-2 mt-2">
+                <div className="space-x-2 ml-11 mt-4">
                   <button
                     onClick={() => handleButtonFunFact("Yes, I consent")}
                     className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
@@ -15784,7 +15812,7 @@ export default function Chat() {
                       collection and storage?
                     </p>
                   </div>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 ml-11 mt-4">
                     <button
                       onClick={() => handleButtonPrivacy("Yes, I consent")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
@@ -15822,7 +15850,7 @@ export default function Chat() {
                       different estate planning choices 🌐?
                     </p>
                   </div>
-                  <div className="space-x-2 mt-2">
+                  <div className="space-x-2 ml-11 mt-4">
                     <button
                       onClick={() =>
                         handleButtonFunFact("Yes, I'm ready to move on.")
@@ -15846,7 +15874,7 @@ export default function Chat() {
               ) : null}
 
               {video && (
-                <div className="space-x-2 mt-2">
+                <div className="space-x-2 ml-11 mt-4">
                   <button
                     onClick={() => handleButtonClick("Yes, I want to watch")}
                     className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
@@ -17058,7 +17086,7 @@ export default function Chat() {
                 ) {
                   e.preventDefault();
                   handleAddAIResponse(
-                    "Thank you for providing these details," +
+                    "Thank you for providing these details, " +
                       userName +
                       ". Now, we can move on to the next part of your estate planning. Ready to continue?"
                   );
