@@ -6795,7 +6795,7 @@ export default function Chat() {
                 <div className="space-y-2 mt-2">
                   {/* Yes, I consent checkbox */}
                   <div
-                    onClick={() => handleButtonStage21Asset("Continue")} // Add onClick event
+                    onClick={() => handleButtonConsent("Yes, I consent")} // Add onClick event
                     className={`flex items-center space-x-2 px-4 py-2 w-[400px] rounded-md border cursor-pointer ${
                       consent === "Yes, I consent"
                         ? "bg-[#8DC63F] text-white border-transparent"
