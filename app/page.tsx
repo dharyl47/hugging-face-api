@@ -3192,6 +3192,10 @@ export default function Chat() {
     if (message == "No") {
       response =
         "Sure, I’m here to help. What additional information or questions do you have?";
+         setNextResponse(
+        "Now let's discuss estate duty, the tax on the total value of your estate if you were to pass away today with your current will or distribution wishes in place. Understanding this helps us ensure your estate plan minimises taxes and maximises what is passed on to your heirs. Ready to get started?"
+      );
+      isResponse.current = "1";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -3459,7 +3463,7 @@ export default function Chat() {
     if (message == "Yes") {
       firstTip.current = 1;
       response =
-        "USEFUL TIP: For estate duty: When farms are bequeathed (whether to trust or natural person) and the farm was used for bona fide farming purposes, the market value less 30% is included as the value of the farm for estate duty purposes.";
+        "<strong>💡 USEFUL TIP:</strong><br/> For estate duty: When farms are bequeathed (whether to trust or natural person) and the farm was used for bona fide farming purposes, the market value less 30% is included as the value of the farm for estate duty purposes.";
     }
     if (message == "No") {
       response =
@@ -5987,11 +5991,11 @@ export default function Chat() {
     let response = "";
     if (message == "Continue") {
       response =
-        "We’ve now gathered all the relevant information to help create your estate plan. As one of the final steps, please upload the documents below. These will be securely stored and only shared with the financial adviser who will assist you in finalising your estate plan.";
+        "We’ve now gathered all the relevant information to help create your estate plan. As one of the final steps, please upload the documents below. <br/><br/>These will be securely stored and only shared with the financial adviser who will assist you in finalising your estate plan.";
     }
     if (message == "Yes") {
       response =
-        "We’ve now gathered all the relevant information to help create your estate plan. As one of the final steps, please upload the documents below. These will be securely stored and only shared with the financial adviser who will assist you in finalising your estate plan.";
+        "We’ve now gathered all the relevant information to help create your estate plan. As one of the final steps, please upload the documents below. <br/><br/>These will be securely stored and only shared with the financial adviser who will assist you in finalising your estate plan.";
     }
     if (message == "No") {
       response =
@@ -6887,11 +6891,14 @@ export default function Chat() {
                 </>
               ) : (
                 //AI CHAT BUBBLE IS HERE
-                <div className={message.role === "user"? "bg-[#8dc63f] text-white rounded-lg py-2 px-4 inline-block":
+               <div className={message.role === "user"? "bg-[#8dc63f] text-white rounded-lg py-2 px-4 inline-block":
                   "flex items-start mb-2 assistant-message"}>
-                  <p className={message.role === "user"? "":"bg-[#2f2f2f] text-white rounded-lg inline-block"}>
-                   {` ${filteredContent.replace(/<\|endoftext\|>/g, "")}`}</p>
-                </div>
+  <p 
+    className={message.role === "user"? "":"bg-[#2f2f2f] text-white rounded-lg inline-block"} 
+    dangerouslySetInnerHTML={{ __html: filteredContent.replace(/<\|endoftext\|>/g, "") }}>
+  </p>
+</div>
+
 
               )}
 
@@ -10239,7 +10246,7 @@ export default function Chat() {
                     />
                   </div>
 
-                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-2 mb-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Please provide details of the trust.
                   </div>
                 </>
@@ -10420,7 +10427,7 @@ export default function Chat() {
                   <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Thank you for providing all these details. {userName}. This helps us
                     understand the estate duty implications of your current
-                    will. Please share your current will. 🔐💼
+                    will.
                   </div>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
@@ -10513,7 +10520,7 @@ export default function Chat() {
               ) && (
                 <>
                   <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    <strong>💡 USEFUL TIP</strong>:
+                    <strong style={{marginLeft: "-5px"}}>💡 USEFUL TIP</strong>:
                     <br />
                     If your spouse were to pass away immediately after you,
                     there are specific estate duty implications and/or
@@ -10527,25 +10534,26 @@ export default function Chat() {
                     understand the estate duty implications of your current
                     will. Please share your current will. 🔐💼
                   </div>
+                   <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Next, we’ll look at the executor’s fees. Shall we continue?
+                  </div>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
                     <button
                       onClick={() =>
-                        handleButtonStage65CurrentWill(
-                          "Upload Document at End of Chat"
-                        )
+                        handleButtonStage66EstateDutyCurrentWillFinal("Yes")
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
-                      Upload Document at End of Chat
+                      Yes
                     </button>
                     <button
                       onClick={() =>
-                        handleButtonStage65CurrentWill("No, let’s move on")
+                        handleButtonStage66EstateDutyCurrentWillFinal("No")
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
-                      No, let’s move on
+                      No
                     </button>
                   </div>
                 </>
@@ -10588,7 +10596,7 @@ export default function Chat() {
                     wish to set for the executor’s fees.
                     <br />
                     <br />
-                    <strong>USEFUL TIP</strong>:
+                    <strong style={{marginLeft: "-1px"}}>💡 USEFUL TIP</strong>:
                     <br />
                     👪 Family members are also entitled to executor’s fees. The
                     advantage of family members as executors is that they may be
@@ -10718,7 +10726,7 @@ export default function Chat() {
                     <br />
                     <button
                       onClick={() =>
-                        handleButtonStage71LiquidityEssential("Yes, specify")
+                        handleButtonStage71LiquidityEssential("Continue")
                       }
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
@@ -14350,7 +14358,7 @@ export default function Chat() {
               )}
 
               {message.content.includes(
-                "We’ve now gathered all the relevant information to help create your estate plan. As one of the final steps, please upload the documents below. These will be securely stored and only shared with the financial adviser who will assist you in finalising your estate plan."
+                "We’ve now gathered all the relevant information to help create your estate plan. As one of the final steps, please upload the documents below. <br/><br/>These will be securely stored and only shared with the financial adviser who will assist you in finalising your estate plan."
               ) && (
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
