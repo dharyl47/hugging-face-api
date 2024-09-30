@@ -16506,6 +16506,84 @@ export default function Chat() {
                   );
                 }
 
+                else if (
+                  messageData.current.includes(
+                    "Buy and sell insurance is designed to ensure that"
+                  )
+                ) {
+                  e.preventDefault();
+                  handleAddAIResponse(
+                    "For business owners, key person insurance can help the business survive the loss of a crucial employee. Do you have this in place?"
+                  );
+                }
+
+
+                //NEW ADDED
+                else if (
+                  messageData.current.includes(
+                    "Key person insurance provides financial support to your business"
+                  )
+                ) {
+                  e.preventDefault();
+                  handleAddAIResponse(
+                    "Do you have any other types of insurance not already covered? Please provide details about the type of coverage and the insurance provider."
+                  );
+                }
+
+                else if (
+                  messageData.current.includes(
+                    "I recommend reviewing your current disability insurance policy to understand any limitations"
+                  )
+                ) {
+                  e.preventDefault();
+                  handleAddAIResponse(
+                    "Do you have contingent liability insurance to cover unexpected liabilities that may arise?"
+                  );
+                }
+
+
+                //Investment Portfolio NEW
+                else if (
+                  messageData.current.includes(
+                    "Understanding your investment goals and risk tolerance"
+                  )
+                ) {
+                  e.preventDefault();
+                  handleAddAIResponse(
+                    "Are there any specific changes or adjustments you're considering making to your investment portfolio in the near future?"
+                  );
+                }
+
+                else if (
+                  messageData.current.includes(
+                    "It's always a good idea to periodically review your"
+                  )
+                ) {
+                  e.preventDefault();
+                  handleAddAIResponse(
+                    "Great! Next, we’ll discuss estate duty. Shall we continue?"
+                  );
+                }
+
+                
+                
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                
 
 
 
