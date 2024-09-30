@@ -1002,53 +1002,70 @@ export default function Chat() {
   const handleButtonStage14Template = async (message: any) => {
   let response = "";
   let updateField: any = {}; // Object to store the field to update
+  let downloadUrl: string | undefined = ""; // Initialize as an empty string
 
   if (message === "Download Will Template") {
-   response = "Templates are downloaded";
-    updateField = { 'templatesDownloaded.will': true }; // Mark will template as downloaded
+    response = "Templates are downloaded";
+    updateField = { 'templatesDownloaded.will': true };
+    downloadUrl = "/downloadables/SingleWillTemplate.docx";
   }
   if (message === "Download Trust Template") {
     response = "Templates are downloaded";
-    updateField = { 'templatesDownloaded.trust': true }; // Mark trust template as downloaded
+    updateField = { 'templatesDownloaded.trust': true };
+    downloadUrl = "/downloadables/TrustTemplate.docx";
   }
   if (message === "Download Power of Attorney Template") {
-   response = "Templates are downloaded";
-    updateField = { 'templatesDownloaded.powerOfAttorney': true }; // Mark power of attorney template as downloaded
+    response = "Templates are downloaded";
+    updateField = { 'templatesDownloaded.powerOfAttorney': true };
+    downloadUrl = "/downloadables/PowerOfAttorney.docx";
   }
   if (message === "Download Living Will Template") {
-   response = "Templates are downloaded";
-    updateField = { 'templatesDownloaded.livingWill': true }; // Mark living will template as downloaded
+    response = "Templates are downloaded";
+    updateField = { 'templatesDownloaded.livingWill': true };
+    downloadUrl = "/downloadables/LivingWill.doc";
   }
   if (message === "Download All Templates") {
-   response = "Templates are downloaded";
+    response = "Templates are downloaded";
     updateField = {
       'templatesDownloaded.will': true,
       'templatesDownloaded.trust': true,
       'templatesDownloaded.powerOfAttorney': true,
       'templatesDownloaded.livingWill': true,
-    }; // Mark all templates as downloaded
+    };
+    // You could trigger multiple downloads or bundle all templates into a zip file.
+    downloadUrl = ""; // You'd need to define how to handle downloading all files.
   }
   if (message === "Skip") {
     response =
       "Now that we’ve covered your personal details, let’s talk about your objectives for estate planning. Understanding your goals will help us create a plan that fits your needs perfectly. Ready to dive in?";
   }
 
-  // Append the user message first (this simulates the user's selection being displayed on the right side)
+  // Append the user message first
   const userMessage: Message = {
-    id: Date.now().toString(), // Unique ID
-    role: "user", // User message role
-    content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    id: Date.now().toString(), 
+    role: "user", 
+    content: message, 
   };
 
   // Then append the assistant response
   const aiMessage: Message = {
-    id: Date.now().toString(), // Unique ID
-    role: "assistant", // Assistant response role
-    content: response, // Message content (the AI response)
+    id: Date.now().toString(), 
+    role: "assistant", 
+    content: response, 
   };
 
   // Append both the user message and AI response to the existing messages
   setMessages([...messages, userMessage, aiMessage]);
+
+  // Trigger the file download only if downloadUrl is valid and not empty
+  if (downloadUrl && downloadUrl.length > 0) {
+    const link = document.createElement('a');
+    link.href = downloadUrl;
+    link.setAttribute('download', downloadUrl.split('/').pop() as string); // Ensure it's a string
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+  }
 
   // Check if there is something to update
   if (Object.keys(updateField).length > 0) {
@@ -1061,6 +1078,7 @@ export default function Chat() {
     }
   }
 };
+
 
 
 

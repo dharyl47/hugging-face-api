@@ -3,7 +3,7 @@ import React, { useState, useEffect } from 'react';
 const Calendar = ({ onDateSelect }) => {
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
-  const currentMonth = currentDate.getMonth(); // 0 = January, so getMonth returns a 0-based index
+  const currentMonth = currentDate.getMonth(); // 0 = January
   const currentDay = currentDate.getDate();
 
   const [selectedYear, setSelectedYear] = useState(currentYear);
@@ -42,18 +42,22 @@ const Calendar = ({ onDateSelect }) => {
 
   return (
     <>
+      {/* Year Selection */}
       <div style={{ backgroundColor: '#333', color: '#fff', padding: '20px', borderRadius: '4px', width: '400px' }}>
         <div style={{ marginBottom: '20px', textAlign: 'center' }}>
+          <label style={{ display: 'block', marginBottom: '10px', fontWeight: 'bold' }}>Select Year:</label>
           <select 
             value={selectedYear} 
             onChange={handleYearChange}
             style={{ backgroundColor: '#333', color: '#fff', border: 'none', padding: '5px', borderRadius: '4px', fontSize: '16px', textAlign: 'center' }}
           >
-            {Array.from({ length: 100 }, (_, i) => (
-              <option key={i} value={currentYear - 50 + i}>{currentYear - 50 + i}</option>
+            {Array.from({ length: currentYear - 1919 }, (_, i) => (
+              <option key={i} value={currentYear - i}>{currentYear - i}</option>
             ))}
           </select>
         </div>
+
+        {/* Month Selection */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px', textAlign: 'center' }}>
           {months.map((month, index) => (
             <div 
@@ -74,6 +78,7 @@ const Calendar = ({ onDateSelect }) => {
 
       <br/>
 
+      {/* Date Selection */}
       <div style={{ backgroundColor: '#333', color: '#fff', padding: '20px', borderRadius: '4px', width: '400px', marginLeft: '-1px' }}>
         <div style={{ textAlign: 'center', marginBottom: '20px' }}>
           <span style={{ fontSize: '18px', fontWeight: 'bold' }}>{months[selectedMonth]} {selectedYear}</span>
