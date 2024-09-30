@@ -7005,6 +7005,7 @@ export default function Chat() {
                     <br />
                   </div>
                   <br />
+                   <div className="space-x-2 ml-9 mt-1">
                   {scenario.map((scenarios) => (
   <>
     <br /> {/* Adjust margin as needed */}
@@ -7029,14 +7030,14 @@ export default function Chat() {
       &nbsp;&nbsp;&nbsp;{scenarios}
     </label>
   </>
-))}
-
-                  <button
+))}<button
                     onClick={handleProceedScenario}
                     className="mt-4 px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition"
                   >
                     Proceed
-                  </button>
+                  </button></div>
+
+                  
                 </>
               )}
 
@@ -7410,7 +7411,7 @@ export default function Chat() {
               ) && (
                 <>
                   <br />
-                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 -mt-4 ml-11 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Firstly, how important is it for your estate plan to be
                     flexible and adapt to changes in your personal, financial,
                     and legislative environment?
@@ -7420,7 +7421,7 @@ export default function Chat() {
                     there are changes in laws or your financial situation?
                   </div>
                   <>
-                    <div className="space-x-2 ml-9">
+                    <div className="space-x-2 ml-9 -mt-2">
                       <br />
                       <button
                         onClick={() => handleButtonStage15Financial("Yes")}
@@ -7494,7 +7495,7 @@ export default function Chat() {
   "What strategies and measures would you like to have in place to ensure the financial resources set aside for retirement are safeguarded, particularly regarding your business assets or investments?"
 ) && (
   <>
-    <div className="space-x-2 ml-9">
+    <div className="space-x-2 ml-9 -mt-8">
       <br />
       {strategies.map((strategy) => (
   <>
@@ -7502,7 +7503,7 @@ export default function Chat() {
     <label
       key={strategy}
       htmlFor={strategy}
-      className={`flex items-start space-x-4 px-4 py-2 w-full sm:w-[600px] min-h-[60px] rounded-md border cursor-pointer ${
+       className={`flex items-center space-x-2 px-4 py-2 w-[400px] -my-2 rounded-md border cursor-pointer ${
         selectedStrategies.includes(strategy)
           ? "bg-[#8DC63F] text-white border-transparent"
           : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
@@ -7881,7 +7882,7 @@ export default function Chat() {
                 "Let’s dive into the details of what you own to ensure we have a comprehensive understanding of your estate. Your assets play a crucial role in your estate plan."
               ) && (
                 <>
-                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-1 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Do you own any real estate properties, such as houses,
                     apartments, or land? If so, could you provide details about
                     each property, including location, estimated current market
@@ -10232,7 +10233,7 @@ export default function Chat() {
                 </>
               )}
               {message.content.includes(
-                "USEFUL TIP: For estate duty: When farms are bequeathed (whether to trust or natural person) and the farm was used for bona fide farming purposes, the market value less 30% is included as the value of the farm for estate duty purposes."
+                "the market value less 30% is included as the value of the farm for estate duty purposes."
               ) && (
                 <>
                   <div className="flex items-start space-x-4 mt-2 ml-11">
@@ -11422,7 +11423,7 @@ export default function Chat() {
               {message.content.includes(
                 "Have you considered the cost of education and taken that into account regarding maintenance?"
               ) && (
-                <div className="space-x-2 ml-9">
+                <div className="space-x-2 ml-9 -mt-4">
                   <br />
                   <button
                     onClick={() => handleButtonStage82LifeInsurancev1("Yes")}
@@ -12362,58 +12363,58 @@ export default function Chat() {
                   </div>
                 </>
               )}
-              {message.content.includes(
-                "Have you considered obtaining additional life insurance for providing capital required for income needs of dependents?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-9 -mt-4">
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage88Additional(
-                          "My current life insurance coverage is sufficient"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      My current life insurance coverage is sufficient
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage88Additional(
-                          "I’m currently reviewing my options for additional life insurance"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I’m currently reviewing my options for additional life
-                      insurance
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage88Additional(
-                          "No, I haven’t considered obtaining M additional life insurance"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No, I haven’t considered obtaining M additional life
-                      insurance
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage88Additional(
-                          "I’m unsure if additional life insurance is necessary given my current financial situation"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I’m unsure if additional life insurance is necessary given
-                      my current financial situation
-                    </button>
-                  </div>
-                </>
-              )}
+             {message.content.includes(
+  "Have you considered obtaining additional life insurance for providing capital required for income needs of dependents?"
+) && (
+  <>
+    <div className="space-y-2 ml-11 -mt-4">
+      <br />
+      <button
+        onClick={() =>
+          handleButtonStage88Additional(
+            "My current life insurance coverage is sufficient"
+          )
+        }
+        className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+      >
+        My current life insurance coverage is sufficient
+      </button>
+      <button
+        onClick={() =>
+          handleButtonStage88Additional(
+            "I’m currently reviewing my options for additional life insurance"
+          )
+        }
+        className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+      >
+        I’m currently reviewing my options for additional life insurance
+      </button>
+      <button
+        onClick={() =>
+          handleButtonStage88Additional(
+            "No, I haven’t considered obtaining additional life insurance"
+          )
+        }
+        className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+      >
+        No, I haven’t considered obtaining additional life insurance
+      </button>
+      <button
+        onClick={() =>
+          handleButtonStage88Additional(
+            "I’m unsure if additional life insurance is necessary given my current financial situation"
+          )
+        }
+        className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+      >
+        I’m unsure if additional life insurance is necessary given my current
+        financial situation
+      </button>
+    </div>
+  </>
+)}
+
+
 
               {message.content.includes(
                 "It's prudent to periodically review your life insurance coverage to ensure that it aligns with your current financial situation and the needs of your dependents. We can assist you in evaluating your insurance needs and exploring suitable options for additional coverage based on your evolving circumstances. Would you like guidance in assessing your life insurance needs and exploring available options?"
@@ -13110,91 +13111,89 @@ export default function Chat() {
               )}
 
               {message.content.includes(
-                "Additionally, transferring assets to a trust can save on executor's fees and exclude assets from your estate for estate duty purposes. Have you thought about these advantages in relation to your estate planning?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-9 -mt-4">
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage94Executor(
-                          "Yes, saving on executor’s fees is an important consideration for me"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, saving on executor’s fees is an important
-                      consideration for me
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage94Executor(
-                          "Excluding assets from my estate for estate duty purposes is a key factor in my planning"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Excluding assets from my estate for estate duty purposes
-                      is a key factor in my planning
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage94Executor(
-                          "I’m interested in exploring how transferring assets to a trust could benefit me"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I’m interested in exploring how transferring assets to a
-                      trust could benefit me
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage94Executor(
-                          "I haven’t considered these advantages before, but they sound appealing"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I haven’t considered these advantages before, but they
-                      sound appealing
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage94Executor(
-                          "I’m not sure how significant these advantages before would be for my estate planning"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I’m not sure how significant these advantages before would
-                      be for my estate planning
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage94Executor(
-                          "I need more information to understand how these advantages would apply to my situation"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I need more information to understand how these advantages
-                      would apply to my situation
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage94Executor(
-                          "I’m primarily focused on other aspects of my estate planning right now"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I’m primarily focused on other aspects of my estate
-                      planning right now
-                    </button>
-                  </div>
-                </>
-              )}
+  "Additionally, transferring assets to a trust can save on executor's fees and exclude assets from your estate for estate duty purposes. Have you thought about these advantages in relation to your estate planning?"
+) && (
+  <>
+    <div className="space-y-2 ml-11 -mt-4 ">
+      <br />
+      <button
+        onClick={() =>
+          handleButtonStage94Executor(
+            "Yes, saving on executor’s fees is an important consideration for me"
+          )
+        }
+        className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+      >
+        Yes, saving on executor’s fees is an important consideration for me
+      </button>
+      <button
+        onClick={() =>
+          handleButtonStage94Executor(
+            "Excluding assets from my estate for estate duty purposes is a key factor in my planning"
+          )
+        }
+        className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+      >
+        Excluding assets from my estate for estate duty purposes is a key factor
+        in my planning
+      </button>
+      <button
+        onClick={() =>
+          handleButtonStage94Executor(
+            "I’m interested in exploring how transferring assets to a trust could benefit me"
+          )
+        }
+        className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+      >
+        I’m interested in exploring how transferring assets to a trust could
+        benefit me
+      </button>
+      <button
+        onClick={() =>
+          handleButtonStage94Executor(
+            "I haven’t considered these advantages before, but they sound appealing"
+          )
+        }
+        className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+      >
+        I haven’t considered these advantages before, but they sound appealing
+      </button>
+      <button
+        onClick={() =>
+          handleButtonStage94Executor(
+            "I’m not sure how significant these advantages before would be for my estate planning"
+          )
+        }
+        className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+      >
+        I’m not sure how significant these advantages would be for my estate
+        planning
+      </button>
+      <button
+        onClick={() =>
+          handleButtonStage94Executor(
+            "I need more information to understand how these advantages would apply to my situation"
+          )
+        }
+        className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+      >
+        I need more information to understand how these advantages would apply
+        to my situation
+      </button>
+      <button
+        onClick={() =>
+          handleButtonStage94Executor(
+            "I’m primarily focused on other aspects of my estate planning right now"
+          )
+        }
+        className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+      >
+        I’m primarily focused on other aspects of my estate planning right now
+      </button>
+    </div>
+  </>
+)}
+
 
               {message.content.includes(
                 "Exploring how transferring assets to a trust could benefit you is a wise decision in estate planning. It offers various advantages, such as reducing executor's fees and estate duty obligations, as well as providing asset protection and efficient distribution to beneficiaries. If you're interested in learning more about these benefits and how they apply to your specific situation, I am here to provide further information and guidance."
@@ -13528,7 +13527,7 @@ export default function Chat() {
               {message.content.includes(
                 "Excellent. Are you married in or out of community of property? If married out of community of property, is it with or without the accrual system?"
               ) && (
-                <div className="space-x-2 ml-11 mt-4">
+                <div className="space-x-2 ml-11 -mt-4">
                   <br />
                   <button
                     onClick={() =>
@@ -13793,7 +13792,7 @@ export default function Chat() {
               )}
 
               {message.content.includes("Do you have any dependents?") && (
-                <div className="flex flex-col space-y-2 mt-2">
+                <div className="flex flex-col space-y-2 mt-2 ml-9">
                   <label className="text-white">
                     Please select your dependents:
                   </label>
@@ -13833,7 +13832,7 @@ export default function Chat() {
               {message.content.includes(
                 "Is there anything else you’d like to add about your personal particulars or any questions you have at this stage?"
               ) && (
-                <div className="space-x-2 ml-9">
+                <div className="space-x-2 ml-9 -mt-4">
                   <br />
                   <button
                     onClick={() => handleButtonStage7("Yes, I have a question")}
@@ -14689,7 +14688,7 @@ export default function Chat() {
                 "Thank you for uploading your documents!"
               ) && (
                 <>
-                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-1 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Now before we wrap up, could you please share your email
                     address with us? This will be used by an Old Mutual
                     financial adviser who will contact you directly regarding
@@ -14706,7 +14705,7 @@ export default function Chat() {
                 "A report has been generated containing all the results from this chat. You can download a copy below."
               ) && (
                 <>
-                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <div className="space-x-2 ml-11 mt-1 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     This report along with your documents will be shared with an
                     Old Mutual financial adviser who will use this information
                     to finalise your estate plan.
@@ -14729,7 +14728,7 @@ export default function Chat() {
                 "Thanks for sharing your thoughts,"
               ) && (
                 <>
-                  <div className="space-x-2 ml-11 my-2">
+                  <div className="space-x-2 ml-11 my-1">
                     <button
                       onClick={() =>
                         handleButtonStage20Final("Yes, I have a question")
@@ -14752,7 +14751,7 @@ export default function Chat() {
                 "The success of your estate plan relies on accurate information about your assets, liabilities, and clear communication of your wishes. How confident are you in the accuracy of the details you’ve provided so far? And would you be open to regularly reviewing and updating your estate plan to reflect any changes?"
               ) && (
                 <>
-                  <div className="space-x-2 ml-11 my-2">
+                  <div className="space-x-2 ml-11 my-1">
                     <button
                       onClick={() => handleButtonStage20("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
@@ -14773,7 +14772,8 @@ export default function Chat() {
                 "Reducing taxes and expenses payable upon your death can help maximise the value passed on to your heirs. How high a priority is it for you to minimise these costs?"
               ) && (
                 <>
-                  <TaxesSlider onProceed={handleButtonStage20Payable} />
+                <div className="space-x-2 ml-11 -mt-1">
+                  <TaxesSlider onProceed={handleButtonStage20Payable} /></div>
                   {/* <button
                     onClick={() => handleButtonStage20Payable("Low")}
                     className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
@@ -15106,7 +15106,7 @@ export default function Chat() {
                     <br />
                     <br />
                    <em>
-  <b style={{ marginLeft: "-1px" }}>Example 1</b>: Peter’s estate is worth R5 million. His
+  <b style={{ marginLeft: "-8px" }}>Example 1</b>: Peter’s estate is worth R5 million. His
   estate will be liable for estate duty as follows:
   <br />
   R5m - R3.5m = R1.5m
@@ -15138,7 +15138,7 @@ export default function Chat() {
                     value of qualifying farm property is not subject to estate
                     duty.
                     <br />
-                    <em>
+                    <em style={{ marginLeft: "-2px" }}>
                     Example: If a farm is valued at R50 million and qualifies
                     for the full exemption, only R20 million would be subject to
                     estate duty, potentially reducing the estate duty payable.
@@ -15206,7 +15206,7 @@ export default function Chat() {
                     <br />
                     Some title deeds (of farms) may include conditions about
                     who can inherit the farm or whether the land can be sold or
-                    subdivided. This would be an instance of: 📜
+                    subdivided. This would be an instance of:
                     <br />
                     <br />
                     <b style={{marginLeft: "-1px"}}>Fideicommissum</b>🔹
@@ -15239,7 +15239,7 @@ export default function Chat() {
                     Do you have any questions regarding bequeathing a farm at
                     this stage?
                   </div>
-                  <div className="space-x-2 ml-11 mt-4">
+                  <div className="space-x-2 ml-11 mt-3">
                     <button
                       onClick={() =>
                         handleButtonStage13("Yes, I have a question")
@@ -15708,7 +15708,7 @@ export default function Chat() {
                       </div>
                       <br />
                       <br />
-
+                         <div className="space-x-2 ml-11 -mt-1">
                       <button
                         onClick={() =>
                           handleButtonStage13Component("Yes, I have a question")
@@ -15724,7 +15724,7 @@ export default function Chat() {
                         className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                       >
                         No, let's move on
-                      </button>
+                      </button></div>
                     </>
                   )}
                 </>
