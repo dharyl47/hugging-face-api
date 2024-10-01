@@ -25,15 +25,25 @@ export async function POST(req: Request) {
       checkboxesAsset,
       maritalStatus,
       templatesDownloaded,
+      estatePlanFlexibility,
+      businessProtectionImportance,
+      financialSafeguardStrategies,
+      insolvencyProtectionConcern,
+      dependentsMaintenanceImportance,
+      taxMinimizationPriority,
+      estatePlanReviewConfidence,
+      realEstateProperties, // added for updating Assets.realEstateProperties
     } = await req.json();
 
-    if (name === '404') {
+    if (!name || name === '404') {
       return NextResponse.json({ error: 'Invalid user name' }, { status: 400 });
     }
 
     console.log("Updating or creating user profile");
 
     const updatedFields: any = {};
+
+    // Update specific fields in user profile
     if (dateOfBirth) updatedFields.dateOfBirth = dateOfBirth;
     if (will) updatedFields.will = will;
     if (dateCreated) updatedFields.dateCreated = dateCreated;
@@ -43,15 +53,52 @@ export async function POST(req: Request) {
     if (dependentsOver) updatedFields.dependentsOver = dependentsOver;
     if (dependentsUnder) updatedFields.dependentsUnder = dependentsUnder;
     if (propertyRegime) updatedFields.propertyRegime = propertyRegime;
-    if (checkboxesAsset) updatedFields.asset = checkboxesAsset;
+    if (checkboxesAsset) updatedFields['Assets.checkboxesAsset'] = checkboxesAsset;  // Update Asset-related fields
     if (maritalStatus) updatedFields.maritalStatus = maritalStatus;
+
+    // Update fields inside ObjectivesOfEstatePlanning without overwriting
+    if (estatePlanFlexibility) updatedFields['ObjectivesOfEstatePlanning.estatePlanFlexibility'] = estatePlanFlexibility;
+    if (businessProtectionImportance) updatedFields['ObjectivesOfEstatePlanning.businessProtectionImportance'] = businessProtectionImportance;
+    if (financialSafeguardStrategies) updatedFields['ObjectivesOfEstatePlanning.financialSafeguardStrategies'] = financialSafeguardStrategies;
+    if (insolvencyProtectionConcern) updatedFields['ObjectivesOfEstatePlanning.insolvencyProtectionConcern'] = insolvencyProtectionConcern;
+    if (taxMinimizationPriority) updatedFields['ObjectivesOfEstatePlanning.taxMinimizationPriority'] = taxMinimizationPriority;
+    if (estatePlanReviewConfidence) updatedFields['ObjectivesOfEstatePlanning.estatePlanReviewConfidence'] = estatePlanReviewConfidence;
+
+    // Update fields inside realEstateProperties within Assets
+    if (realEstateProperties) {
+      if (realEstateProperties.uploadDocumentAtEndOfChat !== undefined) {
+        updatedFields['Assets.realEstateProperties.uploadDocumentAtEndOfChat'] = realEstateProperties.uploadDocumentAtEndOfChat;
+      }
+      if (realEstateProperties.propertiesDetails) {
+        updatedFields['Assets.realEstateProperties.propertiesDetails'] = realEstateProperties.propertiesDetails;
+      }
+      if (realEstateProperties.inDepthDetails) {
+        if (realEstateProperties.inDepthDetails.propertyType) {
+          updatedFields['Assets.realEstateProperties.inDepthDetails.propertyType'] = realEstateProperties.inDepthDetails.propertyType;
+        }
+        if (realEstateProperties.inDepthDetails.propertyLocation) {
+          updatedFields['Assets.realEstateProperties.inDepthDetails.propertyLocation'] = realEstateProperties.inDepthDetails.propertyLocation;
+        }
+        if (realEstateProperties.inDepthDetails.propertySize) {
+          updatedFields['Assets.realEstateProperties.inDepthDetails.propertySize'] = realEstateProperties.inDepthDetails.propertySize;
+        }
+        if (realEstateProperties.inDepthDetails.bedroomsAndBathroomCount) {
+          updatedFields['Assets.realEstateProperties.inDepthDetails.bedroomsAndBathroomCount'] = realEstateProperties.inDepthDetails.bedroomsAndBathroomCount;
+        }
+        if (realEstateProperties.inDepthDetails.propertyCondition) {
+          updatedFields['Assets.realEstateProperties.inDepthDetails.propertyCondition'] = realEstateProperties.inDepthDetails.propertyCondition;
+        }
+      }
+    }
+
+    if (encryptedName) updatedFields.mvID = encryptedName;  // Ensure mvID is only updated if it's not empty
 
     // Ensure that 'dependants' includes 'stepChildren' and 'grandChildren' by merging with default values
     const defaultDependants = {
       spouse: false,
       children: false,
-      stepChildren: false,  // Add stepChildren
-      grandChildren: false, // Add grandChildren
+      stepChildren: false,
+      grandChildren: false,
       factualDependents: false,
       other: false,
     };
@@ -68,11 +115,18 @@ export async function POST(req: Request) {
       updatedFields.templatesDownloaded = templatesDownloaded;
     }
 
+    // Log the data that is being used to update the profile
+    console.log("Data to be updated:", updatedFields);
+
+    // Use dot notation to update the fields inside nested objects without overwriting
     let userProfile = await UserProfile.findOneAndUpdate(
       { name },
-      { $set: updatedFields, mvID: encryptedName },
+      { $set: updatedFields },  // Using dot notation to update nested fields
       { new: true, upsert: true }
     );
+
+    // Log the document that was updated/created
+    console.log("Updated or created User Profile:", userProfile);
 
     console.log("User profile saved/updated");
     return NextResponse.json(userProfile);

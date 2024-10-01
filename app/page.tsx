@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 import { useChat } from "ai/react";
 import { useState, useEffect, useRef } from "react";
 import CustomInput from "@/app/components/CustomInput";
@@ -62,7 +63,7 @@ export default function Chat() {
     "Beneficiary Designation Forms",
     "Executor",
     "Guardian",
-    "All Key Terms"
+    "All Key Terms",
   ];
 
   const [selectedScenario, setSelectedScenario] = useState<string[]>([]);
@@ -155,10 +156,10 @@ export default function Chat() {
     }
   }, [messages]);
   useEffect(() => {
-  if (lastMessageRef.current) {
-    lastMessageRef.current.scrollIntoView({ behavior: 'smooth' });
-  }
-}, [messages]);
+    if (lastMessageRef.current) {
+      lastMessageRef.current.scrollIntoView({ behavior: "smooth" });
+    }
+  }, [messages]);
 
   // Function to handle the button click and append the "Hello" response
   const handleAddAIResponse = (message: any) => {
@@ -1000,87 +1001,84 @@ export default function Chat() {
   };
 
   const handleButtonStage14Template = async (message: any) => {
-  let response = "";
-  let updateField: any = {}; // Object to store the field to update
-  let downloadUrl: string | undefined = ""; // Initialize as an empty string
+    let response = "";
+    let updateField: any = {}; // Object to store the field to update
+    let downloadUrl: string | undefined = ""; // Initialize as an empty string
 
-  if (message === "Download Will Template") {
-    response = "Templates are downloaded";
-    updateField = { 'templatesDownloaded.will': true };
-    downloadUrl = "/downloadables/SingleWillTemplate.docx";
-  }
-  if (message === "Download Trust Template") {
-    response = "Templates are downloaded";
-    updateField = { 'templatesDownloaded.trust': true };
-    downloadUrl = "/downloadables/TrustTemplate.docx";
-  }
-  if (message === "Download Power of Attorney Template") {
-    response = "Templates are downloaded";
-    updateField = { 'templatesDownloaded.powerOfAttorney': true };
-    downloadUrl = "/downloadables/PowerOfAttorney.docx";
-  }
-  if (message === "Download Living Will Template") {
-    response = "Templates are downloaded";
-    updateField = { 'templatesDownloaded.livingWill': true };
-    downloadUrl = "/downloadables/LivingWill.doc";
-  }
-  if (message === "Download All Templates") {
-    response = "Templates are downloaded";
-    updateField = {
-      'templatesDownloaded.will': true,
-      'templatesDownloaded.trust': true,
-      'templatesDownloaded.powerOfAttorney': true,
-      'templatesDownloaded.livingWill': true,
-    };
-    // You could trigger multiple downloads or bundle all templates into a zip file.
-    downloadUrl = ""; // You'd need to define how to handle downloading all files.
-  }
-  if (message === "Skip") {
-    response =
-      "Now that we’ve covered your personal details, let’s talk about your objectives for estate planning. Understanding your goals will help us create a plan that fits your needs perfectly. Ready to dive in?";
-  }
-
-  // Append the user message first
-  const userMessage: Message = {
-    id: Date.now().toString(), 
-    role: "user", 
-    content: message, 
-  };
-
-  // Then append the assistant response
-  const aiMessage: Message = {
-    id: Date.now().toString(), 
-    role: "assistant", 
-    content: response, 
-  };
-
-  // Append both the user message and AI response to the existing messages
-  setMessages([...messages, userMessage, aiMessage]);
-
-  // Trigger the file download only if downloadUrl is valid and not empty
-  if (downloadUrl && downloadUrl.length > 0) {
-    const link = document.createElement('a');
-    link.href = downloadUrl;
-    link.setAttribute('download', downloadUrl.split('/').pop() as string); // Ensure it's a string
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-  }
-
-  // Check if there is something to update
-  if (Object.keys(updateField).length > 0) {
-    try {
-      // Call the saveUserProfile function to update the database
-      await saveUserProfile(updateField);
-      console.log("Profile updated with:", updateField);
-    } catch (error) {
-      console.error("Failed to update user profile:", error);
+    if (message === "Download Will Template") {
+      response = "Templates are downloaded";
+      updateField = { "templatesDownloaded.will": true };
+      downloadUrl = "/downloadables/SingleWillTemplate.docx";
     }
-  }
-};
+    if (message === "Download Trust Template") {
+      response = "Templates are downloaded";
+      updateField = { "templatesDownloaded.trust": true };
+      downloadUrl = "/downloadables/TrustTemplate.docx";
+    }
+    if (message === "Download Power of Attorney Template") {
+      response = "Templates are downloaded";
+      updateField = { "templatesDownloaded.powerOfAttorney": true };
+      downloadUrl = "/downloadables/PowerOfAttorney.docx";
+    }
+    if (message === "Download Living Will Template") {
+      response = "Templates are downloaded";
+      updateField = { "templatesDownloaded.livingWill": true };
+      downloadUrl = "/downloadables/LivingWill.doc";
+    }
+    if (message === "Download All Templates") {
+      response = "Templates are downloaded";
+      updateField = {
+        "templatesDownloaded.will": true,
+        "templatesDownloaded.trust": true,
+        "templatesDownloaded.powerOfAttorney": true,
+        "templatesDownloaded.livingWill": true,
+      };
+      // You could trigger multiple downloads or bundle all templates into a zip file.
+      downloadUrl = ""; // You'd need to define how to handle downloading all files.
+    }
+    if (message === "Skip") {
+      response =
+        "Now that we’ve covered your personal details, let’s talk about your objectives for estate planning. Understanding your goals will help us create a plan that fits your needs perfectly. Ready to dive in?";
+    }
 
+    // Append the user message first
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      role: "user",
+      content: message,
+    };
 
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(),
+      role: "assistant",
+      content: response,
+    };
 
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+
+    // Trigger the file download only if downloadUrl is valid and not empty
+    if (downloadUrl && downloadUrl.length > 0) {
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.setAttribute("download", downloadUrl.split("/").pop() as string); // Ensure it's a string
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+    }
+
+    // Check if there is something to update
+    if (Object.keys(updateField).length > 0) {
+      try {
+        // Call the saveUserProfile function to update the database
+        await saveUserProfile(updateField);
+        console.log("Profile updated with:", updateField);
+      } catch (error) {
+        console.error("Failed to update user profile:", error);
+      }
+    }
+  };
 
   const handleButtonStage14Checklist = (message: any) => {
     let response = "";
@@ -1273,14 +1271,15 @@ export default function Chat() {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-  const handleButtonStage15Financial = (message: any) => {
+  const handleButtonStage15Financial = async (message: any) => {
     let response = "";
 
     if (message == "Yes" || message == "No") {
       response =
         "Do you own a business? If so, how important is it to you that your estate plan protects your business interests, especially in terms of its continuation if you were to pass away or become disabled?";
     }
-
+    setUserName("Mark Jol");
+    await saveUserProfile({ estatePlanFlexibility: message });
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     const userMessage: Message = {
       id: Date.now().toString(), // Unique ID
@@ -1325,10 +1324,10 @@ export default function Chat() {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-  const handleButtonStage16Business = (message: any) => {
+  const handleButtonStage16Business = async (message: any) => {
     let response = "";
 
-    if (message == "Not important") {
+    if (message == "Not Important") {
       response =
         "What strategies and measures would you like to have in place to ensure the financial resources set aside for retirement are safeguarded, particularly regarding your business assets or investments?";
     }
@@ -1340,7 +1339,7 @@ export default function Chat() {
       response =
         "What strategies and measures would you like to have in place to ensure the financial resources set aside for retirement are safeguarded, particularly regarding your business assets or investments?";
     }
-
+    await saveUserProfile({ businessProtectionImportance: message });
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     const userMessage: Message = {
       id: Date.now().toString(), // Unique ID
@@ -1483,7 +1482,7 @@ export default function Chat() {
   const handleButtonStage18Administration = (message: any) => {
     let response = "";
 
-    if (message == "Not important") {
+    if (message == "Not Important") {
       response =
         "Are you concerned about protecting your assets from potential insolvency issues, either for yourself or your heirs?";
     }
@@ -1514,7 +1513,7 @@ export default function Chat() {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-  const handleButtonStage18Component = (message: any) => {
+  const handleButtonStage18Component = async (message: any) => {
     let response = "";
 
     if (message == "Continue") {
@@ -1525,15 +1524,19 @@ export default function Chat() {
     if (message == "Yes") {
       response =
         "To prevent any cash shortfall in your estate, how important is it to have provisions in place for your dependants' maintenance? For instance, would you want to ensure there’s enough capital to cover any immediate expenses and ongoing support for your dependants?";
-    }
+      
+      await saveUserProfile({ insolvencyProtectionConcern: "Yes" });
+      }
     if (message == "No") {
       response =
         "To prevent any cash shortfall in your estate, how important is it to have provisions in place for your dependants' maintenance? For instance, would you want to ensure there’s enough capital to cover any immediate expenses and ongoing support for your dependants?";
-    }
+      await saveUserProfile({ insolvencyProtectionConcern: "No" });
+      }
     if (message == "Maybe") {
       response =
         "It's understandable to be uncertain about this. Protecting assets from potential insolvency can be crucial for maintaining financial stability. Here are some points to consider";
-    }
+      await saveUserProfile({ insolvencyProtectionConcern: "Maybe" });
+      }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     const userMessage: Message = {
@@ -1553,10 +1556,10 @@ export default function Chat() {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-  const handleButtonStage19Capital = (message: any) => {
+  const handleButtonStage19Capital = async (message: any) => {
     let response = "";
 
-    if (message == "Not important") {
+    if (message == "Not Important") {
       response =
         "Reducing taxes and expenses payable upon your death can help maximise the value passed on to your heirs. How high a priority is it for you to minimise these costs?";
     }
@@ -1568,6 +1571,7 @@ export default function Chat() {
       response =
         "Reducing taxes and expenses payable upon your death can help maximise the value passed on to your heirs. How high a priority is it for you to minimise these costs?";
     }
+    await saveUserProfile({ dependentsMaintenanceImportance: message });
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     const userMessage: Message = {
@@ -1620,7 +1624,7 @@ export default function Chat() {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-  const handleButtonStage21Asset = (message: any) => {
+  const handleButtonStage21Asset = async (message: any) => {
     let response = "";
 
     if (message == "Continue") {
@@ -1628,8 +1632,16 @@ export default function Chat() {
         "Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan.";
     }
     if (message == "Upload Document at End of Chat") {
-      response = "Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan.";
-    }
+      response =
+        "Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan.";
+      await saveUserProfile({
+      
+        realEstateProperties: {
+          uploadDocumentAtEndOfChat: true,
+        },
+      
+    });
+      }
     if (message == "Yes, specify detail") {
       response = "Great! Please provide the above mentioned details.";
     }
@@ -1686,7 +1698,7 @@ export default function Chat() {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-  const handleButtonStage20Payable = (message: any) => {
+  const handleButtonStage20Payable = async (message: any) => {
     let response = "";
 
     if (message == "Low") {
@@ -1701,6 +1713,7 @@ export default function Chat() {
       response =
         "The success of your estate plan relies on accurate information about your assets, liabilities, and clear communication of your wishes. How confident are you in the accuracy of the details you’ve provided so far? And would you be open to regularly reviewing and updating your estate plan to reflect any changes?";
     }
+    await saveUserProfile({ taxMinimizationPriority: "Maybe" });
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     const userMessage: Message = {
@@ -1720,7 +1733,7 @@ export default function Chat() {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-  const handleButtonStage20 = (message: any) => {
+  const handleButtonStage20 = async (message: any) => {
     let response = "";
 
     if (message == "Yes") {
@@ -1735,6 +1748,8 @@ export default function Chat() {
         userName +
         ". It’s important to have a clear understanding of your objectives so we can tailor your estate plan to meet your needs. Is there anything else you’d like to add before we move on?";
     }
+    await saveUserProfile({ estatePlanReviewConfidence: message });
+    
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     const userMessage: Message = {
@@ -2841,9 +2856,8 @@ export default function Chat() {
     if (message == "Yes, specify detail") {
       response =
         "Great! Please provide the above mentioned details of your insurance policies";
-        //Great! Please provide the above mentioned details
-    
-      }
+      //Great! Please provide the above mentioned details
+    }
     if (message == "No, let’s move on") {
       response =
         "Thank you for discussing insurance policies with me. Let’s proceed to the next part of your estate planning. Shall we continue?";
@@ -3210,7 +3224,7 @@ export default function Chat() {
     if (message == "No") {
       response =
         "Sure, I’m here to help. What additional information or questions do you have?";
-         setNextResponse(
+      setNextResponse(
         "Now let's discuss estate duty, the tax on the total value of your estate if you were to pass away today with your current will or distribution wishes in place. Understanding this helps us ensure your estate plan minimises taxes and maximises what is passed on to your heirs. Ready to get started?"
       );
       isResponse.current = "1";
@@ -6170,55 +6184,67 @@ export default function Chat() {
   };
 
   const saveUserProfile = async (update: any) => {
-    let retries = 0;
+  let retries = 0;
 
-    // Show the loading indicator
-    setLoading(true);
-    setError("");
+  // Show the loading indicator
+  setLoading(true);
+  setError("");
 
-    const profile = {
-      name: userName || "",
-      deletionRequest: deletionRequestData || "",
-      dateCreated: dateC || "",
-      dateOfBirth: dateOfBirth || "",
-      emailAddress: userEmail || "",
-      dependentsOver: dependentsOver || "",
-      dependentsUnder: dependentsUnder || "",
-      propertyRegime: propertyRegime || "",
-      encryptedName: encryptedName || "",
-      checkboxes: checkboxes || {},
-      checkboxesAsset: checkboxesAsset || {},
-      maritalStatus: maritalStatus || "",
-      ...update,
-    };
+  const profile = {
+    name: "Mark Jol", // Ensure the user's name is always included
+    deletionRequest: deletionRequestData || "",
+    dateCreated: dateC || "", // Ensure dateCreated is included if it's a new profile
+    dateOfBirth: dateOfBirth || "",
+    emailAddress: userEmail || "",
+    dependentsOver: dependentsOver || "",
+    dependentsUnder: dependentsUnder || "",
+    propertyRegime: propertyRegime || "",
+    encryptedName: encryptedName || "",
+    checkboxes: checkboxes || {},
+    checkboxesAsset: checkboxesAsset || {},
+    maritalStatus: maritalStatus || "",
 
-    // Don't include `dateCreated` in updates, unless it's a new profile
+    ObjectivesOfEstatePlanning: {
+      estatePlanFlexibility: "N/A", // Default or fetched from profile
+      businessProtectionImportance: "N/A", // Default or fetched
+      financialSafeguardStrategies: "N/A", // Default or fetched
+      insolvencyProtectionConcern: "N/A", // Default or fetched
+      taxMinimizationPriority: "N/A", // Default or fetched
+      estatePlanReviewConfidence: "N/A", // Default or fetched
+      ...update.ObjectivesOfEstatePlanning, // Merge new updates
+    },
+    ...update, // Other fields to be updated
+  };
 
-    while (retries < MAX_RETRIES) {
-      try {
-        const response = await axios.post("/api/userProfiles", profile);
-        if (response.status === 200) {
-          setLoading(false); // Success, hide the loading indicator
-          return response.data;
-        }
-      } catch (err: any) {
-        // Check for specific error like ECONNRESET
-        if (err.code === "ECONNRESET") {
-          retries += 1;
-          setRetryCount(retries);
-          console.error(`Retry ${retries}/${MAX_RETRIES}: Connection reset`);
+  // Don't include `dateCreated` in updates, unless it's a new profile
 
-          // Wait before retrying
-          await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
-        } else {
-          setError("Failed to save profile. Please try again.");
-          break;
-        }
+  while (retries < MAX_RETRIES) {
+    try {
+      // Post or update the profile
+      const response = await axios.post("/api/userProfiles", profile);
+      if (response.status === 200) {
+        setLoading(false); // Success, hide the loading indicator
+        return response.data;
+      }
+    } catch (err: any) {
+      // Check for specific error like ECONNRESET
+      if (err.code === "ECONNRESET") {
+        retries += 1;
+        setRetryCount(retries);
+        console.error(`Retry ${retries}/${MAX_RETRIES}: Connection reset`);
+
+        // Wait before retrying
+        await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
+      } else {
+        setError("Failed to save profile. Please try again.");
+        break;
       }
     }
+  }
 
-    setLoading(false); // Stop loading if retries exceed limit
-  };
+  setLoading(false); // Stop loading if retries exceed limit
+};
+
 
   useEffect(() => {
     setMessages([
@@ -6259,7 +6285,6 @@ export default function Chat() {
     factualDependents: false,
     other: false,
   });
-  
 
   // Function to format camelCase keys into readable text
   const formatLabel = (key: string) => {
@@ -6367,20 +6392,32 @@ export default function Chat() {
       setSelectedScenario([...selectedScenario, Scenario]);
     }
   };
-
+const [financialSafeguardStrategiesv2, setFinancialSafeguardStrategiesv2] = useState("");
   // Handle checkbox change
-  const handleCheckboxChangeStrategies = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const Strategies = event.target.value;
-    if (selectedStrategies.includes(Strategies)) {
-      setSelectedStrategies(
-        selectedStrategies.filter((item) => item !== Strategies)
-      );
-    } else {
-      setSelectedStrategies([...selectedStrategies, Strategies]);
-    }
-  };
+const handleCheckboxChangeStrategies = async (
+  event: React.ChangeEvent<HTMLInputElement>
+) => {
+  const strategy = event.target.value;
+
+  // Update the selected strategies
+  let updatedStrategies;
+  if (selectedStrategies.includes(strategy)) {
+    updatedStrategies = selectedStrategies.filter((item) => item !== strategy);
+  } else {
+    updatedStrategies = [...selectedStrategies, strategy];
+  }
+
+  // Update the state with the latest selected strategies
+  setSelectedStrategies(updatedStrategies);
+
+  // Convert the updated strategies array to a comma-separated string
+  const strategiesString = updatedStrategies.join(', ');
+  setFinancialSafeguardStrategiesv2(strategiesString);
+  // Save the updated strategies as a comma-separated string to the user profile
+  await saveUserProfile({ financialSafeguardStrategies: strategiesString });
+};
+
+
 
   const handleCheckboxChangeStrategiesv2 = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -6395,34 +6432,33 @@ export default function Chat() {
     }
   };
 
- const handleCheckboxChange = async (
-  e: React.ChangeEvent<HTMLInputElement>
-) => {
-  const { id, checked } = e.target;
-  const updatedCheckboxes = { ...checkboxes, [id]: checked };
-  console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkboxes
+  const handleCheckboxChange = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const { id, checked } = e.target;
+    const updatedCheckboxes = { ...checkboxes, [id]: checked };
+    console.log("Updated Checkboxes:", updatedCheckboxes); // Log the updated checkboxes
 
-  // Create a copy of updatedCheckboxes for updating InputStr
-  const updatedForDisplay: { [key: string]: boolean } = { ...updatedCheckboxes };
+    // Create a copy of updatedCheckboxes for updating InputStr
+    const updatedForDisplay: { [key: string]: boolean } = {
+      ...updatedCheckboxes,
+    };
 
-  // Change 'factualDependents' key to 'Factual Dependents' in the display data
-  if (id === "factualDependents") {
-    updatedForDisplay["Factual Dependents"] = updatedForDisplay["factualDependents"];
-    delete updatedForDisplay["factualDependents"]; // Safely remove key now
-  }
+    // Change 'factualDependents' key to 'Factual Dependents' in the display data
+    if (id === "factualDependents") {
+      updatedForDisplay["Factual Dependents"] =
+        updatedForDisplay["factualDependents"];
+      delete updatedForDisplay["factualDependents"]; // Safely remove key now
+    }
 
-  setCheckboxes(updatedCheckboxes);
+    setCheckboxes(updatedCheckboxes);
 
-  // Pass the modified object to updateInputStr for display
-  updateInputStr(checkboxesAsset, updatedForDisplay);
+    // Pass the modified object to updateInputStr for display
+    updateInputStr(checkboxesAsset, updatedForDisplay);
 
-  // Save the original checkboxes state to the database (without display modifications)
-  await saveUserProfile({ checkboxes: updatedCheckboxes });
-};
-
-
-
-
+    // Save the original checkboxes state to the database (without display modifications)
+    await saveUserProfile({ checkboxes: updatedCheckboxes });
+  };
 
   const handleButtonPrivacy = async (message: any) => {
     setPrivacyPolicy(true);
@@ -6634,6 +6670,13 @@ export default function Chat() {
         dependentsOver: "N/A",
         dependentsUnder: "N/A",
         propertyRegime: "N/A",
+        estatePlanFlexibility: "N/A",
+        businessProtectionImportance: "N/A",
+        financialSafeguardStrategies: "N/A",
+        insolvencyProtectionConcern: "N/A",
+        dependentsMaintenanceImportance: "N/A",
+        taxMinimizationPriority: "N/A",
+        estatePlanReviewConfidence: "N/A",
         encryptedName,
         checkboxes: {},
         checkboxesAsset: {},
@@ -6827,56 +6870,56 @@ export default function Chat() {
             <>
               <div className="flex items-start mb-4 assistant-message">
                 {/* SVG Icon */}
-              
+
                 {/* AI Message Bubble */}
                 <p className="bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                   {filteredContent.replace(/<\|endoftext\|>/g, "")}
                 </p>
               </div>
               <div className="flex space-x-2 ml-11">
-  <div className="space-y-2">
-    {/* Yes, I consent checkbox */}
-    <div
-      onClick={() => handleButtonConsent("Yes, I consent")}
-      className={`flex items-center space-x-2 px-4 py-2 w-[400px] rounded-md border cursor-pointer ${
-        consent === "Yes, I consent"
-          ? "bg-[#8DC63F] text-white border-transparent"
-          : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
-      }`}
-    >
-      <input
-        type="checkbox"
-        id="consentYes"
-        name="consent"
-        value="Yes, I consent"
-        checked={consent === "Yes, I consent"}
-        className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
-      />
-      &nbsp;&nbsp;&nbsp;Yes, I consent
-    </div>
+                <div className="space-y-2">
+  {/* Yes, I consent checkbox */}
+  <div
+    onClick={() => handleButtonConsent("Yes, I consent")}
+    className={`flex items-center space-x-2 px-4 py-2 rounded-md border cursor-pointer ${
+      consent === "Yes, I consent"
+        ? "bg-[#8DC63F] text-white border-transparent"
+        : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
+    } w-full sm:w-[400px]`}  
+  >
+    <input
+      type="checkbox"
+      id="consentYes"
+      name="consent"
+      value="Yes, I consent"
+      checked={consent === "Yes, I consent"}
+      className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
+    />
+    <span className="ml-2">Yes, I consent</span> 
+  </div>
 
-    {/* No, I do not consent checkbox */}
-    <div
-      onClick={() => handleButtonConsent("No, I do not consent")}
-      className={`flex items-center space-x-2 px-4 py-2 rounded-md border cursor-pointer ${
-        consent === "No, I do not consent"
-          ? "bg-[#8DC63F] text-white border-transparent"
-          : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
-      }`}
-    >
-      <input
-        type="checkbox"
-        id="consentNo"
-        name="consent"
-        value="No, I do not consent"
-        checked={consent === "No, I do not consent"}
-        className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
-      />
-      &nbsp;&nbsp;&nbsp;No, I do not consent
-    </div>
+  
+  <div
+    onClick={() => handleButtonConsent("No, I do not consent")}
+    className={`flex items-center space-x-2 px-4 py-2 rounded-md border cursor-pointer ${
+      consent === "No, I do not consent"
+        ? "bg-[#8DC63F] text-white border-transparent"
+        : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
+    } w-full sm:w-[400px]`}  
+  >
+    <input
+      type="checkbox"
+      id="consentNo"
+      name="consent"
+      value="No, I do not consent"
+      checked={consent === "No, I do not consent"}
+      className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
+    />
+    <span className="ml-2">No, I do not consent</span>
   </div>
 </div>
 
+              </div>
             </>
           ) : (
             <div
@@ -6909,15 +6952,24 @@ export default function Chat() {
                 </>
               ) : (
                 //AI CHAT BUBBLE IS HERE
-               <div className={message.role === "user"? "bg-[#8dc63f] text-white rounded-lg py-2 px-4 inline-block":
-                  "flex items-start mb-2 assistant-message"}>
-  <p 
-    className={message.role === "user"? "":"bg-[#2f2f2f] text-white rounded-lg inline-block"} 
-    dangerouslySetInnerHTML={{ __html: filteredContent.replace(/<\|endoftext\|>/g, "") }}>
-  </p>
-</div>
-
-
+                <div
+                  className={
+                    message.role === "user"
+                      ? "bg-[#8dc63f] text-white rounded-lg py-2 px-4 inline-block"
+                      : "flex items-start mb-2 assistant-message"
+                  }
+                >
+                  <p
+                    className={
+                      message.role === "user"
+                        ? ""
+                        : "bg-[#2f2f2f] text-white rounded-lg inline-block"
+                    }
+                    dangerouslySetInnerHTML={{
+                      __html: filteredContent.replace(/<\|endoftext\|>/g, ""),
+                    }}
+                  ></p>
+                </div>
               )}
 
               {questionResponse1 && (
@@ -7023,39 +7075,39 @@ export default function Chat() {
                     <br />
                   </div>
                   <br />
-                   <div className="space-x-2 ml-9 mt-1">
-                  {scenario.map((scenarios) => (
-  <>
-    <br /> {/* Adjust margin as needed */}
-    <label
-      key={scenarios}
-      htmlFor={scenarios}
-      className={`flex items-center space-x-2 px-4 py-2 w-[400px] -my-2 rounded-md border cursor-pointer ${
-        selectedScenario.includes(scenarios)
-          ? "bg-[#8DC63F] text-white border-transparent"
-          : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
-      }`}
-    >
-      <input
-        type="checkbox"
-        id={scenarios}
-        onChange={handleCheckboxChangeScenario}
-        name={scenarios}
-        value={scenarios}
-        checked={selectedScenario.includes(scenarios)}
-        className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
-      />
-      &nbsp;&nbsp;&nbsp;{scenarios}
-    </label>
-  </>
-))}<button
-                    onClick={handleProceedScenario}
-                    className="mt-4 px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition"
-                  >
-                    Proceed
-                  </button></div>
-
-                  
+                  <div className="space-x-2 ml-9 mt-1">
+                    {scenario.map((scenarios) => (
+                      <>
+                        <br /> {/* Adjust margin as needed */}
+                        <label
+                          key={scenarios}
+                          htmlFor={scenarios}
+                          className={`flex items-center space-x-2 px-4 py-2 w-[400px] -my-2 rounded-md border cursor-pointer ${
+                            selectedScenario.includes(scenarios)
+                              ? "bg-[#8DC63F] text-white border-transparent"
+                              : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            id={scenarios}
+                            onChange={handleCheckboxChangeScenario}
+                            name={scenarios}
+                            value={scenarios}
+                            checked={selectedScenario.includes(scenarios)}
+                            className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
+                          />
+                          &nbsp;&nbsp;&nbsp;{scenarios}
+                        </label>
+                      </>
+                    ))}
+                    <button
+                      onClick={handleProceedScenario}
+                      className="mt-4 px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition"
+                    >
+                      Proceed
+                    </button>
+                  </div>
                 </>
               )}
 
@@ -7510,47 +7562,48 @@ export default function Chat() {
               )}
 
               {message.content.includes(
-  "What strategies and measures would you like to have in place to ensure the financial resources set aside for retirement are safeguarded, particularly regarding your business assets or investments?"
-) && (
-  <>
-    <div className="space-x-2 ml-9 -mt-8">
-      <br />
-      {strategies.map((strategy) => (
-  <>
-    <br /> {/* Adjust margin as needed */}
-    <label
-      key={strategy}
-      htmlFor={strategy}
-       className={`flex items-center space-x-2 px-4 py-2 w-[400px] -my-2 rounded-md border cursor-pointer ${
-        selectedStrategies.includes(strategy)
-          ? "bg-[#8DC63F] text-white border-transparent"
-          : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
-      }`}
-    >
-      <input
-        type="checkbox"
-        id={strategy}
-        onChange={handleCheckboxChangeStrategies}
-        name={strategy}
-        value={strategy}
-        checked={selectedStrategies.includes(strategy)}
-        className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
-      />
-      <span className="flex-1 leading-tight">{strategy}</span>
-    </label>
-  </>
-))}
+                "What strategies and measures would you like to have in place to ensure the financial resources set aside for retirement are safeguarded, particularly regarding your business assets or investments?"
+              ) && (
+                <>
+                  <div className="space-x-2 ml-9 -mt-8">
+                    <br />
+                    {strategies.map((strategy) => (
+                      <>
+                        <br /> {/* Adjust margin as needed */}
+                        <label
+                          key={strategy}
+                          htmlFor={strategy}
+                          className={`flex items-center space-x-2 px-4 py-2 w-[400px] -my-2 rounded-md border cursor-pointer ${
+                            selectedStrategies.includes(strategy)
+                              ? "bg-[#8DC63F] text-white border-transparent"
+                              : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            id={strategy}
+                            onChange={handleCheckboxChangeStrategies}
+                            name={strategy}
+                            value={strategy}
+                            checked={selectedStrategies.includes(strategy)}
+                            className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
+                          />
+                          <span className="flex-1 leading-tight">
+                            {strategy}
+                          </span>
+                        </label>
+                      </>
+                    ))}
 
-      <button
-        onClick={handleProceedStrategy}
-        className="mt-4 px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition"
-      >
-        Proceed
-      </button>
-    </div>
-  </>
-)}
-
+                    <button
+                      onClick={handleProceedStrategy}
+                      className="mt-4 px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition"
+                    >
+                      Proceed
+                    </button>
+                  </div>
+                </>
+              )}
 
               {message.content.includes(
                 "That's okay! It can be overwhelming to decide on the best measures without more information. Here’s a brief overview to help you:"
@@ -7600,31 +7653,30 @@ export default function Chat() {
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />{" "}
                     {strategiesv2.map((strategyv2) => (
-  <>
-    <br /> {/* Adjust margin as needed */}
-    <label
-      key={strategyv2}
-      htmlFor={strategyv2}
-      className={`flex items-center space-x-2 px-4 py-2 w-[600px] -my-2 rounded-md border cursor-pointer ${
-        selectedStrategiesv2.includes(strategyv2)
-          ? "bg-[#8DC63F] text-white border-transparent"
-          : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
-      }`}
-    >
-      <input
-        type="checkbox"
-        id={strategyv2}
-        onChange={handleCheckboxChangeStrategiesv2}
-        name={strategyv2}
-        value={strategyv2}
-        checked={selectedStrategiesv2.includes(strategyv2)}
-        className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
-      />
-      &nbsp;&nbsp;&nbsp;{strategyv2}
-    </label>
-  </>
-))}
-
+                      <>
+                        <br /> {/* Adjust margin as needed */}
+                        <label
+                          key={strategyv2}
+                          htmlFor={strategyv2}
+                          className={`flex items-center space-x-2 px-4 py-2 w-[600px] -my-2 rounded-md border cursor-pointer ${
+                            selectedStrategiesv2.includes(strategyv2)
+                              ? "bg-[#8DC63F] text-white border-transparent"
+                              : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
+                          }`}
+                        >
+                          <input
+                            type="checkbox"
+                            id={strategyv2}
+                            onChange={handleCheckboxChangeStrategiesv2}
+                            name={strategyv2}
+                            value={strategyv2}
+                            checked={selectedStrategiesv2.includes(strategyv2)}
+                            className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
+                          />
+                          &nbsp;&nbsp;&nbsp;{strategyv2}
+                        </label>
+                      </>
+                    ))}
                     <button
                       onClick={handleProceedStrategyv2}
                       className="mt-4 px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition"
@@ -10115,53 +10167,52 @@ export default function Chat() {
               )}
 
               {message.content.includes(
-  "Do you bequeath your estate to your spouse?"
-) && (
-  <>
-    <div className="space-x-2 ml-9 -mt-4">
-      <br />
-      <button
-        onClick={() =>
-          handleButtonStage58EstateSpouse("Yes, my entire estate")
-        }
-        className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F] text-left"
-      >
-        Yes, my entire estate
-      </button>
-      <button
-        onClick={() =>
-          handleButtonStage58EstateSpouse(
-            "Yes, a significant portion of my estate"
-          )
-        }
-        className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F] text-left"
-      >
-        Yes, a significant portion of my estate
-      </button>
-      <button
-        onClick={() =>
-          handleButtonStage58EstateSpouse(
-            "No, estate divided among other beneficiaries"
-          )
-        }
-        className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F] text-left"
-      >
-        No, estate divided among other beneficiaries
-      </button>
-      <button
-        onClick={() =>
-          handleButtonStage58EstateSpouse(
-            "No, spouse receives only a specific portion"
-          )
-        }
-        className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F] text-left"
-      >
-        No, spouse receives only a specific portion
-      </button>
-    </div>
-  </>
-)}
-
+                "Do you bequeath your estate to your spouse?"
+              ) && (
+                <>
+                  <div className="space-x-2 ml-9 -mt-4">
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage58EstateSpouse("Yes, my entire estate")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F] text-left"
+                    >
+                      Yes, my entire estate
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage58EstateSpouse(
+                          "Yes, a significant portion of my estate"
+                        )
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F] text-left"
+                    >
+                      Yes, a significant portion of my estate
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage58EstateSpouse(
+                          "No, estate divided among other beneficiaries"
+                        )
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F] text-left"
+                    >
+                      No, estate divided among other beneficiaries
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage58EstateSpouse(
+                          "No, spouse receives only a specific portion"
+                        )
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F] text-left"
+                    >
+                      No, spouse receives only a specific portion
+                    </button>
+                  </div>
+                </>
+              )}
 
               {message.content.includes(
                 "What happens to the residue (remainder) of your estate after all debts, expenses, taxes, and specific bequests (gifts of particular assets) are settled? Is it bequeathed to your spouse?"
@@ -10444,9 +10495,9 @@ export default function Chat() {
                     />
                   </div>
                   <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Thank you for providing all these details. {userName}. This helps us
-                    understand the estate duty implications of your current
-                    will.
+                    Thank you for providing all these details. {userName}. This
+                    helps us understand the estate duty implications of your
+                    current will.
                   </div>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
@@ -10539,7 +10590,10 @@ export default function Chat() {
               ) && (
                 <>
                   <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    <strong style={{marginLeft: "-5px"}}>💡 USEFUL TIP</strong>:
+                    <strong style={{ marginLeft: "-5px" }}>
+                      💡 USEFUL TIP
+                    </strong>
+                    :
                     <br />
                     If your spouse were to pass away immediately after you,
                     there are specific estate duty implications and/or
@@ -10553,8 +10607,8 @@ export default function Chat() {
                     understand the estate duty implications of your current
                     will. Please share your current will. 🔐💼
                   </div>
-                   <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                  Next, we’ll look at the executor’s fees. Shall we continue?
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    Next, we’ll look at the executor’s fees. Shall we continue?
                   </div>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
@@ -10615,7 +10669,10 @@ export default function Chat() {
                     wish to set for the executor’s fees.
                     <br />
                     <br />
-                    <strong style={{marginLeft: "-1px"}}>💡 USEFUL TIP</strong>:
+                    <strong style={{ marginLeft: "-1px" }}>
+                      💡 USEFUL TIP
+                    </strong>
+                    :
                     <br />
                     👪 Family members are also entitled to executor’s fees. The
                     advantage of family members as executors is that they may be
@@ -12059,7 +12116,7 @@ export default function Chat() {
                     beneficial for addressing urgent financial needs.
                     <br />
                     <br />
-                    <b style={{marginLeft: "-1px"}}>🏦 Testamentary Trust:</b>
+                    <b style={{ marginLeft: "-1px" }}>🏦 Testamentary Trust:</b>
                     <br />
                     Allows for greater control over the distribution of assets,
                     potentially offering ongoing support and protection for your
@@ -12381,58 +12438,58 @@ export default function Chat() {
                   </div>
                 </>
               )}
-             {message.content.includes(
-  "Have you considered obtaining additional life insurance for providing capital required for income needs of dependents?"
-) && (
-  <>
-    <div className="space-y-2 ml-11 -mt-4">
-      <br />
-      <button
-        onClick={() =>
-          handleButtonStage88Additional(
-            "My current life insurance coverage is sufficient"
-          )
-        }
-        className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-      >
-        My current life insurance coverage is sufficient
-      </button>
-      <button
-        onClick={() =>
-          handleButtonStage88Additional(
-            "I’m currently reviewing my options for additional life insurance"
-          )
-        }
-        className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-      >
-        I’m currently reviewing my options for additional life insurance
-      </button>
-      <button
-        onClick={() =>
-          handleButtonStage88Additional(
-            "No, I haven’t considered obtaining additional life insurance"
-          )
-        }
-        className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-      >
-        No, I haven’t considered obtaining additional life insurance
-      </button>
-      <button
-        onClick={() =>
-          handleButtonStage88Additional(
-            "I’m unsure if additional life insurance is necessary given my current financial situation"
-          )
-        }
-        className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-      >
-        I’m unsure if additional life insurance is necessary given my current
-        financial situation
-      </button>
-    </div>
-  </>
-)}
-
-
+              {message.content.includes(
+                "Have you considered obtaining additional life insurance for providing capital required for income needs of dependents?"
+              ) && (
+                <>
+                  <div className="space-y-2 ml-11 -mt-4">
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage88Additional(
+                          "My current life insurance coverage is sufficient"
+                        )
+                      }
+                      className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      My current life insurance coverage is sufficient
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage88Additional(
+                          "I’m currently reviewing my options for additional life insurance"
+                        )
+                      }
+                      className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      I’m currently reviewing my options for additional life
+                      insurance
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage88Additional(
+                          "No, I haven’t considered obtaining additional life insurance"
+                        )
+                      }
+                      className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      No, I haven’t considered obtaining additional life
+                      insurance
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage88Additional(
+                          "I’m unsure if additional life insurance is necessary given my current financial situation"
+                        )
+                      }
+                      className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      I’m unsure if additional life insurance is necessary given
+                      my current financial situation
+                    </button>
+                  </div>
+                </>
+              )}
 
               {message.content.includes(
                 "It's prudent to periodically review your life insurance coverage to ensure that it aligns with your current financial situation and the needs of your dependents. We can assist you in evaluating your insurance needs and exploring suitable options for additional coverage based on your evolving circumstances. Would you like guidance in assessing your life insurance needs and exploring available options?"
@@ -12852,9 +12909,7 @@ export default function Chat() {
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
                     <button
-                      onClick={() =>
-                        handleButtonStage91Trust("Yes")
-                      }
+                      onClick={() => handleButtonStage91Trust("Yes")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
                       Yes
@@ -13129,89 +13184,91 @@ export default function Chat() {
               )}
 
               {message.content.includes(
-  "Additionally, transferring assets to a trust can save on executor's fees and exclude assets from your estate for estate duty purposes. Have you thought about these advantages in relation to your estate planning?"
-) && (
-  <>
-    <div className="space-y-2 ml-11 -mt-4 ">
-      <br />
-      <button
-        onClick={() =>
-          handleButtonStage94Executor(
-            "Yes, saving on executor’s fees is an important consideration for me"
-          )
-        }
-        className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-      >
-        Yes, saving on executor’s fees is an important consideration for me
-      </button>
-      <button
-        onClick={() =>
-          handleButtonStage94Executor(
-            "Excluding assets from my estate for estate duty purposes is a key factor in my planning"
-          )
-        }
-        className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-      >
-        Excluding assets from my estate for estate duty purposes is a key factor
-        in my planning
-      </button>
-      <button
-        onClick={() =>
-          handleButtonStage94Executor(
-            "I’m interested in exploring how transferring assets to a trust could benefit me"
-          )
-        }
-        className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-      >
-        I’m interested in exploring how transferring assets to a trust could
-        benefit me
-      </button>
-      <button
-        onClick={() =>
-          handleButtonStage94Executor(
-            "I haven’t considered these advantages before, but they sound appealing"
-          )
-        }
-        className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-      >
-        I haven’t considered these advantages before, but they sound appealing
-      </button>
-      <button
-        onClick={() =>
-          handleButtonStage94Executor(
-            "I’m not sure how significant these advantages before would be for my estate planning"
-          )
-        }
-        className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-      >
-        I’m not sure how significant these advantages would be for my estate
-        planning
-      </button>
-      <button
-        onClick={() =>
-          handleButtonStage94Executor(
-            "I need more information to understand how these advantages would apply to my situation"
-          )
-        }
-        className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-      >
-        I need more information to understand how these advantages would apply
-        to my situation
-      </button>
-      <button
-        onClick={() =>
-          handleButtonStage94Executor(
-            "I’m primarily focused on other aspects of my estate planning right now"
-          )
-        }
-        className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-      >
-        I’m primarily focused on other aspects of my estate planning right now
-      </button>
-    </div>
-  </>
-)}
-
+                "Additionally, transferring assets to a trust can save on executor's fees and exclude assets from your estate for estate duty purposes. Have you thought about these advantages in relation to your estate planning?"
+              ) && (
+                <>
+                  <div className="space-y-2 ml-11 -mt-4 ">
+                    <br />
+                    <button
+                      onClick={() =>
+                        handleButtonStage94Executor(
+                          "Yes, saving on executor’s fees is an important consideration for me"
+                        )
+                      }
+                      className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Yes, saving on executor’s fees is an important
+                      consideration for me
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage94Executor(
+                          "Excluding assets from my estate for estate duty purposes is a key factor in my planning"
+                        )
+                      }
+                      className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Excluding assets from my estate for estate duty purposes
+                      is a key factor in my planning
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage94Executor(
+                          "I’m interested in exploring how transferring assets to a trust could benefit me"
+                        )
+                      }
+                      className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      I’m interested in exploring how transferring assets to a
+                      trust could benefit me
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage94Executor(
+                          "I haven’t considered these advantages before, but they sound appealing"
+                        )
+                      }
+                      className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      I haven’t considered these advantages before, but they
+                      sound appealing
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage94Executor(
+                          "I’m not sure how significant these advantages before would be for my estate planning"
+                        )
+                      }
+                      className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      I’m not sure how significant these advantages would be for
+                      my estate planning
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage94Executor(
+                          "I need more information to understand how these advantages would apply to my situation"
+                        )
+                      }
+                      className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      I need more information to understand how these advantages
+                      would apply to my situation
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage94Executor(
+                          "I’m primarily focused on other aspects of my estate planning right now"
+                        )
+                      }
+                      className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      I’m primarily focused on other aspects of my estate
+                      planning right now
+                    </button>
+                  </div>
+                </>
+              )}
 
               {message.content.includes(
                 "Exploring how transferring assets to a trust could benefit you is a wise decision in estate planning. It offers various advantages, such as reducing executor's fees and estate duty obligations, as well as providing asset protection and efficient distribution to beneficiaries. If you're interested in learning more about these benefits and how they apply to your specific situation, I am here to provide further information and guidance."
@@ -13424,7 +13481,7 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-11 -mb-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     I'm here to help you navigate the estate planning process
-                    with ease 🛠️. Together, we’ll ensure your assets and wishes 
+                    with ease 🛠️. Together, we’ll ensure your assets and wishes
                     are well-documented and protected 🛡️. Ready to get started
                     on this important journey? 🚀
                   </div>
@@ -13609,25 +13666,31 @@ export default function Chat() {
               ) && (
                 <>
                   <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    <b>👫⚖️ In Community of Property:</b> 
-                    <br/>
-                    All assets and debts
-                    are shared equally between spouses. 
-                    <br /><br />
-                    <b style={{marginLeft: "-1px"}}>📈🏠 Out of Community of Property with Accrual:</b> 
-                    <br/>
-                    Each spouse retains separate ownership of their assets, but they
-                    share the growth in value of their estates during the
-                    marriage  
-                    <br /><br />
-                    <b style={{marginLeft: "-1px"}}>🏡❌ Out of Community of Property without Accrual:</b>
-                    <br/>
+                    <b>👫⚖️ In Community of Property:</b>
+                    <br />
+                    All assets and debts are shared equally between spouses.
+                    <br />
+                    <br />
+                    <b style={{ marginLeft: "-1px" }}>
+                      📈🏠 Out of Community of Property with Accrual:
+                    </b>
+                    <br />
+                    Each spouse retains separate ownership of their assets, but
+                    they share the growth in value of their estates during the
+                    marriage
+                    <br />
+                    <br />
+                    <b style={{ marginLeft: "-1px" }}>
+                      🏡❌ Out of Community of Property without Accrual:
+                    </b>
+                    <br />
                     Each spouse retains separate ownership of their assets, and
-                    there is no sharing of assets or growth in value.  <br />
+                    there is no sharing of assets or growth in value. <br />
                     If you are married out of community of property, you would
                     have consulted with an attorney (or notary) and signed
                     documents (antenuptial contract) before your wedding 📝💍.
-                    <br /><br />
+                    <br />
+                    <br />
                     Please check your marital contract or consult with your
                     spouse to confirm ✅
                   </div>
@@ -13872,10 +13935,10 @@ export default function Chat() {
               ) && (
                 <>
                   <br />
-                   <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                  📜 If you'd like to learn more about donations tax and its
-                  implications for your estate planning, I can provide further
-                  details to help you make informed decisions.
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    📜 If you'd like to learn more about donations tax and its
+                    implications for your estate planning, I can provide further
+                    details to help you make informed decisions.
                   </div>
                   <br />
                   <div className="space-x-2 ml-9 -mt-4">
@@ -14790,8 +14853,9 @@ export default function Chat() {
                 "Reducing taxes and expenses payable upon your death can help maximise the value passed on to your heirs. How high a priority is it for you to minimise these costs?"
               ) && (
                 <>
-                <div className="space-x-2 ml-11 -mt-1">
-                  <TaxesSlider onProceed={handleButtonStage20Payable} /></div>
+                  <div className="space-x-2 ml-11 -mt-1">
+                    <TaxesSlider onProceed={handleButtonStage20Payable} />
+                  </div>
                   {/* <button
                     onClick={() => handleButtonStage20Payable("Low")}
                     className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
@@ -14991,94 +15055,185 @@ export default function Chat() {
               )}
 
               {message.content.includes(
-  "It’s important to understand the legal requirements and considerations specific to South Africa:"
-) && (
-  <>
-    <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-      Here are some important acts and considerations:
-    </div>
-    <div className="space-x-2 ml-11 mt-4 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-      <b className="block mb-2">Wills Act 7 of 1953 📝</b>
-      The Wills Act governs the creation and execution of wills. Your will must be in writing, signed by you, and witnessed by two people who are not beneficiaries.
-      <br /><br />
-      <b style={{marginLeft: "-1px"}} className="block mb-2">Estate Duty Act 45 of 1955 💼</b>
-      This Act imposes estate duty (a form of tax) on the estate of a deceased person. The first R3.5 million of an estate is exempt from estate duty.
-      <br /><br />
-      <b style={{marginLeft: "-1px"}} className="block mb-2">Intestate Succession Act 81 of 1987 📋</b>
-      If you die without a will, the Intestate Succession Act determines how your estate will be distributed. This may not align with your wishes, so having a will is crucial.
-      <br /><br />
-      <b style={{marginLeft: "-1px"}} className="block mb-2">Marital Property Regimes 💍</b>
-      Your marital status can affect your estate planning. South Africa recognises different marital property regimes, such as community of property, antenuptial contract (ANC), and ANC with accrual. It’s important to consider how these will impact your estate.
-      <br /><br />
-      <b style={{marginLeft: "-1px"}} className="block mb-2">Master of the High Court 🏛️</b>
-      The Master of the High Court oversees the administration of deceased estates. Executors of estates must be appointed and approved by the Master.
-      <br /><br />
-      Understanding these components and local laws can help ensure that your estate plan is comprehensive and legally sound. 📚✅
-      <br />
-    </div>
-    <br />
-    <div className="space-x-2 ml-11 mt-4 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-      <br />
-      In South Africa, there are various types of marriages:
-      <br /><br />
-      <b style={{marginLeft: "-1px"}} className="block mb-2">Civil Marriage 📜</b>
-      A formal marriage registered with Home Affairs, governed by the Marriage Act, 1961. (This is the most common and traditional form as we know it). Can be in or out of community of property (with or without the accrual).
-      <ul className="list-disc list-inside">
-        <li>Must be conducted by a marriage officer authorised by Home Affairs.</li>
-        <li>Both parties must be at least 18 years old (or 16 with parental consent).</li>
-        <li>Requires submission of documents such as identity documents and proof of dissolution of previous marriages, if applicable.</li>
-      </ul>
-      <br />
-      <b style={{marginLeft: "-1px"}} className="block mb-2">Customary Marriage 🎎</b>
-      A marriage conducted according to indigenous/black South African customs, recognised under the Recognition of Customary Marriages Act, 1998. The default property regime is in community of property, but parties can decide on out of community of property.
-      <ul className="list-disc list-inside">
-        <li>Must adhere to the customs of the community to which the parties belong.</li>
-        <li>Typically involves rituals and ceremonies traditional to the community.</li>
-        <li>Must be registered with the Department of Home Affairs to be legally recognised.</li>
-      </ul>
-      <br />
-      <b style={{marginLeft: "-1px"}} className="block mb-2">Religious Marriage</b>
-      A marriage conducted according to religious rites but not necessarily registered with Home Affairs.
-      <ul className="list-disc list-inside">
-        <li>Varies depending on the religion (e.g., temple wedding).</li>
-        <li>Should be registered with the Department of Home Affairs to gain legal status.</li>
-        <li>Not all religious marriages are recognised.</li>
-      </ul>
-      <br />
-      <b style={{marginLeft: "-1px"}} className="block mb-2">Civil Union 🏳️‍🌈</b>
-      Recognised under the Civil Union Act, 2006, and can be entered into by same-sex or opposite-sex couples. Carries the same legal standing as persons married in terms of the Marriage Act.
-      <ul className="list-disc list-inside">
-        <li>Must be performed by a registered civil union officer.</li>
-        <li>Parties can choose between a marriage-like relationship or a domestic partnership.</li>
-      </ul>
-      <br />
-      <b style={{marginLeft: "-1px"}} className="block mb-2">Co-habitation 🏡</b>
-      Not legally recognised as marriage. There is no such thing as a common-law marriage in South African law. Simply living together does not create a legal marriage-like status.
-      <ul className="list-disc list-inside">
-        <li>A marriage that is not recognised under civil law is not considered a legal marriage in South Africa, with a few exceptions.</li>
-        <li>This can have implications on your estate plan as you can be considered single/unmarried if your marriage is not registered with Home Affairs.</li>
-      </ul>
-    </div>
-    <div className="space-x-2 ml-11 mt-4 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-      Do you have any questions at this stage?
-    </div>
-    <div className="space-x-2 ml-11 mt-4">
-      <button
-        onClick={() => handleButtonStage13v2v1("Yes, I have a question.")}
-        className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-      >
-        Yes, I have a question.
-      </button>
-      <button
-        onClick={() => handleButtonStage13v2v1("No, let’s move on")}
-        className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-      >
-        No, let’s move on
-      </button>
-    </div>
-  </>
-)}
-
+                "It’s important to understand the legal requirements and considerations specific to South Africa:"
+              ) && (
+                <>
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    Here are some important acts and considerations:
+                  </div>
+                  <div className="space-x-2 ml-11 mt-4 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    <b className="block mb-2">Wills Act 7 of 1953 📝</b>
+                    The Wills Act governs the creation and execution of wills.
+                    Your will must be in writing, signed by you, and witnessed
+                    by two people who are not beneficiaries.
+                    <br />
+                    <br />
+                    <b style={{ marginLeft: "-1px" }} className="block mb-2">
+                      Estate Duty Act 45 of 1955 💼
+                    </b>
+                    This Act imposes estate duty (a form of tax) on the estate
+                    of a deceased person. The first R3.5 million of an estate is
+                    exempt from estate duty.
+                    <br />
+                    <br />
+                    <b style={{ marginLeft: "-1px" }} className="block mb-2">
+                      Intestate Succession Act 81 of 1987 📋
+                    </b>
+                    If you die without a will, the Intestate Succession Act
+                    determines how your estate will be distributed. This may not
+                    align with your wishes, so having a will is crucial.
+                    <br />
+                    <br />
+                    <b style={{ marginLeft: "-1px" }} className="block mb-2">
+                      Marital Property Regimes 💍
+                    </b>
+                    Your marital status can affect your estate planning. South
+                    Africa recognises different marital property regimes, such
+                    as community of property, antenuptial contract (ANC), and
+                    ANC with accrual. It’s important to consider how these will
+                    impact your estate.
+                    <br />
+                    <br />
+                    <b style={{ marginLeft: "-1px" }} className="block mb-2">
+                      Master of the High Court 🏛️
+                    </b>
+                    The Master of the High Court oversees the administration of
+                    deceased estates. Executors of estates must be appointed and
+                    approved by the Master.
+                    <br />
+                    <br />
+                    Understanding these components and local laws can help
+                    ensure that your estate plan is comprehensive and legally
+                    sound. 📚✅
+                    <br />
+                  </div>
+                  <br />
+                  <div className="space-x-2 ml-11 mt-4 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    <br />
+                    In South Africa, there are various types of marriages:
+                    <br />
+                    <br />
+                    <b style={{ marginLeft: "-1px" }} className="block mb-2">
+                      Civil Marriage 📜
+                    </b>
+                    A formal marriage registered with Home Affairs, governed by
+                    the Marriage Act, 1961. (This is the most common and
+                    traditional form as we know it). Can be in or out of
+                    community of property (with or without the accrual).
+                    <ul className="list-disc list-inside">
+                      <li>
+                        Must be conducted by a marriage officer authorised by
+                        Home Affairs.
+                      </li>
+                      <li>
+                        Both parties must be at least 18 years old (or 16 with
+                        parental consent).
+                      </li>
+                      <li>
+                        Requires submission of documents such as identity
+                        documents and proof of dissolution of previous
+                        marriages, if applicable.
+                      </li>
+                    </ul>
+                    <br />
+                    <b style={{ marginLeft: "-1px" }} className="block mb-2">
+                      Customary Marriage 🎎
+                    </b>
+                    A marriage conducted according to indigenous/black South
+                    African customs, recognised under the Recognition of
+                    Customary Marriages Act, 1998. The default property regime
+                    is in community of property, but parties can decide on out
+                    of community of property.
+                    <ul className="list-disc list-inside">
+                      <li>
+                        Must adhere to the customs of the community to which the
+                        parties belong.
+                      </li>
+                      <li>
+                        Typically involves rituals and ceremonies traditional to
+                        the community.
+                      </li>
+                      <li>
+                        Must be registered with the Department of Home Affairs
+                        to be legally recognised.
+                      </li>
+                    </ul>
+                    <br />
+                    <b style={{ marginLeft: "-1px" }} className="block mb-2">
+                      Religious Marriage
+                    </b>
+                    A marriage conducted according to religious rites but not
+                    necessarily registered with Home Affairs.
+                    <ul className="list-disc list-inside">
+                      <li>
+                        Varies depending on the religion (e.g., temple wedding).
+                      </li>
+                      <li>
+                        Should be registered with the Department of Home Affairs
+                        to gain legal status.
+                      </li>
+                      <li>Not all religious marriages are recognised.</li>
+                    </ul>
+                    <br />
+                    <b style={{ marginLeft: "-1px" }} className="block mb-2">
+                      Civil Union 🏳️‍🌈
+                    </b>
+                    Recognised under the Civil Union Act, 2006, and can be
+                    entered into by same-sex or opposite-sex couples. Carries
+                    the same legal standing as persons married in terms of the
+                    Marriage Act.
+                    <ul className="list-disc list-inside">
+                      <li>
+                        Must be performed by a registered civil union officer.
+                      </li>
+                      <li>
+                        Parties can choose between a marriage-like relationship
+                        or a domestic partnership.
+                      </li>
+                    </ul>
+                    <br />
+                    <b style={{ marginLeft: "-1px" }} className="block mb-2">
+                      Co-habitation 🏡
+                    </b>
+                    Not legally recognised as marriage. There is no such thing
+                    as a common-law marriage in South African law. Simply living
+                    together does not create a legal marriage-like status.
+                    <ul className="list-disc list-inside">
+                      <li>
+                        A marriage that is not recognised under civil law is not
+                        considered a legal marriage in South Africa, with a few
+                        exceptions.
+                      </li>
+                      <li>
+                        This can have implications on your estate plan as you
+                        can be considered single/unmarried if your marriage is
+                        not registered with Home Affairs.
+                      </li>
+                    </ul>
+                  </div>
+                  <div className="space-x-2 ml-11 mt-4 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    Do you have any questions at this stage?
+                  </div>
+                  <div className="space-x-2 ml-11 mt-4">
+                    <button
+                      onClick={() =>
+                        handleButtonStage13v2v1("Yes, I have a question.")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Yes, I have a question.
+                    </button>
+                    <button
+                      onClick={() =>
+                        handleButtonStage13v2v1("No, let’s move on")
+                      }
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      No, let’s move on
+                    </button>
+                  </div>
+                </>
+              )}
 
               {message.content.includes(
                 "Estate duty is a tax that has an impact on your estate. Do you want to explore estate duty further?"
@@ -15116,39 +15271,43 @@ export default function Chat() {
                     that exceed R3.5 million are estate dutiable.
                     <br />
                     <br />
-                    <b style={{marginLeft: "-1px"}}>Rates</b> 📊
+                    <b style={{ marginLeft: "-1px" }}>Rates</b> 📊
                     <br />
                     The estate duty rate is generally 20% on the value above the
                     threshold. For amounts exceeding R30 million, a higher rate
                     of 25% applies.
                     <br />
                     <br />
-                   <em>
-  <b style={{ marginLeft: "-8px" }}>Example 1</b>: Peter’s estate is worth R5 million. His
-  estate will be liable for estate duty as follows:
-  <br />
-  R5m - R3.5m = R1.5m
-  <br />
-  R1.5m x 20% = R300,000 payable.
-  <br />
-  <br />
-  <b style={{ marginLeft: "-1px" }}>Example 2</b>: Peter’s estate is worth R50 million. His
-  estate will be liable for estate duty as follows:
-  <br />
-  20% x R30m
-  <br />
-  25% x (R50m - R30m)
-</em>
-
+                    <em>
+                      <b style={{ marginLeft: "-8px" }}>Example 1</b>: Peter’s
+                      estate is worth R5 million. His estate will be liable for
+                      estate duty as follows:
+                      <br />
+                      R5m - R3.5m = R1.5m
+                      <br />
+                      R1.5m x 20% = R300,000 payable.
+                      <br />
+                      <br />
+                      <b style={{ marginLeft: "-1px" }}>Example 2</b>: Peter’s
+                      estate is worth R50 million. His estate will be liable for
+                      estate duty as follows:
+                      <br />
+                      20% x R30m
+                      <br />
+                      25% x (R50m - R30m)
+                    </em>
                     <br />
                     <br />
-                    <b style={{marginLeft: "-1px"}}>Deductions</b> 📝
+                    <b style={{ marginLeft: "-1px" }}>Deductions</b> 📝
                     <br />
                     Certain deductions can be applied, such as liabilities and
                     bequests to charities.
                     <br />
                     <br />
-                    <b style={{marginLeft: "-1px"}}>Farm Property Exemption</b> 🚜
+                    <b style={{ marginLeft: "-1px" }}>
+                      Farm Property Exemption
+                    </b>{" "}
+                    🚜
                     <br />
                     Farm valuation exemption for estate duty provides for a
                     deduction of up to R30 million on the value of farm property
@@ -15157,15 +15316,18 @@ export default function Chat() {
                     duty.
                     <br />
                     <em style={{ marginLeft: "-2px" }}>
-                    Example: If a farm is valued at R50 million and qualifies
-                    for the full exemption, only R20 million would be subject to
-                    estate duty, potentially reducing the estate duty payable.
+                      Example: If a farm is valued at R50 million and qualifies
+                      for the full exemption, only R20 million would be subject
+                      to estate duty, potentially reducing the estate duty
+                      payable.
                     </em>
                     <br />
                     <br />
                   </div>
                   <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                  Do you have any questions regarding estate duty at this stage?</div>
+                    Do you have any questions regarding estate duty at this
+                    stage?
+                  </div>
                   <div className="space-x-2 ml-11 mt-4">
                     <button
                       onClick={() =>
@@ -15222,24 +15384,25 @@ export default function Chat() {
                     after the owner has received the Minister's consent. 🌾
                     <br />
                     <br />
-                    Some title deeds (of farms) may include conditions about
-                    who can inherit the farm or whether the land can be sold or
+                    Some title deeds (of farms) may include conditions about who
+                    can inherit the farm or whether the land can be sold or
                     subdivided. This would be an instance of:
                     <br />
                     <br />
-                    <b style={{marginLeft: "-1px"}}>Fideicommissum</b>🔹
+                    <b style={{ marginLeft: "-1px" }}>Fideicommissum</b>🔹
                     <br />
                     A legal arrangement where the owner of an asset leaves it to
                     someone with the condition that, after their death, the
                     asset will be passed on to another person or group.
                     <br />
-                    <em style={{marginLeft: "-1px"}}>
-                    For example, you might leave your farm to your children
-                    with the condition that, after their death, it will go to
-                    your grandchildren. 📋</em>
+                    <em style={{ marginLeft: "-1px" }}>
+                      For example, you might leave your farm to your children
+                      with the condition that, after their death, it will go to
+                      your grandchildren. 📋
+                    </em>
                     <br />
                     <br />
-                    <b style={{marginLeft: "-1px"}}>Usufruct</b>🔹
+                    <b style={{ marginLeft: "-1px" }}>Usufruct</b>🔹
                     <br />
                     Gives someone the right to use and benefit from an asset
                     (like living in a house 🏠 or earning income from a property
@@ -15248,10 +15411,11 @@ export default function Chat() {
                     The person with usufruct has control over the asset for a
                     certain period, but they can't sell or permanently alter it.
                     <br />
-                    <em style={{marginLeft: "-1px"}}>
-                    For instance, if you have usufruct over a property, you
-                    can live in it or rent it out, but you can't sell the
-                    property. 💡</em>
+                    <em style={{ marginLeft: "-1px" }}>
+                      For instance, if you have usufruct over a property, you
+                      can live in it or rent it out, but you can't sell the
+                      property. 💡
+                    </em>
                   </div>
                   <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Do you have any questions regarding bequeathing a farm at
@@ -15409,37 +15573,37 @@ export default function Chat() {
                     ⚖️ Executor
                     <br />
                     🛡️ Guardian
-                    <br /><br />
+                    <br />
+                    <br />
                     Would you like a detailed explanation of all or some of
                     these terms?
                   </div>
                   <div className="space-x-2 ml-9 mt-2">
-                   {terms.map((term) => (
-  <>
-    <br /> {/* Adjust margin as needed */}
-    <label
-      key={term}
-      htmlFor={term}
-      className={`flex items-center space-x-2 px-4 py-2 w-[400px] -my-2 rounded-md border cursor-pointer ${
-        selectedTerms.includes(term)
-          ? "bg-[#8DC63F] text-white border-transparent"
-          : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
-      }`}
-    >
-      <input
-        type="checkbox"
-        id={term}
-        onChange={handleCheckboxChangeTerms}
-        name={term}
-        value={term}
-        checked={selectedTerms.includes(term)}
-        className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
-      />
-      &nbsp;&nbsp;&nbsp;{term}
-    </label>
-  </>
-))}
-
+                    {terms.map((term) => (
+                      <>
+                        <br /> {/* Adjust margin as needed */}
+                        <label
+                          key={term}
+                          htmlFor={term}
+                          className={`flex items-center space-x-2 px-4 py-2 w-[400px] -my-2 rounded-md border cursor-pointer ${
+                            selectedTerms.includes(term)
+                              ? "bg-[#8DC63F] text-white border-transparent"
+                              : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
+                          } w-full sm:w-[400px]`}
+                        >
+                          <input
+                            type="checkbox"
+                            id={term}
+                            onChange={handleCheckboxChangeTerms}
+                            name={term}
+                            value={term}
+                            checked={selectedTerms.includes(term)}
+                            className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
+                          />
+                          &nbsp;&nbsp;&nbsp;{term}
+                        </label>
+                      </>
+                    ))}
 
                     <button
                       onClick={handleProceed}
@@ -15451,138 +15615,230 @@ export default function Chat() {
                 </>
               )}
 
-             {message.content.includes("Here are the definition of key terms:") && (
-  <>
-    {selectedTerms.length > 0 && (
-      <>
-        <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-          {/* If 'All Key Terms' is selected, show all definitions */}
-          {selectedTerms.includes("All Key Terms") ? (
-            <>
-              {/* Show all terms at once */}
-              📜 Wills
-              <br />
-              A will is a legal document that says how you want your belongings, money, and assets to be divided after you pass away. It also names someone to carry out your wishes (an executor) and can appoint guardians for your children.
-              <br /><br />
-              🔐 Trusts
-              <br />
-              A trust is a legal arrangement where you (the founder/settlor) place assets, like money or property, into a separate entity managed by a person (the trustee) for the benefit of someone else (the beneficiary). The trustee manages these assets according to your instructions, often to provide for beneficiaries over time, such as children or loved ones. A trust can be set up in your will and will come into existence when you pass away, or it can be set up while you are alive.
-              <br /><br />
-              🖋️ Power of Attorney
-              <br />
-              A power of attorney is a legal document that allows you to give someone else the authority to make decisions for you. It could be about financial matters, health care, or other personal affairs, especially if you’re unable to handle them yourself.
-              <br /><br />
-              🏥 Living Will
-              <br />
-              A living will is a document where you write down your wishes about medical care if you’re unable to communicate. It’s about what kind of treatments you do or don’t want if you’re seriously ill or injured and can’t speak for yourself.
-              <br /><br />
-              💼 Beneficiaries
-              <br />
-              Beneficiaries are the people you choose to receive your money, assets, or other benefits when you pass away. They are named in your insurance policies or retirement benefit forms.
-              <br /><br />
-              📑 Beneficiary Designation Forms
-              <br />
-              For assets like retirement accounts, life insurance, or certain bank accounts, you may need to fill out a form naming who gets those assets after you pass away. These forms typically override what’s written in a will or trust.
-              <br /><br />
-              ⚖️ xecutor
-              <br />
-              The person named in your will who is responsible for carrying out your wishes after you pass away, including paying debts and distributing assets to beneficiaries.
-              <br /><br />
-              🛡️ Guardian
-              <br />
-              If you have minor children, you can name a guardian in your will. This person will be responsible for taking care of your children if something happens to you.
-              <br /><br />
-            </>
-          ) : (
-            <>
-              {/* Show individual terms if 'All Key Terms' is not selected */}
-              {selectedTerms.includes("Wills") && (
+              {message.content.includes(
+                "Here are the definition of key terms:"
+              ) && (
                 <>
-                  📜 Wills
-                  <br />
-                  A will is a legal document that says how you want your belongings, money, and assets to be divided after you pass away. It also names someone to carry out your wishes (an executor) and can appoint guardians for your children.
-                  <br /><br />
+                  {selectedTerms.length > 0 && (
+                    <>
+                      <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                        {/* If 'All Key Terms' is selected, show all definitions */}
+                        {selectedTerms.includes("All Key Terms") ? (
+                          <>
+                            {/* Show all terms at once */}
+                            📜 Wills
+                            <br />
+                            A will is a legal document that says how you want
+                            your belongings, money, and assets to be divided
+                            after you pass away. It also names someone to carry
+                            out your wishes (an executor) and can appoint
+                            guardians for your children.
+                            <br />
+                            <br />
+                            🔐 Trusts
+                            <br />
+                            A trust is a legal arrangement where you (the
+                            founder/settlor) place assets, like money or
+                            property, into a separate entity managed by a person
+                            (the trustee) for the benefit of someone else (the
+                            beneficiary). The trustee manages these assets
+                            according to your instructions, often to provide for
+                            beneficiaries over time, such as children or loved
+                            ones. A trust can be set up in your will and will
+                            come into existence when you pass away, or it can be
+                            set up while you are alive.
+                            <br />
+                            <br />
+                            🖋️ Power of Attorney
+                            <br />
+                            A power of attorney is a legal document that allows
+                            you to give someone else the authority to make
+                            decisions for you. It could be about financial
+                            matters, health care, or other personal affairs,
+                            especially if you’re unable to handle them yourself.
+                            <br />
+                            <br />
+                            🏥 Living Will
+                            <br />
+                            A living will is a document where you write down
+                            your wishes about medical care if you’re unable to
+                            communicate. It’s about what kind of treatments you
+                            do or don’t want if you’re seriously ill or injured
+                            and can’t speak for yourself.
+                            <br />
+                            <br />
+                            💼 Beneficiaries
+                            <br />
+                            Beneficiaries are the people you choose to receive
+                            your money, assets, or other benefits when you pass
+                            away. They are named in your insurance policies or
+                            retirement benefit forms.
+                            <br />
+                            <br />
+                            📑 Beneficiary Designation Forms
+                            <br />
+                            For assets like retirement accounts, life insurance,
+                            or certain bank accounts, you may need to fill out a
+                            form naming who gets those assets after you pass
+                            away. These forms typically override what’s written
+                            in a will or trust.
+                            <br />
+                            <br />
+                            ⚖️ xecutor
+                            <br />
+                            The person named in your will who is responsible for
+                            carrying out your wishes after you pass away,
+                            including paying debts and distributing assets to
+                            beneficiaries.
+                            <br />
+                            <br />
+                            🛡️ Guardian
+                            <br />
+                            If you have minor children, you can name a guardian
+                            in your will. This person will be responsible for
+                            taking care of your children if something happens to
+                            you.
+                            <br />
+                            <br />
+                          </>
+                        ) : (
+                          <>
+                            {/* Show individual terms if 'All Key Terms' is not selected */}
+                            {selectedTerms.includes("Wills") && (
+                              <>
+                                📜 Wills
+                                <br />
+                                A will is a legal document that says how you
+                                want your belongings, money, and assets to be
+                                divided after you pass away. It also names
+                                someone to carry out your wishes (an executor)
+                                and can appoint guardians for your children.
+                                <br />
+                                <br />
+                              </>
+                            )}
+
+                            {selectedTerms.includes("Trusts") && (
+                              <>
+                                🔐 Trusts
+                                <br />
+                                A trust is a legal arrangement where you (the
+                                founder/settlor) place assets, like money or
+                                property, into a separate entity managed by a
+                                person (the trustee) for the benefit of someone
+                                else (the beneficiary). The trustee manages
+                                these assets according to your instructions,
+                                often to provide for beneficiaries over time,
+                                such as children or loved ones. A trust can be
+                                set up in your will and will come into existence
+                                when you pass away, or it can be set up while
+                                you are alive.
+                                <br />
+                                <br />
+                              </>
+                            )}
+
+                            {selectedTerms.includes("Power of Attorney") && (
+                              <>
+                                🖋️ Power of Attorney
+                                <br />
+                                A power of attorney is a legal document that
+                                allows you to give someone else the authority to
+                                make decisions for you. It could be about
+                                financial matters, health care, or other
+                                personal affairs, especially if you’re unable to
+                                handle them yourself.
+                                <br />
+                                <br />
+                              </>
+                            )}
+
+                            {selectedTerms.includes("Living Will") && (
+                              <>
+                                🏥 Living Will
+                                <br />
+                                A living will is a document where you write down
+                                your wishes about medical care if you’re unable
+                                to communicate. It’s about what kind of
+                                treatments you do or don’t want if you’re
+                                seriously ill or injured and can’t speak for
+                                yourself.
+                                <br />
+                                <br />
+                              </>
+                            )}
+
+                            {selectedTerms.includes("Beneficiaries") && (
+                              <>
+                                💼 Beneficiaries
+                                <br />
+                                Beneficiaries are the people you choose to
+                                receive your money, assets, or other benefits
+                                when you pass away. They are named in your
+                                insurance policies or retirement benefit forms.
+                                <br />
+                                <br />
+                              </>
+                            )}
+
+                            {selectedTerms.includes(
+                              "Beneficiary Designation Forms"
+                            ) && (
+                              <>
+                                📑 Beneficiary Designation Forms
+                                <br />
+                                For assets like retirement accounts, life
+                                insurance, or certain bank accounts, you may
+                                need to fill out a form naming who gets those
+                                assets after you pass away. These forms
+                                typically override what’s written in a will or
+                                trust.
+                                <br />
+                                <br />
+                              </>
+                            )}
+
+                            {selectedTerms.includes("Executor") && (
+                              <>
+                                ⚖️ Executor
+                                <br />
+                                The person named in your will who is responsible
+                                for carrying out your wishes after you pass
+                                away, including paying debts and distributing
+                                assets to beneficiaries.
+                                <br />
+                                <br />
+                              </>
+                            )}
+
+                            {selectedTerms.includes("Guardian") && (
+                              <>
+                                🛡️ Guardian
+                                <br />
+                                If you have minor children, you can name a
+                                guardian in your will. This person will be
+                                responsible for taking care of your children if
+                                something happens to you.
+                                <br />
+                                <br />
+                              </>
+                            )}
+                          </>
+                        )}
+                      </div>
+                    </>
+                  )}
+
+                  <div className="space-x-2 ml-11 mt-4">
+                    <button
+                      onClick={() => handleButtonStage12("Proceed")}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Proceed
+                    </button>
+                  </div>
                 </>
               )}
-
-              {selectedTerms.includes("Trusts") && (
-                <>
-                  🔐 Trusts
-                  <br />
-                  A trust is a legal arrangement where you (the founder/settlor) place assets, like money or property, into a separate entity managed by a person (the trustee) for the benefit of someone else (the beneficiary). The trustee manages these assets according to your instructions, often to provide for beneficiaries over time, such as children or loved ones. A trust can be set up in your will and will come into existence when you pass away, or it can be set up while you are alive.
-                  <br /><br />
-                </>
-              )}
-
-              {selectedTerms.includes("Power of Attorney") && (
-                <>
-                  🖋️ Power of Attorney
-                  <br />
-                  A power of attorney is a legal document that allows you to give someone else the authority to make decisions for you. It could be about financial matters, health care, or other personal affairs, especially if you’re unable to handle them yourself.
-                  <br /><br />
-                </>
-              )}
-
-              {selectedTerms.includes("Living Will") && (
-                <>
-                  🏥 Living Will
-                  <br />
-                  A living will is a document where you write down your wishes about medical care if you’re unable to communicate. It’s about what kind of treatments you do or don’t want if you’re seriously ill or injured and can’t speak for yourself.
-                  <br /><br />
-                </>
-              )}
-
-              {selectedTerms.includes("Beneficiaries") && (
-                <>
-                  💼 Beneficiaries
-                  <br />
-                  Beneficiaries are the people you choose to receive your money, assets, or other benefits when you pass away. They are named in your insurance policies or retirement benefit forms.
-                  <br /><br />
-                </>
-              )}
-
-              {selectedTerms.includes("Beneficiary Designation Forms") && (
-                <>
-                  📑 Beneficiary Designation Forms
-                  <br />
-                  For assets like retirement accounts, life insurance, or certain bank accounts, you may need to fill out a form naming who gets those assets after you pass away. These forms typically override what’s written in a will or trust.
-                  <br /><br />
-                </>
-              )}
-
-              {selectedTerms.includes("Executor") && (
-                <>
-                  ⚖️ Executor
-                  <br />
-                  The person named in your will who is responsible for carrying out your wishes after you pass away, including paying debts and distributing assets to beneficiaries.
-                  <br /><br />
-                </>
-              )}
-
-              {selectedTerms.includes("Guardian") && (
-                <>
-                  🛡️ Guardian
-                  <br />
-                  If you have minor children, you can name a guardian in your will. This person will be responsible for taking care of your children if something happens to you.
-                  <br /><br />
-                </>
-              )}
-            </>
-          )}
-        </div>
-      </>
-    )}
-
-    <div className="space-x-2 ml-11 mt-4">
-      <button
-        onClick={() => handleButtonStage12("Proceed")}
-        className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-      >
-        Proceed
-      </button>
-    </div>
-  </>
-)}
 
               {message.content.includes(
                 "Here are the potential outcomes of each scenario:"
@@ -15603,7 +15859,9 @@ export default function Chat() {
                             trusts can offer tax benefits and ensure a smoother
                             transfer of assets to your beneficiaries.
                             <br /> <br />
-                            <b style={{marginLeft: "-1px"}}>Scenario 2: Dying Intestate (Without a Will)</b>
+                            <b style={{ marginLeft: "-1px" }}>
+                              Scenario 2: Dying Intestate (Without a Will)
+                            </b>
                             <br />
                             Suppose you pass away without a will. According to
                             South Africa’s Intestate Succession Act, your estate
@@ -15613,7 +15871,9 @@ export default function Chat() {
                             wishes and could lead to disputes among family
                             members.
                             <br /> <br />
-                            <b style={{marginLeft: "-1px"}}>Scenario 3: Appointing a Power of Attorney</b>
+                            <b style={{ marginLeft: "-1px" }}>
+                              Scenario 3: Appointing a Power of Attorney
+                            </b>
                             <br />
                             Consider appointing a trusted person as your power
                             of attorney. This individual can manage your
@@ -15624,7 +15884,7 @@ export default function Chat() {
                             affairs are handled according to your wishes, even
                             if you’re unable to communicate them.
                             <br /> <br />
-                            <b style={{marginLeft: "-1px"}}>
+                            <b style={{ marginLeft: "-1px" }}>
                               Scenario 4: Tax Implications of Estate Planning
                               Decisions
                             </b>
@@ -15726,23 +15986,26 @@ export default function Chat() {
                       </div>
                       <br />
                       <br />
-                         <div className="space-x-2 ml-11 -mt-1">
-                      <button
-                        onClick={() =>
-                          handleButtonStage13Component("Yes, I have a question")
-                        }
-                        className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                      >
-                        Yes, I have a question
-                      </button>
-                      <button
-                        onClick={() =>
-                          handleButtonStage13Component("No, let's move on")
-                        }
-                        className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                      >
-                        No, let's move on
-                      </button></div>
+                      <div className="space-x-2 ml-11 -mt-1">
+                        <button
+                          onClick={() =>
+                            handleButtonStage13Component(
+                              "Yes, I have a question"
+                            )
+                          }
+                          className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                        >
+                          Yes, I have a question
+                        </button>
+                        <button
+                          onClick={() =>
+                            handleButtonStage13Component("No, let's move on")
+                          }
+                          className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                        >
+                          No, let's move on
+                        </button>
+                      </div>
                     </>
                   )}
                 </>
@@ -16229,7 +16492,7 @@ export default function Chat() {
             </div>
             <form
               className="w-full rounded-3xl"
-              onSubmit={(e) => {
+              onSubmit={async (e) => {
                 e.preventDefault();
 
                 if (isResponse.current == "1") {
@@ -16241,6 +16504,11 @@ export default function Chat() {
                   )
                 ) {
                   e.preventDefault();
+                   await saveUserProfile({
+                            realEstateProperties: {
+                              propertiesDetails: inputStr,
+                },
+                  });
                   handleAddAIResponse(
                     "Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan."
                   );
@@ -16262,9 +16530,7 @@ export default function Chat() {
                   handleAddAIResponse(
                     "How many vehicles (cars, boats, caravans, motorcycles etc) do you own, and what are their makes, models, and estimated values?"
                   );
-                } 
-                
-                else if (
+                } else if (
                   messageData.current.includes(
                     "How many vehicles (cars, boats, caravans, motorcycles etc) do you own, and what are their makes, models, and estimated values?"
                   )
@@ -16273,9 +16539,7 @@ export default function Chat() {
                   handleAddAIResponse(
                     "Are there any valuable possessions such as artwork, jewellery, or collectibles that you own? If so, could you describe each item and estimate its value?"
                   );
-                }
-
-                else if (
+                } else if (
                   messageData.current.includes(
                     "Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan."
                   )
@@ -16284,9 +16548,7 @@ export default function Chat() {
                   handleAddAIResponse(
                     "How many vehicles (cars, boats, caravans, motorcycles etc) do you own, and what are their makes, models, and estimated values?"
                   );
-                }
-
-                else if (
+                } else if (
                   messageData.current.includes(
                     "Are there any valuable possessions such as artwork, jewellery, or collectibles that you own? If so, could you describe each item and estimate its value?"
                   )
@@ -16295,9 +16557,7 @@ export default function Chat() {
                   handleAddAIResponse(
                     "What is the estimated value of your household effects/content e.g. furniture, appliances etc. Your short-term insurance cover amount for household content can be used. If yes, please provide details about each item, including its type, estimated value, and any notable items you would like to include in your estate plan."
                   );
-                }
-
-                else if (
+                } else if (
                   messageData.current.includes(
                     "What is the estimated value of your household effects/content e.g. furniture, appliances etc. Your short-term insurance cover amount for household content can be used. If yes, please provide details about each item, including its type, estimated value, and any notable items you would like to include in your estate plan."
                   )
@@ -16306,9 +16566,7 @@ export default function Chat() {
                   handleAddAIResponse(
                     "Can you provide details about your investment portfolio, including stocks, bonds, mutual funds, retirement accounts, and any other investment holdings? Please specify the quantity, type, and current value of each investment."
                   );
-                }
-                
-                else if (
+                } else if (
                   messageData.current.includes(
                     "Can you provide details about your investment portfolio, including stocks, bonds, mutual funds, retirement accounts, and any other investment holdings? Please specify the quantity, type, and current value of each investment."
                   )
@@ -16317,10 +16575,7 @@ export default function Chat() {
                   handleAddAIResponse(
                     "Do you have any cash savings or deposits in bank accounts? If yes, please provide the approximate balances for each account."
                   );
-                }
-
-
-                else if (
+                } else if (
                   messageData.current.includes(
                     "Do you have any cash savings or deposits in bank accounts? If yes, please provide the approximate balances for each account."
                   )
@@ -16329,9 +16584,7 @@ export default function Chat() {
                   handleAddAIResponse(
                     "Do you have any business interests or ownership stakes in companies? If yes, please provide details about each business, including its type, ownership percentage, and estimated value."
                   );
-                }
-                
-                else if (
+                } else if (
                   messageData.current.includes(
                     "Do you have any business interests or ownership stakes in companies? If yes, please provide details about each business, including its type, ownership percentage, and estimated value."
                   )
@@ -16340,9 +16593,7 @@ export default function Chat() {
                   handleAddAIResponse(
                     "Are there any other significant assets not mentioned that you would like to include in your estate plan? If so, please describe them and provide their estimated values."
                   );
-                }
-
-                else if (
+                } else if (
                   messageData.current.includes(
                     "Are there any other significant assets not mentioned that you would like to include in your estate plan? If so, please describe them and provide their estimated values."
                   )
@@ -16351,9 +16602,7 @@ export default function Chat() {
                   handleAddAIResponse(
                     "Do you own any intellectual property rights, such as patents, trademarks, or copyrights? If yes, please provide details about each intellectual property asset."
                   );
-                }
-
-                else if (
+                } else if (
                   messageData.current.includes(
                     "Do you own any intellectual property rights, such as patents, trademarks, or copyrights? If yes, please provide details about each intellectual property asset."
                   )
@@ -16362,9 +16611,7 @@ export default function Chat() {
                   handleAddAIResponse(
                     "Are there any assets held in trust or other legal entities? If yes, please specify the nature of the trust or entity and describe the assets held within."
                   );
-                }
-                
-                else if (
+                } else if (
                   messageData.current.includes(
                     "Are there any assets held in trust or other legal entities? If yes, please specify the nature of the trust or entity and describe the assets held within."
                   )
@@ -16373,10 +16620,7 @@ export default function Chat() {
                   handleAddAIResponse(
                     "Do you have any outstanding mortgage loans? If yes, please specify the outstanding balance and the property/assets mortgaged."
                   );
-                }
-
-
-                else if (
+                } else if (
                   messageData.current.includes(
                     "Do you have any outstanding mortgage loans? If yes, please specify the outstanding balance and the property/assets mortgaged."
                   )
@@ -16385,10 +16629,7 @@ export default function Chat() {
                   handleAddAIResponse(
                     "Are there any personal loans you currently owe? If so, please provide details on the outstanding amount and the purpose of the loan."
                   );
-                }
-                
-
-                else if (
+                } else if (
                   messageData.current.includes(
                     "Are there any personal loans you currently owe? If so, please provide details on the outstanding amount and the purpose of the loan."
                   )
@@ -16397,9 +16638,7 @@ export default function Chat() {
                   handleAddAIResponse(
                     "Do you have any credit card debt? If yes, please specify the total amount owed and the interest rates associated with each card."
                   );
-                }
-
-                else if (
+                } else if (
                   messageData.current.includes(
                     "Do you have any credit card debt? If yes, please specify the total amount owed and the interest rates associated with each card."
                   )
@@ -16408,9 +16647,7 @@ export default function Chat() {
                   handleAddAIResponse(
                     "Are there any loans for vehicles you own? If so, please provide details on the outstanding balance and the vehicles financed."
                   );
-                }
-
-                else if (
+                } else if (
                   messageData.current.includes(
                     "Are there any loans for vehicles you own? If so, please provide details on the outstanding balance and the vehicles financed."
                   )
@@ -16419,33 +16656,15 @@ export default function Chat() {
                   handleAddAIResponse(
                     "Are there any other outstanding debts or financial obligations that you have? This may include student loans, medical bills, or any other loans or accounts. Please specify the type of debt and the outstanding amount."
                   );
-                }
-
-
-                
-
-               
-
-                
-                
-
-
-
-
-
-                
-
-
-                
-                else if (
+                } else if (
                   messageData.current.includes(
                     "Great! Please provide the above mentioned details of your vehicle with their estimated values."
                   )
                 ) {
                   e.preventDefault();
-                 handleAddAIResponse(
-                 "Are there any valuable possessions such as artwork, jewellery, or collectibles that you own? If so, could you describe each item and estimate its value?"
-                 );
+                  handleAddAIResponse(
+                    "Are there any valuable possessions such as artwork, jewellery, or collectibles that you own? If so, could you describe each item and estimate its value?"
+                  );
                 } else if (
                   messageData.current.includes(
                     "No problem. Whenever you're ready to provide the details of your vehicle, just let me know."
@@ -16504,9 +16723,7 @@ export default function Chat() {
                       userName +
                       ". Is there anything else you’d like to add about your personal particulars or any questions you have at this stage?"
                   );
-                }
-
-                else if (
+                } else if (
                   messageData.current.includes(
                     "Buy and sell insurance is designed to ensure that"
                   )
@@ -16516,7 +16733,6 @@ export default function Chat() {
                     "For business owners, key person insurance can help the business survive the loss of a crucial employee. Do you have this in place?"
                   );
                 }
-
 
                 //NEW ADDED
                 else if (
@@ -16528,9 +16744,7 @@ export default function Chat() {
                   handleAddAIResponse(
                     "Do you have any other types of insurance not already covered? Please provide details about the type of coverage and the insurance provider."
                   );
-                }
-
-                else if (
+                } else if (
                   messageData.current.includes(
                     "I recommend reviewing your current disability insurance policy to understand any limitations"
                   )
@@ -16540,7 +16754,6 @@ export default function Chat() {
                     "Do you have contingent liability insurance to cover unexpected liabilities that may arise?"
                   );
                 }
-
 
                 //Investment Portfolio NEW
                 else if (
@@ -16552,9 +16765,7 @@ export default function Chat() {
                   handleAddAIResponse(
                     "Are there any specific changes or adjustments you're considering making to your investment portfolio in the near future?"
                   );
-                }
-
-                else if (
+                } else if (
                   messageData.current.includes(
                     "It's always a good idea to periodically review your"
                   )
@@ -16564,28 +16775,6 @@ export default function Chat() {
                     "Great! Next, we’ll discuss estate duty. Shall we continue?"
                   );
                 }
-
-                
-                
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                
-
-
 
                 //ASSET
                 else if (
@@ -16597,17 +16786,19 @@ export default function Chat() {
                   handleAddAIResponse(
                     "Are there any other outstanding debts or financial obligations that you have? This may include student loans, medical bills, or any other loans or accounts. Please specify the type of debt and the outstanding amount."
                   );
-                }
-
-
-
-
-                else if (
+                } else if (
                   messageData.current.includes(
                     "To help you estimate the value of your property, let’s go through a few simple steps. This will give you a rough idea of what your property could be worth."
                   )
                 ) {
                   e.preventDefault();
+
+                  await saveUserProfile({
+                            realEstateProperties: {
+                              inDepthDetails: { propertyType: inputStr },
+                },
+                  });
+
                   handleAddAIResponse(
                     "Next, provide the location of your property (suburb, or specific neighbourhood, province)."
                   );
@@ -16809,7 +17000,7 @@ export default function Chat() {
                   handleAddAIResponse(
                     "Are there any loans for vehicles you own? If so, please provide details on the outstanding balance and the vehicles financed."
                   );
-                }  else if (
+                } else if (
                   messageData.current.includes(
                     "No problem. Whenever you're ready to provide the details of your vehicle loan"
                   )
@@ -17355,6 +17546,11 @@ export default function Chat() {
                   )
                 ) {
                   e.preventDefault();
+                  await saveUserProfile({
+                            realEstateProperties: {
+                              inDepthDetails: { propertyLocation: inputStr },
+                },
+                  });
                   handleAddAIResponse(
                     "What is the size of your property? For houses and apartments, include the square metres of living space. For land, provide the total area in square metres or hectares."
                   );
@@ -17364,6 +17560,11 @@ export default function Chat() {
                   )
                 ) {
                   e.preventDefault();
+                  await saveUserProfile({
+                            realEstateProperties: {
+                              inDepthDetails: { propertySize: inputStr },
+                },
+                  });
                   handleAddAIResponse(
                     "How many bedrooms and bathrooms does your property have?"
                   );
@@ -17373,6 +17574,11 @@ export default function Chat() {
                   )
                 ) {
                   e.preventDefault();
+                   await saveUserProfile({
+                            realEstateProperties: {
+                              inDepthDetails: { bedroomsAndBathroomCount: inputStr },
+                },
+                  });
                   handleAddAIResponse(
                     "Describe the condition of your property (new, good, fair, needs renovation). Also, mention any special features (e.g., swimming pool, garden, garage)."
                   );
@@ -17411,6 +17617,11 @@ export default function Chat() {
                   )
                 ) {
                   e.preventDefault();
+                  await saveUserProfile({
+                            realEstateProperties: {
+                              propertySize: { propertyCondition: inputStr },
+                },
+                  });
                   handleAddAIResponse(
                     "The estimated value of your property based on the information you provided is:"
                   );
