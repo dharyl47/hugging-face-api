@@ -14,6 +14,7 @@ import Navbar from "@/app/components/Navbar";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import CryptoJS from "crypto-js";
+import connectMongoDB from "@/app/lib/mongo";
 import "./globals.css";
 
 interface Checkboxes {
@@ -23,6 +24,7 @@ interface Checkboxes {
   grandchildren: boolean;
   factualDependents: boolean;
   other: boolean;
+  none: boolean;
 }
 
 interface CheckboxesAsset {
@@ -107,6 +109,7 @@ export default function Chat() {
     "Separation of Personal & Business Finances",
     "Other",
   ];
+  const [isThinking, setIsThinking] = useState(false);
 
   const [error, setError] = useState("");
   const [retryCount, setRetryCount] = useState(0);
@@ -150,6 +153,35 @@ export default function Chat() {
   const lastMessageRef = useRef<HTMLDivElement | null>(null);
 
   const chatboxRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    const connectToMongo = async () => {
+      try {
+        // Send a POST request to your test Mongo API route
+        const response = await axios.post("/api/checkMongoConnection");
+        console.log(response.data.message); // Log success message
+      } catch (error: any) {
+        console.error(
+          "Failed to connect to MongoDB:",
+          error.response?.data?.error || error.message
+        );
+      }
+    };
+
+    connectToMongo(); // Call the function when the component mounts
+  }, []);
+
+  useEffect(() => {
+    if (messages.length > 0) {
+      const lastMessage = messages[messages.length - 1];
+
+      // Stop "thinking" when an assistant message with content arrives
+      if (lastMessage.role === "assistant" && lastMessage.content) {
+        setIsThinking(false);
+      }
+    }
+  }, [messages]); // Run this effect every time messages change
+
   useEffect(() => {
     if (chatboxRef.current) {
       chatboxRef.current.scrollTop = chatboxRef.current.scrollHeight;
@@ -353,7 +385,7 @@ export default function Chat() {
 
     if (message == "No, I do not consent") {
       response =
-        "If you have any questions or need further information about our data privacy practices, please let me know.";
+        "Unfortunately your consent is required to move froward with this process. If you need any further information, please submit your questions in the feedback form below.";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -440,7 +472,7 @@ export default function Chat() {
   const handleButtonStage2 = (message: any) => {
     let response = "";
     if (message == "Single") {
-      //   response = "There are 9 key components of estate planning:";
+      response = "Great! Are you currently single, divorced, or widowed?";
     }
     if (message == "Married") {
       response =
@@ -493,6 +525,40 @@ export default function Chat() {
     if (message == "What is Accrual?") {
       response =
         "Accrual is a concept in marriage where the growth in wealth during the marriage is shared between spouses. When a couple marries under the accrual system, each spouse keeps the assets they had before the marriage. However, any increase in their respective estates during the marriage is shared equally when the marriage ends, either through divorce or death.";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
+  };
+
+  const handleButtonStage3Single = async (message: any) => {
+    let response = "";
+
+    if (message == "Single") {
+      response = "Do you have a current will in place?";
+      await saveUserProfile({ maritalStatus: message });
+    }
+    if (message == "Divorced") {
+      response = "Do you have a current will in place?";
+      await saveUserProfile({ maritalStatus: message });
+    }
+    if (message == "Widowed") {
+      response = "Do you have a current will in place?";
+      await saveUserProfile({ maritalStatus: message });
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -1524,19 +1590,19 @@ export default function Chat() {
     if (message == "Yes") {
       response =
         "To prevent any cash shortfall in your estate, how important is it to have provisions in place for your dependants' maintenance? For instance, would you want to ensure there’s enough capital to cover any immediate expenses and ongoing support for your dependants?";
-      
+
       await saveUserProfile({ insolvencyProtectionConcern: "Yes" });
-      }
+    }
     if (message == "No") {
       response =
         "To prevent any cash shortfall in your estate, how important is it to have provisions in place for your dependants' maintenance? For instance, would you want to ensure there’s enough capital to cover any immediate expenses and ongoing support for your dependants?";
       await saveUserProfile({ insolvencyProtectionConcern: "No" });
-      }
+    }
     if (message == "Maybe") {
       response =
         "It's understandable to be uncertain about this. Protecting assets from potential insolvency can be crucial for maintaining financial stability. Here are some points to consider";
       await saveUserProfile({ insolvencyProtectionConcern: "Maybe" });
-      }
+    }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     const userMessage: Message = {
@@ -1635,13 +1701,11 @@ export default function Chat() {
       response =
         "Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan.";
       await saveUserProfile({
-      
         realEstateProperties: {
           uploadDocumentAtEndOfChat: true,
         },
-      
-    });
-      }
+      });
+    }
     if (message == "Yes, specify detail") {
       response = "Great! Please provide the above mentioned details.";
     }
@@ -1749,7 +1813,6 @@ export default function Chat() {
         ". It’s important to have a clear understanding of your objectives so we can tailor your estate plan to meet your needs. Is there anything else you’d like to add before we move on?";
     }
     await saveUserProfile({ estatePlanReviewConfidence: message });
-    
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     const userMessage: Message = {
@@ -1769,7 +1832,7 @@ export default function Chat() {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-  const handleButtonStage22Farm = (message: any) => {
+  const handleButtonStage22Farm = async (message: any) => {
     let response = "";
     if (message == "Continue") {
       response =
@@ -1778,6 +1841,11 @@ export default function Chat() {
     if (message == "Upload Document at End of Chat") {
       response =
         "How many vehicles (cars, boats, caravans, motorcycles etc) do you own, and what are their makes, models, and estimated values?";
+      await saveUserProfile({
+        farmProperties: {
+          uploadDocumentAtEndOfChat: true,
+        },
+      });
     }
     if (message == "Yes, specify detail") {
       response =
@@ -1806,7 +1874,7 @@ export default function Chat() {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-  const handleButtonStage22Vehicle = (message: any) => {
+  const handleButtonStage22Vehicle = async (message: any) => {
     let response = "";
     if (message == "Continue") {
       response =
@@ -1815,6 +1883,11 @@ export default function Chat() {
     if (message == "Upload Document at End of Chat") {
       response =
         "Are there any valuable possessions such as artwork, jewellery, or collectibles that you own? If so, could you describe each item and estimate its value?";
+      await saveUserProfile({
+        vehicleProperties: {
+          uploadDocumentAtEndOfChat: true,
+        },
+      });
     }
     if (message == "Yes, specify detail") {
       response =
@@ -1843,7 +1916,7 @@ export default function Chat() {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-  const handleButtonStage23Jewelry = (message: any) => {
+  const handleButtonStage23Jewelry = async (message: any) => {
     let response = "";
     if (message == "Continue") {
       response =
@@ -1852,6 +1925,11 @@ export default function Chat() {
     if (message == "Upload Document at End of Chat") {
       response =
         "What is the estimated value of your household effects/content e.g. furniture, appliances etc. Your short-term insurance cover amount for household content can be used. If yes, please provide details about each item, including its type, estimated value, and any notable items you would like to include in your estate plan.?";
+      await saveUserProfile({
+        valuablePossessions: {
+          uploadDocumentAtEndOfChat: true,
+        },
+      });
     }
     if (message == "Yes, specify detail") {
       response =
@@ -1880,7 +1958,7 @@ export default function Chat() {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-  const handleButtonStage24Household = (message: any) => {
+  const handleButtonStage24Household = async (message: any) => {
     let response = "";
     if (message == "Continue") {
       response =
@@ -1889,6 +1967,11 @@ export default function Chat() {
     if (message == "Upload Document at End of Chat") {
       response =
         "Can you provide details about your investment portfolio, including stocks, bonds, mutual funds, retirement accounts, and any other investment holdings? Please specify the quantity, type, and current value of each investment.";
+      await saveUserProfile({
+        householdEffects: {
+          uploadDocumentAtEndOfChat: true,
+        },
+      });
     }
     if (message == "Yes, specify detail") {
       response =
@@ -1917,7 +2000,7 @@ export default function Chat() {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-  const handleButtonStage25Portfolio = (message: any) => {
+  const handleButtonStage25Portfolio = async (message: any) => {
     let response = "";
     if (message == "Continue") {
       response =
@@ -1926,6 +2009,11 @@ export default function Chat() {
     if (message == "Upload Document at End of Chat") {
       response =
         "Do you have any cash savings or deposits in bank accounts? If yes, please provide the approximate balances for each account.";
+      await saveUserProfile({
+        investmentPortfolio: {
+          uploadDocumentAtEndOfChat: true,
+        },
+      });
     }
 
     if (message == "Yes, specify detail") {
@@ -1955,7 +2043,7 @@ export default function Chat() {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-  const handleButtonStage25Cash = (message: any) => {
+  const handleButtonStage25Cash = async (message: any) => {
     let response = "";
     if (message == "Continue") {
       response =
@@ -1964,6 +2052,11 @@ export default function Chat() {
     if (message == "Upload Document at End of Chat") {
       response =
         "Do you have any business interests or ownership stakes in companies? If yes, please provide details about each business, including its type, ownership percentage, and estimated value.";
+      await saveUserProfile({
+        bankBalances: {
+          uploadDocumentAtEndOfChat: true,
+        },
+      });
     }
     if (message == "Yes, specify detail") {
       response =
@@ -1992,7 +2085,7 @@ export default function Chat() {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-  const handleButtonStage26BusinessInterest = (message: any) => {
+  const handleButtonStage26BusinessInterest = async (message: any) => {
     let response = "";
     if (message == "Continue") {
       response =
@@ -2001,6 +2094,11 @@ export default function Chat() {
     if (message == "Upload Document at End of Chat") {
       response =
         "Are there any other significant assets not mentioned that you would like to include in your estate plan? If so, please describe them and provide their estimated values.";
+      await saveUserProfile({
+        businessAssets: {
+          uploadDocumentAtEndOfChat: true,
+        },
+      });
     }
     if (message == "Yes, specify detail") {
       response =
@@ -2029,7 +2127,7 @@ export default function Chat() {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-  const handleButtonStage27SignificantAssets = (message: any) => {
+  const handleButtonStage27SignificantAssets = async (message: any) => {
     let response = "";
     if (message == "Continue") {
       response =
@@ -2038,6 +2136,11 @@ export default function Chat() {
     if (message == "Upload Document at End of Chat") {
       response =
         "Do you own any intellectual property rights, such as patents, trademarks, or copyrights? If yes, please provide details about each intellectual property asset.";
+      await saveUserProfile({
+        otherAssets: {
+          uploadDocumentAtEndOfChat: true,
+        },
+      });
     }
     if (message == "Yes, specify detail") {
       response =
@@ -2066,7 +2169,7 @@ export default function Chat() {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-  const handleButtonStage28Intellectual = (message: any) => {
+  const handleButtonStage28Intellectual = async (message: any) => {
     let response = "";
     if (message == "Continue") {
       response =
@@ -2075,6 +2178,11 @@ export default function Chat() {
     if (message == "Upload Document at End of Chat") {
       response =
         "Are there any assets held in trust or other legal entities? If yes, please specify the nature of the trust or entity and describe the assets held within.";
+      await saveUserProfile({
+        intellectualPropertyRights: {
+          uploadDocumentAtEndOfChat: true,
+        },
+      });
     }
     if (message == "Yes, specify detail") {
       response =
@@ -2103,7 +2211,7 @@ export default function Chat() {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-  const handleButtonStage29LegalEntities = (message: any) => {
+  const handleButtonStage29LegalEntities = async (message: any) => {
     let response = "";
     if (message == "Continue") {
       response =
@@ -2112,6 +2220,11 @@ export default function Chat() {
     if (message == "Upload Document at End of Chat") {
       response =
         "Do you have any outstanding mortgage loans? If yes, please specify the outstanding balance and the property/assets mortgaged.";
+      await saveUserProfile({
+        assetsInTrust: {
+          uploadDocumentAtEndOfChat: true,
+        },
+      });
     }
     if (message == "Yes, specify detail") {
       response =
@@ -2140,7 +2253,7 @@ export default function Chat() {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-  const handleButtonStage30Mortgage = (message: any) => {
+  const handleButtonStage30Mortgage = async (message: any) => {
     let response = "";
     if (message == "Continue") {
       response =
@@ -2149,6 +2262,11 @@ export default function Chat() {
     if (message == "Upload Document at End of Chat") {
       response =
         "Are there any personal loans you currently owe? If so, please provide details on the outstanding amount and the purpose of the loan.";
+      await saveUserProfile({
+        outstandingMortgageLoans: {
+          uploadDocumentAtEndOfChat: true,
+        },
+      });
     }
     if (message == "Yes, specify detail") {
       response =
@@ -2177,7 +2295,7 @@ export default function Chat() {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-  const handleButtonStage31PersonalLoan = (message: any) => {
+  const handleButtonStage31PersonalLoan = async (message: any) => {
     let response = "";
     if (message == "Continue") {
       response =
@@ -2186,6 +2304,11 @@ export default function Chat() {
     if (message == "Upload Document at End of Chat") {
       response =
         "Do you have any credit card debt? If yes, please specify the total amount owed and the interest rates associated with each card.";
+      await saveUserProfile({
+        personalLoans: {
+          uploadDocumentAtEndOfChat: true,
+        },
+      });
     }
     if (message == "Yes, specify detail") {
       response =
@@ -2214,7 +2337,7 @@ export default function Chat() {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-  const handleButtonStage32CreditCardDebt = (message: any) => {
+  const handleButtonStage32CreditCardDebt = async (message: any) => {
     let response = "";
     if (message == "Continue") {
       response =
@@ -2223,6 +2346,11 @@ export default function Chat() {
     if (message == "Upload Document at End of Chat") {
       response =
         "Are there any loans for vehicles you own? If so, please provide details on the outstanding balance and the vehicles financed.";
+      await saveUserProfile({
+        creditCardDebt: {
+          uploadDocumentAtEndOfChat: true,
+        },
+      });
     }
     if (message == "Yes, specify detail") {
       response =
@@ -2251,7 +2379,7 @@ export default function Chat() {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-  const handleButtonStage33VehicleLoan = (message: any) => {
+  const handleButtonStage33VehicleLoan = async (message: any) => {
     let response = "";
     if (message == "Continue") {
       response =
@@ -2260,6 +2388,11 @@ export default function Chat() {
     if (message == "Upload Document at End of Chat") {
       response =
         "Are there any other outstanding debts or financial obligations that you have? This may include student loans, medical bills, or any other loans or accounts. Please specify the type of debt and the outstanding amount.";
+      await saveUserProfile({
+        vehicleLoans: {
+          uploadDocumentAtEndOfChat: true,
+        },
+      });
     }
     if (message == "Yes, specify detail") {
       response =
@@ -2288,7 +2421,7 @@ export default function Chat() {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-  const handleButtonStage34OutstandingDebt = (message: any) => {
+  const handleButtonStage34OutstandingDebt = async (message: any) => {
     let response = "";
     if (message == "Continue") {
       response =
@@ -2297,6 +2430,11 @@ export default function Chat() {
     if (message == "Upload Document at End of Chat") {
       response =
         "Do you have a strategy in place for managing and reducing your liabilities over time?";
+      await saveUserProfile({
+        otherOutstandingDebts: {
+          uploadDocumentAtEndOfChat: true,
+        },
+      });
     }
     if (message == "Yes, specify detail") {
       response =
@@ -2325,7 +2463,7 @@ export default function Chat() {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-  const handleButtonStage35Strategy = (message: any) => {
+  const handleButtonStage35Strategy = async (message: any) => {
     let response = "";
     if (message == "Continue") {
       response =
@@ -2334,6 +2472,11 @@ export default function Chat() {
     if (message == "Upload Document at End of Chat") {
       response =
         "Are there any significant changes expected in your liabilities in the foreseeable future?";
+      await saveUserProfile({
+        strategyLiabilities: {
+          uploadDocumentAtEndOfChat: true,
+        },
+      });
     }
     if (message == "Yes, specify detail") {
       response =
@@ -2362,7 +2505,7 @@ export default function Chat() {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
-  const handleButtonStage36SignificantChanges = (message: any) => {
+  const handleButtonStage36SignificantChanges = async (message: any) => {
     let response = "";
     if (message == "Continue") {
       response =
@@ -2371,6 +2514,11 @@ export default function Chat() {
     if (message == "Upload Document at End of Chat") {
       response =
         "Do you currently have any life insurance policies in place? If yes, please specify the type of policy, the coverage amount, the beneficiaries, and any additional riders or features.";
+      await saveUserProfile({
+        foreseeableFuture: {
+          uploadDocumentAtEndOfChat: true,
+        },
+      });
     }
     if (message == "Yes, specify detail") {
       response =
@@ -3219,13 +3367,13 @@ export default function Chat() {
 
     if (message == "Yes") {
       response =
-        "Now let's discuss estate duty, the tax on the total value of your estate if you were to pass away today with your current will or distribution wishes in place. Understanding this helps us ensure your estate plan minimises taxes and maximises what is passed on to your heirs. Ready to get started?";
+        "The tax on the total value of your estate if you were to pass away today with your current will or distribution wishes in place. Understanding this helps us ensure your estate plan minimises taxes and maximises what is passed on to your heirs. Ready to get started?";
     }
     if (message == "No") {
       response =
         "Sure, I’m here to help. What additional information or questions do you have?";
       setNextResponse(
-        "Now let's discuss estate duty, the tax on the total value of your estate if you were to pass away today with your current will or distribution wishes in place. Understanding this helps us ensure your estate plan minimises taxes and maximises what is passed on to your heirs. Ready to get started?"
+        "The tax on the total value of your estate if you were to pass away today with your current will or distribution wishes in place. Understanding this helps us ensure your estate plan minimises taxes and maximises what is passed on to your heirs. Ready to get started?"
       );
       isResponse.current = "1";
     }
@@ -6184,67 +6332,66 @@ export default function Chat() {
   };
 
   const saveUserProfile = async (update: any) => {
-  let retries = 0;
+    let retries = 0;
 
-  // Show the loading indicator
-  setLoading(true);
-  setError("");
+    // Show the loading indicator
+    setLoading(true);
+    setError("");
 
-  const profile = {
-    name: "Mark Jol", // Ensure the user's name is always included
-    deletionRequest: deletionRequestData || "",
-    dateCreated: dateC || "", // Ensure dateCreated is included if it's a new profile
-    dateOfBirth: dateOfBirth || "",
-    emailAddress: userEmail || "",
-    dependentsOver: dependentsOver || "",
-    dependentsUnder: dependentsUnder || "",
-    propertyRegime: propertyRegime || "",
-    encryptedName: encryptedName || "",
-    checkboxes: checkboxes || {},
-    checkboxesAsset: checkboxesAsset || {},
-    maritalStatus: maritalStatus || "",
+    const profile = {
+      name: "Mark Jol", // Ensure the user's name is always included
+      deletionRequest: deletionRequestData || "",
+      dateCreated: dateC || "", // Ensure dateCreated is included if it's a new profile
+      dateOfBirth: dateOfBirth || "",
+      emailAddress: userEmail || "",
+      dependentsOver: dependentsOver || "",
+      dependentsUnder: dependentsUnder || "",
+      propertyRegime: propertyRegime || "",
+      encryptedName: encryptedName || "",
+      checkboxes: checkboxes || {},
+      checkboxesAsset: checkboxesAsset || {},
+      maritalStatus: maritalStatus || "",
 
-    ObjectivesOfEstatePlanning: {
-      estatePlanFlexibility: "N/A", // Default or fetched from profile
-      businessProtectionImportance: "N/A", // Default or fetched
-      financialSafeguardStrategies: "N/A", // Default or fetched
-      insolvencyProtectionConcern: "N/A", // Default or fetched
-      taxMinimizationPriority: "N/A", // Default or fetched
-      estatePlanReviewConfidence: "N/A", // Default or fetched
-      ...update.ObjectivesOfEstatePlanning, // Merge new updates
-    },
-    ...update, // Other fields to be updated
-  };
+      ObjectivesOfEstatePlanning: {
+        estatePlanFlexibility: "N/A", // Default or fetched from profile
+        businessProtectionImportance: "N/A", // Default or fetched
+        financialSafeguardStrategies: "N/A", // Default or fetched
+        insolvencyProtectionConcern: "N/A", // Default or fetched
+        taxMinimizationPriority: "N/A", // Default or fetched
+        estatePlanReviewConfidence: "N/A", // Default or fetched
+        ...update.ObjectivesOfEstatePlanning, // Merge new updates
+      },
+      ...update, // Other fields to be updated
+    };
 
-  // Don't include `dateCreated` in updates, unless it's a new profile
+    // Don't include `dateCreated` in updates, unless it's a new profile
 
-  while (retries < MAX_RETRIES) {
-    try {
-      // Post or update the profile
-      const response = await axios.post("/api/userProfiles", profile);
-      if (response.status === 200) {
-        setLoading(false); // Success, hide the loading indicator
-        return response.data;
-      }
-    } catch (err: any) {
-      // Check for specific error like ECONNRESET
-      if (err.code === "ECONNRESET") {
-        retries += 1;
-        setRetryCount(retries);
-        console.error(`Retry ${retries}/${MAX_RETRIES}: Connection reset`);
+    while (retries < MAX_RETRIES) {
+      try {
+        // Post or update the profile
+        const response = await axios.post("/api/userProfiles", profile);
+        if (response.status === 200) {
+          setLoading(false); // Success, hide the loading indicator
+          return response.data;
+        }
+      } catch (err: any) {
+        // Check for specific error like ECONNRESET
+        if (err.code === "ECONNRESET") {
+          retries += 1;
+          setRetryCount(retries);
+          console.error(`Retry ${retries}/${MAX_RETRIES}: Connection reset`);
 
-        // Wait before retrying
-        await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
-      } else {
-        setError("Failed to save profile. Please try again.");
-        break;
+          // Wait before retrying
+          await new Promise((resolve) => setTimeout(resolve, RETRY_DELAY));
+        } else {
+          setError("Failed to save profile. Please try again.");
+          break;
+        }
       }
     }
-  }
 
-  setLoading(false); // Stop loading if retries exceed limit
-};
-
+    setLoading(false); // Stop loading if retries exceed limit
+  };
 
   useEffect(() => {
     setMessages([
@@ -6284,6 +6431,7 @@ export default function Chat() {
     grandchildren: false,
     factualDependents: false,
     other: false,
+    none: false,
   });
 
   // Function to format camelCase keys into readable text
@@ -6392,32 +6540,33 @@ export default function Chat() {
       setSelectedScenario([...selectedScenario, Scenario]);
     }
   };
-const [financialSafeguardStrategiesv2, setFinancialSafeguardStrategiesv2] = useState("");
+  const [financialSafeguardStrategiesv2, setFinancialSafeguardStrategiesv2] =
+    useState("");
   // Handle checkbox change
-const handleCheckboxChangeStrategies = async (
-  event: React.ChangeEvent<HTMLInputElement>
-) => {
-  const strategy = event.target.value;
+  const handleCheckboxChangeStrategies = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const strategy = event.target.value;
 
-  // Update the selected strategies
-  let updatedStrategies;
-  if (selectedStrategies.includes(strategy)) {
-    updatedStrategies = selectedStrategies.filter((item) => item !== strategy);
-  } else {
-    updatedStrategies = [...selectedStrategies, strategy];
-  }
+    // Update the selected strategies
+    let updatedStrategies;
+    if (selectedStrategies.includes(strategy)) {
+      updatedStrategies = selectedStrategies.filter(
+        (item) => item !== strategy
+      );
+    } else {
+      updatedStrategies = [...selectedStrategies, strategy];
+    }
 
-  // Update the state with the latest selected strategies
-  setSelectedStrategies(updatedStrategies);
+    // Update the state with the latest selected strategies
+    setSelectedStrategies(updatedStrategies);
 
-  // Convert the updated strategies array to a comma-separated string
-  const strategiesString = updatedStrategies.join(', ');
-  setFinancialSafeguardStrategiesv2(strategiesString);
-  // Save the updated strategies as a comma-separated string to the user profile
-  await saveUserProfile({ financialSafeguardStrategies: strategiesString });
-};
-
-
+    // Convert the updated strategies array to a comma-separated string
+    const strategiesString = updatedStrategies.join(", ");
+    setFinancialSafeguardStrategiesv2(strategiesString);
+    // Save the updated strategies as a comma-separated string to the user profile
+    await saveUserProfile({ financialSafeguardStrategies: strategiesString });
+  };
 
   const handleCheckboxChangeStrategiesv2 = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -6451,6 +6600,10 @@ const handleCheckboxChangeStrategies = async (
       delete updatedForDisplay["factualDependents"]; // Safely remove key now
     }
 
+    if (id === "none") {
+      noneDependents("none");
+    }
+
     setCheckboxes(updatedCheckboxes);
 
     // Pass the modified object to updateInputStr for display
@@ -6458,6 +6611,34 @@ const handleCheckboxChangeStrategies = async (
 
     // Save the original checkboxes state to the database (without display modifications)
     await saveUserProfile({ checkboxes: updatedCheckboxes });
+  };
+
+  const noneDependents = (message: any) => {
+    let response = "";
+
+    if (message == "none") {
+      response =
+        "Thank you for sharing, " +
+        userName +
+        ". Is there anything else you’d like to add about your personal particulars or any questions you have at this stage?";
+    }
+
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    const userMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "user", // User message role
+      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    setMessages([...messages, userMessage, aiMessage]);
   };
 
   const handleButtonPrivacy = async (message: any) => {
@@ -6542,6 +6723,7 @@ const handleCheckboxChangeStrategies = async (
         grandchildren: false,
         factualDependents: false,
         other: false,
+        none: false,
       };
 
       return newState;
@@ -6878,47 +7060,45 @@ const handleCheckboxChangeStrategies = async (
               </div>
               <div className="flex space-x-2 ml-11">
                 <div className="space-y-2">
-  {/* Yes, I consent checkbox */}
-  <div
-    onClick={() => handleButtonConsent("Yes, I consent")}
-    className={`flex items-center space-x-2 px-4 py-2 rounded-md border cursor-pointer ${
-      consent === "Yes, I consent"
-        ? "bg-[#8DC63F] text-white border-transparent"
-        : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
-    } w-full sm:w-[400px]`}  
-  >
-    <input
-      type="checkbox"
-      id="consentYes"
-      name="consent"
-      value="Yes, I consent"
-      checked={consent === "Yes, I consent"}
-      className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
-    />
-    <span className="ml-2">Yes, I consent</span> 
-  </div>
+                  {/* Yes, I consent checkbox */}
+                  <div
+                    onClick={() => handleButtonConsent("Yes, I consent")}
+                    className={`flex items-center space-x-2 px-4 py-2 rounded-md border cursor-pointer ${
+                      consent === "Yes, I consent"
+                        ? "bg-[#8DC63F] text-white border-transparent"
+                        : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
+                    } w-full sm:w-[400px]`}
+                  >
+                    <input
+                      type="checkbox"
+                      id="consentYes"
+                      name="consent"
+                      value="Yes, I consent"
+                      checked={consent === "Yes, I consent"}
+                      className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
+                    />
+                    <span className="ml-2">Yes, I consent</span>
+                  </div>
 
-  
-  <div
-    onClick={() => handleButtonConsent("No, I do not consent")}
-    className={`flex items-center space-x-2 px-4 py-2 rounded-md border cursor-pointer ${
-      consent === "No, I do not consent"
-        ? "bg-[#8DC63F] text-white border-transparent"
-        : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
-    } w-full sm:w-[400px]`}  
-  >
-    <input
-      type="checkbox"
-      id="consentNo"
-      name="consent"
-      value="No, I do not consent"
-      checked={consent === "No, I do not consent"}
-      className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
-    />
-    <span className="ml-2">No, I do not consent</span>
-  </div>
-</div>
-
+                  <div
+                    onClick={() => handleButtonConsent("No, I do not consent")}
+                    className={`flex items-center space-x-2 px-4 py-2 rounded-md border cursor-pointer ${
+                      consent === "No, I do not consent"
+                        ? "bg-[#8DC63F] text-white border-transparent"
+                        : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
+                    } w-full sm:w-[400px]`}
+                  >
+                    <input
+                      type="checkbox"
+                      id="consentNo"
+                      name="consent"
+                      value="No, I do not consent"
+                      checked={consent === "No, I do not consent"}
+                      className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
+                    />
+                    <span className="ml-2">No, I do not consent</span>
+                  </div>
+                </div>
               </div>
             </>
           ) : (
@@ -10059,7 +10239,7 @@ const handleCheckboxChangeStrategies = async (
               )}
 
               {message.content.includes(
-                "Now let's discuss estate duty, the tax on the total value of your estate if you were to pass away today with your current will or distribution wishes in place. Understanding this helps us ensure your estate plan minimises taxes and maximises what is passed on to your heirs. Ready to get started?"
+                "The tax on the total value of your estate if you were to pass away today with your current will or distribution wishes in place. Understanding this helps us ensure your estate plan minimises taxes and maximises what is passed on to your heirs. Ready to get started?"
               ) && (
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
@@ -13513,7 +13693,7 @@ const handleCheckboxChangeStrategies = async (
                 "No problem at all. If you ever have questions or decide to start your estate planning, I’m here to help. Have a great day!"
               ) && (
                 <>
-                  <div className="space-x-2 ml-9 -mt-4">
+                  {/* <div className="space-x-2 ml-9 -mt-4">
                     <br />
                     <button
                       onClick={() => handleButtonStage0("Let's chat again!")}
@@ -13521,7 +13701,7 @@ const handleCheckboxChangeStrategies = async (
                     >
                       Let's chat again!
                     </button>
-                  </div>
+                  </div> */}
                 </>
               )}
 
@@ -13597,6 +13777,32 @@ const handleCheckboxChangeStrategies = async (
                     </button>
                   </div>
                 </>
+              )}
+
+              {message.content.includes(
+                "Great! Are you currently single, divorced, or widowed?"
+              ) && (
+                <div className="space-x-2 ml-11 -mt-4">
+                  <br />
+                  <button
+                    onClick={() => handleButtonStage3Single("Single")}
+                    className="px-2 py-2 mb-1 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Single
+                  </button>
+                  <button
+                    onClick={() => handleButtonStage3Single("Divorced")}
+                    className="px-2 py-2 mb-1 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Divorced
+                  </button>
+                  <button
+                    onClick={() => handleButtonStage3Single("Widowed")}
+                    className="px-2 py-2 rounded-md mb-1 border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Widowed
+                  </button>
+                </div>
               )}
 
               {message.content.includes(
@@ -16328,7 +16534,7 @@ const handleCheckboxChangeStrategies = async (
                     <div className="flex justify-between items-center mb-6">
                       <h2 className="text-3xl font-bold leading-tight">
                         Estate Planning FAQs
-                      </h2>{" "}
+                      </h2>
                       {/* H2 should be 36px according to Adobe XD */}
                       <button
                         className="text-white text-2xl hover:text-gray-300"
@@ -16344,73 +16550,48 @@ const handleCheckboxChangeStrategies = async (
 
                     {/* Scrollable FAQ Content with custom scrollbar */}
                     <div className="space-y-4 text-sm max-h-[60vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[#8DC63F] scrollbar-track-[#2f2f2f]">
-                      <div>
-                        <p className="font-semibold text-lg">
-                          What is estate planning? 🧾
-                        </p>{" "}
-                        {/* Change to 24px (text-lg) */}
-                        <p>
-                          Estate planning is the process of arranging for the
-                          management and disposal of a person’s estate during
-                          their life and after death. It involves creating
-                          documents like wills, trusts, and powers of attorney.
-                        </p>
-                      </div>
-                      <div>
-                        <p className="font-semibold text-lg">
-                          Why is having a will important? 📄
-                        </p>
-                        <p>
-                          A will ensures your assets are distributed according
-                          to your wishes, names guardians for minor children,
-                          and can help reduce estate taxes and legal fees.
-                        </p>
-                      </div>
-                      <div>
-                        <p className="font-semibold text-lg">
-                          What happens if I die without a will? ⚖️
-                        </p>
-                        <p>
-                          If you die intestate (without a will), your estate
-                          will be distributed according to South Africa’s
-                          Intestate Succession Act, which may not align with
-                          your wishes.
-                        </p>
-                      </div>
-                      <div>
-                        <p className="font-semibold text-lg">
-                          Can I change my will after it’s been created? 💼
-                        </p>
-                        <p>
-                          Yes, you can update your will as often as you like.
-                          It’s recommended to review and update it after major
-                          life events, such as marriage, divorce, or the birth
-                          of a child.
-                        </p>
-                      </div>
-                      <div>
-                        <p className="font-semibold text-lg">
-                          What is a trust and why would I need one? 🔒
-                        </p>
-                        <p>
-                          A trust is a legal arrangement where a trustee manages
-                          assets on behalf of beneficiaries. Trusts can help
-                          manage assets, reduce estate taxes, and provide for
-                          beneficiaries according to your wishes.
-                        </p>
-                      </div>
-                      <div>
-                        <p className="font-semibold text-lg">
-                          When should I seek legal advice for estate planning?
-                          🏛️
-                        </p>
-                        <p>
-                          It’s advisable to seek legal advice if you have a
-                          large or complex estate, anticipate family disputes,
-                          own a business, or need to stay updated with changing
-                          laws.
-                        </p>
-                      </div>
+                      {[
+                        {
+                          question: "What is estate planning? 🧾",
+                          answer:
+                            "Estate planning is the process of arranging for the management and disposal of a person’s estate during their life and after death. It involves creating documents like wills, trusts, and powers of attorney.",
+                        },
+                        {
+                          question: "Why is having a will important? 📄",
+                          answer:
+                            "A will ensures your assets are distributed according to your wishes, names guardians for minor children, and can help reduce estate taxes and legal fees.",
+                        },
+                        {
+                          question: "What happens if I die without a will? ⚖️",
+                          answer:
+                            "If you die intestate (without a will), your estate will be distributed according to South Africa’s Intestate Succession Act, which may not align with your wishes.",
+                        },
+                        {
+                          question:
+                            "Can I change my will after it’s been created? 💼",
+                          answer:
+                            "Yes, you can update your will as often as you like. It’s recommended to review and update it after major life events, such as marriage, divorce, or the birth of a child.",
+                        },
+                        {
+                          question:
+                            "What is a trust and why would I need one? 🔒",
+                          answer:
+                            "A trust is a legal arrangement where a trustee manages assets on behalf of beneficiaries. Trusts can help manage assets, reduce estate taxes, and provide for beneficiaries according to your wishes.",
+                        },
+                        {
+                          question:
+                            "When should I seek legal advice for estate planning? 🏛️",
+                          answer:
+                            "It’s advisable to seek legal advice if you have a large or complex estate, anticipate family disputes, own a business, or need to stay updated with changing laws.",
+                        },
+                      ].map((faq, index) => (
+                        <div key={index}>
+                          <p className="font-semibold text-lg">
+                            {`${index + 1}. ${faq.question}`}
+                          </p>
+                          <p>{faq.answer}</p>
+                        </div>
+                      ))}
                     </div>
                   </div>
                 </div>
@@ -16494,6 +16675,7 @@ const handleCheckboxChangeStrategies = async (
               className="w-full rounded-3xl"
               onSubmit={async (e) => {
                 e.preventDefault();
+                setIsThinking(true);
 
                 if (isResponse.current == "1") {
                   e.preventDefault();
@@ -16504,10 +16686,10 @@ const handleCheckboxChangeStrategies = async (
                   )
                 ) {
                   e.preventDefault();
-                   await saveUserProfile({
-                            realEstateProperties: {
-                              propertiesDetails: inputStr,
-                },
+                  await saveUserProfile({
+                    realEstateProperties: {
+                      propertiesDetails: inputStr,
+                    },
                   });
                   handleAddAIResponse(
                     "Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan."
@@ -16536,6 +16718,11 @@ const handleCheckboxChangeStrategies = async (
                   )
                 ) {
                   e.preventDefault();
+                  await saveUserProfile({
+                    vehicleProperties: {
+                      propertiesDetails: inputStr,
+                    },
+                  });
                   handleAddAIResponse(
                     "Are there any valuable possessions such as artwork, jewellery, or collectibles that you own? If so, could you describe each item and estimate its value?"
                   );
@@ -16545,6 +16732,11 @@ const handleCheckboxChangeStrategies = async (
                   )
                 ) {
                   e.preventDefault();
+                  await saveUserProfile({
+                    farmProperties: {
+                      propertiesDetails: inputStr,
+                    },
+                  });
                   handleAddAIResponse(
                     "How many vehicles (cars, boats, caravans, motorcycles etc) do you own, and what are their makes, models, and estimated values?"
                   );
@@ -16554,6 +16746,11 @@ const handleCheckboxChangeStrategies = async (
                   )
                 ) {
                   e.preventDefault();
+                  await saveUserProfile({
+                    valuablePossessions: {
+                      propertiesDetails: inputStr,
+                    },
+                  });
                   handleAddAIResponse(
                     "What is the estimated value of your household effects/content e.g. furniture, appliances etc. Your short-term insurance cover amount for household content can be used. If yes, please provide details about each item, including its type, estimated value, and any notable items you would like to include in your estate plan."
                   );
@@ -16563,6 +16760,11 @@ const handleCheckboxChangeStrategies = async (
                   )
                 ) {
                   e.preventDefault();
+                  await saveUserProfile({
+                    householdEffects: {
+                      propertiesDetails: inputStr,
+                    },
+                  });
                   handleAddAIResponse(
                     "Can you provide details about your investment portfolio, including stocks, bonds, mutual funds, retirement accounts, and any other investment holdings? Please specify the quantity, type, and current value of each investment."
                   );
@@ -16572,6 +16774,11 @@ const handleCheckboxChangeStrategies = async (
                   )
                 ) {
                   e.preventDefault();
+                  await saveUserProfile({
+                    investmentPortfolio: {
+                      propertiesDetails: inputStr,
+                    },
+                  });
                   handleAddAIResponse(
                     "Do you have any cash savings or deposits in bank accounts? If yes, please provide the approximate balances for each account."
                   );
@@ -16581,6 +16788,11 @@ const handleCheckboxChangeStrategies = async (
                   )
                 ) {
                   e.preventDefault();
+                  await saveUserProfile({
+                    bankBalances: {
+                      propertiesDetails: inputStr,
+                    },
+                  });
                   handleAddAIResponse(
                     "Do you have any business interests or ownership stakes in companies? If yes, please provide details about each business, including its type, ownership percentage, and estimated value."
                   );
@@ -16590,6 +16802,11 @@ const handleCheckboxChangeStrategies = async (
                   )
                 ) {
                   e.preventDefault();
+                  await saveUserProfile({
+                    businessAssets: {
+                      propertiesDetails: inputStr,
+                    },
+                  });
                   handleAddAIResponse(
                     "Are there any other significant assets not mentioned that you would like to include in your estate plan? If so, please describe them and provide their estimated values."
                   );
@@ -16599,6 +16816,11 @@ const handleCheckboxChangeStrategies = async (
                   )
                 ) {
                   e.preventDefault();
+                  await saveUserProfile({
+                    otherAssets: {
+                      propertiesDetails: inputStr,
+                    },
+                  });
                   handleAddAIResponse(
                     "Do you own any intellectual property rights, such as patents, trademarks, or copyrights? If yes, please provide details about each intellectual property asset."
                   );
@@ -16608,6 +16830,11 @@ const handleCheckboxChangeStrategies = async (
                   )
                 ) {
                   e.preventDefault();
+                  await saveUserProfile({
+                    intellectualPropertyRights: {
+                      propertiesDetails: inputStr,
+                    },
+                  });
                   handleAddAIResponse(
                     "Are there any assets held in trust or other legal entities? If yes, please specify the nature of the trust or entity and describe the assets held within."
                   );
@@ -16617,6 +16844,11 @@ const handleCheckboxChangeStrategies = async (
                   )
                 ) {
                   e.preventDefault();
+                  await saveUserProfile({
+                    assetsInTrust: {
+                      propertiesDetails: inputStr,
+                    },
+                  });
                   handleAddAIResponse(
                     "Do you have any outstanding mortgage loans? If yes, please specify the outstanding balance and the property/assets mortgaged."
                   );
@@ -16626,15 +16858,26 @@ const handleCheckboxChangeStrategies = async (
                   )
                 ) {
                   e.preventDefault();
+
                   handleAddAIResponse(
                     "Are there any personal loans you currently owe? If so, please provide details on the outstanding amount and the purpose of the loan."
                   );
+                  await saveUserProfile({
+                    outstandingMortgageLoans: {
+                      propertiesDetails: inputStr,
+                    },
+                  });
                 } else if (
                   messageData.current.includes(
                     "Are there any personal loans you currently owe? If so, please provide details on the outstanding amount and the purpose of the loan."
                   )
                 ) {
                   e.preventDefault();
+                  await saveUserProfile({
+                    personalLoans: {
+                      propertiesDetails: inputStr,
+                    },
+                  });
                   handleAddAIResponse(
                     "Do you have any credit card debt? If yes, please specify the total amount owed and the interest rates associated with each card."
                   );
@@ -16644,6 +16887,11 @@ const handleCheckboxChangeStrategies = async (
                   )
                 ) {
                   e.preventDefault();
+                  await saveUserProfile({
+                    creditCardDebt: {
+                      propertiesDetails: inputStr,
+                    },
+                  });
                   handleAddAIResponse(
                     "Are there any loans for vehicles you own? If so, please provide details on the outstanding balance and the vehicles financed."
                   );
@@ -16653,8 +16901,55 @@ const handleCheckboxChangeStrategies = async (
                   )
                 ) {
                   e.preventDefault();
+                  await saveUserProfile({
+                    vehicleLoans: {
+                      propertiesDetails: inputStr,
+                    },
+                  });
                   handleAddAIResponse(
                     "Are there any other outstanding debts or financial obligations that you have? This may include student loans, medical bills, or any other loans or accounts. Please specify the type of debt and the outstanding amount."
+                  );
+                } else if (
+                  messageData.current.includes(
+                    "Are there any other outstanding debts or financial obligations that you have? This may include student loans, medical bills, or any other loans or accounts. Please specify the type of debt and the outstanding amount."
+                  )
+                ) {
+                  e.preventDefault();
+                  await saveUserProfile({
+                    otherOutstandingDebts: {
+                      propertiesDetails: inputStr,
+                    },
+                  });
+                  handleAddAIResponse(
+                    "Do you have a strategy in place for managing and reducing your liabilities over time?"
+                  );
+                } else if (
+                  messageData.current.includes(
+                    "Do you have a strategy in place for managing and reducing your liabilities over time?"
+                  )
+                ) {
+                  e.preventDefault();
+                  await saveUserProfile({
+                    strategyLiabilities: {
+                      propertiesDetails: inputStr,
+                    },
+                  });
+                  handleAddAIResponse(
+                    "Are there any significant changes expected in your liabilities in the foreseeable future?"
+                  );
+                } else if (
+                  messageData.current.includes(
+                    "Are there any significant changes expected in your liabilities in the foreseeable future?"
+                  )
+                ) {
+                  e.preventDefault();
+                  await saveUserProfile({
+                    foreseeableFuture: {
+                      propertiesDetails: inputStr,
+                    },
+                  });
+                  handleAddAIResponse(
+                    "Do you currently have any life insurance policies in place? If yes, please specify the type of policy, the coverage amount, the beneficiaries, and any additional riders or features."
                   );
                 } else if (
                   messageData.current.includes(
@@ -16779,10 +17074,15 @@ const handleCheckboxChangeStrategies = async (
                 //ASSET
                 else if (
                   messageData.current.includes(
-                    "Great! Please provide the above mentioned details of your vehicle loan23443234"
+                    "Great! Please provide the above mentioned details of your vehicle loan"
                   )
                 ) {
                   e.preventDefault();
+                  await saveUserProfile({
+                    vehicleLoans: {
+                      propertiesDetails: inputStr,
+                    },
+                  });
                   handleAddAIResponse(
                     "Are there any other outstanding debts or financial obligations that you have? This may include student loans, medical bills, or any other loans or accounts. Please specify the type of debt and the outstanding amount."
                   );
@@ -16794,9 +17094,9 @@ const handleCheckboxChangeStrategies = async (
                   e.preventDefault();
 
                   await saveUserProfile({
-                            realEstateProperties: {
-                              inDepthDetails: { propertyType: inputStr },
-                },
+                    realEstateProperties: {
+                      inDepthDetails: { propertyType: inputStr },
+                    },
                   });
 
                   handleAddAIResponse(
@@ -16952,6 +17252,11 @@ const handleCheckboxChangeStrategies = async (
                   )
                 ) {
                   e.preventDefault();
+                  await saveUserProfile({
+                    outstandingMortgageLoans: {
+                      propertiesDetails: inputStr,
+                    },
+                  });
                   handleAddAIResponse(
                     "Are there any personal loans you currently owe? If so, please provide details on the outstanding amount and the purpose of the loan."
                   );
@@ -16970,6 +17275,11 @@ const handleCheckboxChangeStrategies = async (
                   )
                 ) {
                   e.preventDefault();
+                  await saveUserProfile({
+                    personalLoans: {
+                      propertiesDetails: inputStr,
+                    },
+                  });
                   handleAddAIResponse(
                     "Do you have any credit card debt? If yes, please specify the total amount owed and the interest rates associated with each card."
                   );
@@ -16988,6 +17298,11 @@ const handleCheckboxChangeStrategies = async (
                   )
                 ) {
                   e.preventDefault();
+                  await saveUserProfile({
+                    creditCardDebt: {
+                      propertiesDetails: inputStr,
+                    },
+                  });
                   handleAddAIResponse(
                     "Are there any loans for vehicles you own? If so, please provide details on the outstanding balance and the vehicles financed."
                   );
@@ -17015,6 +17330,11 @@ const handleCheckboxChangeStrategies = async (
                   )
                 ) {
                   e.preventDefault();
+                  await saveUserProfile({
+                    otherOutstandingDebts: {
+                      propertiesDetails: inputStr,
+                    },
+                  });
                   handleAddAIResponse(
                     "Do you have a strategy in place for managing and reducing your liabilities over time?"
                   );
@@ -17033,6 +17353,11 @@ const handleCheckboxChangeStrategies = async (
                   )
                 ) {
                   e.preventDefault();
+                  await saveUserProfile({
+                    strategyLiabilities: {
+                      propertiesDetails: inputStr,
+                    },
+                  });
                   handleAddAIResponse(
                     "Are there any significant changes expected in your liabilities in the foreseeable future?"
                   );
@@ -17051,6 +17376,11 @@ const handleCheckboxChangeStrategies = async (
                   )
                 ) {
                   e.preventDefault();
+                  await saveUserProfile({
+                    foreseeableFuture: {
+                      propertiesDetails: inputStr,
+                    },
+                  });
                   handleAddAIResponse(
                     "Do you currently have any life insurance policies in place? If yes, please specify the type of policy, the coverage amount, the beneficiaries, and any additional riders or features."
                   );
@@ -17547,9 +17877,9 @@ const handleCheckboxChangeStrategies = async (
                 ) {
                   e.preventDefault();
                   await saveUserProfile({
-                            realEstateProperties: {
-                              inDepthDetails: { propertyLocation: inputStr },
-                },
+                    realEstateProperties: {
+                      inDepthDetails: { propertyLocation: inputStr },
+                    },
                   });
                   handleAddAIResponse(
                     "What is the size of your property? For houses and apartments, include the square metres of living space. For land, provide the total area in square metres or hectares."
@@ -17561,9 +17891,9 @@ const handleCheckboxChangeStrategies = async (
                 ) {
                   e.preventDefault();
                   await saveUserProfile({
-                            realEstateProperties: {
-                              inDepthDetails: { propertySize: inputStr },
-                },
+                    realEstateProperties: {
+                      inDepthDetails: { propertySize: inputStr },
+                    },
                   });
                   handleAddAIResponse(
                     "How many bedrooms and bathrooms does your property have?"
@@ -17574,10 +17904,10 @@ const handleCheckboxChangeStrategies = async (
                   )
                 ) {
                   e.preventDefault();
-                   await saveUserProfile({
-                            realEstateProperties: {
-                              inDepthDetails: { bedroomsAndBathroomCount: inputStr },
-                },
+                  await saveUserProfile({
+                    realEstateProperties: {
+                      inDepthDetails: { bedroomsAndBathroomCount: inputStr },
+                    },
                   });
                   handleAddAIResponse(
                     "Describe the condition of your property (new, good, fair, needs renovation). Also, mention any special features (e.g., swimming pool, garden, garage)."
@@ -17618,9 +17948,9 @@ const handleCheckboxChangeStrategies = async (
                 ) {
                   e.preventDefault();
                   await saveUserProfile({
-                            realEstateProperties: {
-                              propertySize: { propertyCondition: inputStr },
-                },
+                    realEstateProperties: {
+                      propertySize: { propertyCondition: inputStr },
+                    },
                   });
                   handleAddAIResponse(
                     "The estimated value of your property based on the information you provided is:"
@@ -17768,31 +18098,32 @@ const handleCheckboxChangeStrategies = async (
                 setInputStr("");
               }}
             >
-              <div className="p-4 flex rounded bg-[#303134]">
-                <CustomInput
-                  className="send-input bg-[#303134] text-white border-none focus:outline-none w-full "
-                  id="user-input"
-                  value={inputStr}
-                  onChange={(e: any) => {
-                    setInputStr(e.target.value);
-                    handleInputChange(e);
-                    // if(messageData.current.includes("Can you please provide your user name so I can assist you with deleting")){
-                    // checkUserExists(e.target.value);}
-                  }}
-                  placeholder="Type a question"
-                />
-                {!userExists &&
-                  messageData.current.includes(
-                    "Can you please provide your user name so I can assist you with deleting"
-                  ) && (
-                    <div className="text-red-500 text-sm absolute -mt-3 ml-3">
-                      No user found
-                    </div>
-                  )}
+              <div className="p-4 flex items-center justify-between rounded bg-[#303134]">
+                {isThinking ? (
+                  // Show the dots when the AI is "thinking"
+                  <div className="dots-container w-full flex justify-center items-center">
+                    <span className="dot"></span>
+                    <span className="dot"></span>
+                    <span className="dot"></span>
+                  </div>
+                ) : (
+                  // Show the input when AI is not thinking
+                  <CustomInput
+                    className="send-input bg-[#303134] text-white border-none focus:outline-none w-full"
+                    id="user-input"
+                    value={inputStr}
+                    onChange={(e: any) => {
+                      setInputStr(e.target.value);
+                      handleInputChange(e);
+                    }}
+                    placeholder="Type a question"
+                  />
+                )}
+
                 <button
                   id="send-button"
                   type="submit"
-                  className=" text-white  rounded-md ml-2 flex items-center justify-center"
+                  className="text-white rounded-md ml-2 flex items-center justify-center"
                 >
                   <img
                     src="/images/sendButton.png"

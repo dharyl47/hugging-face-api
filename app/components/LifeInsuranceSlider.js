@@ -14,7 +14,7 @@ const LifeInsuranceSlider = ({ onProceed }) => {
     } else if (newValue === 2) {
       setSelectedImportance("Considering");
     } else {
-      setSelectedImportance("Agreet");
+      setSelectedImportance("Agree");
     }
   };
 

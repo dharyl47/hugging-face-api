@@ -62,7 +62,77 @@ const userProfileSchema = new mongoose.Schema({
         propertyCondition: { type: String, default: 'N/A' },
       },
     },
+    farmProperties: {
+        uploadDocumentAtEndOfChat: { type: Boolean, default: false },
+        propertiesDetails: { type: String, default: '' },
+      },
+      vehicleProperties: {
+        uploadDocumentAtEndOfChat: { type: Boolean, default: false },
+        propertiesDetails: { type: String, default: '' },
+      },
+      valuablePossessions: {
+        uploadDocumentAtEndOfChat: { type: Boolean, default: false },
+        propertiesDetails: { type: String, default: '' },
+      },
+      householdEffects: {
+        uploadDocumentAtEndOfChat: { type: Boolean, default: false },
+        propertiesDetails: { type: String, default: '' },
+      },
+      investmentPortfolio: {
+        uploadDocumentAtEndOfChat: { type: Boolean, default: false },
+        propertiesDetails: { type: String, default: '' },
+      },
+      bankBalances: {
+        uploadDocumentAtEndOfChat: { type: Boolean, default: false },
+        propertiesDetails: { type: String, default: '' },
+      },
+      businessAssets: {
+        uploadDocumentAtEndOfChat: { type: Boolean, default: false },
+        propertiesDetails: { type: String, default: '' },
+      },
+      otherAssets: {
+        uploadDocumentAtEndOfChat: { type: Boolean, default: false },
+        propertiesDetails: { type: String, default: '' },
+      },
+      intellectualPropertyRights: {
+        uploadDocumentAtEndOfChat: { type: Boolean, default: false },
+        propertiesDetails: { type: String, default: '' },
+      },
+      assetsInTrust: {
+        uploadDocumentAtEndOfChat: { type: Boolean, default: false },
+        propertiesDetails: { type: String, default: '' },
+      },
     // You can add more asset-related fields here if needed in the future
+  },
+  Liabilities: { 
+    outstandingMortgageLoans: {
+        uploadDocumentAtEndOfChat: { type: Boolean, default: false },
+        propertiesDetails: { type: String, default: '' },
+      },
+      personalLoans: {
+        uploadDocumentAtEndOfChat: { type: Boolean, default: false },
+        propertiesDetails: { type: String, default: '' },
+      },
+      creditCardDebt: {
+        uploadDocumentAtEndOfChat: { type: Boolean, default: false },
+        propertiesDetails: { type: String, default: '' },
+      },
+      vehicleLoans: {
+        uploadDocumentAtEndOfChat: { type: Boolean, default: false },
+        propertiesDetails: { type: String, default: '' },
+      },
+      otherOutstandingDebts: {
+        uploadDocumentAtEndOfChat: { type: Boolean, default: false },
+        propertiesDetails: { type: String, default: '' },
+      },
+      strategyLiabilities: {
+        uploadDocumentAtEndOfChat: { type: Boolean, default: false },
+        propertiesDetails: { type: String, default: '' },
+      },
+      foreseeableFuture: {
+        uploadDocumentAtEndOfChat: { type: Boolean, default: false },
+        propertiesDetails: { type: String, default: '' },
+      },
   },
   mvID: { type: String },
 });
