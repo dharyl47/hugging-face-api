@@ -329,11 +329,11 @@ export default function Chat() {
     const userResponse = messagesData.join(", ");
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: userResponse, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: userResponse, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -343,7 +343,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonQuestion = (message: any) => {
@@ -389,11 +389,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -403,9 +403,10 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
+  const [selectedButton, setSelectedButton] = useState<string | null>(null);
   const handleButtonStage0 = (message: any) => {
     let response = "";
     if (message == "Let's chat again!") {
@@ -422,13 +423,13 @@ export default function Chat() {
       response =
         "No problem at all. If you ever have questions or decide to start your estate planning, I’m here to help. Have a great day!";
     }
-
+    setSelectedButton(message);
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -438,8 +439,10 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
+
+  const [tellMeMore, setTellMeMore] = useState<string | null>(null);
   const handleButtonStage1 = (message: any) => {
     let response = "";
     if (message == "Tell me more") {
@@ -450,13 +453,13 @@ export default function Chat() {
       response =
         "I know estate planning can be daunting, so I’m here to make it as easy as possible for you to find a tailored estate plan that suits your needs. To begin, I need to gather some basic information. This will help tailor the estate planning process to your unique situation.";
     }
-
+    setTellMeMore(message);
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -466,7 +469,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage2 = (message: any) => {
@@ -549,15 +552,15 @@ export default function Chat() {
     let response = "";
 
     if (message == "Single") {
-      response = "Do you have a current will in place?";
+      response = "Do you currently have a will in place?";
       await saveUserProfile({ maritalStatus: message });
     }
     if (message == "Divorced") {
-      response = "Do you have a current will in place?";
+      response = "Do you currently have a will in place?";
       await saveUserProfile({ maritalStatus: message });
     }
     if (message == "Widowed") {
-      response = "Do you have a current will in place?";
+      response = "Do you currently have a will in place?";
       await saveUserProfile({ maritalStatus: message });
     }
 
@@ -730,11 +733,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -744,7 +747,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage13v1 = (message: any) => {
@@ -795,11 +798,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -809,7 +812,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage13EstateDuty = (message: any) => {
@@ -1100,7 +1103,7 @@ export default function Chat() {
         "templatesDownloaded.livingWill": true,
       };
       // You could trigger multiple downloads or bundle all templates into a zip file.
-      downloadUrl = ""; // You'd need to define how to handle downloading all files.
+      downloadUrl = "/downloadables/All_Templates.zip"; // You'd need to define how to handle downloading all files.
     }
     if (message === "Skip") {
       response =
@@ -1148,13 +1151,24 @@ export default function Chat() {
 
   const handleButtonStage14Checklist = (message: any) => {
     let response = "";
+    let downloadUrl: string | undefined = ""; // Initialize as an empty string
 
     if (message == "Download Checklist") {
       response = "Checklist is downloaded";
+      downloadUrl = "/downloadables/OM_EstatePlan_Checklist.pdf";
     }
     if (message == "Let’s move on") {
       response =
         "While these templates and checklists can help you get started, there are times when seeking professional legal advice is essential. Consider getting legal advice* if the following applies to you:";
+    }
+
+    if (downloadUrl && downloadUrl.length > 0) {
+      const link = document.createElement("a");
+      link.href = downloadUrl;
+      link.setAttribute("download", downloadUrl.split("/").pop() as string); // Ensure it's a string
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -6600,14 +6614,14 @@ export default function Chat() {
       delete updatedForDisplay["factualDependents"]; // Safely remove key now
     }
 
-    if (id === "none") {
-      noneDependents("none");
-    }
+    
 
     setCheckboxes(updatedCheckboxes);
-
+    if (id === "none") {
+      noneDependents("none");
+    } else {
     // Pass the modified object to updateInputStr for display
-    updateInputStr(checkboxesAsset, updatedForDisplay);
+    updateInputStr(checkboxesAsset, updatedForDisplay);}
 
     // Save the original checkboxes state to the database (without display modifications)
     await saveUserProfile({ checkboxes: updatedCheckboxes });
@@ -6622,7 +6636,8 @@ export default function Chat() {
         userName +
         ". Is there anything else you’d like to add about your personal particulars or any questions you have at this stage?";
     }
-
+    setInputStr("");
+    
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     const userMessage: Message = {
       id: Date.now().toString(), // Unique ID
@@ -7100,6 +7115,7 @@ export default function Chat() {
                   </div>
                 </div>
               </div>
+              <br/>
             </>
           ) : (
             <div
@@ -13668,23 +13684,29 @@ export default function Chat() {
                   <div className="space-x-2 ml-9">
                     <br />
                     <button
-                      onClick={() => handleButtonStage0("Absolutely")}
-                      className="px-4 py-2 mb-1 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Absolutely
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage0("Tell me more")}
-                      className="px-4 py-2 mb-1 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Tell me more
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage0("Not now")}
-                      className="px-4 py-2 mb-1 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Not now
-                    </button>
+        onClick={() => handleButtonStage0("Absolutely")}
+        className={`px-4 py-2 mb-1 rounded-md border border-[#8DC63F] ${
+          selectedButton === "Absolutely" ? "bg-[#8DC63F] text-white" : "text-[#8DC63F]"
+        }`}
+      >
+        Absolutely
+      </button>
+      <button
+        onClick={() => handleButtonStage0("Tell me more")}
+        className={`px-4 py-2 mb-1 rounded-md border border-[#8DC63F] ${
+          selectedButton === "Tell me more" ? "bg-[#8DC63F] text-white" : "text-[#8DC63F]"
+        }`}
+      >
+        Tell me more
+      </button>
+      <button
+        onClick={() => handleButtonStage0("Not now")}
+        className={`px-4 py-2 mb-1 rounded-md border border-[#8DC63F] ${
+          selectedButton === "Not now" ? "bg-[#8DC63F] text-white" : "text-[#8DC63F]"
+        }`}
+      >
+        Not now
+      </button>
                   </div>
                 </>
               )}
@@ -13723,7 +13745,9 @@ export default function Chat() {
                     <br />
                     <button
                       onClick={() => handleButtonStage1("Tell me more")}
-                      className="px-4 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                       className={`px-4 py-2 mb-1 rounded-md border border-[#8DC63F] ${
+          tellMeMore === "Tell me more" ? "bg-[#8DC63F] text-white" : "text-[#8DC63F]"
+        }`}
                     >
                       Tell me more
                     </button>
@@ -13731,7 +13755,9 @@ export default function Chat() {
                       onClick={() =>
                         handleButtonStage1("Skip Estate Planning Explanation")
                       }
-                      className="px-4 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                       className={`px-4 py-2 mb-1 rounded-md border border-[#8DC63F] ${
+          tellMeMore === "Skip Estate Planning Explanation" ? "bg-[#8DC63F] text-white" : "text-[#8DC63F]"
+        }`}
                     >
                       Skip Estate Planning Explanation
                     </button>
@@ -16496,17 +16522,17 @@ export default function Chat() {
   };
 
   return (
-    <div className="fixed inset-0 bg-[#212121] flex flex-col">
-      <div className="fixed inset-0">
-        <div className="fixed inset-0 flex items-end lg:w-1/2 xl:w-2/5 mx-auto ">
-          <div className="bg-[#212121] shadow-md rounded-lg w-full h-full">
-            {/* Header Section */}
-            <div className="p-4 text-white rounded-t-lg items-center mt-12">
-              <div className="flex justify-center -mt-12 space-x-4">
-                <div className="text-lg font-semibold text-center text-4xl">
-                  <p className="text-center text-2xl font-bold">
-                    Welcome to our Estate Planning Chat
-                  </p>
+<div className="fixed inset-0 bg-[#212121] flex flex-col">
+  <div className="fixed inset-0">
+    <div className="fixed inset-0 flex items-end w-full md:w-3/4 lg:w-3/4 xl:w-3/4 mx-auto">
+      <div className="bg-[#212121] shadow-md rounded-lg w-full h-full">
+        {/* Header Section */}
+        <div className="p-4 text-white rounded-t-lg items-center mt-12">
+          <div className="flex justify-center -mt-12 space-x-4">
+            <div className="text-lg font-semibold text-center text-4xl">
+              <p className="text-center text-2xl font-bold">
+                Welcome to our Estate Planning Chat
+              </p>
                 </div>
 
                 {/* SVG Icon */}
