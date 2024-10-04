@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from "react";
 import CustomInput from "@/app/components/CustomInput";
 import CustomCheckBox from "@/app/components/CustomCheckBox"; // Import the CustomCheckBox component
 import EmbeddedVideo from "@/app/components/EmbeddedVideo";
+import SelectableButtonGroup from "@/app/components/SelectableButtonGroup";
 import Calendar from "@/app/components/Calendar";
 import Image from "next/image"; // Import the Image component
 import BusinessImportanceSlider from "./components/BusinessImportanceSlider";
@@ -220,14 +221,18 @@ export default function Chat() {
   };
 
   // Handle the proceed button click - send definitions for selected terms
+  const [detailedProceed, setDetailedProceed] = useState(false);
   const handleProceed = () => {
+    setDetailedProceed(true);
     //selectedTerms.forEach((term) => {
     handleButtonComponent(selectedTerms);
     // });
   };
+  const [scenarioProceed, setScenarioProceed] = useState(false);
   const handleProceedScenario = () => {
     //selectedTerms.forEach((term) => {
     handleButtonComponentScenario(selectedScenario);
+    setScenarioProceed(true);
     // });
   };
   const handleProceedStrategy = () => {
@@ -484,11 +489,11 @@ export default function Chat() {
     saveMarriage(message);
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -498,7 +503,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage3 = async (message: any) => {
@@ -531,11 +536,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -545,7 +550,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage3Single = async (message: any) => {
@@ -599,11 +604,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -613,7 +618,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage5 = async (message: any) => {
@@ -657,11 +662,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -671,7 +676,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage7 = (message: any) => {
@@ -710,6 +715,7 @@ export default function Chat() {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
+  const [stage12Proceed, setStage12Proceed] = useState<string | null>(null);
   const handleButtonStage12 = (message: any) => {
     let response = "";
     if (message == "Yes, I have a question") {
@@ -731,7 +737,7 @@ export default function Chat() {
       response =
         "Is there anything else you’d like to know about estate planning or any questions you have at this stage?";
     }
-
+    setStage12Proceed(message);
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     // const userMessage: Message = {
     //   id: Date.now().toString(), // Unique ID
@@ -780,6 +786,9 @@ export default function Chat() {
     setMessages([...messages, userMessage, aiMessage]);
   };
 
+  const [stage13v2v1Proceed, setStage13v2v1Proceed] = useState<string | null>(
+    null
+  );
   const handleButtonStage13v2v1 = (message: any) => {
     let response = "";
 
@@ -796,7 +805,7 @@ export default function Chat() {
       response =
         "Estate duty is a tax that has an impact on your estate. Do you want to explore estate duty further?";
     }
-
+    setStage13v2v1Proceed(message);
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     // const userMessage: Message = {
     //   id: Date.now().toString(), // Unique ID
@@ -895,11 +904,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -909,7 +918,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage13 = (message: any) => {
@@ -6614,14 +6623,13 @@ export default function Chat() {
       delete updatedForDisplay["factualDependents"]; // Safely remove key now
     }
 
-    
-
     setCheckboxes(updatedCheckboxes);
     if (id === "none") {
       noneDependents("none");
     } else {
-    // Pass the modified object to updateInputStr for display
-    updateInputStr(checkboxesAsset, updatedForDisplay);}
+      // Pass the modified object to updateInputStr for display
+      updateInputStr(checkboxesAsset, updatedForDisplay);
+    }
 
     // Save the original checkboxes state to the database (without display modifications)
     await saveUserProfile({ checkboxes: updatedCheckboxes });
@@ -6637,13 +6645,13 @@ export default function Chat() {
         ". Is there anything else you’d like to add about your personal particulars or any questions you have at this stage?";
     }
     setInputStr("");
-    
+
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -6653,7 +6661,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonPrivacy = async (message: any) => {
@@ -7115,7 +7123,7 @@ export default function Chat() {
                   </div>
                 </div>
               </div>
-              <br/>
+              <br />
             </>
           ) : (
             <div
@@ -7209,20 +7217,11 @@ export default function Chat() {
               ) && (
                 <>
                   <div className="space-x-2 ml-11 mt-4">
-                    <button
-                      onClick={() =>
-                        handleButtonStage13v1("Yes, I’m ready to move on")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, I’m ready to move on
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage13v1("Skip")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Skip
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes, I’m ready to move on", "Skip"]}
+  handleSelection={handleButtonStage13v1}
+/>
+                    
                   </div>
                 </>
               )}
@@ -7297,12 +7296,11 @@ export default function Chat() {
                         </label>
                       </>
                     ))}
-                    <button
-                      onClick={handleProceedScenario}
-                      className="mt-4 px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition"
-                    >
-                      Proceed
-                    </button>
+                   <br/>
+                    <SelectableButtonGroup
+  options={["Proceed"]}
+  handleSelection={handleProceedScenario}
+/>
                   </div>
                 </>
               )}
@@ -13683,30 +13681,11 @@ export default function Chat() {
                   </div>
                   <div className="space-x-2 ml-9">
                     <br />
-                    <button
-        onClick={() => handleButtonStage0("Absolutely")}
-        className={`px-4 py-2 mb-1 rounded-md border border-[#8DC63F] ${
-          selectedButton === "Absolutely" ? "bg-[#8DC63F] text-white" : "text-[#8DC63F]"
-        }`}
-      >
-        Absolutely
-      </button>
-      <button
-        onClick={() => handleButtonStage0("Tell me more")}
-        className={`px-4 py-2 mb-1 rounded-md border border-[#8DC63F] ${
-          selectedButton === "Tell me more" ? "bg-[#8DC63F] text-white" : "text-[#8DC63F]"
-        }`}
-      >
-        Tell me more
-      </button>
-      <button
-        onClick={() => handleButtonStage0("Not now")}
-        className={`px-4 py-2 mb-1 rounded-md border border-[#8DC63F] ${
-          selectedButton === "Not now" ? "bg-[#8DC63F] text-white" : "text-[#8DC63F]"
-        }`}
-      >
-        Not now
-      </button>
+                   <SelectableButtonGroup
+  options={["Absolutely", "Tell me more", "Not now"]}
+  handleSelection={handleButtonStage0}
+/>
+
                   </div>
                 </>
               )}
@@ -13743,24 +13722,10 @@ export default function Chat() {
                   </div>
                   <div className="space-x-2 ml-9">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage1("Tell me more")}
-                       className={`px-4 py-2 mb-1 rounded-md border border-[#8DC63F] ${
-          tellMeMore === "Tell me more" ? "bg-[#8DC63F] text-white" : "text-[#8DC63F]"
-        }`}
-                    >
-                      Tell me more
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage1("Skip Estate Planning Explanation")
-                      }
-                       className={`px-4 py-2 mb-1 rounded-md border border-[#8DC63F] ${
-          tellMeMore === "Skip Estate Planning Explanation" ? "bg-[#8DC63F] text-white" : "text-[#8DC63F]"
-        }`}
-                    >
-                      Skip Estate Planning Explanation
-                    </button>
+                     <SelectableButtonGroup
+      options={["Tell me more", "Skip Estate Planning Explanation"]}
+      handleSelection={handleButtonStage1}
+    />
                   </div>
                 </>
               )}
@@ -13789,18 +13754,11 @@ export default function Chat() {
               ) && (
                 <>
                   <div className="space-x-2 ml-11 mt-4">
-                    <button
-                      onClick={() => handleButtonStage2("Married")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Married
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage2("Single")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Single
-                    </button>
+                    <SelectableButtonGroup
+  options={["Married", "Single"]}
+  handleSelection={handleButtonStage2}
+/>
+                   
                   </div>
                 </>
               )}
@@ -13836,46 +13794,12 @@ export default function Chat() {
               ) && (
                 <div className="space-x-2 ml-11 -mt-4">
                   <br />
-                  <button
-                    onClick={() =>
-                      handleButtonStage3("In Community of Property")
-                    }
-                    className="px-2 py-2 mb-1 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                  >
-                    In Community of Property
-                  </button>
-                  <button
-                    onClick={() =>
-                      handleButtonStage3(
-                        "Out of Community of Property with Accrual"
-                      )
-                    }
-                    className="px-2 py-2 mb-1 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                  >
-                    Out of Community of Property with Accrual
-                  </button>
-                  <button
-                    onClick={() =>
-                      handleButtonStage3(
-                        "Out of Community of Property without Accrual"
-                      )
-                    }
-                    className="px-2 py-2 rounded-md mb-1 border border-[#8DC63F] text-[#8DC63F]"
-                  >
-                    Out of Community of Property without Accrual
-                  </button>
-                  <button
-                    onClick={() => handleButtonStage3("I can't remember")}
-                    className="px-2 py-2 rounded-md mb-1 border border-[#8DC63F] text-[#8DC63F]"
-                  >
-                    I can't remember
-                  </button>
-                  <button
-                    onClick={() => handleButtonStage3("What is Accrual?")}
-                    className="px-2 py-2 rounded-md mb-1 border border-[#8DC63F] text-[#8DC63F]"
-                  >
-                    What is Accrual?
-                  </button>
+                  <SelectableButtonGroup
+  options={["In Community of Property", "Out of Community of Property with Accrual", "Out of Community of Property without Accrual", "Out of Community of Property without Accrual", "I can't remember", "What is Accrual?"]}
+  handleSelection={handleButtonStage3}
+/>
+                  
+                 
                 </div>
               )}
 
@@ -13884,12 +13808,11 @@ export default function Chat() {
               ) && (
                 <div className="space-x-2 ml-9">
                   <br />
-                  <button
-                    onClick={() => handleButtonStage3("Continue")}
-                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                  >
-                    Continue
-                  </button>
+                   <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage3}
+/>
+                 
                 </div>
               )}
 
@@ -13928,40 +13851,10 @@ export default function Chat() {
                   </div>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage3("In Community of Property")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      In Community of Property
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage3(
-                          "Out of Community of Property with Accrual"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Out of Community of Property with Accrual
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage3(
-                          "Out of Community of Property without Accrual"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Out of Community of Property without Accrual
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage3("I can't remember")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I can't remember
-                    </button>
+                      <SelectableButtonGroup
+  options={["In Community of Property", "Out of Community of Property with Accrual", "Out of Community of Property without Accrual", "Out of Community of Property without Accrual", "I can't remember", "What is Accrual?"]}
+  handleSelection={handleButtonStage3}
+/>
                   </div>
                 </>
               )}
@@ -13980,40 +13873,10 @@ export default function Chat() {
                   </div>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage3("In Community of Property")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      In Community of Property
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage3(
-                          "Out of Community of Property with Accrual"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Out of Community of Property with Accrual
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage3(
-                          "Out of Community of Property without Accrual"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Out of Community of Property without Accrual
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage3("I can't remember")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I can't remember
-                    </button>
+                     <SelectableButtonGroup
+  options={["In Community of Property", "Out of Community of Property with Accrual", "Out of Community of Property without Accrual", "Out of Community of Property without Accrual", "I can't remember", "What is Accrual?"]}
+  handleSelection={handleButtonStage3}
+/>
                   </div>
                 </>
               )}
@@ -14024,18 +13887,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage4("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage4("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                      <SelectableButtonGroup
+  options={["Yes","No"]}
+  handleSelection={handleButtonStage4}
+/>
+                   
                   </div>
                 </>
               )}
@@ -14046,12 +13902,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage4("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage4}
+/>
+                   
                   </div>
                 </>
               )}
@@ -14062,22 +13917,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage5("Will is up to date")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Will is up to date
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage5(
-                          "Will needs to be reviewed & updated"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Will needs to be reviewed & updated
-                    </button>
+                     <SelectableButtonGroup
+  options={["Will is up to date", "Will needs to be reviewed & updated"]}
+  handleSelection={handleButtonStage5}
+/>
+                    
                   </div>
                 </>
               )}
@@ -14088,18 +13932,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage6("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage6("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage6}
+/>
+                   
                   </div>
                 </>
               )}
@@ -15268,20 +15105,10 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage12("Yes, I have a question")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, I have a question
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage12("No, let’s move on")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No, let’s move on
-                    </button>
+                    <SelectableButtonGroup
+      options={["Yes, I have a question", "No, let’s move on"]}
+      handleSelection={handleButtonStage12}
+    />
                   </div>
                 </>
               )}
@@ -15447,22 +15274,11 @@ export default function Chat() {
                     Do you have any questions at this stage?
                   </div>
                   <div className="space-x-2 ml-11 mt-4">
-                    <button
-                      onClick={() =>
-                        handleButtonStage13v2v1("Yes, I have a question.")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, I have a question.
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage13v2v1("No, let’s move on")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No, let’s move on
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes, I have a question.", "No, let’s move on"]}
+  handleSelection={handleButtonStage13v2v1}
+/>
+
                   </div>
                 </>
               )}
@@ -15472,22 +15288,16 @@ export default function Chat() {
               ) && (
                 <>
                   <div className="space-x-2 ml-11 mt-4">
-                    <button
-                      onClick={() => handleButtonStage13EstateDuty("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage13EstateDuty("No, let’s move on")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No, let’s move on
-                    </button>
+                     <SelectableButtonGroup
+  options={["Yes", "No, let’s move on"]}
+  handleSelection={handleButtonStage13EstateDuty}
+/>
+
                   </div>
                 </>
+          
+                    
+                  
               )}
 
               {message.content.includes(
@@ -15584,20 +15394,12 @@ export default function Chat() {
               ) && (
                 <>
                   <div className="space-x-2 ml-11 mt-4">
-                    <button
-                      onClick={() => handleButtonStage13v3("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage13v3("No, does not apply to me")
+                    <SelectableButtonGroup
+                      options={["Yes", "No, does not apply to me"]}
+                      handleSelection={(option: any) =>
+                        handleButtonStage13v3(option)
                       }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No, does not apply to me
-                    </button>
+                    />
                   </div>
                 </>
               )}
@@ -15839,7 +15641,11 @@ export default function Chat() {
 
                     <button
                       onClick={handleProceed}
-                      className="mt-4 px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition"
+                      className={`mt-4 px-4 py-2 rounded-md border border-[#8DC63F] ${
+                        detailedProceed
+                          ? "bg-[#8DC63F] text-white"
+                          : "text-[#8DC63F]"
+                      }`}
                     >
                       Proceed
                     </button>
@@ -16064,7 +15870,11 @@ export default function Chat() {
                   <div className="space-x-2 ml-11 mt-4">
                     <button
                       onClick={() => handleButtonStage12("Proceed")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                      className={`px-4 py-2 mb-1 rounded-md border border-[#8DC63F] ${
+                        stage12Proceed === "Proceed"
+                          ? "bg-[#8DC63F] text-white"
+                          : "text-[#8DC63F]"
+                      }`}
                     >
                       Proceed
                     </button>
@@ -16219,24 +16029,11 @@ export default function Chat() {
                       <br />
                       <br />
                       <div className="space-x-2 ml-11 -mt-1">
-                        <button
-                          onClick={() =>
-                            handleButtonStage13Component(
-                              "Yes, I have a question"
-                            )
-                          }
-                          className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                        >
-                          Yes, I have a question
-                        </button>
-                        <button
-                          onClick={() =>
-                            handleButtonStage13Component("No, let's move on")
-                          }
-                          className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                        >
-                          No, let's move on
-                        </button>
+                        <SelectableButtonGroup
+  options={["Yes, I have a question", "No, let's move on"]}
+  handleSelection={handleButtonStage13Component}
+/>
+                        
                       </div>
                     </>
                   )}
@@ -16522,17 +16319,17 @@ export default function Chat() {
   };
 
   return (
-<div className="fixed inset-0 bg-[#212121] flex flex-col">
-  <div className="fixed inset-0">
-    <div className="fixed inset-0 flex items-end w-full md:w-3/4 lg:w-3/4 xl:w-3/4 mx-auto">
-      <div className="bg-[#212121] shadow-md rounded-lg w-full h-full">
-        {/* Header Section */}
-        <div className="p-4 text-white rounded-t-lg items-center mt-12">
-          <div className="flex justify-center -mt-12 space-x-4">
-            <div className="text-lg font-semibold text-center text-4xl">
-              <p className="text-center text-2xl font-bold">
-                Welcome to our Estate Planning Chat
-              </p>
+    <div className="fixed inset-0 bg-[#212121] flex flex-col">
+      <div className="fixed inset-0">
+        <div className="fixed inset-0 flex items-end w-full md:w-3/4 lg:w-3/4 xl:w-3/4 mx-auto">
+          <div className="bg-[#212121] shadow-md rounded-lg w-full h-full">
+            {/* Header Section */}
+            <div className="p-4 text-white rounded-t-lg items-center mt-12">
+              <div className="flex justify-center -mt-12 space-x-4">
+                <div className="text-lg font-semibold text-center text-4xl">
+                  <p className="text-center text-2xl font-bold">
+                    Welcome to our Estate Planning Chat
+                  </p>
                 </div>
 
                 {/* SVG Icon */}

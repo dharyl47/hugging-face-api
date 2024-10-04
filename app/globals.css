@@ -146,7 +146,23 @@
     color: white;
   }
 
+  .hidden-radio {
+    display: none;
+  }
 
+  .estate-button-label {
+    padding: 0.5rem 1rem;
+    border-radius: 0.375rem;
+    border: 1px solid #8DC63F;
+    color: #8DC63F;
+    cursor: pointer;
+    margin-bottom: 0.25rem;
+  }
+
+  .hidden-radio:checked + .estate-button-label {
+    background-color: #8DC63F;
+    color: white;
+  }
 
 /* Input form fixed at the bottom */
 form {
