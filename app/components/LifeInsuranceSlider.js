@@ -3,12 +3,12 @@ import { useState } from 'react';
 const LifeInsuranceSlider = ({ onProceed }) => {
   const [value, setValue] = useState(1); // Start from 1 for "Not Important"
   const [selectedImportance, setSelectedImportance] = useState("Against");
+  const [isClicked, setIsClicked] = useState(false); // New state to track button click
 
   const handleChange = (event) => {
     const newValue = parseInt(event.target.value, 10);
     setValue(newValue);
 
-    // Dynamically update the importance level without calling the main function
     if (newValue === 1) {
       setSelectedImportance("Against");
     } else if (newValue === 2) {
@@ -19,14 +19,14 @@ const LifeInsuranceSlider = ({ onProceed }) => {
   };
 
   const getBackgroundStyle = () => {
-    const percentage = ((value - 1) / 2) * 100; // Since we have 3 levels (1 to 3)
+    const percentage = ((value - 1) / 2) * 100;
     return {
       background: `linear-gradient(to right, #8dc63f ${percentage}%, #D1D5DB ${percentage}%)`
     };
   };
 
   const handleProceedClick = () => {
-    // Trigger the passed function with the selected importance when Proceed is clicked
+    setIsClicked(true); // Set the button as clicked
     onProceed(selectedImportance);
   };
 
@@ -51,7 +51,9 @@ const LifeInsuranceSlider = ({ onProceed }) => {
       {/* Proceed button */}
       <button
         onClick={handleProceedClick}
-        className="mt-4 px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition"
+        className={`mt-4 px-4 py-2 rounded-md border border-[#8DC63F] transition ${
+          isClicked ? "bg-[#8DC63F] text-white" : "text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white"
+        }`}
       >
         Proceed
       </button>
