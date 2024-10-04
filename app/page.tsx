@@ -634,11 +634,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -648,7 +648,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage6 = (message: any) => {
@@ -698,11 +698,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -712,7 +712,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const [stage12Proceed, setStage12Proceed] = useState<string | null>(null);
@@ -13984,18 +13984,11 @@ export default function Chat() {
               ) && (
                 <div className="space-x-2 ml-9 -mt-4">
                   <br />
-                  <button
-                    onClick={() => handleButtonStage7("Yes, I have a question")}
-                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                  >
-                    Yes, I have a question
-                  </button>
-                  <button
-                    onClick={() => handleButtonStage7("No, let’s move on")}
-                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                  >
-                    No, let’s move on
-                  </button>
+                  <SelectableButtonGroup
+  options={["Yes, I have a question", "No, let’s move on"]}
+  handleSelection={handleButtonStage7}
+/>
+                  
                 </div>
               )}
 
