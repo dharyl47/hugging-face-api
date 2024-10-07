@@ -10,6 +10,21 @@
   font-size: 20px !important; /* Adjust font size if needed */
 }
 
+/* Font size for mobile devices (max-width 640px) */
+@media (max-width: 640px) {
+  * {
+    font-size: 14px !important; /* Smaller font size for mobile */
+  }
+}
+
+/* Font size for tablet devices (min-width 641px and max-width 1024px) */
+@media (min-width: 641px) and (max-width: 1024px) {
+  * {
+    font-size: 16px !important; /* Slightly larger font size for tablet */
+  }
+}
+
+
 /* #chat-container{
     width: 30rem;
     padding-left: 100px;

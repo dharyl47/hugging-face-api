@@ -14136,16 +14136,20 @@ async function calculatePropertyValue({
                 </div>
               )}
             </div>
-
+              <div
+  id="chat-container"
+  className="flex flex-col h-screen" // This ensures the layout takes up the entire screen height
+>
             <div
               id="chatbox"
-              className="p-4 h-[calc(100vh-250px)]  overflow-y-auto"
+              className="flex-grow p-4 overflow-y-auto"
               ref={chatboxRef}
             >
               {renderMessages() || <div className="italic">typing...</div>}
             </div>
             <form
               className="w-full rounded-3xl"
+              
               onSubmit={async (e) => {
                 e.preventDefault();
                 setIsThinking(true);
@@ -15626,6 +15630,7 @@ async function calculatePropertyValue({
                 </button>
               </div>
             </form>
+            </div>
             {/* {loading && (
               <p className="text-white">
                 Loading... Retrying {retryCount}/{MAX_RETRIES}
