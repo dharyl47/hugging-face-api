@@ -7224,7 +7224,7 @@ async function calculatePropertyValue({
                   {filteredContent.replace(/<\|endoftext\|>/g, "")}
                 </p>
               </div>
-              <div className="flex space-x-2 ml-11">
+              <div className="flex space-x-2 ml-16 sm:ml-11">
                 <div className="space-y-2">
                   {/* Yes, I consent checkbox  handleButtonStage7("No, let’s move on") handleButtonStage61PassAway*/}
                   <div
