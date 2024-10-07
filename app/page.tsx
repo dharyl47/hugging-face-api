@@ -6,6 +6,7 @@ import CustomInput from "@/app/components/CustomInput";
 import CustomCheckBox from "@/app/components/CustomCheckBox"; // Import the CustomCheckBox component
 import EmbeddedVideo from "@/app/components/EmbeddedVideo";
 import SelectableButtonGroup from "@/app/components/SelectableButtonGroup";
+import CustomButtonGroup from "@/app/components/CustomButtonGroup";
 import Calendar from "@/app/components/Calendar";
 import Image from "next/image"; // Import the Image component
 import BusinessImportanceSlider from "./components/BusinessImportanceSlider";
@@ -130,7 +131,7 @@ export default function Chat() {
   const [isChecked, setIsChecked] = useState(false);
   const [userName, setUserName] = useState("");
   const [userNameDelete, setUserNameDelete] = useState("");
-  const [maritalStatus, setMaritalStatus] = useState("");
+  const [maritalStatus, setMaritalStatus] = useState("Married");
   const [encryptedName, setEncryptedName] = useState("");
   const [isUserNameCollected, setIsUserNameCollected] = useState(false);
   const [propertyRegime, setPropertyRegime] = useState("");
@@ -139,6 +140,16 @@ export default function Chat() {
   const [dependentsUnder, setDependentsUnder] = useState("");
   const [userEmail, setUserEmail] = useState("");
   const [dateOfBirth, setDateOfBirth] = useState("");
+
+  const [typeOfProperty, setTypeOfProperty] = useState("");
+  const [locationOfProperty, setLocationOfProperty] = useState("");
+  const [sizeOfProperty, setSizeOfProperty] = useState("");
+  const [roomsOfProperty, setRoomsOfProperty] = useState("");
+  const [conditionOfProperty, setConditionOfProperty] = useState("");
+
+
+
+
 
   const [dependentsOverStage, setDependentsOverStage] = useState(false);
   const [dependentsUnderStage, setDependentsUnderStage] = useState(false);
@@ -193,6 +204,87 @@ export default function Chat() {
       lastMessageRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
+
+
+
+
+
+
+const valueProperty = useRef("");
+
+async function calculatePropertyValue({
+  typeOfProperty,
+  locationOfProperty,
+  sizeOfProperty,
+  roomsOfProperty,
+  conditionOfProperty,
+}: {
+  typeOfProperty: string;
+  locationOfProperty: string;
+  sizeOfProperty: string; 
+  roomsOfProperty: string;
+  conditionOfProperty: string;
+}) {
+  try {
+    // Log the input data to the console
+    console.log("Property Input Details:");
+    console.log("Type of Property:", typeOfProperty);
+    console.log("Location of Property:", locationOfProperty);
+    console.log("Size of Property:", sizeOfProperty);
+    console.log("Rooms of Property:", roomsOfProperty);
+    console.log("Condition of Property:", conditionOfProperty);
+
+    // Refined prompt to request only the property value
+    const response = await axios.post("/api/chatAnalyze", {
+      messages: [
+        {
+          content: `Please provide a rough estimate of the value for a ${typeOfProperty} located in ${locationOfProperty}. The property size is ${sizeOfProperty} square metres with ${roomsOfProperty} and is in ${conditionOfProperty}. Respond only with the value in ZAR and no other details.`,
+          role: "user",
+          createdAt: new Date(),
+        },
+      ],
+    });
+
+    let aiResponseContent = "";
+    
+    // Handle different response formats
+    if (typeof response.data === "string") {
+      const responseLines = response.data
+        .split("\n")
+        .filter((line) => line.trim() !== ""); // Filter out empty lines
+      aiResponseContent = responseLines.join(" "); // Combine lines for a clean response
+    } else if (Array.isArray(response.data.messages)) {
+      aiResponseContent = response.data.messages[0]?.content || "No content received";
+    } else {
+      throw new Error("Invalid response format");
+    }
+
+    // Handle the AI response (e.g., add to chat)
+    valueProperty.current = aiResponseContent;
+    handleAddAIResponse(
+      "The estimated value of your property based on the information you provided is"
+    );
+  } catch (error) {
+    console.error("Error calculating property value:", error);
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   // Function to handle the button click and append the "Hello" response
   const handleAddAIResponse = (message: any) => {
@@ -257,11 +349,11 @@ export default function Chat() {
     const userResponse = messagesData.join(", ");
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: userResponse, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: userResponse, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -271,7 +363,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
   const handleButtonComponentStrategy = (messagesData: string[]) => {
     let response = "";
@@ -838,11 +930,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -852,7 +944,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage13v2 = (message: any) => {
@@ -1006,11 +1098,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -1020,7 +1112,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage14 = (message: any) => {
@@ -1644,11 +1736,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -1658,7 +1750,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage19Capital = async (message: any) => {
@@ -3131,11 +3223,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -3145,7 +3237,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage48FixedIncome = (message: any) => {
@@ -3168,11 +3260,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -3182,7 +3274,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage48MutualFunds = (message: any) => {
@@ -3206,11 +3298,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -3220,7 +3312,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage49RetirementFunds = (message: any) => {
@@ -3244,11 +3336,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -3258,7 +3350,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage50EstateHoldings = (message: any) => {
@@ -3282,11 +3374,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -3296,7 +3388,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage51AssetClasses = (message: any) => {
@@ -3320,11 +3412,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -3334,7 +3426,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage52InvestmentGoals = (message: any) => {
@@ -3357,11 +3449,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -3371,7 +3463,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage53SpecificChanges = (message: any) => {
@@ -3392,11 +3484,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -3406,7 +3498,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage54Final = (message: any) => {
@@ -3426,11 +3518,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -3440,7 +3532,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage55EstateDuty = (message: any) => {
@@ -3455,11 +3547,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -3469,7 +3561,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage56CurrentWill = (message: any) => {
@@ -3578,11 +3670,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -3592,7 +3684,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage59Residue = (message: any) => {
@@ -3608,11 +3700,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -3622,7 +3714,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage60Bequeath = (message: any) => {
@@ -3638,11 +3730,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -3652,7 +3744,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage61PassAway = (message: any) => {
@@ -3667,11 +3759,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -3681,7 +3773,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage62Bequeathed = (message: any) => {
@@ -3692,17 +3784,21 @@ export default function Chat() {
       response =
         "<strong>💡 USEFUL TIP:</strong><br/> For estate duty: When farms are bequeathed (whether to trust or natural person) and the farm was used for bona fide farming purposes, the market value less 30% is included as the value of the farm for estate duty purposes.";
     }
-    if (message == "No") {
+    if (message == "No" && maritalStatus == "Married") {
+      response =
+        "Upon your death, if massing takes place (combining assets from both spouses' estates), how should the assets be managed? For instance, if the surviving spouse's contribution is more valuable than the benefit received, should the difference be considered a loan to the specific beneficiary?";
+    }
+     if (message == "No" && maritalStatus != "Married") {
       response =
         "Upon your death, if massing takes place (combining assets from both spouses' estates), how should the assets be managed? For instance, if the surviving spouse's contribution is more valuable than the benefit received, should the difference be considered a loan to the specific beneficiary?";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -3712,7 +3808,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage63AssetsManaged = (message: any) => {
@@ -3722,11 +3818,11 @@ export default function Chat() {
       "Certain third parties may be responsible for estate duty based on the assets they receive. Do you have any specific instructions or details about third-party liability for estate duty in your current will?";
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -3736,7 +3832,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage64ThirdParties = (message: any) => {
@@ -3751,11 +3847,11 @@ export default function Chat() {
         "Understood. It's crucial to consider this aspect carefully. Would you like to discuss potential options for addressing third-party liability in your estate plan?";
     }
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -3765,7 +3861,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage65Stages = (message: any) => {
@@ -3780,11 +3876,11 @@ export default function Chat() {
         "Great, one of our financial advisers will be in touch in this regard.";
     }
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -3794,7 +3890,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage65CurrentWill = (message: any) => {
@@ -3813,11 +3909,11 @@ export default function Chat() {
         "Great! Next, we’ll look at the executor’s fees. Shall we continue?";
     }
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -3827,7 +3923,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage65PotentialOption = (message: any) => {
@@ -3843,11 +3939,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -3857,7 +3953,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage66EstateDutyCurrentWillFinal = (message: any) => {
@@ -3877,11 +3973,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -3891,7 +3987,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage67ExecutorFee = (message: any) => {
@@ -3903,11 +3999,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -3917,7 +4013,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage68Payable = (message: any) => {
@@ -3935,11 +4031,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -3949,7 +4045,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage69ExecutorFinal = (message: any) => {
@@ -3970,11 +4066,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -3984,7 +4080,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage70Liquidity = (message: any) => {
@@ -4001,11 +4097,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -4015,7 +4111,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage71LiquidityEssential = (message: any) => {
@@ -4041,11 +4137,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -4055,7 +4151,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage72Shortfall = (message: any) => {
@@ -4076,11 +4172,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -4090,7 +4186,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage73FinancialImpact = (message: any) => {
@@ -4109,11 +4205,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -4123,7 +4219,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage74Shortfall = (message: any) => {
@@ -4141,11 +4237,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -4155,7 +4251,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage75SellingAsset = (message: any) => {
@@ -4182,11 +4278,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -4196,7 +4292,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage76Reservation = (message: any) => {
@@ -4214,11 +4310,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -4228,7 +4324,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage77BorrowingFunds = (message: any) => {
@@ -4251,11 +4347,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -4265,29 +4361,29 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage77FinancialRisk = (message: any) => {
     let response = "";
     if (message == "Continue") {
       response =
-        "Have you considered life assurance as a way to address any cash shortfall? Life assurance provides immediate cash without income tax or capital gains tax. How willing are you to go this route";
+        "Have you considered life assurance as a way to address any cash shortfall? Life assurance provides immediate cash without income tax or capital gains tax. How willing are you to go this route?";
     }
     if (message == "Yes") {
       response = "Great! Here are some important aspects to consider:";
     }
     if (message == "No") {
       response =
-        "Have you considered life assurance as a way to address any cash shortfall? Life assurance provides immediate cash without income tax or capital gains tax. How willing are you to go this route";
+        "Have you considered life assurance as a way to address any cash shortfall? Life assurance provides immediate cash without income tax or capital gains tax. How willing are you to go this route?";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -4297,7 +4393,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage77Alternative = (message: any) => {
@@ -4312,15 +4408,15 @@ export default function Chat() {
     }
     if (message == "No") {
       response =
-        "Have you considered life assurance as a way to address any cash shortfall? Life assurance provides immediate cash without income tax or capital gains tax. How willing are you to go this route";
+        "Have you considered life assurance as a way to address any cash shortfall? Life assurance provides immediate cash without income tax or capital gains tax. How willing are you to go this route?";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -4330,7 +4426,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage78LifeInsurance = (message: any) => {
@@ -4349,11 +4445,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -4363,7 +4459,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage79LiquidityEnd = (message: any) => {
@@ -4382,11 +4478,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -4396,7 +4492,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage80Claims = (message: any) => {
@@ -4422,11 +4518,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -4436,7 +4532,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage81Obligations = (message: any) => {
@@ -4459,11 +4555,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -4473,7 +4569,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage81Agreements = (message: any) => {
@@ -4496,11 +4592,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -4510,7 +4606,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage81Complications = (message: any) => {
@@ -4521,7 +4617,7 @@ export default function Chat() {
     }
     if (message == "Yes") {
       response =
-        "We will include this information about life insurance policy in the report shared at the end of this conversation.";
+        "We'll include this information about life insurance policy in the report shared at the end of this conversation.";
     }
     if (message == "No") {
       response =
@@ -4533,11 +4629,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -4547,7 +4643,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
   const handleButtonStage82LifeInsurancev1 = (message: any) => {
     let response = "";
@@ -4561,11 +4657,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -4575,7 +4671,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage82LifeInsurance = (message: any) => {
@@ -4594,11 +4690,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -4608,18 +4704,28 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage83Proactive = (message: any) => {
     let response = "";
     if (message == "Continue") {
+     if(maritalStatus=="Married"){
       response =
         "Next, let's talk about maintenance for the surviving spouse. If you don't make provision for maintenance for the surviving spouse, they can institute a claim against your estate in terms of the Maintenance of Surviving Spouse’s Act. Are you considering provisions for your surviving spouse?";
+    }else{
+      response =
+        "Do your dependents require any income per month for maintenance?";
+    }
     }
     if (message == "I have set up a policy") {
+     if(maritalStatus=="Married"){
       response =
         "Next, let's talk about maintenance for the surviving spouse. If you don't make provision for maintenance for the surviving spouse, they can institute a claim against your estate in terms of the Maintenance of Surviving Spouse’s Act. Are you considering provisions for your surviving spouse?";
+    }else{
+      response =
+        "Do your dependents require any income per month for maintenance?";
+    }
     }
     if (message == "I need assistance in setting up a policy") {
       response =
@@ -4627,11 +4733,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -4641,30 +4747,39 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage83Passing = (message: any) => {
     let response = "";
     if (message == "No") {
+      if(maritalStatus=="Married"){
       response =
         "Next, let's talk about maintenance for the surviving spouse. If you don't make provision for maintenance for the surviving spouse, they can institute a claim against your estate in terms of the Maintenance of Surviving Spouse’s Act. Are you considering provisions for your surviving spouse?";
+    }else{
+      response =
+        "Do your dependents require any income per month for maintenance?";
+    }
     }
     if (message == "Continue") {
+      if(maritalStatus=="Married"){
       response =
         "Next, let's talk about maintenance for the surviving spouse. If you don't make provision for maintenance for the surviving spouse, they can institute a claim against your estate in terms of the Maintenance of Surviving Spouse’s Act. Are you considering provisions for your surviving spouse?";
-    }
+    }else{
+      response =
+        "Do your dependents require any income per month for maintenance?";
+    }}
     if (message == "Yes") {
       response =
         "Setting up a life insurance policy payable to a testamentary trust can ensure that maintenance obligations are met without burdening your estate. This approach provides a reliable income stream for your beneficiaries. Our financial advisers at Old Mutual can provide detailed guidance and help you explore this option further.";
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -4674,7 +4789,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage84Provision = (message: any) => {
@@ -4697,11 +4812,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -4711,7 +4826,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage84ExistingProvision = (message: any) => {
@@ -4730,11 +4845,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -4744,7 +4859,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage84OptionProvision = (message: any) => {
@@ -4763,11 +4878,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -4777,7 +4892,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage84CrucialProvision = (message: any) => {
@@ -4796,11 +4911,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -4810,7 +4925,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage85FactorsProvision = (message: any) => {
@@ -4839,11 +4954,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -4853,7 +4968,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage85GoalsProvision = (message: any) => {
@@ -4872,11 +4987,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -4886,7 +5001,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage85UnderstandingProvision = (message: any) => {
@@ -4905,11 +5020,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -4919,7 +5034,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage85ComprehensiveProvision = (message: any) => {
@@ -4938,11 +5053,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -4952,7 +5067,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage85EffectiveProvision = (message: any) => {
@@ -4971,11 +5086,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -4985,7 +5100,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage85MaintenanceProvision = (message: any) => {
@@ -5014,11 +5129,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -5028,7 +5143,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage85BenefitProvision = (message: any) => {
@@ -5046,11 +5161,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -5060,7 +5175,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage86DeeperProvision = (message: any) => {
@@ -5078,11 +5193,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -5092,7 +5207,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage86AnnuitiesProvision = (message: any) => {
@@ -5111,11 +5226,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -5125,7 +5240,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage87ShortFall = (message: any) => {
@@ -5155,11 +5270,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -5169,7 +5284,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage87Capital = (message: any) => {
@@ -5188,11 +5303,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -5202,7 +5317,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage87Planning = (message: any) => {
@@ -5254,11 +5369,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -5268,7 +5383,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage88Additionalv1 = (message: any) => {
@@ -5283,11 +5398,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -5297,7 +5412,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage88Additional = (message: any) => {
@@ -5329,11 +5444,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -5343,7 +5458,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage88Coverage = (message: any) => {
@@ -5361,11 +5476,11 @@ export default function Chat() {
         "Excellent! Now, let's continue with your estate planning. Ready?";
     }
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -5375,7 +5490,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage88LifeInsurance = (message: any) => {
@@ -5393,11 +5508,11 @@ export default function Chat() {
         "Excellent! Now, let's continue with your estate planning. Ready?";
     }
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -5407,7 +5522,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage88Assessment = (message: any) => {
@@ -5425,11 +5540,11 @@ export default function Chat() {
         "Excellent! Now, let's continue with your estate planning. Ready?";
     }
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -5439,7 +5554,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage89Final = (message: any) => {
@@ -5457,11 +5572,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -5471,7 +5586,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage90FuneralCover = (message: any) => {
@@ -5490,11 +5605,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -5504,7 +5619,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage90NominateFuneralCover = (message: any) => {
@@ -5523,11 +5638,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -5537,7 +5652,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage90BeneficiaryFuneralCover = (message: any) => {
@@ -5556,11 +5671,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -5570,7 +5685,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage90AssistanceFuneralCover = (message: any) => {
@@ -5585,11 +5700,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -5599,7 +5714,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage90ImmediateFuneralCover = (message: any) => {
@@ -5618,11 +5733,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -5632,7 +5747,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage90specificsFuneralCover = (message: any) => {
@@ -5652,11 +5767,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -5666,7 +5781,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage91Trust = (message: any) => {
@@ -5686,11 +5801,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -5700,7 +5815,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage91Integral = (message: any) => {
@@ -5720,11 +5835,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -5734,7 +5849,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage92Vivos = (message: any) => {
@@ -5776,11 +5891,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -5790,7 +5905,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage92Setting = (message: any) => {
@@ -5801,11 +5916,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -5815,7 +5930,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage93Beneficial = (message: any) => {
@@ -5849,11 +5964,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -5863,7 +5978,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage94Executor = (message: any) => {
@@ -5922,11 +6037,11 @@ export default function Chat() {
         "Addressing specific concerns or questions about setting up a trust is crucial for making informed decisions about your estate plans. Whether you're unsure about the process, concerned about potential implications, or have questions about trust administration, I'm here to provide guidance and support. Feel free to share your concerns, and we can discuss them further.";
     }
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -5936,7 +6051,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage95Donation = (message: any) => {
@@ -5969,11 +6084,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -5983,7 +6098,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage96Strategy = (message: any) => {
@@ -6002,11 +6117,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -6016,7 +6131,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage97Donation = (message: any) => {
@@ -6027,11 +6142,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -6041,7 +6156,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage98Assets = (message: any) => {
@@ -6067,11 +6182,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -6081,11 +6196,15 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage99Selling = (message: any) => {
     let response = "";
+      if (message == "Yes, I am familiar") {
+      response =
+        "Selling assets to a trust can be a strategic way to transfer assets out of your estate, potentially reducing estate duty and protecting your wealth. However, it’s important to consider the potential tax implications, such as capital gains tax and transfer duty, and whether a loan account will actually be created. If you’re interested in exploring this option further, we can dive into the specifics and see how it aligns with your overall estate planning goals.";
+    }
     if (message == "Continue") {
       response =
         "Lastly, let's discuss the costs and tax consequences of transferring assets to a trust. This may include capital gains tax, transfer duty (for immovable property), and possible donations tax. Have you taken these factors into account?";
@@ -6109,11 +6228,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -6123,7 +6242,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage99Final = (message: any) => {
@@ -6197,11 +6316,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -6211,7 +6330,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage101InvestmentFlexibility = (message: any) => {
@@ -6234,11 +6353,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -6248,7 +6367,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStage101Final = (message: any) => {
@@ -6271,11 +6390,11 @@ export default function Chat() {
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
 
     // Then append the assistant response
     const aiMessage: Message = {
@@ -6285,7 +6404,7 @@ export default function Chat() {
     };
 
     // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
   };
 
   const handleButtonStageDownloadReport = (message: any) => {
@@ -7107,7 +7226,7 @@ export default function Chat() {
               </div>
               <div className="flex space-x-2 ml-11">
                 <div className="space-y-2">
-                  {/* Yes, I consent checkbox  handleButtonStage7("No, let’s move on")*/}
+                  {/* Yes, I consent checkbox  handleButtonStage7("No, let’s move on") handleButtonStage61PassAway*/}
                   <div
                     onClick={() => handleButtonConsent("Yes, I consent")}
                     className={`flex items-center space-x-2 px-4 py-2 rounded-md border cursor-pointer ${
@@ -8116,9 +8235,9 @@ export default function Chat() {
               ) && (
                 <>
                   <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    (value displayed)
+                    <strong>{valueProperty.current}</strong>
                     <br />
-                    <b>Please note</b> that this is a rough estimate and should
+                    <b className="-ml-2">Please note</b> that this is a rough estimate and should
                     not be considered an official appraisal. The actual value of
                     your property may vary based on additional factors such as
                     market conditions, recent sales data, and property- specific
@@ -9033,36 +9152,11 @@ export default function Chat() {
                   </div>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage47InvestmentHolding(
-                          "Upload Document at End of Chat"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Upload Document at End of Chat
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage47InvestmentHolding(
-                          "Yes, specify detail"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, specify detail
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage47InvestmentHolding(
-                          "No, let’s move on"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No, let’s move on
-                    </button>
+                    <SelectableButtonGroup
+  options={["Upload Document at End of Chat", "Yes, specify detail", "No, let’s move on"]}
+  handleSelection={handleButtonStage47InvestmentHolding}
+/>
+                   
                   </div>
                 </>
               )}
@@ -9073,14 +9167,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage47InvestmentHolding("Continue")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage47InvestmentHolding}
+/>
+                   
                   </div>
                 </>
               )}
@@ -9091,32 +9182,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage48FixedIncome(
-                          "Upload Document at End of Chat"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Upload Document at End of Chat
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage48FixedIncome("Yes, specify detail")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, specify detail
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage48FixedIncome("No, let’s move on")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No, let’s move on
-                    </button>
+                             <SelectableButtonGroup
+  options={["Upload Document at End of Chat", "Yes, specify detail", "No, let’s move on"]}
+  handleSelection={handleButtonStage48FixedIncome}
+/>
+                   
                   </div>
                 </>
               )}
@@ -9127,12 +9197,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage48FixedIncome("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                      <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage48FixedIncome}
+/>
+                    
                   </div>
                 </>
               )}
@@ -9143,32 +9212,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage48MutualFunds(
-                          "Upload Document at End of Chat"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Upload Document at End of Chat
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage48MutualFunds("Yes, specify detail")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, specify detail
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage48MutualFunds("No, let’s move on")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No, let’s move on
-                    </button>
+                          <SelectableButtonGroup
+  options={["Upload Document at End of Chat", "Yes, specify detail", "No, let’s move on"]}
+  handleSelection={handleButtonStage48MutualFunds}
+/>
+                    
                   </div>
                 </>
               )}
@@ -9179,12 +9227,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage48MutualFunds("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage48MutualFunds}
+/>
+                   
                   </div>
                 </>
               )}
@@ -9195,34 +9242,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage49RetirementFunds(
-                          "Upload Document at End of Chat"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Upload Document at End of Chat
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage49RetirementFunds(
-                          "Yes, specify detail"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, specify detail
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage49RetirementFunds("No, let’s move on")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No, let’s move on
-                    </button>
+                    <SelectableButtonGroup
+  options={["Upload Document at End of Chat", "Yes, specify detail", "No, let’s move on"]}
+  handleSelection={handleButtonStage49RetirementFunds}
+/>
+                    
                   </div>
                 </>
               )}
@@ -9233,14 +9257,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage49RetirementFunds("Continue")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage49RetirementFunds}
+/>
+                    
                   </div>
                 </>
               )}
@@ -9251,32 +9272,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage50EstateHoldings(
-                          "Upload Document at End of Chat"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Upload Document at End of Chat
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage50EstateHoldings("Yes, specify detail")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, specify detail
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage50EstateHoldings("No, let’s move on")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No, let’s move on
-                    </button>
+                    <SelectableButtonGroup
+  options={["Upload Document at End of Chat", "Yes, specify detail", "No, let’s move on"]}
+  handleSelection={handleButtonStage50EstateHoldings}
+/>
+                    
                   </div>
                 </>
               )}
@@ -9287,14 +9287,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage50EstateHoldings("Continue")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage50EstateHoldings}
+/>
+                   
                   </div>
                 </>
               )}
@@ -9305,32 +9302,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage51AssetClasses(
-                          "Upload Document at End of Chat"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Upload Document at End of Chat
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage51AssetClasses("Yes, specify detail")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, specify detail
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage51AssetClasses("No, let’s move on")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No, let’s move on
-                    </button>
+                    <SelectableButtonGroup
+  options={["Upload Document at End of Chat", "Yes, specify detail", "No, let’s move on"]}
+  handleSelection={handleButtonStage51AssetClasses}
+/>
+                   
                   </div>
                 </>
               )}
@@ -9341,14 +9317,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage51AssetClasses("Continue")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage51AssetClasses}
+/>
+                   
                   </div>
                 </>
               )}
@@ -9359,26 +9332,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage52InvestmentGoals("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage52InvestmentGoals("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage52InvestmentGoals("Unsure")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Unsure
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes", "No", "Unsure"]}
+  handleSelection={handleButtonStage52InvestmentGoals}
+/>
+                    
                   </div>
                 </>
               )}
@@ -9389,14 +9347,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage52InvestmentGoals("Continue")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage52InvestmentGoals}
+/>
+                   
                   </div>
                 </>
               )}
@@ -9407,26 +9362,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage53SpecificChanges("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage53SpecificChanges("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage53SpecificChanges("Unsure")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Unsure
-                    </button>
+                     <SelectableButtonGroup
+  options={["Yes", "No", "Unsure"]}
+  handleSelection={handleButtonStage53SpecificChanges}
+/>
+                    
                   </div>
                 </>
               )}
@@ -9437,14 +9377,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage53SpecificChanges("Continue")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                     <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage53SpecificChanges}
+/>
+                    
                   </div>
                 </>
               )}
@@ -9455,18 +9392,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage54Final("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage54Final("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage54Final}
+/>
+                   
                   </div>
                 </>
               )}
@@ -9477,18 +9407,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage55EstateDuty("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage55EstateDuty("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                     <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage55EstateDuty}
+/>
+                    
                   </div>
                 </>
               )}
@@ -9499,18 +9422,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage56CurrentWill("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage56CurrentWill("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage56CurrentWill}
+/>
+                    
                   </div>
                 </>
               )}
@@ -9521,14 +9437,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage57ImportantStep("Continue")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                     <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage57ImportantStep}
+/>
+                    
                   </div>
                 </>
               )}
@@ -9539,24 +9452,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage57ReviewedWill("Will is up to date")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Will is up to date
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage57ReviewedWill(
-                          "Will needs to be reviewed & updated"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Will needs to be reviewed & updated
-                    </button>
+                    <SelectableButtonGroup
+  options={["Will is up to date", "Will needs to be reviewed & updated"]}
+  handleSelection={handleButtonStage57ReviewedWill}
+/>
+                    
                   </div>
                 </>
               )}
@@ -9585,44 +9485,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage58EstateSpouse("Yes, my entire estate")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F] text-left"
-                    >
-                      Yes, my entire estate
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage58EstateSpouse(
-                          "Yes, a significant portion of my estate"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F] text-left"
-                    >
-                      Yes, a significant portion of my estate
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage58EstateSpouse(
-                          "No, estate divided among other beneficiaries"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F] text-left"
-                    >
-                      No, estate divided among other beneficiaries
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage58EstateSpouse(
-                          "No, spouse receives only a specific portion"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F] text-left"
-                    >
-                      No, spouse receives only a specific portion
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes, my entire estate", "Yes, a significant portion of my estate", "No, estate divided among other beneficiaries", "No, spouse receives only a specific portion"]}
+  handleSelection={handleButtonStage58EstateSpouse}
+/>
+                    
                   </div>
                 </>
               )}
@@ -9633,18 +9500,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage59Residue("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage59Residue("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage59Residue}
+/>
+                    
                   </div>
                 </>
               )}
@@ -9655,18 +9515,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage60Bequeath("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage60Bequeath("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                     <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage60Bequeath}
+/>
+                    
                   </div>
                 </>
               )}
@@ -9677,18 +9530,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage61PassAway("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage61PassAway("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage61PassAway}
+/>
+                    
                   </div>
                 </>
               )}
@@ -9699,18 +9545,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage62Bequeathed("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage62Bequeathed("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage62Bequeathed}
+/>
+                  
                   </div>
                 </>
               )}
@@ -9735,131 +9574,26 @@ export default function Chat() {
                 </>
               )}
 
-              {message.content.includes(
+              {maritalStatus==="Married" && message.content.includes(
                 "Upon your death, if massing takes place (combining assets from both spouses' estates), how should the assets be managed? For instance, if the surviving spouse's contribution is more valuable than the benefit received, should the difference be considered a loan to the specific beneficiary?"
               ) && (
                 <>
-                  <div className="grid grid-cols-2 gap-2 mt-3">
-                    <button
-                      onClick={() =>
-                        handleButtonStage63AssetsManaged(
-                          "Yes, the difference should be considered a loan to the specific beneficiary"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition text-left"
-                    >
-                      Yes, the difference should be considered a loan to the
-                      specific beneficiary
-                    </button>
+                  
+                    <CustomButtonGroup
+  options={["Yes, the difference should be considered a loan to the specific beneficiary", "No, the difference should be considered a gift and not a loan",
+    "The difference should be treated as a loan with interest payable by the beneficiary", "The difference should be adjusted through other assets or cash to balance the value",
+    "A family trust should manage the difference to ensure equitable distribution", "The surviving spouse should decide on how to manage the difference based on circumstance",
+     "The difference should be documented but forgiven upon the death of the surviving spouse", "The estate should sell specific assets to cover the difference and distribute proceeds accordingly",
+    "A clause should be added to the will to allow for flexibility in handling the difference", "The difference should be split among all beneficiaries to evenly distribute the value",
 
-                    <button
-                      onClick={() =>
-                        handleButtonStage63AssetsManaged(
-                          "No, the difference should be considered a gift and not a loan"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition text-left"
-                    >
-                      No, the difference should be considered a gift and not a
-                      loan
-                    </button>
+  ]}
+  handleSelection={handleButtonStage63AssetsManaged}
+/>
+                 
+                
 
-                    <button
-                      onClick={() =>
-                        handleButtonStage63AssetsManaged(
-                          "The difference should be treated as a loan with interest payable by the beneficiary"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition text-left"
-                    >
-                      The difference should be treated as a loan with interest
-                      payable by the beneficiary
-                    </button>
-
-                    <button
-                      onClick={() =>
-                        handleButtonStage63AssetsManaged(
-                          "The difference should be adjusted through other assets or cash to balance the value"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition text-left"
-                    >
-                      The difference should be adjusted through other assets or
-                      cash to balance the value
-                    </button>
-
-                    <button
-                      onClick={() =>
-                        handleButtonStage63AssetsManaged(
-                          "A family trust should manage the difference to ensure equitable distribution"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition text-left"
-                    >
-                      A family trust should manage the difference to ensure
-                      equitable distribution
-                    </button>
-
-                    <button
-                      onClick={() =>
-                        handleButtonStage63AssetsManaged(
-                          "The surviving spouse should decide on how to manage the difference based on circumstance"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition text-left"
-                    >
-                      The surviving spouse should decide on how to manage the
-                      difference based on circumstance
-                    </button>
-
-                    <button
-                      onClick={() =>
-                        handleButtonStage63AssetsManaged(
-                          "The difference should be documented but forgiven upon the death of the surviving spouse"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition text-left"
-                    >
-                      The difference should be documented but forgiven upon the
-                      death of the surviving spouse
-                    </button>
-
-                    <button
-                      onClick={() =>
-                        handleButtonStage63AssetsManaged(
-                          "The estate should sell specific assets to cover the difference and distribute proceeds accordingly"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition text-left"
-                    >
-                      The estate should sell specific assets to cover the
-                      difference and distribute proceeds accordingly
-                    </button>
-
-                    <button
-                      onClick={() =>
-                        handleButtonStage63AssetsManaged(
-                          "A clause should be added to the will to allow for flexibility in handling the difference"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition text-left"
-                    >
-                      A clause should be added to the will to allow for
-                      flexibility in handling the difference
-                    </button>
-
-                    <button
-                      onClick={() =>
-                        handleButtonStage63AssetsManaged(
-                          "The difference should be split among all beneficiaries to evenly distribute the value"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition text-left"
-                    >
-                      The difference should be split among all beneficiaries to
-                      evenly distribute the value
-                    </button>
-                  </div>
+                    
+                  
                 </>
               )}
 
@@ -9869,26 +9603,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage64ThirdParties(
-                          "Yes, I have it in my current will"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, I have it in my current will
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage64ThirdParties(
-                          "No, I have not included specific instructions"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No, I have not included specific instructions
-                    </button>
+                      <SelectableButtonGroup
+  options={["Yes, I have it in my current will", "No, I have not included specific instructions"]}
+  handleSelection={handleButtonStage64ThirdParties}
+/>
+                   
                   </div>
                 </>
               )}
@@ -9911,27 +9630,17 @@ export default function Chat() {
                     Thank you for providing all these details. {userName}. This
                     helps us understand the estate duty implications of your
                     current will.
+                  </div><br/>
+                  <div className="space-x-2 ml-11 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Next, we’ll look at the executor’s fees. Shall we continue?
                   </div>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage65CurrentWill(
-                          "Upload Document at End of Chat"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Upload Document at End of Chat
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage65CurrentWill("No, let’s move on")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No, let’s move on
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage66EstateDutyCurrentWillFinal}
+/>
+                   
                   </div>
                 </>
               )}
@@ -9942,12 +9651,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage65CurrentWill("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage65CurrentWill}
+/>
+                  
                   </div>
                 </>
               )}
@@ -9958,18 +9666,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage65PotentialOption("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage65PotentialOption("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                     <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage65PotentialOption}
+/>
+                   
                   </div>
                 </>
               )}
@@ -9980,20 +9681,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage65Stages("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage65Stages("No, let’s move on")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                      <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage65Stages}
+/>
+                 
                   </div>
                 </>
               )}
@@ -10025,22 +9717,11 @@ export default function Chat() {
                   </div>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage66EstateDutyCurrentWillFinal("Yes")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage66EstateDutyCurrentWillFinal("No")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                     <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage66EstateDutyCurrentWillFinal}
+/>
+               
                   </div>
                 </>
               )}
@@ -10051,22 +9732,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage66EstateDutyCurrentWillFinal("Yes")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage66EstateDutyCurrentWillFinal("No")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage66EstateDutyCurrentWillFinal}
+/>
+                    
                   </div>
                 </>
               )}
@@ -10093,12 +9763,11 @@ export default function Chat() {
                   </div>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage67ExecutorFee("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                      <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage67ExecutorFee}
+/>
+                   
                   </div>
                 </>
               )}
@@ -10109,18 +9778,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage68Payable("Yes, specify")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, specify
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage68Payable("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                       <SelectableButtonGroup
+  options={["Yes, specify", "No"]}
+  handleSelection={handleButtonStage68Payable}
+/>
+                   
                   </div>
                 </>
               )}
@@ -10131,18 +9793,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage69ExecutorFinal("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage69ExecutorFinal("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                       <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage69ExecutorFinal}
+/>
+                    
                   </div>
                 </>
               )}
@@ -10153,18 +9808,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage70Liquidity("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage70Liquidity("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                      <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage70Liquidity}
+/>
+                  
                   </div>
                 </>
               )}
@@ -10175,34 +9823,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage71LiquidityEssential("Yes, specify")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, specify
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage71LiquidityEssential(
-                          "No, I have no significant sourced of liquidity"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No, I have no significant sourced of liquidity
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage71LiquidityEssential(
-                          "Unsure, will need assistance"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Unsure, will need assistance
-                    </button>
+                     <SelectableButtonGroup
+  options={["Yes, specify", "No, I have no significant sourced of liquidity", "Unsure, will need assistance"]}
+  handleSelection={handleButtonStage71LiquidityEssential}
+/>
+                   
                   </div>
                 </>
               )}
@@ -10213,14 +9838,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage71LiquidityEssential("Continue")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage71LiquidityEssential}
+/>
+                   
                   </div>
                 </>
               )}
@@ -10231,34 +9853,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage72Shortfall("Yes, with considerations")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, with considerations
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage72Shortfall(
-                          "No, assets should be sold to cover shortfall"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No, assets should be sold to cover shortfall
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage72Shortfall(
-                          "I need more information before deciding"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I need more information before deciding
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes, with considerations", "No, assets should be sold to cover shortfall", "I need more information before deciding"]}
+  handleSelection={handleButtonStage72Shortfall}
+/>
+                   
                   </div>
                 </>
               )}
@@ -10269,18 +9868,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage73FinancialImpact("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage73FinancialImpact("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage73FinancialImpact}
+/>
+                    
                   </div>
                 </>
               )}
@@ -10290,14 +9882,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage73FinancialImpact("Continue")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage73FinancialImpact}
+/>
+                   
                   </div>
                 </>
               )}
@@ -10308,18 +9897,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage74Shortfall("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage74Shortfall("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage74Shortfall}
+/>
+                  
                   </div>
                 </>
               )}
@@ -10358,12 +9940,11 @@ export default function Chat() {
                   </div>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage74Shortfall("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage74Shortfall}
+/>
+                   
                   </div>
                 </>
               )}
@@ -10374,46 +9955,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage75SellingAsset(
-                          "I am open to selling assets"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I am open to selling assets
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage75SellingAsset(
-                          "I am against selling assets"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I am against selling assets
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage75SellingAsset(
-                          "I need more information before deciding"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I need more information before deciding
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage75SellingAsset(
-                          "I’d like to explore alternative financing options"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I’d like to explore alternative financing options
-                    </button>
+                    <SelectableButtonGroup
+  options={["I am open to selling assets", "I am against selling assets", "I need more information before deciding", "I’d like to explore alternative financing options"]}
+  handleSelection={handleButtonStage75SellingAsset}
+/>
+                 
                   </div>
                 </>
               )}
@@ -10424,14 +9970,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage75SellingAsset("Continue")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                      <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage75SellingAsset}
+/>
+                    
                   </div>
                 </>
               )}
@@ -10442,18 +9985,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage76Reservation("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage76Reservation("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                     <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage76Reservation}
+/>
+                   
                   </div>
                 </>
               )}
@@ -10492,12 +10028,11 @@ export default function Chat() {
                   </div>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage76Reservation("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
+                     <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage76Reservation}
+/>
+                  
                   </div>
                 </>
               )}
@@ -10508,46 +10043,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage77BorrowingFunds(
-                          "I am open to borrowing funds"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I am open to borrowing funds
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage77BorrowingFunds(
-                          "I am against borrowing funds"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I am against borrowing funds
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage77BorrowingFunds(
-                          "I need more information before deciding"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I need more information before deciding
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage77BorrowingFunds(
-                          "I’d like to explore alternative financing options"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I’d like to explore alternative financing options
-                    </button>
+                      <SelectableButtonGroup
+  options={["I am open to borrowing funds", "I am against borrowing funds", "I need more information before deciding", "I’d like to explore alternative financing options"]}
+  handleSelection={handleButtonStage77BorrowingFunds}
+/>
+                    
                   </div>
                 </>
               )}
@@ -10558,18 +10058,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage77FinancialRisk("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage77FinancialRisk("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage77FinancialRisk}
+/>
+                    
                   </div>
                 </>
               )}
@@ -10607,14 +10100,11 @@ export default function Chat() {
                   </div>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage77FinancialRisk("Continue")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                     <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage77FinancialRisk}
+/>
+                  
                   </div>
                 </>
               )}
@@ -10625,18 +10115,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage77Alternative("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage77Alternative("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                      <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage77Alternative}
+/>
+                   
                   </div>
                 </>
               )}
@@ -10671,12 +10154,11 @@ export default function Chat() {
                   </div>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage77Alternative("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage77Alternative}
+/>
+                    
                   </div>
                 </>
               )}
@@ -10700,18 +10182,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage79LiquidityEnd("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage79LiquidityEnd("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage79LiquidityEnd}
+/>
+                   
                   </div>
                 </>
               )}
@@ -10722,47 +10197,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage80Claims(
-                          "I have court ordered maintenance obligations"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I have court ordered maintenance obligations
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage80Claims(
-                          "I have informal agreements, not court orders"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I have informal agreements, not court orders
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage80Claims(
-                          "I don’t have any maintenance obligations"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I don’t have any maintenance obligations
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage80Claims(
-                          "I haven’t considered maintenance claims in relation to my estate planning"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I haven’t considered maintenance claims in relation to my
-                      estate planning
-                    </button>
+                    <SelectableButtonGroup
+  options={["I have court ordered maintenance obligations", "I have informal agreements, not court orders", "I don’t have any maintenance obligations", "I haven’t considered maintenance claims in relation to my estate planning"]}
+  handleSelection={handleButtonStage80Claims}
+/>
+                  
                   </div>
                 </>
               )}
@@ -10773,32 +10212,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage81Obligations(
-                          "Upload Document at End of Chat"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Upload Document at End of Chat
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage81Obligations("Yes, specify detail")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, specify detail
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage81Obligations("No, let’s move on")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No, let’s move on
-                    </button>
+                    <SelectableButtonGroup
+  options={["Upload Document at End of Chat", "Yes, specify detail", "No, let’s move on"]}
+  handleSelection={handleButtonStage81Obligations}
+/>
+                    
                   </div>
                 </>
               )}
@@ -10809,12 +10227,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage81Obligations("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                     <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage81Obligations}
+/>
+                  
                   </div>
                 </>
               )}
@@ -10825,24 +10242,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage81Agreements("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage81Agreements("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage81Agreements("Maybe")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Maybe
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes", "No", "Maybe"]}
+  handleSelection={handleButtonStage81Agreements}
+/>
+                   
                   </div>
                 </>
               )}
@@ -10853,12 +10257,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage81Agreements("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage81Agreements}
+/>
+                   
                   </div>
                 </>
               )}
@@ -10869,42 +10272,26 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage81Complications("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage81Complications("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage81Complications("Maybe")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Maybe
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes", "No", "Maybe"]}
+  handleSelection={handleButtonStage81Complications}
+/>
+                   
                   </div>
                 </>
               )}
 
               {message.content.includes(
-                "We will include this information about life insurance policy in the report shared at the end of this conversation."
+                "We'll include this information about life insurance policy in the report shared at the end of this conversation."
               ) && (
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage81Complications("Continue")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage81Complications}
+/>
+                   
                   </div>
                 </>
               )}
@@ -10913,18 +10300,11 @@ export default function Chat() {
               ) && (
                 <div className="space-x-2 ml-9 -mt-4">
                   <br />
-                  <button
-                    onClick={() => handleButtonStage82LifeInsurancev1("Yes")}
-                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                  >
-                    Yes
-                  </button>
-                  <button
-                    onClick={() => handleButtonStage82LifeInsurancev1("No")}
-                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                  >
-                    No
-                  </button>
+                    <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage82LifeInsurancev1}
+/>
+                
                 </div>
               )}
 
@@ -10934,24 +10314,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage82LifeInsurance("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage82LifeInsurance("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage82LifeInsurance("Unsure")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Unsure
-                    </button>
+                     <SelectableButtonGroup
+  options={["Yes", "No", "Unsure"]}
+  handleSelection={handleButtonStage82LifeInsurance}
+/>
+                    
                   </div>
                 </>
               )}
@@ -10962,24 +10329,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage83Proactive("I have set up a policy")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I have set up a policy
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage83Proactive(
-                          "I need assistance in setting up a policy"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I need assistance in setting up a policy
-                    </button>
+                    <SelectableButtonGroup
+  options={["I have set up a policy", "I need assistance in setting up a policy"]}
+  handleSelection={handleButtonStage83Proactive}
+/>
+                    
                   </div>
                 </>
               )}
@@ -10990,12 +10344,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage83Proactive("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage83Proactive}
+/>
+                 
                   </div>
                 </>
               )}
@@ -11006,18 +10359,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage83Passing("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage83Passing("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage83Passing}
+/>
+                  
                   </div>
                 </>
               )}
@@ -11028,12 +10374,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage83Passing("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage83Passing}
+/>
+                   
                   </div>
                 </>
               )}
@@ -11044,46 +10389,12 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage84Provision(
-                          "I have provisions in place"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I have provisions in place
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage84Provision(
-                          "I want to make provisions in my estate planning"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I want to make provisions in my estate planning
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage84Provision(
-                          "I don’t want to make provisions in my estate planning"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I don’t want to make provisions in my estate planning
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage84Provision(
-                          "I need more information before deciding"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I need more information before deciding
-                    </button>
+                     <SelectableButtonGroup
+  options={["I have provisions in place", "I want to make provisions in my estate planning", "I don’t want to make provisions in my estate planning", " I need more information before deciding"]}
+  handleSelection={handleButtonStage84Provision}
+/>
+                   
+                    
                   </div>
                 </>
               )}
@@ -11094,20 +10405,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage84ExistingProvision("Yes")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage84ExistingProvision("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                     <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage84ExistingProvision}
+/>
+                   
                   </div>
                 </>
               )}
@@ -11118,14 +10420,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage84ExistingProvision("Continue")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage84ExistingProvision}
+/>
+                    
                   </div>
                 </>
               )}
@@ -11136,18 +10435,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage84OptionProvision("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage84OptionProvision("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage84OptionProvision}
+/>
+                    
                   </div>
                 </>
               )}
@@ -11158,14 +10450,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage84OptionProvision("Continue")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage84OptionProvision}
+/>
+                    
                   </div>
                 </>
               )}
@@ -11176,18 +10465,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage84CrucialProvision("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage84CrucialProvision("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage84CrucialProvision}
+/>
+                   
                   </div>
                 </>
               )}
@@ -11198,14 +10480,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage84CrucialProvision("Continue")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                     <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage84CrucialProvision}
+/>
+                   
                   </div>
                 </>
               )}
@@ -11216,48 +10495,13 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage85FactorsProvision(
-                          "Yes, I have considered them and have factored them into my estate planning"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, I have considered them and have factored them into my
-                      estate planning
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage85FactorsProvision(
-                          "I am aware of these factors but haven’t considered them in my estate planning"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I am aware of these factors but haven’t considered them in
-                      my estate planning
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage85FactorsProvision(
-                          "No, I haven’t thought about these factors yet"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No, I haven’t thought about these factors yet
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage85FactorsProvision(
-                          "I need more information before I can respond"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I need more information before I can respond
-                    </button>
+                     <CustomButtonGroup
+  options={["Yes, I have considered them and have factored them into my estate planning", "I am aware of these factors but haven’t considered them in my estate planning",
+      "No, I haven’t thought about these factors yet", "I need more information before I can respond", 
+  ]}
+  handleSelection={handleButtonStage85FactorsProvision}
+/>
+                    
                   </div>
                 </>
               )}
@@ -11268,18 +10512,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage85GoalsProvision("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage85GoalsProvision("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage85GoalsProvision}
+/>
+                    
                   </div>
                 </>
               )}
@@ -11290,14 +10527,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage85GoalsProvision("Continue")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                     <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage85GoalsProvision}
+/>
+                   
                   </div>
                 </>
               )}
@@ -11308,22 +10542,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage85UnderstandingProvision("Yes")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage85UnderstandingProvision("No")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                     <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage85UnderstandingProvision}
+/>
+                   
                   </div>
                 </>
               )}
@@ -11334,14 +10557,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage85UnderstandingProvision("Continue")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage85UnderstandingProvision}
+/>
+                   
                   </div>
                 </>
               )}
@@ -11352,22 +10572,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage85ComprehensiveProvision("Yes")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage85ComprehensiveProvision("No")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage85ComprehensiveProvision}
+/>
+                    
                   </div>
                 </>
               )}
@@ -11378,14 +10587,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage85ComprehensiveProvision("Continue")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage85ComprehensiveProvision}
+/>
+                    
                   </div>
                 </>
               )}
@@ -11396,22 +10602,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage85EffectiveProvision("Yes")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage85EffectiveProvision("No")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                      <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage85EffectiveProvision}
+/>
+                   
                   </div>
                 </>
               )}
@@ -11422,14 +10617,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage85EffectiveProvision("Continue")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                     <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage85EffectiveProvision}
+/>
+                   
                   </div>
                 </>
               )}
@@ -11440,57 +10632,17 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage85MaintenanceProvision(
-                          "Insurance policy with my spouse as the nominated beneficiary"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Insurance policy with my spouse as the nominated
-                      beneficiary
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage85MaintenanceProvision(
-                          "Testamentary trust for spouse outlines in my will"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Testamentary trust for spouse outlines in my will
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage85MaintenanceProvision(
-                          "I’m open to either option"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I’m open to either option
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage85MaintenanceProvision(
-                          "I’m not sure, I need more information of each option"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I’m not sure, I need more information of each option
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage85MaintenanceProvision(
-                          "I’d like to explore other options"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I’d like to explore other options
-                    </button>
+                      <CustomButtonGroup
+  options={["Insurance policy with my spouse as the nominated beneficiary", "Testamentary trust for spouse outlines in my will", "I’m open to either option",
+    "I’m not sure, I need more information of each option", "I’d like to explore other options"
+  ]}
+  handleSelection={handleButtonStage85MaintenanceProvision}
+/>
+                   
+                
+                  
+                  
+                  
                   </div>
                 </>
               )}
@@ -11501,18 +10653,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage85BenefitProvision("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage85BenefitProvision("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage85BenefitProvision}
+/>
+                    
                   </div>
                 </>
               )}
@@ -11538,14 +10683,11 @@ export default function Chat() {
                   </div>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage85BenefitProvision("Continue")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                      <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage85BenefitProvision}
+/>
+                   
                   </div>
                 </>
               )}
@@ -11556,18 +10698,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage86DeeperProvision("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage86DeeperProvision("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                     <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage86DeeperProvision}
+/>
+                   
                   </div>
                 </>
               )}
@@ -11577,23 +10712,12 @@ export default function Chat() {
               ) && (
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage86AnnuitiesProvision("Yes")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage86AnnuitiesProvision("No")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                    <br />+
+                     <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage86AnnuitiesProvision}
+/>
+                   
                   </div>
                 </>
               )}
@@ -11624,14 +10748,11 @@ export default function Chat() {
                   </div>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage86AnnuitiesProvision("Continue")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage86AnnuitiesProvision}
+/>
+                    
                   </div>
                 </>
               )}
@@ -11666,48 +10787,14 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage87ShortFall(
-                          "I have capital available to generate an income for my dependents"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I have capital available to generate an income for my
-                      dependents
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage87ShortFall(
-                          "I have capital but unsure if it will generate enough income"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I have capital but unsure if it will generate enough
-                      income
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage87ShortFall(
-                          "I haven’t thought of this aspect of financial planning yet"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I haven’t thought of this aspect of financial planning yet
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage87ShortFall(
-                          "I need more information to determine this"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I need more information to determine this
-                    </button>
+                    <SelectableButtonGroup
+  options={["I have capital available to generate an income for my dependents", "I have capital but unsure if it will generate enough income",
+    "I haven’t thought of this aspect of financial planning yet",  "I need more information to determine this"
+  ]}
+  handleSelection={handleButtonStage87ShortFall}
+/>
+                   
+                   
                   </div>
                 </>
               )}
@@ -11718,18 +10805,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage87Capital("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage87Capital("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                     <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage87Capital}
+/>
+                   
                   </div>
                 </>
               )}
@@ -11740,12 +10820,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage87Capital("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                      <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage87Capital}
+/>
+                   
                   </div>
                 </>
               )}
@@ -11756,18 +10835,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage87Planning("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage87Planning("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                     <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage87Capital}
+/>
+                    
                   </div>
                 </>
               )}
@@ -11778,12 +10850,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage87Planning("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                     <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage87Planning}
+/>
+                  
                   </div>
                 </>
               )}
@@ -11794,18 +10865,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage87Dependents("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage87Dependents("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                     <SelectableButtonGroup
+  options={["Yes","No"]}
+  handleSelection={handleButtonStage87Dependents}
+/>
+                    
                   </div>
                 </>
               )}
@@ -11816,12 +10880,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage87Dependents("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                     <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage87Dependents}
+/>
+                   
                   </div>
                 </>
               )}
@@ -11832,22 +10895,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage88Additionalv1("Yes, specify details")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, specify details
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage88Additionalv1("No, let's move on")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No, let's move on
-                    </button>
+                     <SelectableButtonGroup
+  options={["Yes, specify details", "No, let's move on"]}
+  handleSelection={handleButtonStage88Additionalv1}
+/>
+                   
                   </div>
                 </>
               )}
@@ -11857,49 +10909,14 @@ export default function Chat() {
                 <>
                   <div className="space-y-2 ml-11 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage88Additional(
-                          "My current life insurance coverage is sufficient"
-                        )
-                      }
-                      className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      My current life insurance coverage is sufficient
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage88Additional(
-                          "I’m currently reviewing my options for additional life insurance"
-                        )
-                      }
-                      className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I’m currently reviewing my options for additional life
-                      insurance
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage88Additional(
-                          "No, I haven’t considered obtaining additional life insurance"
-                        )
-                      }
-                      className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No, I haven’t considered obtaining additional life
-                      insurance
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage88Additional(
-                          "I’m unsure if additional life insurance is necessary given my current financial situation"
-                        )
-                      }
-                      className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I’m unsure if additional life insurance is necessary given
-                      my current financial situation
-                    </button>
+                      <SelectableButtonGroup
+  options={["My current life insurance coverage is sufficient", "I’m currently reviewing my options for additional life insurance",
+"No, I haven’t considered obtaining additional life insurance", "I’m unsure if additional life insurance is necessary given my current financial situation"
+  ]}
+  handleSelection={handleButtonStage88Additional}
+/>
+                   
+                   
                   </div>
                 </>
               )}
@@ -11910,18 +10927,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage88Coverage("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage88Coverage("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                     <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage88Coverage}
+/>
+                    
                   </div>
                 </>
               )}
@@ -11932,12 +10942,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage88Coverage("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                     <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage88Coverage}
+/>
+                   
                   </div>
                 </>
               )}
@@ -11948,18 +10957,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage88LifeInsurance("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage88LifeInsurance("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                      <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage88LifeInsurance}
+/>
+                   
                   </div>
                 </>
               )}
@@ -11970,14 +10972,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage88LifeInsurance("Continue")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                     <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage88LifeInsurance}
+/>
+                    
                   </div>
                 </>
               )}
@@ -11988,18 +10987,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage88Assessment("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage88Assessment("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                         <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage88Assessment}
+/>
+                 
                   </div>
                 </>
               )}
@@ -12010,12 +11002,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage88Assessment("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage88Assessment}
+/>
+                    
                   </div>
                 </>
               )}
@@ -12026,18 +11017,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage89Final("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage89Final("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage89Final}
+/>
+                   
                   </div>
                 </>
               )}
@@ -12048,36 +11032,12 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage90FuneralCover(
-                          "Yes, I have funeral cover in place"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, I have funeral cover in place
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage90FuneralCover(
-                          "No, I haven’t considered obtaining funeral cover"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No, I haven’t considered obtaining funeral cover
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage90FuneralCover(
-                          "I need more information before deciding"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I need more information before deciding
-                    </button>
+                      <SelectableButtonGroup
+  options={["Yes, I have funeral cover in place", "No, I haven’t considered obtaining funeral cover", "I need more information before deciding"]}
+  handleSelection={handleButtonStage90FuneralCover}
+/>
+                    
+                  
                   </div>
                 </>
               )}
@@ -12088,32 +11048,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage90NominateFuneralCover("Yes")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage90NominateFuneralCover("No")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage90NominateFuneralCover(
-                          "Wasn’t aware this was an option"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Wasn’t aware this was an option
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes", "No", "Wasn’t aware this was an option"]}
+  handleSelection={handleButtonStage90NominateFuneralCover}
+/>
+                  
                   </div>
                 </>
               )}
@@ -12124,22 +11063,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage90BeneficiaryFuneralCover("Yes")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage90BeneficiaryFuneralCover("No")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage90BeneficiaryFuneralCover}
+/>
+                    
                   </div>
                 </>
               )}
@@ -12150,14 +11078,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage90BeneficiaryFuneralCover("Continue")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage90BeneficiaryFuneralCover}
+/>
+                    
                   </div>
                 </>
               )}
@@ -12168,22 +11093,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage90AssistanceFuneralCover("Yes")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage90AssistanceFuneralCover("No")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage90AssistanceFuneralCover}
+/>
+                   
                   </div>
                 </>
               )}
@@ -12249,22 +11163,11 @@ export default function Chat() {
                   </div>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage90ImmediateFuneralCover("Yes")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage90ImmediateFuneralCover("No")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage90ImmediateFuneralCover}
+/>
+                   
                   </div>
                 </>
               )}
@@ -12275,14 +11178,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage90ImmediateFuneralCover("Continue")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                      <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage90ImmediateFuneralCover}
+/>
+                   
                   </div>
                 </>
               )}
@@ -12293,24 +11193,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage90specificsFuneralCover(
-                          "Yes, I have a question"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, I have a question
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage90specificsFuneralCover("No")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                     <SelectableButtonGroup
+  options={["Yes, I have a question", "No"]}
+  handleSelection={handleButtonStage90specificsFuneralCover}
+/>
+                    
                   </div>
                 </>
               )}
@@ -12321,24 +11208,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage91Trust("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage91Trust("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage91Trust("Tell me more")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Tell me more
-                    </button>
+                      <SelectableButtonGroup
+  options={["Yes", "No", "Tell me more"]}
+  handleSelection={handleButtonStage91Trust}
+/>
+                    
                   </div>
                 </>
               )}
@@ -12349,18 +11223,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage91Integral("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage91Integral("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                      <SelectableButtonGroup
+  options={["Yes", "No"]}
+  handleSelection={handleButtonStage91Integral}
+/>
+                  
                   </div>
                 </>
               )}
@@ -12371,12 +11238,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage91Integral("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage91Integral}
+/>
+                  
                   </div>
                 </>
               )}
@@ -12387,69 +11253,17 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage92Vivos(
-                          "Yes, I have considered setting up a trust"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, I have considered setting up a trust
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage92Vivos(
-                          "No, I haven’t thought about setting up a trust yet"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No, I haven’t thought about setting up a trust yet
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage92Vivos(
-                          "I’m currently exploring the possibility of setting up a trust"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I’m currently exploring the possibility of setting up a
-                      trust
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage92Vivos(
-                          "I’m not sure if setting up a trust is necessary for me"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I’m not sure if setting up a trust is necessary for me
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage92Vivos(
-                          "I have some knowledge about trusts but need more information"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I have some knowledge about trusts but need more
-                      information
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage92Vivos(
-                          "I have specific concerns or questions about setting up a trust"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I have specific concerns or questions about setting up a
-                      trust
-                    </button>
+                    <CustomButtonGroup
+  options={["Yes, I have considered setting up a trust", "No, I haven’t thought about setting up a trust yet",
+    "I’m currently exploring the possibility of setting up a trust", "I’m not sure if setting up a trust is necessary for me",
+    "I have some knowledge about trusts but need more information", "I have specific concerns or questions about setting up a trust"
+
+  ]}
+  handleSelection={handleButtonStage92Vivos}
+/>
+                   
+                   
+                  
                   </div>
                 </>
               )}
@@ -12460,12 +11274,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage92Setting("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                     <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage92Setting}
+/>
+                  
                   </div>
                 </>
               )}
@@ -12476,12 +11289,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage92Setting("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage92Setting}
+/>
+                    
                   </div>
                 </>
               )}
@@ -12492,12 +11304,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage92Setting("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage92Setting}
+/>
+                   
                   </div>
                 </>
               )}
@@ -12508,12 +11319,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage92Setting("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                     <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage92Setting}
+/>
+                    
                   </div>
                 </>
               )}
@@ -12524,12 +11334,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage92Setting("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage92Setting}
+/>
+                   
                   </div>
                 </>
               )}
@@ -12540,58 +11349,15 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage93Beneficial(
-                          "Yes, protecting my estate against insolvency is a priority for me"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, protecting my estate against insolvency is a priority
-                      for me
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage93Beneficial(
-                          "I’m concerned about safeguarding assets in case of divorce"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I’m concerned about safeguarding assets in case of divorce
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage93Beneficial(
-                          "Pegging growth in my estate sounds like a beneficial strategy"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Pegging growth in my estate sounds like a beneficial
-                      strategy
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage93Beneficial(
-                          "All of these reasons are relevant to my estate planning"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      All of these reasons are relevant to my estate planning
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage93Beneficial(
-                          "None of these reasons are currently a priority for me"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      None of these reasons are currently a priority for me
-                    </button>
+                    <CustomButtonGroup
+  options={["Yes, protecting my estate against insolvency is a priority for me", "I’m concerned about safeguarding assets in case of divorce",
+    "Pegging growth in my estate sounds like a beneficial strategy", "All of these reasons are relevant to my estate planning","None of these reasons are currently a priority for me"
+
+  ]}
+  handleSelection={handleButtonStage93Beneficial}
+/>
+                   
+
                   </div>
                 </>
               )}
@@ -12602,83 +11368,16 @@ export default function Chat() {
                 <>
                   <div className="space-y-2 ml-11 -mt-4 ">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage94Executor(
-                          "Yes, saving on executor’s fees is an important consideration for me"
-                        )
-                      }
-                      className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, saving on executor’s fees is an important
-                      consideration for me
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage94Executor(
-                          "Excluding assets from my estate for estate duty purposes is a key factor in my planning"
-                        )
-                      }
-                      className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Excluding assets from my estate for estate duty purposes
-                      is a key factor in my planning
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage94Executor(
-                          "I’m interested in exploring how transferring assets to a trust could benefit me"
-                        )
-                      }
-                      className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I’m interested in exploring how transferring assets to a
-                      trust could benefit me
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage94Executor(
-                          "I haven’t considered these advantages before, but they sound appealing"
-                        )
-                      }
-                      className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I haven’t considered these advantages before, but they
-                      sound appealing
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage94Executor(
-                          "I’m not sure how significant these advantages before would be for my estate planning"
-                        )
-                      }
-                      className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I’m not sure how significant these advantages would be for
-                      my estate planning
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage94Executor(
-                          "I need more information to understand how these advantages would apply to my situation"
-                        )
-                      }
-                      className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I need more information to understand how these advantages
-                      would apply to my situation
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage94Executor(
-                          "I’m primarily focused on other aspects of my estate planning right now"
-                        )
-                      }
-                      className="w-full text-left px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I’m primarily focused on other aspects of my estate
-                      planning right now
-                    </button>
+                    <CustomButtonGroup
+  options={["Yes, saving on executor’s fees is an important consideration for me", "Excluding assets from my estate for estate duty purposes is a key factor in my planning",
+"I’m interested in exploring how transferring assets to a trust could benefit me", "I haven’t considered these advantages before, but they sound appealing",
+"I’m not sure how significant these advantages before would be for my estate planning", "I need more information to understand how these advantages would apply to my situation",
+"I’m primarily focused on other aspects of my estate planning right now"
+
+  ]}
+  handleSelection={handleButtonStage94Executor}
+/>
+    
                   </div>
                 </>
               )}
@@ -12689,12 +11388,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage94Executor("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                     <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage94Executor}
+/>
+                 
                   </div>
                 </>
               )}
@@ -12705,12 +11403,10 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage94Executor("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                      <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage94Executor}
+/>
                   </div>
                 </>
               )}
@@ -12721,12 +11417,10 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage94Executor("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                     <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage94Executor}
+/>
                   </div>
                 </>
               )}
@@ -12737,12 +11431,10 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage94Executor("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                      <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage94Executor}
+/>
                   </div>
                 </>
               )}
@@ -12753,12 +11445,10 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage94Executor("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                     <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage94Executor}
+/>
                   </div>
                 </>
               )}
@@ -12769,48 +11459,14 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage95Donation(
-                          "Yes, I’m interested in exploring this option"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, I’m interested in exploring this option
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage95Donation(
-                          "I’m not sure if donating assets to a trust aligns with my estate planning goals"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I’m not sure if donating assets to a trust aligns with my
-                      estate planning goals
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage95Donation(
-                          "I need more information before deciding"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I need more information before deciding
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage95Donation(
-                          "I’m not comfortable with the idea of donating assets to a trust"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I’m not comfortable with the idea of donating assets to a
-                      trust
-                    </button>
+                      <SelectableButtonGroup
+  options={["Yes, I’m interested in exploring this option", "I’m not sure if donating assets to a trust aligns with my estate planning goals",
+    "I need more information before deciding", "I’m not comfortable with the idea of donating assets to a trust"
+  ]}
+  handleSelection={handleButtonStage95Donation}
+/>
+             
+                    
                   </div>
                 </>
               )}
@@ -12821,12 +11477,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage95Donation("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                     <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage95Donation}
+/>
+                   
                   </div>
                 </>
               )}
@@ -12837,12 +11492,10 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage95Donation("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                     <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage95Donation}
+/>
                   </div>
                 </>
               )}
@@ -12853,26 +11506,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage96Strategy("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage96Strategy("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage96Strategy("Tell me more")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Tell me more
-                    </button>
+                     <SelectableButtonGroup
+  options={["Yes", "No", "Tell me more"]}
+  handleSelection={handleButtonStage96Strategy}
+/>
+                   
                   </div>
                 </>
               )}
@@ -13224,12 +11862,11 @@ export default function Chat() {
                   <br />
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage97Donation("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                     <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage97Donation}
+/>
+                    
                   </div>
                 </>
               )}
@@ -13240,48 +11877,16 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage98Assets(
-                          "Yes, I’m interested in exploring this option"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, I’m interested in exploring this option
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage98Assets(
-                          "I’m not sure if selling assets to a trust aligns with my estate planning goals"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I’m not sure if selling assets to a trust aligns with my
-                      estate planning goals
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage98Assets(
-                          "I need more information before deciding"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I need more information before deciding
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage98Assets(
-                          "I’m not comfortable with the idea of selling assets to a trust"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I’m not comfortable with the idea of selling assets to a
-                      trust
-                    </button>
+                    <CustomButtonGroup
+  options={["Yes, I’m interested in exploring this option", "I’m not sure if selling assets to a trust aligns with my estate planning goals",
+    "I need more information before deciding", "I’m not comfortable with the idea of selling assets to a trust"
+  ]}
+  handleSelection={handleButtonStage98Assets}
+/>
+                    
+                    
+                    
+                   
                   </div>
                 </>
               )}
@@ -13292,12 +11897,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage98Assets("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage98Assets}
+/>
+                   
                   </div>
                 </>
               )}
@@ -13308,12 +11912,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage98Assets("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage98Assets}
+/>
+                    
                   </div>
                 </>
               )}
@@ -13324,12 +11927,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage98Assets("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage98Assets}
+/>
+                    
                   </div>
                 </>
               )}
@@ -13340,44 +11942,13 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage99Selling("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, I am familiar
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage99Selling(
-                          "I have some understanding but need more clarity"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I have some understanding but need more clarity
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage99Selling(
-                          "I need assistance in understanding the terms and conditions"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I need assistance in understanding the terms and
-                      conditions
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage99Selling(
-                          "I prefer not to engage in agreements that involve selling assets to a trust"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I prefer not to engage in agreements that involve selling
-                      assets to a trust
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes, I am familiar", "I have some understanding but need more clarity", "I need assistance in understanding the terms and conditions",
+    "I prefer not to engage in agreements that involve selling assets to a trust"
+  ]}
+  handleSelection={handleButtonStage99Selling}
+/>
+                   
                   </div>
                 </>
               )}
@@ -13388,12 +11959,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage99Selling("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                     <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage99Selling}
+/>
+                  
                   </div>
                 </>
               )}
@@ -13403,12 +11973,10 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage99Selling("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage99Selling}
+/>
                   </div>
                 </>
               )}
@@ -13418,45 +11986,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage99Final("Yes, I am familiar")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, I am familiar
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage99Final(
-                          "I have some understanding but need more clarity"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I have some understanding but need more clarity
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage99Final(
-                          "I need more information before deciding"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I need more information before deciding
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage99Final(
-                          "I’m not comfortable with the potential costs & tax implications at this time"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I’m not comfortable with the potential costs & tax
-                      implications at this time
-                    </button>
+                     <SelectableButtonGroup
+  options={["Yes, I am familiar", "I have some understanding but need more clarity", "I need more information before deciding", "I’m not comfortable with the potential costs & tax implications at this time"]}
+  handleSelection={handleButtonStage99Selling}
+/>
+                    
                   </div>
                 </>
               )}
@@ -13467,12 +12001,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage99Final("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage99Final}
+/>
+                   
                   </div>
                 </>
               )}
@@ -13483,12 +12016,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage99Final("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage99Final}
+/>
+                   
                   </div>
                 </>
               )}
@@ -13499,12 +12031,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage99Final("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage99Final}
+/>
+                    
                   </div>
                 </>
               )}
@@ -13515,45 +12046,13 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage100Investment("Yes, I’m interested")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, I’m interested
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage100Investment(
-                          "I’m not sure if an investment trust aligns with my estate planning goals"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I’m not sure if an investment trust aligns with my estate
-                      planning goals
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage100Investment(
-                          "I prefer to explore other options"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I prefer to explore other options
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage100Investment(
-                          "I need more information before deciding"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      I need more information before deciding
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes, I’m interested", "I’m not sure if an investment trust aligns with my estate planning goals", "I prefer to explore other options",
+        "I need more information before deciding"
+  ]}
+  handleSelection={handleButtonStage100Investment}
+/>
+                  
                   </div>
                 </>
               )}
@@ -13564,12 +12063,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage100Investment("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage100Investment}
+/>
+                    
                   </div>
                 </>
               )}
@@ -13580,12 +12078,10 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage100Investment("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage100Investment}
+/>
                   </div>
                 </>
               )}
@@ -13596,12 +12092,10 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage100Investment("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage100Investment}
+/>
                   </div>
                 </>
               )}
@@ -13612,12 +12106,10 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() => handleButtonStage100Investment("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                   <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage100Investment}
+/>
                   </div>
                 </>
               )}
@@ -13628,32 +12120,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage101InvestmentFlexibility("Yes")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage101InvestmentFlexibility("No")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage101InvestmentFlexibility(
-                          "Tell me more"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Tell me more
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes", "No",  "Tell me more"]}
+  handleSelection={handleButtonStage101InvestmentFlexibility}
+/>
+                   
                   </div>
                 </>
               )}
@@ -13664,14 +12135,11 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage101InvestmentFlexibility("Continue")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                    <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage101InvestmentFlexibility}
+/>
+                    
                   </div>
                 </>
               )}
@@ -13682,14 +12150,10 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage101InvestmentFlexibility("Continue")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
+                   <SelectableButtonGroup
+  options={["Continue"]}
+  handleSelection={handleButtonStage101InvestmentFlexibility}
+/>
                   </div>
                 </>
               )}
@@ -13700,20 +12164,10 @@ export default function Chat() {
                 <>
                   <div className="space-x-2 ml-9 -mt-4">
                     <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage101Final("Yes, I have a question")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage101Final("No")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
+                    <SelectableButtonGroup
+  options={["Yes, I have a question", "No"]}
+  handleSelection={handleButtonStage101InvestmentFlexibility}
+/>
                   </div>
                 </>
               )}
@@ -16709,11 +15163,18 @@ export default function Chat() {
                   messageData.current.includes(
                     "Do you bequeath any farm implements, equipment, tools, vehicles, transport vehicles, or livestock? If so, to whom?"
                   )
-                ) {
+                ){
                   e.preventDefault();
-                  handleAddAIResponse(
+                  if (maritalStatus==="Married") { 
+                    handleAddAIResponse(
                     "Upon your death, if massing takes place (combining assets from both spouses' estates), how should the assets be managed? For instance, if the surviving spouse's contribution is more valuable than the benefit received, should the difference be considered a loan to the specific beneficiary?"
                   );
+                }
+                   else {
+                  handleAddAIResponse(
+                    "Certain third parties may be responsible for estate duty based on the assets they receive. Do you have any specific instructions or details about third-party liability for estate duty in your current will?"
+                  );
+                }
                 } else if (
                   messageData.current.includes(
                     "Do you bequeath any specific assets to a company where a trust has 100% shareholding? Please provide details"
@@ -16886,6 +15347,7 @@ export default function Chat() {
                   )
                 ) {
                   e.preventDefault();
+                  setTypeOfProperty(inputStr);
                   handleAddAIResponse(
                     "Next, provide the location of your property (suburb, or specific neighbourhood, province)."
                   );
@@ -16895,6 +15357,7 @@ export default function Chat() {
                   )
                 ) {
                   e.preventDefault();
+                  setLocationOfProperty(inputStr)
                   await saveUserProfile({
                     realEstateProperties: {
                       inDepthDetails: { propertyLocation: inputStr },
@@ -16909,6 +15372,7 @@ export default function Chat() {
                   )
                 ) {
                   e.preventDefault();
+                  setSizeOfProperty(inputStr);
                   await saveUserProfile({
                     realEstateProperties: {
                       inDepthDetails: { propertySize: inputStr },
@@ -16923,6 +15387,7 @@ export default function Chat() {
                   )
                 ) {
                   e.preventDefault();
+                  setRoomsOfProperty(inputStr);
                   await saveUserProfile({
                     realEstateProperties: {
                       inDepthDetails: { bedroomsAndBathroomCount: inputStr },
@@ -16966,14 +15431,23 @@ export default function Chat() {
                   )
                 ) {
                   e.preventDefault();
+                  setConditionOfProperty(inputStr);
                   await saveUserProfile({
                     realEstateProperties: {
                       propertySize: { propertyCondition: inputStr },
                     },
                   });
-                  handleAddAIResponse(
-                    "The estimated value of your property based on the information you provided is:"
-                  );
+                 calculatePropertyValue({
+  typeOfProperty,
+  locationOfProperty,
+  sizeOfProperty,
+  roomsOfProperty,
+  conditionOfProperty,
+});
+
+                  // handleAddAIResponse(
+                  //   "The estimated value of your property based on the information you provided is:"
+                  // );
                 } else if (
                   messageData.current.includes(
                     "Please provide details of your arrangement."

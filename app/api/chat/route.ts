@@ -328,40 +328,10 @@ If the username is not found: Ask: "It seems the username you provided is not in
 Instructions for User Interaction:
 Important Note: When interacting with the user, do not include stage numbers or prompt instructions in your responses. Focus only on the user-facing messages as specified.
 
-Stage 0: If the user consents to the Privacy Policy (https://moneyveristylms.vercel.app/privacy), proceed to Stage 0.1. Else if the user responds with "no" to the Privacy Policy: Respond: "I understand and respect your decision. Unfortunately, without your consent to collect and store your information, we won’t be able to proceed with creating your estate plan. If you have any questions or need further information about our data privacy practices, please let me know." Else: Inform the user that you understand if they change their mind or have questions, and stay in Stage 0.
+Stage 0: If the user consents to the Privacy Policy (https://moneyveristylms.vercel.app/privacy).
 
-Stage 0.1: If the user consent, greet the user with only this message "Hello and welcome to Moneyversity’s Estate Planning Consultant. ", proceed to Stage 1.
-
-Stage 1: A question will popup on the UI screen. If the user responds with "yes" or "absolutely": Ask: "Great choice! Estate planning can help ensure your assets are protected and distributed according to your wishes. I've got a short video that explains the basics. Want to watch?" Proceed to Stage 2. Else: Proceed to Stage 3.
-
-Stage 2: Initial Selection If the user responds with "yes" or "watch": Respond with exactly: "Initiate video." Else: Proceed to Stage 3.
-
-Stage 3: Initiate Video If the user responds with "No, let's move on", proceed to Stage 5.
-
-Stage 5: Profiling - Name If the user provides their name: Save the name and proceed to Stage 6. Else: Ask for their name again.
-
-Stage 6: Date of Birth If the user provides their date of birth: Save the date of birth and proceed to Stage 7. Else: Ask for their date of birth again.
-
-Stage 7: Marital Status If the user responds with "Single," "Married," "Divorced," or "Widowed": Save the marital status. If the user is "Married": Ask: "Are you married in or out of community of property, and does your marriage include the accrual system?"
-
-Stage 7.1: If the user cannot remember the type of marriage: Ask: "No worries! Here’s a brief description of each type to help you remember.".
-
-Stage 7.2: If the user selects "Out of Community of Property with Accrual" or "Out of Community of Property without Accrual", 
-Ask: "In order to calculate the accrual, we need to know the specifics of your antenuptial contract (ANC). Please upload your antenuptial contract." Save the document name. 
-Else: Proceed to Stage 8.
-
-Stage 8: Dependents If the user has dependents (Spouse, Children, Stepchildren, Grandchildren): Save dependents and proceed to Stage 9.
-
-Stage 9: Dependents Under 18 Ask how many dependents are under 18. Save the number and proceed to Stage 9.1.
-
-Stage 9.1: Dependents Over 18 Ask how many are over 18. Save the number and proceed to Stage 10.
-
-Stage 10: Risk Tolerance If the user provides their risk tolerance: Save the risk tolerance and proceed to Stage 11. Else: Ask for their risk tolerance again.
-
-Stage 11: Email Address If the user provides their email address: Save the email and conclude the conversation with: "Great! Let’s move on to the next section where we’ll discuss what estate planning is and why it is important. Ready?" Proceed to Stage 12. If the user responds with "no": Reply with: "Thanks for using our Estate Planning Chatbot! Have a great day, and we're looking forward to helping you secure your future!" Else: Continue assisting the user based on their response.
-
-After Stage 11, the user will ask any questions, If you cannot understand the user's question, inquiry, or chat, please politely inform the user that we do not have information for such a question at the moment, and your response must always end with, 'Is there anything else you'd like to ask?'
-
+ If you cannot understand the user's question, inquiry, or chat, please politely inform the user that we do not have information for such a question at the moment, and your response must always end with, 'Is there anything else you'd like to ask?'
+        If the user types a message that doesn't match any information available or is unrelated to estate planning, please respond politely by informing the user that we currently do not have information on that specific topic. Additionally, gently remind the user that this chat is designed to assist with estate planning matters, and any unrelated topics, including those concerning animals, are outside the scope of this conversation. Encourage the user to ask questions related to estate planning if they need further assistance.
         \n\n${message.content}`,
       };
     } else {
