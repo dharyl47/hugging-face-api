@@ -14081,7 +14081,7 @@ async function analyzeEstatePlanningMessage(message: string) {
               <div className="flex justify-center -mt-12 space-x-4">
                 <div className="text-lg font-semibold text-center text-4xl">
                   <p className="text-center text-2xl font-bold">
-                    Welcome to the AI Experiment
+                    Welcome to our Estate Planning Chat
                   </p>
                 </div>
 
@@ -14090,7 +14090,7 @@ async function analyzeEstatePlanningMessage(message: string) {
 
               {/* Button Section */}
               <div className="flex justify-center mt-4 space-x-4">
-                {/* <button
+                <button
                   className="bg-[#009677] text-white px-4 py-2 rounded-md"
                   onClick={handleModalToggle}
                 >
@@ -14101,7 +14101,7 @@ async function analyzeEstatePlanningMessage(message: string) {
                   onClick={handleAdvisorModalToggle}
                 >
                   Contact a Financial Adviser
-                </button> */}
+                </button>
                 <button
                   className="bg-[#009677] text-white px-4 py-2 rounded-md"
                   onClick={() => {
