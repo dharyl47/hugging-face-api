@@ -14081,7 +14081,7 @@ async function analyzeEstatePlanningMessage(message: string) {
               <div className="flex justify-center -mt-12 space-x-4">
                 <div className="text-lg font-semibold text-center text-4xl">
                   <p className="text-center text-2xl font-bold">
-                    Welcome to our Estate Planning Chat
+                    Welcome to the Estate Planning Assistant
                   </p>
                 </div>
 
