@@ -309,7 +309,7 @@ useEffect(() => {
      
     //   console.log("dataProvided", "Original");
     // } 
-    setMessages([...messages, userMessage, aiMessage]);
+    setMessages([...messages, aiMessage]);
     // Clear the input field after sending
    // setInputStr("");
   };
