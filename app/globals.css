@@ -7,7 +7,7 @@
 /* Apply Montserrat globally with !important to ensure it overrides other styles */
 * {
   font-family: 'Montserrat', sans-serif !important;
-  font-size: 20px !important; /* Adjust font size if needed */
+  font-size: 14px !important; /* Adjust font size if needed */
 }
 
 /* Font size for mobile devices (max-width 640px) */
@@ -29,10 +29,26 @@
     width: 30rem;
     padding-left: 100px;
 } */
- #chatbox {
-  max-height: calc(100vh - 100px); /* Adjust this based on your header and input section height */
-  overflow-y: auto;
+#chat-container {
+  display: flex;
+  flex-direction: column;
+  height: 80vh; /* Full height of the viewport */
 }
+
+#chatbox {
+  flex-grow: 1; /* Ensure chatbox grows to fill available space */
+  overflow-y: auto; /* Make it scrollable */
+}
+
+form {
+  position: sticky;
+  bottom: 0;
+  background-color: #303134;
+  z-index: 10;
+ 
+}
+
+
 
 @media (max-width: 640px) {
   .custom-mobile-font {
@@ -44,6 +60,7 @@
 /* Assistant message container */
 .assistant-message {
   display: flex;
+  margin-top: -20px;
   align-items: flex-start;
   position: relative;
   padding-left: 65px; /* Ensure there's space for the icon */
@@ -178,6 +195,57 @@
     background-color: #8DC63F;
     color: white;
   }
+
+
+
+
+
+.tab-wrapper .chrome-tab {
+  padding: 8px 16px;
+  cursor: pointer;
+  background-color: #2f2f2f;
+  color: white;
+  display: flex;
+  align-items: center;
+  border-radius: 4px 4px 0 0;
+  border: 1px solid transparent;
+  margin-right: 4px;
+  transition: background-color 0.2s ease;
+}
+
+.tab-wrapper .chrome-tab.active {
+  background-color: #8dc63f;
+  border: 1px solid #8dc63f;
+  border-bottom: none;
+}
+
+.tab-wrapper .chrome-tab .close-icon {
+  margin-left: 8px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+.tab-wrapper .chrome-tab .close-icon:hover {
+  color: #ff4d4d;
+}
+
+.tab-wrapper .tab-container {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* Now justified to the left */
+  margin-top: 20px;
+}
+
+
+
+
+
+
+
+
+
+
+  
 
 /* Input form fixed at the bottom */
 form {
