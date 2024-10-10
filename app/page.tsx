@@ -11768,7 +11768,6 @@ async function analyzeEstatePlanningMessage(message: string) {
                       "In Community of Property",
                       "Out of Community of Property with Accrual",
                       "Out of Community of Property without Accrual",
-                      "Out of Community of Property without Accrual",
                       "I can't remember",
                       "What is Accrual?",
                     ]}
