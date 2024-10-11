@@ -1904,6 +1904,19 @@ async function analyzeEstatePlanningMessage(message: string) {
     setMessages([...messages, aiMessage]);
   };
 
+  const handleButtonStageProceedLearning = async (message: any) => {
+     if (!isEstatePlanningTabOpen) {
+                      setEstatePlanningTabOpenv1(true);
+                      setEstatePlanningTabOpen(true);
+                      setStartTab(true);
+                    }
+                    // Set the focus to the Estate Planning tab
+                    setActiveTab("estatePlanning");
+                    if(isStartTab==false){
+                    handleButtonStage0("Absolutely");}
+  };
+
+
   const handleButtonStage21Asset = async (message: any) => {
     let response = "";
 
@@ -6928,8 +6941,46 @@ async function analyzeEstatePlanningMessage(message: string) {
     await saveUserProfile({ emailAddress: message });
   };
   const saveDateOfBirth = async (message: any) => {
-    await saveUserProfile({ dateOfBirth: message });
-  };
+  // Save the date of birth first
+  await saveUserProfile({ dateOfBirth: message });
+
+  // Extract the day, month, and year from the input date (10-3-2024)
+  const [day, month, year] = message.split('-').map(Number);
+
+  // Get the current date
+  const currentDate = new Date();
+  const currentYear = currentDate.getFullYear();
+  const currentMonth = currentDate.getMonth() + 1; // JS months are 0-indexed
+  const currentDay = currentDate.getDate();
+
+  // Calculate age
+  let age = currentYear - year;
+  if (currentMonth < month || (currentMonth === month && currentDay < day)) {
+    age--; // Not had their birthday this year yet
+  }
+
+  // Check if age is below 18 and handle accordingly
+  let response = "";
+  if (age < 18) {
+    response = "You are under 18 years old. We recommend you seek advice from a legal guardian or financial advisor before proceeding.";
+  }
+
+  if (response) {
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append the AI response to the existing messages
+    setMessages([...messages, aiMessage]);
+  } else {
+     handleAddAIResponse(
+                        "Let’s talk about your family life quickly. Are you married or single?"
+                      );
+  }
+};
+
   const saveTypeOfMarriage = async (message: any) => {
     await saveUserProfile({ propertyRegime: message });
   };
@@ -10458,6 +10509,21 @@ async function analyzeEstatePlanningMessage(message: string) {
                   </div>
                 </>
               )}
+
+              
+              {message.content.includes(
+                "You are under 18 years old. We recommend you seek advice from a legal guardian or financial advisor"
+              ) && (
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Proceed with Learning"]}
+                    handleSelection={handleButtonStageProceedLearning}
+                  />
+                </div>
+              )}
+
+
               {message.content.includes(
                 "Have you considered the cost of education and taken that into account regarding maintenance?"
               ) && (
@@ -14157,73 +14223,69 @@ async function analyzeEstatePlanningMessage(message: string) {
 
               {/* Modal Popup */}
               {isModalOpen && (
-                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-                  <div className="bg-[#2f2f2f] text-white rounded-lg w-[90%] max-w-3xl p-8">
-                    <div className="flex justify-between items-center mb-6">
-                      <h2 className="text-3xl font-bold leading-tight">
-                        Estate Planning FAQs
-                      </h2>
-                      {/* H2 should be 36px according to Adobe XD */}
-                      <button
-                        className="text-white text-2xl hover:text-gray-300"
-                        onClick={handleModalToggle}
-                      >
-                        ✖
-                      </button>
-                    </div>
-                    <p className="mb-6 text-base leading-relaxed">
-                      Here are some frequently asked questions about estate
-                      planning in South Africa:
-                    </p>
+  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="bg-[#2f2f2f] text-white rounded-lg w-[90%] max-w-5xl p-8">
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-3xl font-bold leading-tight">
+          Estate Planning FAQs
+        </h2>
+        <button
+          className="text-white text-2xl hover:text-gray-300"
+          onClick={handleModalToggle}
+        >
+          ✖
+        </button>
+      </div>
+      <p className="mb-6 text-base leading-relaxed">
+        Here are some frequently asked questions about estate planning in South Africa:
+      </p>
 
-                    {/* Scrollable FAQ Content with custom scrollbar */}
-                    <div className="space-y-4 text-sm max-h-[60vh] overflow-y-auto scrollbar-thin scrollbar-thumb-[#8DC63F] scrollbar-track-[#2f2f2f]">
-                      {[
-                        {
-                          question: "What is estate planning? 🧾",
-                          answer:
-                            "Estate planning is the process of arranging for the management and disposal of a person’s estate during their life and after death. It involves creating documents like wills, trusts, and powers of attorney.",
-                        },
-                        {
-                          question: "Why is having a will important? 📄",
-                          answer:
-                            "A will ensures your assets are distributed according to your wishes, names guardians for minor children, and can help reduce estate taxes and legal fees.",
-                        },
-                        {
-                          question: "What happens if I die without a will? ⚖️",
-                          answer:
-                            "If you die intestate (without a will), your estate will be distributed according to South Africa’s Intestate Succession Act, which may not align with your wishes.",
-                        },
-                        {
-                          question:
-                            "Can I change my will after it’s been created? 💼",
-                          answer:
-                            "Yes, you can update your will as often as you like. It’s recommended to review and update it after major life events, such as marriage, divorce, or the birth of a child.",
-                        },
-                        {
-                          question:
-                            "What is a trust and why would I need one? 🔒",
-                          answer:
-                            "A trust is a legal arrangement where a trustee manages assets on behalf of beneficiaries. Trusts can help manage assets, reduce estate taxes, and provide for beneficiaries according to your wishes.",
-                        },
-                        {
-                          question:
-                            "When should I seek legal advice for estate planning? 🏛️",
-                          answer:
-                            "It’s advisable to seek legal advice if you have a large or complex estate, anticipate family disputes, own a business, or need to stay updated with changing laws.",
-                        },
-                      ].map((faq, index) => (
-                        <div key={index}>
-                          <p className="font-semibold text-lg">
-                            {`${index + 1}. ${faq.question}`}
-                          </p>
-                          <p>{faq.answer}</p>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                </div>
-              )}
+      {/* Scrollable FAQ Content with custom scrollbar and right padding */}
+      <div className="space-y-4 text-sm leading-relaxed max-h-[60vh] overflow-y-auto pr-9 scrollbar-thin scrollbar-thumb-[#8DC63F] scrollbar-track-[#2f2f2f]">
+        {[
+          {
+            question: "What is estate planning? 🧾",
+            answer:
+              "Estate planning is the process of arranging for the management and disposal of a person’s estate during their life and after death. It involves creating documents like wills, trusts, and powers of attorney.",
+          },
+          {
+            question: "Why is having a will important? 📄",
+            answer:
+              "A will ensures your assets are distributed according to your wishes, names guardians for minor children, and can help reduce estate taxes and legal fees.",
+          },
+          {
+            question: "What happens if I die without a will? ⚖️",
+            answer:
+              "If you die intestate (without a will), your estate will be distributed according to South Africa’s Intestate Succession Act, which may not align with your wishes.",
+          },
+          {
+            question: "Can I change my will after it’s been created? 💼",
+            answer:
+              "Yes, you can update your will as often as you like. It’s recommended to review and update it after major life events, such as marriage, divorce, or the birth of a child.",
+          },
+          {
+            question: "What is a trust and why would I need one? 🔒",
+            answer:
+              "A trust is a legal arrangement where a trustee manages assets on behalf of beneficiaries. Trusts can help manage assets, reduce estate taxes, and provide for beneficiaries according to your wishes.",
+          },
+          {
+            question: "When should I seek legal advice for estate planning? 🏛️",
+            answer:
+              "It’s advisable to seek legal advice if you have a large or complex estate, anticipate family disputes, own a business, or need to stay updated with changing laws.",
+          },
+        ].map((faq, index) => (
+          <div key={index}>
+            <p className="font-semibold text-lg">
+              {`${index + 1}. ${faq.question}`}
+            </p>
+            <p>{faq.answer}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+)}
+
 
               {/* Modal Popup for Financial Advisor */}
               {/* Modal Popup for Financial Advisor */}
@@ -14633,9 +14695,7 @@ async function analyzeEstatePlanningMessage(message: string) {
                     ) {
                       e.preventDefault();
                       saveDateOfBirth(inputStr);
-                      handleAddAIResponse(
-                        "Let’s talk about your family life quickly. Are you married or single?"
-                      );
+                     
                       setInputStr("");
                     } else if (
                       messageData.current.includes(

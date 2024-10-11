@@ -34,11 +34,14 @@ const Calendar = ({ onDateSelect }) => {
   const handleDateClick = (date) => {
     setSelectedDate(date);
     setHighlightDate(true);
-    // Call the onDateSelect function to update the parent with the selected date
-    if (onDateSelect) {
-      onDateSelect(selectedYear, selectedMonth, date);
-    }
   };
+
+  // Use useEffect to call onDateSelect whenever year, month, or day changes
+  useEffect(() => {
+    if (onDateSelect) {
+      onDateSelect(selectedYear, selectedMonth, selectedDate);
+    }
+  }, [selectedYear, selectedMonth, selectedDate, onDateSelect]);
 
   return (
     <>
