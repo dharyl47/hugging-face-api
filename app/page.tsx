@@ -53,6 +53,7 @@ export default function Chat() {
   const { messages, input, handleInputChange, handleSubmit, setMessages } =
     useChat();
   const [consent, setConsent] = useState<string>("");
+   const continueButtonRef = useRef(null);
 
   const handleButtonConsentData = (value: string) => {
     setConsent(value);
@@ -198,7 +199,7 @@ export default function Chat() {
       }
     }
   }, [messages]); // Run this effect every time messages change
-
+  
   useEffect(() => {
     if (chatboxRef.current) {
       chatboxRef.current.scrollTop = chatboxRef.current.scrollHeight;
@@ -1436,8 +1437,12 @@ async function analyzeEstatePlanningMessage(message: string) {
   };
   const handleButtonStage15v2 = (message: any) => {
     let response = "";
-
+    
     if (message == "Continue") {
+      response =
+        "Now that we’ve covered your personal details, let’s talk about your objectives for estate planning. Understanding your goals will help us create a plan that fits your needs perfectly. Ready to dive in?";
+    }
+    if (message == "Yes, I'm ready") {
       response =
         "Now that we’ve covered your personal details, let’s talk about your objectives for estate planning. Understanding your goals will help us create a plan that fits your needs perfectly. Ready to dive in?";
     }
@@ -1963,31 +1968,7 @@ async function analyzeEstatePlanningMessage(message: string) {
     setMessages([...messages, aiMessage]);
   };
 
-  const handleButtonStage21Calculator = (message: any) => {
-    let response = "";
-
-    if (message == "Continue") {
-      response =
-        "Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan.";
-    }
-
-    // Append the user message first (this simulates the user's selection being displayed on the right side)
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
-
-    // Then append the assistant response
-    const aiMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "assistant", // Assistant response role
-      content: response, // Message content (the AI response)
-    };
-
-    // Append both the user message and AI response to the existing messages
-    setMessages([...messages, userMessage, aiMessage]);
-  };
+  
 
   const handleButtonStage20Payable = async (message: any) => {
     let response = "";
@@ -7417,7 +7398,7 @@ async function analyzeEstatePlanningMessage(message: string) {
                   <div className="space-y-2">
                     {/* Yes, I consent checkbox */}
                     <div
-                      onClick={() => handleButtonConsent("Yes, I consent")}
+                      onClick={() =>  handleButtonConsent("Yes, I consent")}
                       className={`flex items-center space-x-2 px-4 py-2 rounded-md border cursor-pointer ${
                         consent === "Yes, I consent"
                           ? "bg-[#8DC63F] text-white border-transparent"
@@ -8413,11 +8394,18 @@ async function analyzeEstatePlanningMessage(message: string) {
                     this calculation. For a precise valuation, we recommend
                     consulting a property appraiser or real estate agent
                   </div>
+                   <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan
+                   </div>
                   <div className="space-x-2 ml-14 -mt-4">
                     <br />
                     <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage21Calculator}
+                      options={[
+                        "Upload Document at End of Chat",
+                        "Yes, specify detail",
+                        "No, let’s move on",
+                      ]}
+                      handleSelection={handleButtonStage22Farm}
                     />
                   </div>
                 </>
@@ -9976,11 +9964,14 @@ async function analyzeEstatePlanningMessage(message: string) {
                     advantage of family members as executors is that they may be
                     open to waive or negotiate lower compensation.
                   </div>
+                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Remember, no executor’s fees are payable on proceeds from policies with a beneficiary nomination, as these are paid directly to the nominated beneficiary by the insurance company. Do you have any such policies?
+                  </div>
                   <div className="space-x-2 ml-14 -mt-4">
                     <br />
                     <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage67ExecutorFee}
+                      options={["Yes, specify", "No"]}
+                      handleSelection={handleButtonStage68Payable}
                     />
                   </div>
                 </>
@@ -10050,11 +10041,18 @@ async function analyzeEstatePlanningMessage(message: string) {
                 "Great! Based on the information you've provided earlier, we can review your existing financial assets and investments to assess their liquidity. We will include this information in the report shared at the end of this conversation."
               ) && (
                 <>
-                  <div className="space-x-2 ml-14 -mt-4">
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                If there's a shortfall, there are a few options. The executor may ask heirs to contribute cash to prevent asset sales. Are you open to this option?
+                </div>
+                <div className="space-x-2 ml-14 -mt-4">
                     <br />
                     <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage71LiquidityEssential}
+                      options={[
+                        "Yes, with considerations",
+                        "No, assets should be sold to cover shortfall",
+                        "I need more information before deciding",
+                      ]}
+                      handleSelection={handleButtonStage72Shortfall}
                     />
                   </div>
                 </>
@@ -10184,11 +10182,19 @@ async function analyzeEstatePlanningMessage(message: string) {
                 "Absolutely! When facing a shortfall, selling assets isn't the only option available. Alternative financing strategies, such as securing loans against estate assets, negotiating payment terms with creditors, or utilising existing insurance policies, can provide additional flexibility without compromising your long-term goals for asset distribution. Each option comes with its own set of considerations and implications, so it's essential to weigh them carefully. Our financial advisers can help you set this up."
               ) && (
                 <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Borrowing funds is another option, but it could be costly and limit asset use if assets are used as security. Have you considered this option?
+                </div>
                   <div className="space-x-2 ml-14 -mt-4">
                     <br />
                     <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage75SellingAsset}
+                      options={[
+                        "I am open to borrowing funds",
+                        "I am against borrowing funds",
+                        "I need more information before deciding",
+                        "I’d like to explore alternative financing options",
+                      ]}
+                      handleSelection={handleButtonStage77BorrowingFunds}
                     />
                   </div>
                 </>
@@ -10240,13 +10246,22 @@ async function analyzeEstatePlanningMessage(message: string) {
                     information in the report shared at the end of this
                     conversation.
                   </div>
+                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Borrowing funds is another option, but it could be costly and limit asset use if assets are used as security. Have you considered this option?
+                </div>
                   <div className="space-x-2 ml-14 -mt-4">
                     <br />
                     <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage76Reservation}
+                      options={[
+                        "I am open to borrowing funds",
+                        "I am against borrowing funds",
+                        "I need more information before deciding",
+                        "I’d like to explore alternative financing options",
+                      ]}
+                      handleSelection={handleButtonStage77BorrowingFunds}
                     />
                   </div>
+                  
                 </>
               )}
 
@@ -10314,13 +10329,16 @@ async function analyzeEstatePlanningMessage(message: string) {
                     decision. We will include this information in the report
                     shared at the end of this conversation.
                   </div>
-                  <div className="space-x-2 ml-14 -mt-4">
+                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    Have you considered life assurance as a way to address any cash shortfall? Life assurance provides immediate cash without income tax or capital gains tax. How willing are you to go this route?
+                  </div>
+                   <div className="space-x-2 ml-14 -mt-4">
                     <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage77FinancialRisk}
+                    <LifeInsuranceSlider
+                      onProceed={handleButtonStage78LifeInsurance}
                     />
                   </div>
+                  
                 </>
               )}
 
@@ -10366,11 +10384,13 @@ async function analyzeEstatePlanningMessage(message: string) {
                     decision. We will include this information in the report
                     shared at the end of this conversation.
                   </div>
-                  <div className="space-x-2 ml-14 -mt-4">
+                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    Have you considered life assurance as a way to address any cash shortfall? Life assurance provides immediate cash without income tax or capital gains tax. How willing are you to go this route?
+                  </div>
+                   <div className="space-x-2 ml-14 -mt-4">
                     <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage77Alternative}
+                    <LifeInsuranceSlider
+                      onProceed={handleButtonStage78LifeInsurance}
                     />
                   </div>
                 </>
@@ -11372,11 +11392,14 @@ async function analyzeEstatePlanningMessage(message: string) {
                     tailored to your specific needs or assistance in finding a
                     suitable policy?
                   </div>
+                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Thank you for discussing insurance policies with me. Let’s proceed to the next part of your estate planning. Shall we continue?
+                  </div>
                   <div className="space-x-2 ml-14 -mt-4">
                     <br />
                     <SelectableButtonGroup
                       options={["Yes", "No"]}
-                      handleSelection={handleButtonStage90ImmediateFuneralCover}
+                      handleSelection={handleButtonStage46Continue}
                     />
                   </div>
                 </>
@@ -11845,13 +11868,18 @@ async function analyzeEstatePlanningMessage(message: string) {
               {message.content.includes(
                 "Excellent. In order to calculate the accrual, we need to know the specifics of your antenuptial contract (ANC). We will ask for your antenuptial contract at the end of this chat."
               ) && (
-                <div className="space-x-2 ml-14">
-                  <br />
-                  <SelectableButtonGroup
-                    options={["Continue"]}
-                    handleSelection={handleButtonStage3}
-                  />
+                <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                Do you currently have a will in place?
                 </div>
+                 <div className="space-x-2 ml-14 -mt-4">
+                    <br />
+                    <SelectableButtonGroup
+                      options={["Yes", "No"]}
+                      handleSelection={handleButtonStage4}
+                    />
+                  </div>
+                </>
               )}
 
               {message.content.includes(
@@ -11951,11 +11979,14 @@ async function analyzeEstatePlanningMessage(message: string) {
                 "Creating a will is an important step in securing your assets and ensuring your wishes are followed. We can start drafting your will right here by answering a few questions about your estate and preferences a little later in the chat."
               ) && (
                 <>
-                  <div className="space-x-2 ml-14 -mt-4">
+                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Do you currently have a trust in place?
+                  </div>
+                 <div className="space-x-2 ml-14 -mt-4">
                     <br />
                     <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage4}
+                      options={["Yes", "No"]}
+                      handleSelection={handleButtonStage6}
                     />
                   </div>
                 </>
@@ -12855,10 +12886,10 @@ async function analyzeEstatePlanningMessage(message: string) {
                   <div className="space-x-2 ml-14 -mt-4">
                     <br />
                     <button
-                      onClick={() => handleButtonStage15v2("Continue")}
+                      onClick={() => handleButtonStage15v2("Yes, I'm ready")}
                       className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                     >
-                      Continue
+                      Yes, I'm ready
                     </button>
                     {/* <button
                       onClick={() =>
