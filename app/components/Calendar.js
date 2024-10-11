@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const Calendar = ({ onDateSelect }) => {
+const Calendar = ({ onDateSelect, isFormSubmitted }) => {
   const currentDate = new Date();
   const currentYear = currentDate.getFullYear();
   const currentMonth = currentDate.getMonth(); // 0 = January
@@ -36,12 +36,12 @@ const Calendar = ({ onDateSelect }) => {
     setHighlightDate(true);
   };
 
-  // Use useEffect to call onDateSelect whenever year, month, or day changes
+  // Use useEffect to call onDateSelect whenever year, month, or day changes, but only if the form is not submitted
   useEffect(() => {
-    if (onDateSelect) {
+    if (onDateSelect && !isFormSubmitted) {
       onDateSelect(selectedYear, selectedMonth, selectedDate);
     }
-  }, [selectedYear, selectedMonth, selectedDate, onDateSelect]);
+  }, [selectedYear, selectedMonth, selectedDate, onDateSelect, isFormSubmitted]);
 
   return (
     <>

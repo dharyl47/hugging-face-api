@@ -53,6 +53,8 @@ export default function Chat() {
   const { messages, input, handleInputChange, handleSubmit, setMessages } =
     useChat();
   const [consent, setConsent] = useState<string>("");
+    const [isFormSubmitted, setIsFormSubmitted] = useState(false); // Flag to track form submission
+
    const continueButtonRef = useRef(null);
 
   const handleButtonConsentData = (value: string) => {
@@ -314,7 +316,7 @@ useEffect(() => {
     // Clear the input field after sending
    // setInputStr("");
   };
-
+  
   const handleDateSelection = (year: any, month: any, day: any) => {
     const selectedDate = `${day}-${month + 1}-${year}`; // Format the date as DD-MM-YYYY
     setInputStr(selectedDate);
@@ -6959,6 +6961,7 @@ async function analyzeEstatePlanningMessage(message: string) {
      handleAddAIResponse(
                         "Let’s talk about your family life quickly. Are you married or single?"
                       );
+                      setInputStr("");
   }
 };
 
@@ -11800,7 +11803,7 @@ async function analyzeEstatePlanningMessage(message: string) {
               {message.content.includes("When were you born?") && (
                 <>
                   <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    <Calendar onDateSelect={handleDateSelection} />
+                    <Calendar onDateSelect={handleDateSelection} isFormSubmitted={isFormSubmitted} />
                   </div>
                   <br/><br/><br/>
                 </>
@@ -14728,6 +14731,7 @@ async function analyzeEstatePlanningMessage(message: string) {
                       saveDateOfBirth(inputStr);
                      
                       setInputStr("");
+                      setIsFormSubmitted(true);
                     } else if (
                       messageData.current.includes(
                         "Do you have any dependents?"

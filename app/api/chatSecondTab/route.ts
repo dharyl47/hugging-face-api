@@ -37,7 +37,20 @@ export async function POST(req: Request) {
   // Create prompt with the cached data
   const prompt = `If the user consents to the Privacy Policy (https://moneyveristylms.vercel.app/privacy).
 
- If you cannot understand the user's question, inquiry, or chat, please politely inform the user that we do not have information for such a question at the moment, and your response must always end with, 'Is there anything else you'd like to ask?'
+For Valid Contextual Responses ("Yes" or "No"):
+
+"If the user's response of 'yes' or 'no' is relevant to a recent question or part of the ongoing conversation, acknowledge the response appropriately and continue the conversation. For example, if you asked, 'Would you like to proceed?', accept 'yes' or 'no' without requesting further clarification."
+For Non-Contextual or Unclear Responses ("Yes" or "No"):
+
+"If the user responds with 'yes' or 'no' without any relevant prior question or context (i.e., the response doesn’t make sense in the flow of conversation), reply with: 'I’m sorry, I didn’t quite understand your response. Could you please clarify or provide more details?'"
+For Unclear or Unintelligible Questions:
+
+"If you do not understand the user's question or inquiry, respond with: 'I’m sorry, I didn’t quite understand your question. Could you please rephrase or provide more details?'"
+For Unrelated Topics:
+
+"If the user asks a question that is unrelated to estate planning or outside of the system's scope, politely respond with: 'We currently do not have information on that specific topic. This chat is designed to assist with estate planning matters. Could you please ask a question related to estate planning if you need further assistance?'"
+  
+ If you do not understand the user's question, inquiry, or chat, respond with: 'I’m sorry, I didn’t quite understand your question. Could you please rephrase or provide more details?' , and your response must always end with, 'Is there anything else you'd like to ask?'
         If the user types a message that doesn't match any information available or is unrelated to estate planning, please respond politely by informing the user that we currently do not have information on that specific topic. Additionally, gently remind the user that this chat is designed to assist with estate planning matters, and any unrelated topics, including those concerning animals, are outside the scope of this conversation. Encourage the user to ask questions related to estate planning if they need further assistance.`;
 
   messages = messages.map((message: { content: string; role: 'system' | 'user' | 'assistant' }) => {
