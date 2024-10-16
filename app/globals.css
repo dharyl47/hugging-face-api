@@ -27,19 +27,136 @@
 }
 
 
+/* Main app container */
+.app-container {
+  display: flex;
+  justify-content: space-between; /* Spread out progress bar, chat, and buttons */
+  height: 100vh; /* Full viewport height */
+}
+
+/* Progress sidebar */
+.progress-sidebar {
+  width: 200px;
+  background-color: #212121;
+  padding: 20px;
+  border-right: none; /* Removed the right border */
+  margin-right: 50px; /* Added space between the progress bar and chat */
+  margin-left: 50px;
+  margin-top: -70px;
+}
+
+.scrollable-list {
+  scrollbar-width: none; /* For Firefox */
+  -ms-overflow-style: none; /* For IE and Edge */
+}
+
+.scrollable-list::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Opera */
+}
+
+.progress-list {
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+}
+.number-emoji {
+  color: #8DC63F; /* Color similar to the one you requested */
+  font-weight: bold;
+  font-size: 1.2em;
+}
+
+.progress-item {
+  color: #8c8c8c;
+  padding: 16px 0;
+  position: relative;
+  font-size: 10px !important; /* Reduced font size */
+  text-align: left; /* Align text to the left */
+}
+
+.progress-item.active {
+  color: white;
+}
+
+/* Thicker progress bar with rounded start and end */
+.progress-item:before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -40px; /* Adjust this for proper alignment */
+  height: 100%;
+  width: 12px; /* Width for the thicker progress bar */
+  background-color: transparent;
+  transition: background-color 0.3s ease;
+  border-radius: 100px; /* Rounds both top and bottom ends */
+}
+
+.progress-item.active:before {
+  background-color: #009677; /* Active progress color */
+}
+
+.progress-item:first-child.active:before {
+  border-top-left-radius: 100px;
+  border-top-right-radius: 100px;
+}
+
+.progress-item:last-child.active:before {
+  border-bottom-left-radius: 100px;
+  border-bottom-right-radius: 100px;
+}
+
+/* Chat container */
+#chat-container {
+  flex-grow: 1; /* Take remaining space */
+  
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  border: none; /* No border */
+}
+
+.chat-content {
+  flex-grow: 1;
+  overflow-y: auto; /* Scrollable content */
+  color: white;
+  border: none; /* No inner border */
+}
+
+
 /* #chat-container{
     width: 30rem;
     padding-left: 100px;
 } */
-#chat-container {
+
+/* Button container on the right side */
+/* Button container on the right */
+.button-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
   display: flex;
   flex-direction: column;
-  height: 80vh; /* Full height of the viewport */
+  gap: 8px; /* Space between buttons */
+  z-index: 100; /* Keep on top */
+  background: none; /* No background */
+}
+
+/* Smaller button styling */
+.buttonData {
+  background-color: #009677;
+  color: white;
+  padding: 4px 10px; /* Reduced padding by 12px in total */
+  font-size: 14px !important; /* Reduced font size */
+  text-align: center; /* Ensure text is centered */
+  border-radius: 5px;
+  width: 151px;
+  border: none;
+  cursor: pointer;
 }
 
 #chatbox {
   flex-grow: 1; /* Ensure chatbox grows to fill available space */
   overflow-y: auto; /* Make it scrollable */
+  margin-bottom: 100px;
 }
 
 form {

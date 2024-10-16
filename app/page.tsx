@@ -12,6 +12,8 @@ import Image from "next/image"; // Import the Image component
 import BusinessImportanceSlider from "./components/BusinessImportanceSlider";
 import LifeInsuranceSlider from "./components/LifeInsuranceSlider";
 import TaxesSlider from "./components/TaxesSlider";
+import ProgressSidebar from "./components/ProgressSidebar";
+
 import Navbar from "@/app/components/Navbar";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
@@ -49,13 +51,28 @@ interface Message {
 const MAX_RETRIES = 5;
 const RETRY_DELAY = 3000; // 3 seconds
 
+const stages = [
+  "Consent",
+  "Personal Information",
+  "Step-by-Step Guidance",
+  "Objectives of Estate Planning",
+  "Assets & Liabilities",
+  "Policies & Investments",
+  "Estate Duty & Executor Fees",
+  "Liquidity Position",
+  "Maintenance Claims",
+  "Provisions for Dependents",
+  "Trusts",
+  "Final Details",
+];
+
 export default function Chat() {
   const { messages, input, handleInputChange, handleSubmit, setMessages } =
     useChat();
   const [consent, setConsent] = useState<string>("");
-    const [isFormSubmitted, setIsFormSubmitted] = useState(false); // Flag to track form submission
+  const [isFormSubmitted, setIsFormSubmitted] = useState(false); // Flag to track form submission
 
-   const continueButtonRef = useRef(null);
+  const continueButtonRef = useRef(null);
 
   const handleButtonConsentData = (value: string) => {
     setConsent(value);
@@ -174,6 +191,15 @@ export default function Chat() {
 
   const chatboxRef = useRef<HTMLDivElement | null>(null);
 
+  const [currentChatStage, setCurrentChatStage] = useState(0);
+
+  // Function to handle advancing stages
+  const advanceStage = () => {
+    setCurrentChatStage((prevStage) =>
+      Math.min(prevStage + 1, stages.length - 1)
+    );
+  };
+
   useEffect(() => {
     const connectToMongo = async () => {
       try {
@@ -201,32 +227,40 @@ export default function Chat() {
       }
     }
   }, [messages]); // Run this effect every time messages change
-  
+
   useEffect(() => {
     if (chatboxRef.current) {
       chatboxRef.current.scrollTop = chatboxRef.current.scrollHeight;
     }
   }, [messages]);
-const originalChatRef = useRef<HTMLDivElement | null>(null);
-const estatePlanningChatRef = useRef<HTMLDivElement | null>(null);
+  const originalChatRef = useRef<HTMLDivElement | null>(null);
+  const estatePlanningChatRef = useRef<HTMLDivElement | null>(null);
 
-useEffect(() => {
-  if (activeTab === "originalChat" && originalChatRef.current) {
-    originalChatRef.current.scrollTop = originalChatRef.current.scrollHeight;
-  } else if (activeTab === "estatePlanning" && estatePlanningChatRef.current) {
-    estatePlanningChatRef.current.scrollTop = estatePlanningChatRef.current.scrollHeight;
-  }
-}, [messages, activeTab]); // Add activeTab to the dependency array
+  useEffect(() => {
+    if (activeTab === "originalChat" && originalChatRef.current) {
+      originalChatRef.current.scrollTop = originalChatRef.current.scrollHeight;
+    } else if (
+      activeTab === "estatePlanning" &&
+      estatePlanningChatRef.current
+    ) {
+      estatePlanningChatRef.current.scrollTop =
+        estatePlanningChatRef.current.scrollHeight;
+    }
+  }, [messages, activeTab]); // Add activeTab to the dependency array
 
-useEffect(() => {
-  if (activeTab === "originalChat" && lastMessageRef.current) {
-    lastMessageRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  } else if (activeTab === "estatePlanning" && lastMessageRef.current) {
-    lastMessageRef.current.scrollIntoView({ behavior: "smooth", block: "nearest" });
-  }
-}, [messages, activeTab]); // Also add activeTab here
-
-
+  useEffect(() => {
+    if (activeTab === "originalChat" && lastMessageRef.current) {
+      lastMessageRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+    } else if (activeTab === "estatePlanning" && lastMessageRef.current) {
+      lastMessageRef.current.scrollIntoView({
+        behavior: "smooth",
+        block: "nearest",
+      });
+    }
+  }, [messages, activeTab]); // Also add activeTab here
 
   const valueProperty = useRef("");
 
@@ -309,14 +343,14 @@ useEffect(() => {
     //   console.log("dataProvided", "Second");
     // } else {
     //   // Append both the user input and AI response to the messages
-     
+
     //   console.log("dataProvided", "Original");
-    // } 
+    // }
     setMessages([...messages, aiMessage]);
     // Clear the input field after sending
-   // setInputStr("");
+    // setInputStr("");
   };
-  
+
   const handleDateSelection = (year: any, month: any, day: any) => {
     const selectedDate = `${day}-${month + 1}-${year}`; // Format the date as DD-MM-YYYY
     setInputStr(selectedDate);
@@ -407,66 +441,62 @@ useEffect(() => {
     setMessages([...messages, aiMessage]);
   };
 
+  async function analyzeEstatePlanningMessage(message: string) {
+    try {
+      // Log the input message to the console
+      console.log("Estate Planning Input Message:", message);
 
-async function analyzeEstatePlanningMessage(message: string) {
-  try {
-    // Log the input message to the console
-    console.log("Estate Planning Input Message:", message);
+      // Send the single message to the AI API
+      const response = await axios.post("/api/chatSecondTab", {
+        messages: [
+          {
+            content: message,
+            role: "user",
+            createdAt: new Date(),
+          },
+        ],
+      });
+      const userMessage: Message = {
+        id: Date.now().toString(), // Unique ID
+        role: "user", // User message role
+        content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+      };
+      let aiResponseContent = "";
 
-    // Send the single message to the AI API
-    const response = await axios.post("/api/chatSecondTab", {
-      messages: [
-        {
-          content: message,
-          role: "user",
-          createdAt: new Date(),
-        },
-      ],
-    });
-    const userMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "user", // User message role
-      content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
-    };
-    let aiResponseContent = "";
+      // Handle different response formats
+      if (typeof response.data === "string") {
+        const responseLines = response.data
+          .split("\n")
+          .filter((line) => line.trim() !== ""); // Filter out empty lines
+        aiResponseContent = responseLines.join(" "); // Combine lines for a clean response
+      } else if (Array.isArray(response.data.messages)) {
+        aiResponseContent =
+          response.data.messages[0]?.content || "No content received";
+      } else {
+        throw new Error("Invalid response format");
+      }
 
-    // Handle different response formats
-    if (typeof response.data === "string") {
-      const responseLines = response.data
-        .split("\n")
-        .filter((line) => line.trim() !== ""); // Filter out empty lines
-      aiResponseContent = responseLines.join(" "); // Combine lines for a clean response
-    } else if (Array.isArray(response.data.messages)) {
-      aiResponseContent =
-        response.data.messages[0]?.content || "No content received";
-    } else {
-      throw new Error("Invalid response format");
+      // Create the AI message object
+      const aiMessage: Message = {
+        id: Date.now().toString(),
+        role: "assistant", // Must be a valid role
+        content: aiResponseContent, // AI response content
+      };
+
+      // Save the AI response message into the estate planning messages
+      setEstatePlanningMessages([
+        ...estatePlanningMessages,
+        userMessage,
+        aiMessage,
+      ]);
+
+      // Log or handle the AI response
+      //console.log("AI Response:", aiResponseContent);
+      setInputStr("");
+    } catch (error) {
+      console.error("Error analyzing estate planning message:", error);
     }
-
-    // Create the AI message object
-    const aiMessage: Message = {
-      id: Date.now().toString(),
-      role: "assistant", // Must be a valid role
-      content: aiResponseContent, // AI response content
-    };
-
-    // Save the AI response message into the estate planning messages
-    setEstatePlanningMessages([
-      ...estatePlanningMessages, userMessage,
-      aiMessage,
-    ]);
-
-    // Log or handle the AI response
-    //console.log("AI Response:", aiResponseContent);
-    setInputStr("");
-  } catch (error) {
-    console.error("Error analyzing estate planning message:", error);
   }
-}
-
-
-
-
 
   //Here are the definition of key terms:
   const handleButtonComponentScenario = (messagesData: string[]) => {
@@ -489,7 +519,7 @@ async function analyzeEstatePlanningMessage(message: string) {
     };
 
     // Append both the user message and AI response to the existing messages
-     setEstatePlanningMessages([...estatePlanningMessages, aiMessage]);
+    setEstatePlanningMessages([...estatePlanningMessages, aiMessage]);
   };
   //Here are the definition of key terms:
   const handleButtonComponent = (messagesData: string[]) => {
@@ -541,17 +571,12 @@ async function analyzeEstatePlanningMessage(message: string) {
     };
 
     // Append both the user message and AI response to the existing messages
-     
+
     if (isEstatePlanningTabOpenv1) {
-      setEstatePlanningMessages([
-        ...estatePlanningMessages,
-        aiMessage,
-      ]);
-      
+      setEstatePlanningMessages([...estatePlanningMessages, aiMessage]);
     } else {
       // Append both the user input and AI response to the messages
       setMessages([...messages, aiMessage]);
-     
     }
   };
 
@@ -561,8 +586,11 @@ async function analyzeEstatePlanningMessage(message: string) {
     if (message == "Yes, I consent") {
       // response =
       //   "Hello and welcome to Moneyversity’s Estate Planning Consultant.";
-      response =
-        "I know estate planning can be daunting, so I’m here to make it as easy as possible for you to find a tailored estate plan that suits your needs. To begin, I need to gather some basic information. This will help tailor the estate planning process to your unique situation.";
+    //   response =
+    //     "I know estate planning can be daunting, so I’m here to make it as easy as possible for you to find a tailored estate plan that suits your needs. To begin, I need to gather some basic information. This will help tailor the estate planning process to your unique situation.";
+    // 
+    response =
+         "Hello and welcome to Moneyversity’s Estate Planning Consultant. I’m here to help you navigate the estate planning process with ease. Together, we’ll ensure your assets and wishes are well-documented and protected.";
     }
 
     if (message == "No, I do not consent") {
@@ -588,6 +616,43 @@ async function analyzeEstatePlanningMessage(message: string) {
     setMessages([...messages, aiMessage]);
   };
 
+
+const handleButtonStage00 = (message: any) => {
+    let response = "";
+    if (message == "Let's chat again!") {
+      response = "Let’s dive into the world of estate planning!";
+    }
+    if (message == "Absolutely") {
+      response = "I know estate planning can be daunting, so I’m here to make it as easy as possible for you to find a tailored estate plan that suits your needs. To begin, I need to gather some basic information. This will help tailor the estate planning process to your unique situation.";
+    }
+
+    if (message == "Tell me more") {
+      response = "I know estate planning can be daunting, so I’m here to make it as easy as possible for you to find a tailored estate plan that suits your needs. To begin, I need to gather some basic information. This will help tailor the estate planning process to your unique situation.";
+    }
+    if (message == "Not now") {
+      response =
+        "No problem at all. If you ever have questions or decide to start your estate planning, I’m here to help. Have a great day!";
+    }
+    setSelectedButton(message);
+    // Append the user message first (this simulates the user's selection being displayed on the right side)
+    // const userMessage: Message = {
+    //   id: Date.now().toString(), // Unique ID
+    //   role: "user", // User message role
+    //   content: message, // This will show what the user clicked (e.g., "Wills", "Trusts", etc.)
+    // };
+
+    // Then append the assistant response
+    const aiMessage: Message = {
+      id: Date.now().toString(), // Unique ID
+      role: "assistant", // Assistant response role
+      content: response, // Message content (the AI response)
+    };
+
+    // Append both the user message and AI response to the existing messages
+    // setMessages([...messages, aiMessage]);
+    setMessages([...messages, aiMessage]);
+  };
+
   const [selectedButton, setSelectedButton] = useState<string | null>(null);
   const handleButtonStage0 = (message: any) => {
     let response = "";
@@ -595,11 +660,11 @@ async function analyzeEstatePlanningMessage(message: string) {
       response = "Let’s dive into the world of estate planning!";
     }
     if (message == "Absolutely") {
-      response = "Let’s dive into the world of estate planning!";
+      response = "I know estate planning can be daunting, so I’m here to make it as easy as possible for you to find a tailored estate plan that suits your needs. To begin, I need to gather some basic information. This will help tailor the estate planning process to your unique situation.";
     }
 
     if (message == "Tell me more") {
-      response = "Let’s dive into the world of estate planning!";
+      response = "I know estate planning can be daunting, so I’m here to make it as easy as possible for you to find a tailored estate plan that suits your needs. To begin, I need to gather some basic information. This will help tailor the estate planning process to your unique situation.";
     }
     if (message == "Not now") {
       response =
@@ -931,7 +996,7 @@ async function analyzeEstatePlanningMessage(message: string) {
     };
 
     // Append both the user message and AI response to the existing messages
-     setEstatePlanningMessages([...estatePlanningMessages, aiMessage]);
+    setEstatePlanningMessages([...estatePlanningMessages, aiMessage]);
   };
 
   const handleButtonStage13v1 = (message: any) => {
@@ -959,12 +1024,8 @@ async function analyzeEstatePlanningMessage(message: string) {
       role: "assistant", // Assistant response role
       content: response, // Message content (the AI response)
     };
-    setEstatePlanningMessages([
-      ...estatePlanningMessages,
-      aiMessage,
-    ]);
+    setEstatePlanningMessages([...estatePlanningMessages, aiMessage]);
     // Append both the user message and AI response to the existing messages
-   
   };
 
   const [stage13v2v1Proceed, setStage13v2v1Proceed] = useState<string | null>(
@@ -1002,7 +1063,7 @@ async function analyzeEstatePlanningMessage(message: string) {
     };
 
     // Append both the user message and AI response to the existing messages
-     setEstatePlanningMessages([...estatePlanningMessages, aiMessage]);
+    setEstatePlanningMessages([...estatePlanningMessages, aiMessage]);
   };
 
   const handleButtonStage13EstateDuty = (message: any) => {
@@ -1147,7 +1208,7 @@ async function analyzeEstatePlanningMessage(message: string) {
     };
 
     // Append both the user message and AI response to the existing messages
-   setEstatePlanningMessages([...estatePlanningMessages, aiMessage]);
+    setEstatePlanningMessages([...estatePlanningMessages, aiMessage]);
   };
 
   const handleButtonStage13Component = (message: any) => {
@@ -1439,7 +1500,7 @@ async function analyzeEstatePlanningMessage(message: string) {
   };
   const handleButtonStage15v2 = (message: any) => {
     let response = "";
-    
+
     if (message == "Continue") {
       response =
         "Now that we’ve covered your personal details, let’s talk about your objectives for estate planning. Understanding your goals will help us create a plan that fits your needs perfectly. Ready to dive in?";
@@ -1912,17 +1973,17 @@ async function analyzeEstatePlanningMessage(message: string) {
   };
 
   const handleButtonStageProceedLearning = async (message: any) => {
-     if (!isEstatePlanningTabOpen) {
-                      setEstatePlanningTabOpenv1(true);
-                      setEstatePlanningTabOpen(true);
-                      setStartTab(true);
-                    }
-                    // Set the focus to the Estate Planning tab
-                    setActiveTab("estatePlanning");
-                    if(isStartTab==false){
-                    handleButtonStage0("Absolutely");}
+    if (!isEstatePlanningTabOpen) {
+      setEstatePlanningTabOpenv1(true);
+      setEstatePlanningTabOpen(true);
+      setStartTab(true);
+    }
+    // Set the focus to the Estate Planning tab
+    setActiveTab("estatePlanning");
+    if (isStartTab == false) {
+      handleButtonStage0("Absolutely");
+    }
   };
-
 
   const handleButtonStage21Asset = async (message: any) => {
     let response = "";
@@ -1969,8 +2030,6 @@ async function analyzeEstatePlanningMessage(message: string) {
     // Append both the user message and AI response to the existing messages
     setMessages([...messages, aiMessage]);
   };
-
-  
 
   const handleButtonStage20Payable = async (message: any) => {
     let response = "";
@@ -6924,46 +6983,47 @@ async function analyzeEstatePlanningMessage(message: string) {
     await saveUserProfile({ emailAddress: message });
   };
   const saveDateOfBirth = async (message: any) => {
-  // Save the date of birth first
-  await saveUserProfile({ dateOfBirth: message });
+    // Save the date of birth first
+    await saveUserProfile({ dateOfBirth: message });
 
-  // Extract the day, month, and year from the input date (10-3-2024)
-  const [day, month, year] = message.split('-').map(Number);
+    // Extract the day, month, and year from the input date (10-3-2024)
+    const [day, month, year] = message.split("-").map(Number);
 
-  // Get the current date
-  const currentDate = new Date();
-  const currentYear = currentDate.getFullYear();
-  const currentMonth = currentDate.getMonth() + 1; // JS months are 0-indexed
-  const currentDay = currentDate.getDate();
+    // Get the current date
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1; // JS months are 0-indexed
+    const currentDay = currentDate.getDate();
 
-  // Calculate age
-  let age = currentYear - year;
-  if (currentMonth < month || (currentMonth === month && currentDay < day)) {
-    age--; // Not had their birthday this year yet
-  }
+    // Calculate age
+    let age = currentYear - year;
+    if (currentMonth < month || (currentMonth === month && currentDay < day)) {
+      age--; // Not had their birthday this year yet
+    }
 
-  // Check if age is below 18 and handle accordingly
-  let response = "";
-  if (age < 18) {
-    response = "You are under 18 years old. We recommend you seek advice from a legal guardian or financial advisor before proceeding.";
-  }
+    // Check if age is below 18 and handle accordingly
+    let response = "";
+    if (age < 18) {
+      response =
+        "You are under 18 years old. We recommend you seek advice from a legal guardian or financial advisor before proceeding.";
+    }
 
-  if (response) {
-    const aiMessage: Message = {
-      id: Date.now().toString(), // Unique ID
-      role: "assistant", // Assistant response role
-      content: response, // Message content (the AI response)
-    };
+    if (response) {
+      const aiMessage: Message = {
+        id: Date.now().toString(), // Unique ID
+        role: "assistant", // Assistant response role
+        content: response, // Message content (the AI response)
+      };
 
-    // Append the AI response to the existing messages
-    setMessages([...messages, aiMessage]);
-  } else {
-     handleAddAIResponse(
-                        "Let’s talk about your family life quickly. Are you married or single?"
-                      );
-                      setInputStr("");
-  }
-};
+      // Append the AI response to the existing messages
+      setMessages([...messages, aiMessage]);
+    } else {
+      handleAddAIResponse(
+        "Let’s talk about your family life quickly. Are you married or single?"
+      );
+      setInputStr("");
+    }
+  };
 
   const saveTypeOfMarriage = async (message: any) => {
     await saveUserProfile({ propertyRegime: message });
@@ -7336,267 +7396,285 @@ async function analyzeEstatePlanningMessage(message: string) {
           key={message.id}
           ref={isLastMessage ? lastMessageRef : null}
           className={message.role === "user" ? "text-white" : "text-white"}
-          
         >
-         
-            
-              
+          <br />
 
-              <br />
-          
-            <div
-              className={
-                message.role === "user" ? "mb-2 text-right mt-4" : "mb-2"
-              }
-            >
-             
-              {isVideoTrigger ? (
-                <>
-                  <p className="bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Here you go! 🎥
-                  </p>
-                  <EmbeddedVideo embedUrl="https://www.youtube.com/embed/cMoaGEpffds" />
-                  <p className="bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block mt-2">
-                    Is there anything else you'd like to know about estate
-                    planning or any questions you have at this stage? 🤔
-                  </p>
-                  <button
-                    onClick={() => handleButtonClick("Yes, I have a question")}
-                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                  >
-                    Yes, I have a question
-                  </button>
-                  <button
-                    onClick={() => handleButtonClick("No, Let's move on")}
-                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                  >
-                    No, Let's move on
-                  </button>
-                </>
-              ) : (
-                //AI CHAT BUBBLE IS HERE
-                <div
+          <div
+            className={
+              message.role === "user" ? "mb-2 text-right mt-4" : "mb-2"
+            }
+          >
+            {isVideoTrigger ? (
+              <>
+                <p className="bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Here you go! 🎥
+                </p>
+                <EmbeddedVideo embedUrl="https://www.youtube.com/embed/cMoaGEpffds" />
+                <p className="bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block mt-2">
+                  Is there anything else you'd like to know about estate
+                  planning or any questions you have at this stage? 🤔
+                </p>
+                <button
+                  onClick={() => handleButtonClick("Yes, I have a question")}
+                  className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                >
+                  Yes, I have a question
+                </button>
+                <button
+                  onClick={() => handleButtonClick("No, Let's move on")}
+                  className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                >
+                  No, Let's move on
+                </button>
+              </>
+            ) : (
+              //AI CHAT BUBBLE IS HERE
+              <div
+                className={
+                  message.role === "user"
+                    ? "bg-[#8dc63f] text-white rounded-lg py-2 px-4 inline-block"
+                    : "flex items-start mb-2 assistant-message"
+                }
+              >
+                <p
                   className={
                     message.role === "user"
-                      ? "bg-[#8dc63f] text-white rounded-lg py-2 px-4 inline-block"
-                      : "flex items-start mb-2 assistant-message"
+                      ? ""
+                      : "bg-[#2f2f2f] text-white rounded-lg inline-block"
                   }
-                >
-                  <p
-                    className={
-                      message.role === "user"
-                        ? ""
-                        : "bg-[#2f2f2f] text-white rounded-lg inline-block"
-                    }
-                    dangerouslySetInnerHTML={{
-                      __html: filteredContent.replace(/<\|endoftext\|>/g, ""),
-                    }}
-                  ></p>
-                </div>
-              )}
-               {message.content.includes(
-                "Do you consent to this?"
-              ) && (  
-                <div className="flex space-x-2 ml-16">
-                  <div className="space-y-2">
-                    {/* Yes, I consent checkbox */}
-                    <div
-                      onClick={() =>  handleButtonConsent("Yes, I consent")}
-                      className={`flex items-center space-x-2 px-4 py-2 rounded-md border cursor-pointer ${
-                        consent === "Yes, I consent"
-                          ? "bg-[#8DC63F] text-white border-transparent"
-                          : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
-                      } w-full sm:w-[400px]`}
-                    >
-                      <input
-                        type="checkbox"
-                        id="consentYes"
-                        name="consent"
-                        value="Yes, I consent"
-                        checked={consent === "Yes, I consent"}
-                        className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
-                      />
-                      <span className="ml-2">Yes, I consent</span>
-                    </div>
+                  dangerouslySetInnerHTML={{
+                    __html: filteredContent.replace(/<\|endoftext\|>/g, ""),
+                  }}
+                ></p>
+              </div>
+            )}
 
-                    <div
-                      onClick={() =>
-                        handleButtonConsent("No, I do not consent")
-                      }
-                      className={`flex items-center space-x-2 px-4 py-2 rounded-md border cursor-pointer ${
-                        consent === "No, I do not consent"
-                          ? "bg-[#8DC63F] text-white border-transparent"
-                          : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
-                      } w-full sm:w-[400px]`}
-                    >
-                      <input
-                        type="checkbox"
-                        id="consentNo"
-                        name="consent"
-                        value="No, I do not consent"
-                        checked={consent === "No, I do not consent"}
-                        className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
-                      />
-                      <span className="ml-2">No, I do not consent</span>
-                    </div>
-                  </div>
-                </div>
-              )}
-              {message.content.includes(
-                "Let’s dive into the world of estate planning!"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 -mb-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Estate planning is the process of arranging how your assets
-                    will be managed and distributed after your death 🏡📜. It
-                    ensures that your wishes are respected, your loved ones are
-                    taken care of ❤️, and potential disputes are minimized ⚖️.{" "}
-                    <br />
-                    <br /> It’s important because it gives you peace of mind 🧘
-                    knowing that your affairs are in order, and it can also help
-                    reduce taxes and legal costs in the future 💰📉.
-                  </div>
-                  <div className="space-x-2 ml-14">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Tell me more",
-                        // "Skip Estate Planning Explanation",
-                      ]}
-                      handleSelection={handleButtonStage1}
+            {message.content.includes(
+  "Hello and welcome to Moneyversity’s Estate Planning Consultant. I’m here to help you navigate the estate planning process with ease. Together, we’ll ensure your assets and wishes are well-documented and protected."
+) && (
+  <>
+    <div className="space-x-2 ml-16 mt-2 -mb-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+      Here is what we will be able to achieve in this chat today: <br />
+      <span className="number-emoji">1.)</span> I will ask you some basic questions about your personal circumstances to ensure we tailor your estate plan to suit your needs. <br />
+      <span className="number-emoji">2.)</span> At the end of this chat, I will generate a report that you can share with a financial adviser to finalize your estate plan. <br />
+      <span className="number-emoji">3.)</span> If you want to speak to a financial adviser during any point in our chat, there is a button that shows you how to get in touch with an adviser. <br />
+      Ready to get started on this important journey? 🚀
+    </div>
+    <div className="space-x-2 ml-14">
+      <br />
+      <SelectableButtonGroup
+        options={[
+          "Absolutely",
+          "Tell me more",
+          "Not now",
+        ]}
+        handleSelection={handleButtonStage00}
+      />
+    </div>
+  </>
+)}
+
+            
+
+            {message.content.includes("Do you consent to this?") && (
+              <div className="flex space-x-2 ml-16">
+                <div className="space-y-2">
+                  {/* Yes, I consent checkbox */}
+                  <div
+                    onClick={() => handleButtonConsent("Yes, I consent")}
+                    className={`flex items-center space-x-2 px-4 py-2 rounded-md border cursor-pointer ${
+                      consent === "Yes, I consent"
+                        ? "bg-[#8DC63F] text-white border-transparent"
+                        : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
+                    } w-full sm:w-[400px]`}
+                  >
+                    <input
+                      type="checkbox"
+                      id="consentYes"
+                      name="consent"
+                      value="Yes, I consent"
+                      checked={consent === "Yes, I consent"}
+                      className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
                     />
+                    <span className="ml-2">Yes, I consent</span>
                   </div>
-                </>
-              )}
-              {questionResponse1 && (
-                <div className="space-x-2 ml-16 mt-4">
-                  <button
-                    onClick={() =>
-                      handleButtonFunFact(
-                        "No, I have some questions about the above"
-                      )
-                    }
-                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+
+                  <div
+                    onClick={() => handleButtonConsent("No, I do not consent")}
+                    className={`flex items-center space-x-2 px-4 py-2 rounded-md border cursor-pointer ${
+                      consent === "No, I do not consent"
+                        ? "bg-[#8DC63F] text-white border-transparent"
+                        : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
+                    } w-full sm:w-[400px]`}
                   >
-                    No, I have some questions about the above
-                  </button>
-                  <button
-                    onClick={() => handleButtonFunFact("Yes, I'm ready.")}
-                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                  >
-                    Yes, I'm ready to move on.
-                  </button>
-                </div>
-              )}
-              {questionResponseStage12 && (
-                <div className="space-x-2 ml-16 mt-4">
-                  <button
-                    onClick={() => handleButtonStage12("I have a question.")}
-                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                  >
-                    I have a question.
-                  </button>
-                  <button
-                    onClick={() => handleButtonStage12("No, Let's move on")}
-                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                  >
-                    No, Let's move on
-                  </button>
-                </div>
-              )}
-              {message.content.includes(
-                "Are you ready to explore some potential outcomes of different estate planning choices?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-4">
-                    <SelectableButtonGroup
-                      options={["Yes, I’m ready to move on", "Skip"]}
-                      handleSelection={handleButtonStage13v1}
+                    <input
+                      type="checkbox"
+                      id="consentNo"
+                      name="consent"
+                      value="No, I do not consent"
+                      checked={consent === "No, I do not consent"}
+                      className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
                     />
+                    <span className="ml-2">No, I do not consent</span>
                   </div>
-                </>
-              )}
-              {message.content.includes(
-                "Let’s check out some examples to understand these options better. Here are a few examples we can simulate:"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    <b>Scenario 1</b>: 📜 How will setting up a trust affect the
-                    management and distribution of your assets?
-                    <br />
-                    Setting up a trust can provide asset protection, control,
-                    and tax benefits. It allows you to transfer assets to a
-                    trustee who manages them according to the trust's terms.
-                    This can ensure that your beneficiaries receive assets at
-                    appropriate times, minimizing delays and potential conflicts
-                    in estate administration.
-                    <br />
-                    <br />
-                    <b>Scenario 2</b>: ⚖️ What happens if you pass away without
-                    a will (intestate)?
-                    <br />
-                    If you pass away without a will, the Intestate Succession
-                    Act will govern the distribution of your assets. This may
-                    not align with your wishes and can result in assets being
-                    distributed to heirs according to law, potentially leading
-                    to disputes or unintended consequences.
-                    <br />
-                    <br />
-                    <b>Scenario 3</b>: 🖋️ How will appointing a power of
-                    attorney impact your estate during your lifetime?
-                    <br />
-                    Appointing a power of attorney allows someone you trust to
-                    make decisions on your behalf if you become incapacitated.
-                    This can cover financial, legal, and healthcare matters. It
-                    ensures your estate and personal matters are managed
-                    according to your wishes during your lifetime.
-                    <br />
-                    <br />
-                    <b>Scenario 4</b>: 💼 What are the potential tax
-                    implications of your estate planning decisions?
-                    <br />
-                    <br />
-                    Choose a scenario you’d like to explore, and I’ll show you
-                    the potential outcomes:
-                    <br />
-                  </div>
+                </div>
+              </div>
+            )}
+            {message.content.includes(
+              "Let’s dive into the world of estate planning!"
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 -mb-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Estate planning is the process of arranging how your assets
+                  will be managed and distributed after your death 🏡📜. It
+                  ensures that your wishes are respected, your loved ones are
+                  taken care of ❤️, and potential disputes are minimized ⚖️.{" "}
                   <br />
-                  <div className="space-x-2 ml-14 mt-1">
-                    {scenario.map((scenarios) => (
-                      <>
-                        <br /> {/* Adjust margin as needed */}
-                        <label
-                          key={scenarios}
-                          htmlFor={scenarios}
-                          className={`flex items-center space-x-2 px-4 py-2 w-[400px] -my-2 rounded-md border cursor-pointer ${
-                            selectedScenario.includes(scenarios)
-                              ? "bg-[#8DC63F] text-white border-transparent"
-                              : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
-                          }`}
-                        >
-                          <input
-                            type="checkbox"
-                            id={scenarios}
-                            onChange={handleCheckboxChangeScenario}
-                            name={scenarios}
-                            value={scenarios}
-                            checked={selectedScenario.includes(scenarios)}
-                            className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
-                          />
-                          &nbsp;&nbsp;&nbsp;{scenarios}
-                        </label>
-                      </>
-                    ))}
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Proceed"]}
-                      handleSelection={handleProceedScenario}
-                    />
-                  </div>
-                </>
-              )}
+                  <br /> It’s important because it gives you peace of mind 🧘
+                  knowing that your affairs are in order, and it can also help
+                  reduce taxes and legal costs in the future 💰📉.
+                </div>
+                <div className="space-x-2 ml-14">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Tell me more",
+                      // "Skip Estate Planning Explanation",
+                    ]}
+                    handleSelection={handleButtonStage1}
+                  />
+                </div>
+              </>
+            )}
+            {questionResponse1 && (
+              <div className="space-x-2 ml-16 mt-4">
+                <button
+                  onClick={() =>
+                    handleButtonFunFact(
+                      "No, I have some questions about the above"
+                    )
+                  }
+                  className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                >
+                  No, I have some questions about the above
+                </button>
+                <button
+                  onClick={() => handleButtonFunFact("Yes, I'm ready.")}
+                  className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                >
+                  Yes, I'm ready to move on.
+                </button>
+              </div>
+            )}
+            {questionResponseStage12 && (
+              <div className="space-x-2 ml-16 mt-4">
+                <button
+                  onClick={() => handleButtonStage12("I have a question.")}
+                  className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                >
+                  I have a question.
+                </button>
+                <button
+                  onClick={() => handleButtonStage12("No, Let's move on")}
+                  className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                >
+                  No, Let's move on
+                </button>
+              </div>
+            )}
+            {message.content.includes(
+              "Are you ready to explore some potential outcomes of different estate planning choices?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-4">
+                  <SelectableButtonGroup
+                    options={["Yes, I’m ready to move on", "Skip"]}
+                    handleSelection={handleButtonStage13v1}
+                  />
+                </div>
+              </>
+            )}
+            {message.content.includes(
+              "Let’s check out some examples to understand these options better. Here are a few examples we can simulate:"
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <b>Scenario 1</b>: 📜 How will setting up a trust affect the
+                  management and distribution of your assets?
+                  <br />
+                  Setting up a trust can provide asset protection, control, and
+                  tax benefits. It allows you to transfer assets to a trustee
+                  who manages them according to the trust's terms. This can
+                  ensure that your beneficiaries receive assets at appropriate
+                  times, minimizing delays and potential conflicts in estate
+                  administration.
+                  <br />
+                  <br />
+                  <b>Scenario 2</b>: ⚖️ What happens if you pass away without a
+                  will (intestate)?
+                  <br />
+                  If you pass away without a will, the Intestate Succession Act
+                  will govern the distribution of your assets. This may not
+                  align with your wishes and can result in assets being
+                  distributed to heirs according to law, potentially leading to
+                  disputes or unintended consequences.
+                  <br />
+                  <br />
+                  <b>Scenario 3</b>: 🖋️ How will appointing a power of attorney
+                  impact your estate during your lifetime?
+                  <br />
+                  Appointing a power of attorney allows someone you trust to
+                  make decisions on your behalf if you become incapacitated.
+                  This can cover financial, legal, and healthcare matters. It
+                  ensures your estate and personal matters are managed according
+                  to your wishes during your lifetime.
+                  <br />
+                  <br />
+                  <b>Scenario 4</b>: 💼 What are the potential tax implications
+                  of your estate planning decisions?
+                  <br />
+                  <br />
+                  Choose a scenario you’d like to explore, and I’ll show you the
+                  potential outcomes:
+                  <br />
+                </div>
+                <br />
+                <div className="space-x-2 ml-14 mt-1">
+                  {scenario.map((scenarios) => (
+                    <>
+                      <br /> {/* Adjust margin as needed */}
+                      <label
+                        key={scenarios}
+                        htmlFor={scenarios}
+                        className={`flex items-center space-x-2 px-4 py-2 w-[400px] -my-2 rounded-md border cursor-pointer ${
+                          selectedScenario.includes(scenarios)
+                            ? "bg-[#8DC63F] text-white border-transparent"
+                            : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          id={scenarios}
+                          onChange={handleCheckboxChangeScenario}
+                          name={scenarios}
+                          value={scenarios}
+                          checked={selectedScenario.includes(scenarios)}
+                          className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
+                        />
+                        &nbsp;&nbsp;&nbsp;{scenarios}
+                      </label>
+                    </>
+                  ))}
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Proceed"]}
+                    handleSelection={handleProceedScenario}
+                  />
+                </div>
+              </>
+            )}
 
-              {/* {message.content.includes("Do you have any other questions or need further information? I’m here to help!") && (
+            {/* {message.content.includes("Do you have any other questions or need further information? I’m here to help!") && (
                 <div className="space-x-2 ml-14">
                     <br/><button
                       onClick={() => handleButtonStage14("Yes, I have a question")}
@@ -7612,69 +7690,68 @@ async function analyzeEstatePlanningMessage(message: string) {
                     </button>
                     </div>
                 )} */}
-              {message.content.includes("Templates are downloaded") && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Would you like any assistance filling out any of these
-                    templates?
-                  </div>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <button
-                      onClick={() => handleButtonStage15("No, let's move on")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No, let's move on
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage14Contact("Yes")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                  </div>
-                </>
-              )}
+            {message.content.includes("Templates are downloaded") && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Would you like any assistance filling out any of these
+                  templates?
+                </div>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <button
+                    onClick={() => handleButtonStage15("No, let's move on")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                  >
+                    No, let's move on
+                  </button>
+                  <button
+                    onClick={() => handleButtonStage14Contact("Yes")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                  >
+                    Yes
+                  </button>
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Are you concerned about protecting your assets from potential insolvency issues, either for yourself or your heirs?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No", "Maybe"]}
-                      handleSelection={handleButtonStage18Component}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Are you concerned about protecting your assets from potential insolvency issues, either for yourself or your heirs?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No", "Maybe"]}
+                    handleSelection={handleButtonStage18Component}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Fantastic! Our financial advisers at Old Mutual are ready to assist you in filling out these templates. Please reach out to us directly to schedule a consultation and receive personalised guidance. Here’s how you can get in touch:"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    • Phone: Call us at [insert phone number] to speak with an
-                    adviser.
-                    <br />
-                    <br />• Email: Send us an email at [insert email address]
-                    with your contact details, and we’ll get back to you
-                    promptly.
-                  </div>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <button
-                      onClick={() => handleButtonStage15v1("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Fantastic! Our financial advisers at Old Mutual are ready to assist you in filling out these templates. Please reach out to us directly to schedule a consultation and receive personalised guidance. Here’s how you can get in touch:"
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  • Phone: Call us at [insert phone number] to speak with an
+                  adviser.
+                  <br />
+                  <br />• Email: Send us an email at [insert email address] with
+                  your contact details, and we’ll get back to you promptly.
+                </div>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <button
+                    onClick={() => handleButtonStage15v1("Continue")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                  >
+                    Continue
+                  </button>
+                </div>
+              </>
+            )}
 
-              {/* {message.content.includes("Here are the all scenario") && (
+            {/* {message.content.includes("Here are the all scenario") && (
                 <>
                   <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Scenario 1 - Setting Up a Trust: Imagine you set up a trust
@@ -7761,7 +7838,7 @@ async function analyzeEstatePlanningMessage(message: string) {
                 </>
               )} */}
 
-              {/* {templateButton && (
+            {/* {templateButton && (
                 <>
                   <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                     Based on your profile, here’s a suggested plan:
@@ -7839,260 +7916,257 @@ async function analyzeEstatePlanningMessage(message: string) {
                 </>
               )} */}
 
-              {message.content.includes(
-                "Now that I have some basic information about you, let’s create a customised estate planning process tailored to your needs!"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Here are some templates to help you get started with your
-                    estate planning documents:
-                    <br />
-                    📝 <b>Will:</b>
-                    <br />
-                    A basic template for drafting your will.
-                    <br />
-                    🏦 <b>Trusts: </b>
-                    <br />
-                    A template to set up a simple trust.
-                    <br />
-                    🤝 <b>Power of Attorney: </b>
-                    <br />
-                    A template for appointing a power of attorney.
-                    <br />
-                    💉 <b>Living Will: </b>
-                    <br />
-                    A template to specify your medical treatment preferences.
-                    <br />
-                    <br />
-                    These templates are for your perusal, you can either fill
-                    them in and share at the end of this chat or simply store
-                    the copy for reference at any point in your estate planning
-                    journey.
-                  </div>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Download Will Template",
-                        "Download Trust Template",
-                        "Download Power of Attorney Template",
-                        "Download Living Will Template",
-                        "Download All Templates",
-                        "Skip",
-                      ]}
-                      handleSelection={handleButtonStage14Template}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Now that we’ve covered your personal details, let’s talk about your objectives for estate planning. Understanding your goals will help us create a plan that fits your needs perfectly. Ready to dive in?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage15Component}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Great! Here are a few key considerations to keep in mind while planning your estate. I’ll ask you some questions to get a better understanding of your specific needs and goals."
-              ) && (
-                <>
+            {message.content.includes(
+              "Now that I have some basic information about you, let’s create a customised estate planning process tailored to your needs!"
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Here are some templates to help you get started with your
+                  estate planning documents:
                   <br />
-                  <div className="space-x-2 -mt-4 ml-11 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Firstly, how important is it for your estate plan to be
-                    flexible and adapt to changes in your personal, financial,
-                    and legislative environment?
-                    <br />
-                    <br />
-                    For example, would you want your plan to easily adjust if
-                    there are changes in laws or your financial situation?
-                  </div>
-                  <>
-                    <div className="space-x-2 ml-14 -mt-2">
-                      <br />
-                      <SelectableButtonGroup
-                        options={["Yes", "No", "Not sure, tell me more"]}
-                        handleSelection={handleButtonStage15Financial}
-                      />
-                    </div>
-                  </>
-                </>
-              )}
+                  📝 <b>Will:</b>
+                  <br />
+                  A basic template for drafting your will.
+                  <br />
+                  🏦 <b>Trusts: </b>
+                  <br />
+                  A template to set up a simple trust.
+                  <br />
+                  🤝 <b>Power of Attorney: </b>
+                  <br />
+                  A template for appointing a power of attorney.
+                  <br />
+                  💉 <b>Living Will: </b>
+                  <br />
+                  A template to specify your medical treatment preferences.
+                  <br />
+                  <br />
+                  These templates are for your perusal, you can either fill them
+                  in and share at the end of this chat or simply store the copy
+                  for reference at any point in your estate planning journey.
+                </div>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Download Will Template",
+                      "Download Trust Template",
+                      "Download Power of Attorney Template",
+                      "Download Living Will Template",
+                      "Download All Templates",
+                      "Skip",
+                    ]}
+                    handleSelection={handleButtonStage14Template}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Flexibility in an estate plan means it can be adjusted without major legal hurdles if your circumstances change. For instance, if tax laws change or you acquire new assets, a flexible plan allows for these updates to ensure your wishes are still carried out effectively. This can save time, reduce legal costs, and provide peace of mind knowing your plan remains relevant. Does that make sense, or would you like more details?"
-              ) && (
+            {message.content.includes(
+              "Now that we’ve covered your personal details, let’s talk about your objectives for estate planning. Understanding your goals will help us create a plan that fits your needs perfectly. Ready to dive in?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage15Component}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Great! Here are a few key considerations to keep in mind while planning your estate. I’ll ask you some questions to get a better understanding of your specific needs and goals."
+            ) && (
+              <>
+                <br />
+                <div className="space-x-2 -mt-4 ml-11 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Firstly, how important is it for your estate plan to be
+                  flexible and adapt to changes in your personal, financial, and
+                  legislative environment?
+                  <br />
+                  <br />
+                  For example, would you want your plan to easily adjust if
+                  there are changes in laws or your financial situation?
+                </div>
                 <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />{" "}
+                  <div className="space-x-2 ml-14 -mt-2">
+                    <br />
                     <SelectableButtonGroup
-                      options={["No", "Yes"]}
+                      options={["Yes", "No", "Not sure, tell me more"]}
                       handleSelection={handleButtonStage15Financial}
                     />
                   </div>
                 </>
-              )}
+              </>
+            )}
 
-              {message.content.includes(
-                "Do you own a business? If so, how important is it to you that your estate plan protects your business interests, especially in terms of its continuation if you were to pass away or become disabled"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />{" "}
-                    <BusinessImportanceSlider
-                      onProceed={handleButtonStage16Business}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Flexibility in an estate plan means it can be adjusted without major legal hurdles if your circumstances change. For instance, if tax laws change or you acquire new assets, a flexible plan allows for these updates to ensure your wishes are still carried out effectively. This can save time, reduce legal costs, and provide peace of mind knowing your plan remains relevant. Does that make sense, or would you like more details?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />{" "}
+                  <SelectableButtonGroup
+                    options={["No", "Yes"]}
+                    handleSelection={handleButtonStage15Financial}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Please provide details of your arrangement."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["No, let's move on"]}
-                      handleSelection={handleButtonStage17Strategies}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Do you own a business? If so, how important is it to you that your estate plan protects your business interests, especially in terms of its continuation if you were to pass away or become disabled"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />{" "}
+                  <BusinessImportanceSlider
+                    onProceed={handleButtonStage16Business}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "What strategies and measures would you like to have in place to ensure the financial resources set aside for retirement are safeguarded, particularly regarding your business assets or investments?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-8">
-                    <br />
-                    {strategies.map((strategy) => (
-                      <>
-                        <br /> {/* Adjust margin as needed */}
-                        <label
-                          key={strategy}
-                          htmlFor={strategy}
-                          className={`flex items-center space-x-2 px-4 py-2 w-[400px] -my-2 rounded-md border cursor-pointer ${
-                            selectedStrategies.includes(strategy)
-                              ? "bg-[#8DC63F] text-white border-transparent"
-                              : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
-                          }`}
-                        >
-                          <input
-                            type="checkbox"
-                            id={strategy}
-                            onChange={handleCheckboxChangeStrategies}
-                            name={strategy}
-                            value={strategy}
-                            checked={selectedStrategies.includes(strategy)}
-                            className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
-                          />
-                          <span className="flex-1 leading-tight">
-                            {strategy}
-                          </span>
-                        </label>
-                      </>
-                    ))}
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Proceed"]}
-                      handleSelection={handleProceedStrategy}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Please provide details of your arrangement."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["No, let's move on"]}
+                    handleSelection={handleButtonStage17Strategies}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "That's okay! It can be overwhelming to decide on the best measures without more information. Here’s a brief overview to help you:"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    🏦 <b>Establish a Trust:</b> <br />
-                    Protects your assets and ensures they are distributed
-                    according to your wishes.
-                    <br />
-                    🛡️ <b>Set Up Insurance Policies:</b> <br />
-                    Provides financial security in case of unforeseen events.
-                    <br />
-                    📜 <b>Legal Agreements:</b> <br />
-                    Formalizes arrangements to manage and protect your business
-                    interests.
-                    <br />
-                    🤝 <b>Buy-Sell Agreement:</b> <br />
-                    Ensures smooth transition and fair value if a business
-                    partner exits.
-                    <br />
-                    🏢 <b>Contingent Liability Insurance:</b> <br />
-                    Covers potential business liabilities.
-                    <br />
-                    📊 <b>Diversified Investment Strategy:</b> <br />
-                    Spreads risk across different investments.
-                    <br />
-                    🔄 <b>Regular Financial Reviews:</b> <br />
-                    Keeps your financial plan up to date with your current
-                    situation.
-                    <br />
-                    💳 <b>Business Succession Plan:</b>
-                    <br />A business strategy companies use to pass leadership
-                    roles down to another employee or group of employees
-                    <br />
-                    🛡️ <b>Asset Protection Planning:</b> <br />
-                    Safeguards your personal and business assets from risks.
-                    <br />
-                    🔄 <b>Separation of Personal & Business Finances:</b> <br />
-                    Keeps your personal and business finances distinct to avoid
-                    complications.
-                    <br />
-                    <br />
-                    Would you like to discuss any of these options further, or
-                    do you need more details on any specific measure?
-                  </div>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />{" "}
-                    {strategiesv2.map((strategyv2) => (
-                      <>
-                        <br /> {/* Adjust margin as needed */}
-                        <label
-                          key={strategyv2}
-                          htmlFor={strategyv2}
-                          className={`flex items-center space-x-2 px-4 py-2 w-[600px] -my-2 rounded-md border cursor-pointer ${
-                            selectedStrategiesv2.includes(strategyv2)
-                              ? "bg-[#8DC63F] text-white border-transparent"
-                              : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
-                          }`}
-                        >
-                          <input
-                            type="checkbox"
-                            id={strategyv2}
-                            onChange={handleCheckboxChangeStrategiesv2}
-                            name={strategyv2}
-                            value={strategyv2}
-                            checked={selectedStrategiesv2.includes(strategyv2)}
-                            className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
-                          />
-                          &nbsp;&nbsp;&nbsp;{strategyv2}
-                        </label>
-                      </>
-                    ))}
-                    <button
-                      onClick={handleProceedStrategyv2}
-                      className="mt-4 px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition"
-                    >
-                      Proceed
-                    </button>
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "What strategies and measures would you like to have in place to ensure the financial resources set aside for retirement are safeguarded, particularly regarding your business assets or investments?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-8">
+                  <br />
+                  {strategies.map((strategy) => (
+                    <>
+                      <br /> {/* Adjust margin as needed */}
+                      <label
+                        key={strategy}
+                        htmlFor={strategy}
+                        className={`flex items-center space-x-2 px-4 py-2 w-[400px] -my-2 rounded-md border cursor-pointer ${
+                          selectedStrategies.includes(strategy)
+                            ? "bg-[#8DC63F] text-white border-transparent"
+                            : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          id={strategy}
+                          onChange={handleCheckboxChangeStrategies}
+                          name={strategy}
+                          value={strategy}
+                          checked={selectedStrategies.includes(strategy)}
+                          className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
+                        />
+                        <span className="flex-1 leading-tight">{strategy}</span>
+                      </label>
+                    </>
+                  ))}
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Proceed"]}
+                    handleSelection={handleProceedStrategy}
+                  />
+                </div>
+              </>
+            )}
 
-              {/* {message.content.includes(
+            {message.content.includes(
+              "That's okay! It can be overwhelming to decide on the best measures without more information. Here’s a brief overview to help you:"
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  🏦 <b>Establish a Trust:</b> <br />
+                  Protects your assets and ensures they are distributed
+                  according to your wishes.
+                  <br />
+                  🛡️ <b>Set Up Insurance Policies:</b> <br />
+                  Provides financial security in case of unforeseen events.
+                  <br />
+                  📜 <b>Legal Agreements:</b> <br />
+                  Formalizes arrangements to manage and protect your business
+                  interests.
+                  <br />
+                  🤝 <b>Buy-Sell Agreement:</b> <br />
+                  Ensures smooth transition and fair value if a business partner
+                  exits.
+                  <br />
+                  🏢 <b>Contingent Liability Insurance:</b> <br />
+                  Covers potential business liabilities.
+                  <br />
+                  📊 <b>Diversified Investment Strategy:</b> <br />
+                  Spreads risk across different investments.
+                  <br />
+                  🔄 <b>Regular Financial Reviews:</b> <br />
+                  Keeps your financial plan up to date with your current
+                  situation.
+                  <br />
+                  💳 <b>Business Succession Plan:</b>
+                  <br />A business strategy companies use to pass leadership
+                  roles down to another employee or group of employees
+                  <br />
+                  🛡️ <b>Asset Protection Planning:</b> <br />
+                  Safeguards your personal and business assets from risks.
+                  <br />
+                  🔄 <b>Separation of Personal & Business Finances:</b> <br />
+                  Keeps your personal and business finances distinct to avoid
+                  complications.
+                  <br />
+                  <br />
+                  Would you like to discuss any of these options further, or do
+                  you need more details on any specific measure?
+                </div>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />{" "}
+                  {strategiesv2.map((strategyv2) => (
+                    <>
+                      <br /> {/* Adjust margin as needed */}
+                      <label
+                        key={strategyv2}
+                        htmlFor={strategyv2}
+                        className={`flex items-center space-x-2 px-4 py-2 w-[600px] -my-2 rounded-md border cursor-pointer ${
+                          selectedStrategiesv2.includes(strategyv2)
+                            ? "bg-[#8DC63F] text-white border-transparent"
+                            : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
+                        }`}
+                      >
+                        <input
+                          type="checkbox"
+                          id={strategyv2}
+                          onChange={handleCheckboxChangeStrategiesv2}
+                          name={strategyv2}
+                          value={strategyv2}
+                          checked={selectedStrategiesv2.includes(strategyv2)}
+                          className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
+                        />
+                        &nbsp;&nbsp;&nbsp;{strategyv2}
+                      </label>
+                    </>
+                  ))}
+                  <button
+                    onClick={handleProceedStrategyv2}
+                    className="mt-4 px-4 py-2 rounded-md border border-[#8DC63F] text-[#8DC63F] hover:bg-[#8DC63F] hover:text-white transition"
+                  >
+                    Proceed
+                  </button>
+                </div>
+              </>
+            )}
+
+            {/* {message.content.includes(
                 "When it comes to the administration of your estate after your passing, how important is it to you that the process is smooth and straightforward for your heirs?"
               ) && (
                 <>
@@ -8125,76 +8199,76 @@ async function analyzeEstatePlanningMessage(message: string) {
                 </>
               )} */}
 
-              {message.content.includes(
-                "Great! To help you stay organised throughout the estate planning process, here are some checklists for different stages:"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    <b>Initial Stage:</b>
-                    <br />
-                    ✅ Gather personal information (name, age, marital status,
-                    dependents)
-                    <br />
-                    ✅ List all assets and liabilities
-                    <br />
-                    ✅ Identify beneficiaries
-                    <br />
-                    ✅ Consider your wishes for asset distribution and
-                    guardianship
-                    <br />
-                    <br />
-                    <b>Creating Documents:</b>
-                    <br />
-                    ✅ Draft your will
-                    <br />
-                    ✅ Set up any necessary trusts
-                    <br />
-                    ✅ Prepare power of attorney documents
-                    <br />
-                    💉 Create a living will
-                    <br />
-                    <br />
-                    <b>Review and Update:</b>
-                    <br />
-                    ✅Regularly review your documents (annually or after major
-                    life events)
-                    <br />
-                    ✅ Update beneficiaries as needed
-                    <br />
-                    ✅ Ensure all documents are properly signed and witnessed
-                    <br />
-                    <br />
-                    <b>Final Steps:</b>
-                    <br />
-                    ✅ Store your documents in a safe place
-                    <br />
-                    ✅ Inform your executor and loved ones where to find your
-                    documents
-                    <br />✅ Keep a copy with a trusted person or legal adviser
-                  </div>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage14Checklist("Download Checklist")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Download Checklist
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage14Checklist("Let’s move on")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Let’s move on
-                    </button>
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Great! To help you stay organised throughout the estate planning process, here are some checklists for different stages:"
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <b>Initial Stage:</b>
+                  <br />
+                  ✅ Gather personal information (name, age, marital status,
+                  dependents)
+                  <br />
+                  ✅ List all assets and liabilities
+                  <br />
+                  ✅ Identify beneficiaries
+                  <br />
+                  ✅ Consider your wishes for asset distribution and
+                  guardianship
+                  <br />
+                  <br />
+                  <b>Creating Documents:</b>
+                  <br />
+                  ✅ Draft your will
+                  <br />
+                  ✅ Set up any necessary trusts
+                  <br />
+                  ✅ Prepare power of attorney documents
+                  <br />
+                  💉 Create a living will
+                  <br />
+                  <br />
+                  <b>Review and Update:</b>
+                  <br />
+                  ✅Regularly review your documents (annually or after major
+                  life events)
+                  <br />
+                  ✅ Update beneficiaries as needed
+                  <br />
+                  ✅ Ensure all documents are properly signed and witnessed
+                  <br />
+                  <br />
+                  <b>Final Steps:</b>
+                  <br />
+                  ✅ Store your documents in a safe place
+                  <br />
+                  ✅ Inform your executor and loved ones where to find your
+                  documents
+                  <br />✅ Keep a copy with a trusted person or legal adviser
+                </div>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleButtonStage14Checklist("Download Checklist")
+                    }
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                  >
+                    Download Checklist
+                  </button>
+                  <button
+                    onClick={() =>
+                      handleButtonStage14Checklist("Let’s move on")
+                    }
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                  >
+                    Let’s move on
+                  </button>
+                </div>
+              </>
+            )}
 
-              {/* {message.content.includes(
+            {/* {message.content.includes(
                 "Describe the condition of your property (new, good, fair, needs renovation). Also, mention any special features (e.g., swimming pool, garden, garage)"
               ) && (
                 <>
@@ -8231,79 +8305,79 @@ async function analyzeEstatePlanningMessage(message: string) {
                 </>
               )} */}
 
-              {message.content.includes(
-                "It's understandable to be uncertain about this. Protecting assets from potential insolvency can be crucial for maintaining financial stability. Here are some points to consider"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    🏦 Trusts: Placing assets in a trust can shield them from
-                    creditors.
-                    <br />
-                    🛡️ Insurance: Certain insurance policies can provide a
-                    safety net.
-                    <br />
-                    📜 Legal Structures: Properly structuring your business and
-                    personal finances can offer protection.
-                    <br />
-                    📊 Asset Diversification: Spreading assets across various
-                    investments can mitigate risk.
-                    <br />
-                    📝 Estate Planning: Comprehensive estate planning can help
-                    safeguard your heirs’ inheritance.
-                    <br />
-                    <br />
-                    Would you like to explore these options further to see which
-                    might be the best fit for your situation?
-                  </div>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <button
-                      onClick={() => handleButtonStage18Component("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "It's understandable to be uncertain about this. Protecting assets from potential insolvency can be crucial for maintaining financial stability. Here are some points to consider"
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  🏦 Trusts: Placing assets in a trust can shield them from
+                  creditors.
+                  <br />
+                  🛡️ Insurance: Certain insurance policies can provide a safety
+                  net.
+                  <br />
+                  📜 Legal Structures: Properly structuring your business and
+                  personal finances can offer protection.
+                  <br />
+                  📊 Asset Diversification: Spreading assets across various
+                  investments can mitigate risk.
+                  <br />
+                  📝 Estate Planning: Comprehensive estate planning can help
+                  safeguard your heirs’ inheritance.
+                  <br />
+                  <br />
+                  Would you like to explore these options further to see which
+                  might be the best fit for your situation?
+                </div>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <button
+                    onClick={() => handleButtonStage18Component("Continue")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                  >
+                    Continue
+                  </button>
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Is there anything else you'd like to ask?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonQuestion(
-                          "Is there anything else you'd like to ask?"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Is there anything else you'd like to ask?
-                    </button>
-                    <button
-                      onClick={() => handleButtonQuestion("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Is there anything else you'd like to ask?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleButtonQuestion(
+                        "Is there anything else you'd like to ask?"
+                      )
+                    }
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                  >
+                    Is there anything else you'd like to ask?
+                  </button>
+                  <button
+                    onClick={() => handleButtonQuestion("Continue")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                  >
+                    Continue
+                  </button>
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "To prevent any cash shortfall in your estate, how important is it to have provisions in place for your dependants' maintenance? For instance, would you want to ensure there’s enough capital to cover any immediate expenses and ongoing support for your dependants?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <BusinessImportanceSlider
-                      onProceed={handleButtonStage19Capital}
-                    />
+            {message.content.includes(
+              "To prevent any cash shortfall in your estate, how important is it to have provisions in place for your dependants' maintenance? For instance, would you want to ensure there’s enough capital to cover any immediate expenses and ongoing support for your dependants?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <BusinessImportanceSlider
+                    onProceed={handleButtonStage19Capital}
+                  />
 
-                    {/* <button
+                  {/* <button
                       onClick={() =>
                         handleButtonStage19Capital("Not important")
                       }
@@ -8327,687 +8401,685 @@ async function analyzeEstatePlanningMessage(message: string) {
                     >
                       Very Important
                     </button> */}
-                  </div>
-                </>
-              )}
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Let’s dive into the details of what you own to ensure we have a comprehensive understanding of your estate. Your assets play a crucial role in your estate plan."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-1 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Do you own any real estate properties, such as houses,
-                    apartments, or land? If so, could you provide details about
-                    each property, including location, estimated current market
-                    value, outstanding mortgage amount (if any), and any
-                    significant improvements made? 🏡
-                  </div>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                        "I’m unsure of the details",
-                      ]}
-                      handleSelection={handleButtonStage21Asset}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Let’s dive into the details of what you own to ensure we have a comprehensive understanding of your estate. Your assets play a crucial role in your estate plan."
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-1 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Do you own any real estate properties, such as houses,
+                  apartments, or land? If so, could you provide details about
+                  each property, including location, estimated current market
+                  value, outstanding mortgage amount (if any), and any
+                  significant improvements made? 🏡
+                </div>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                      "I’m unsure of the details",
+                    ]}
+                    handleSelection={handleButtonStage21Asset}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "To help you estimate the value of your property, let’s go through a few simple steps. This will give you a rough idea of what your property could be worth."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    First, please specify the type of property you have (e.g.
-                    house, apartment, land).
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "To help you estimate the value of your property, let’s go through a few simple steps. This will give you a rough idea of what your property could be worth."
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  First, please specify the type of property you have (e.g.
+                  house, apartment, land).
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "No problem. Whenever you're ready to provide the details of any of your real estate, just let me know."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage21Asset}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "No problem. Whenever you're ready to provide the details of any of your real estate, just let me know."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage21Asset}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "The estimated value of your property based on the information you provided is"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    <strong>{valueProperty.current}</strong>
-                    <br />
-                    <b className="-ml-2">Please note</b> that this is a rough
-                    estimate and should not be considered an official appraisal.
-                    The actual value of your property may vary based on
-                    additional factors such as market conditions, recent sales
-                    data, and property- specific details not accounted for in
-                    this calculation. For a precise valuation, we recommend
-                    consulting a property appraiser or real estate agent
-                  </div>
-                   <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan
-                   </div>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                      ]}
-                      handleSelection={handleButtonStage22Farm}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "The estimated value of your property based on the information you provided is"
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <strong>{valueProperty.current}</strong>
+                  <br />
+                  <b className="-ml-2">Please note</b> that this is a rough
+                  estimate and should not be considered an official appraisal.
+                  The actual value of your property may vary based on additional
+                  factors such as market conditions, recent sales data, and
+                  property- specific details not accounted for in this
+                  calculation. For a precise valuation, we recommend consulting
+                  a property appraiser or real estate agent
+                </div>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Do you own a farm? Please provide details of the farm, such as
+                  location, estimated value, and any notable items you would
+                  like to include in your estate plan
+                </div>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                    ]}
+                    handleSelection={handleButtonStage22Farm}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                      ]}
-                      handleSelection={handleButtonStage22Farm}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Do you own a farm? Please provide details of the farm, such as location, estimated value, and any notable items you would like to include in your estate plan"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                    ]}
+                    handleSelection={handleButtonStage22Farm}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "How many vehicles (cars, boats, caravans, motorcycles etc) do you own, and what are their makes, models, and estimated values?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                      ]}
-                      handleSelection={handleButtonStage22Vehicle}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "How many vehicles (cars, boats, caravans, motorcycles etc) do you own, and what are their makes, models, and estimated values?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                    ]}
+                    handleSelection={handleButtonStage22Vehicle}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Are there any valuable possessions such as artwork, jewellery, or collectibles that you own? If so, could you describe each item and estimate its value?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                      ]}
-                      handleSelection={handleButtonStage23Jewelry}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Are there any valuable possessions such as artwork, jewellery, or collectibles that you own? If so, could you describe each item and estimate its value?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                    ]}
+                    handleSelection={handleButtonStage23Jewelry}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "What is the estimated value of your household effects/content e.g. furniture, appliances etc. Your short-term insurance cover amount for household content can be used. If yes, please provide details about each item, including its type, estimated value, and any notable items you would like to include in your estate plan."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                      ]}
-                      handleSelection={handleButtonStage24Household}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "What is the estimated value of your household effects/content e.g. furniture, appliances etc. Your short-term insurance cover amount for household content can be used. If yes, please provide details about each item, including its type, estimated value, and any notable items you would like to include in your estate plan."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                    ]}
+                    handleSelection={handleButtonStage24Household}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Can you provide details about your investment portfolio, including stocks, bonds, mutual funds, retirement accounts, and any other investment holdings? Please specify the quantity, type, and current value of each investment."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                      ]}
-                      handleSelection={handleButtonStage25Portfolio}
-                    />
-                  </div>
-                </>
-              )}
-              {message.content.includes(
-                "Do you have any cash savings or deposits in bank accounts? If yes, please provide the approximate balances for each account."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                      ]}
-                      handleSelection={handleButtonStage25Cash}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Can you provide details about your investment portfolio, including stocks, bonds, mutual funds, retirement accounts, and any other investment holdings? Please specify the quantity, type, and current value of each investment."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                    ]}
+                    handleSelection={handleButtonStage25Portfolio}
+                  />
+                </div>
+              </>
+            )}
+            {message.content.includes(
+              "Do you have any cash savings or deposits in bank accounts? If yes, please provide the approximate balances for each account."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                    ]}
+                    handleSelection={handleButtonStage25Cash}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Do you have any business interests or ownership stakes in companies? If yes, please provide details about each business, including its type, ownership percentage, and estimated value."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                      ]}
-                      handleSelection={handleButtonStage26BusinessInterest}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Do you have any business interests or ownership stakes in companies? If yes, please provide details about each business, including its type, ownership percentage, and estimated value."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                    ]}
+                    handleSelection={handleButtonStage26BusinessInterest}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Are there any other significant assets not mentioned that you would like to include in your estate plan? If so, please describe them and provide their estimated values."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                      ]}
-                      handleSelection={handleButtonStage27SignificantAssets}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Are there any other significant assets not mentioned that you would like to include in your estate plan? If so, please describe them and provide their estimated values."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                    ]}
+                    handleSelection={handleButtonStage27SignificantAssets}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Do you own any intellectual property rights, such as patents, trademarks, or copyrights? If yes, please provide details about each intellectual property asset."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                      ]}
-                      handleSelection={handleButtonStage28Intellectual}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Do you own any intellectual property rights, such as patents, trademarks, or copyrights? If yes, please provide details about each intellectual property asset."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                    ]}
+                    handleSelection={handleButtonStage28Intellectual}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Are there any assets held in trust or other legal entities? If yes, please specify the nature of the trust or entity and describe the assets held within."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                      ]}
-                      handleSelection={handleButtonStage29LegalEntities}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Are there any assets held in trust or other legal entities? If yes, please specify the nature of the trust or entity and describe the assets held within."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                    ]}
+                    handleSelection={handleButtonStage29LegalEntities}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Do you have any outstanding mortgage loans? If yes, please specify the outstanding balance and the property/assets mortgaged."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                      ]}
-                      handleSelection={handleButtonStage30Mortgage}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Do you have any outstanding mortgage loans? If yes, please specify the outstanding balance and the property/assets mortgaged."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                    ]}
+                    handleSelection={handleButtonStage30Mortgage}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Are there any personal loans you currently owe? If so, please provide details on the outstanding amount and the purpose of the loan."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                      ]}
-                      handleSelection={handleButtonStage31PersonalLoan}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Are there any personal loans you currently owe? If so, please provide details on the outstanding amount and the purpose of the loan."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                    ]}
+                    handleSelection={handleButtonStage31PersonalLoan}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Do you have any credit card debt? If yes, please specify the total amount owed and the interest rates associated with each card."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                      ]}
-                      handleSelection={handleButtonStage32CreditCardDebt}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Do you have any credit card debt? If yes, please specify the total amount owed and the interest rates associated with each card."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                    ]}
+                    handleSelection={handleButtonStage32CreditCardDebt}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Are there any loans for vehicles you own? If so, please provide details on the outstanding balance and the vehicles financed."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                      ]}
-                      handleSelection={handleButtonStage33VehicleLoan}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Are there any loans for vehicles you own? If so, please provide details on the outstanding balance and the vehicles financed."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                    ]}
+                    handleSelection={handleButtonStage33VehicleLoan}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Are there any other outstanding debts or financial obligations that you have? This may include student loans, medical bills, or any other loans or accounts. Please specify the type of debt and the outstanding amount."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                      ]}
-                      handleSelection={handleButtonStage34OutstandingDebt}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Are there any other outstanding debts or financial obligations that you have? This may include student loans, medical bills, or any other loans or accounts. Please specify the type of debt and the outstanding amount."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                    ]}
+                    handleSelection={handleButtonStage34OutstandingDebt}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Do you have a strategy in place for managing and reducing your liabilities over time?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                      ]}
-                      handleSelection={handleButtonStage35Strategy}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Do you have a strategy in place for managing and reducing your liabilities over time?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                    ]}
+                    handleSelection={handleButtonStage35Strategy}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Are there any significant changes expected in your liabilities in the foreseeable future?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                      ]}
-                      handleSelection={handleButtonStage36SignificantChanges}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Are there any significant changes expected in your liabilities in the foreseeable future?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                    ]}
+                    handleSelection={handleButtonStage36SignificantChanges}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Do you currently have any life insurance policies in place? If yes, please specify the type of policy, the coverage amount, the beneficiaries, and any additional riders or features."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                      ]}
-                      handleSelection={handleButtonStage37LifeInsurance}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Do you currently have any life insurance policies in place? If yes, please specify the type of policy, the coverage amount, the beneficiaries, and any additional riders or features."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                    ]}
+                    handleSelection={handleButtonStage37LifeInsurance}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Are you covered by any health insurance policies/plans that is not a Medical Aid? If so, please specify the type of coverage, the insurance provider, and any details about co-pays, deductibles, and coverage limits."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                      ]}
-                      handleSelection={handleButtonStage38HealthInsurance}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Are you covered by any health insurance policies/plans that is not a Medical Aid? If so, please specify the type of coverage, the insurance provider, and any details about co-pays, deductibles, and coverage limits."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                    ]}
+                    handleSelection={handleButtonStage38HealthInsurance}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Are your properties, including your primary residence and any other real estate holdings, adequately insured? Please specify the insurance provider, coverage amount, and any additional coverage options"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                      ]}
-                      handleSelection={handleButtonStage39HoldingsInsured}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Are your properties, including your primary residence and any other real estate holdings, adequately insured? Please specify the insurance provider, coverage amount, and any additional coverage options"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                    ]}
+                    handleSelection={handleButtonStage39HoldingsInsured}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Are your vehicles insured? If yes, please specify the insurance provider, coverage type (e.g., comprehensive, liability), and any details about the insured vehicles."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                      ]}
-                      handleSelection={handleButtonStage40VehicleInsured}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Are your vehicles insured? If yes, please specify the insurance provider, coverage type (e.g., comprehensive, liability), and any details about the insured vehicles."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                    ]}
+                    handleSelection={handleButtonStage40VehicleInsured}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Disability insurance is crucial in case you're unable to work due to illness or injury. Do you currently have disability insurance?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No", "Not Sure"]}
-                      handleSelection={handleButtonStage41Disability}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Disability insurance is crucial in case you're unable to work due to illness or injury. Do you currently have disability insurance?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No", "Not Sure"]}
+                    handleSelection={handleButtonStage41Disability}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Disability insurance can provide financial security if you’re unable to work due to illness or injury. It ensures that you have a source of income to cover living expenses and maintain your standard of living. Would you like more information or assistance in obtaining disability insurance and understanding its benefits?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage41DisabilitySecurity("Yes")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage41DisabilitySecurity("No")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No
-                    </button>
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Disability insurance can provide financial security if you’re unable to work due to illness or injury. It ensures that you have a source of income to cover living expenses and maintain your standard of living. Would you like more information or assistance in obtaining disability insurance and understanding its benefits?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <button
+                    onClick={() => handleButtonStage41DisabilitySecurity("Yes")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                  >
+                    Yes
+                  </button>
+                  <button
+                    onClick={() => handleButtonStage41DisabilitySecurity("No")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                  >
+                    No
+                  </button>
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Great, I will have one of our financial advisers get in touch regarding obtaining disability insurance"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage41DisabilitySecurity("Continue")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Great, I will have one of our financial advisers get in touch regarding obtaining disability insurance"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleButtonStage41DisabilitySecurity("Continue")
+                    }
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                  >
+                    Continue
+                  </button>
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Disability insurance can be structured as a single capital lump sum or monthly income replacer. Which type of disability insurance do you currently have, or are you considering?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Single Capital Lump Sum",
-                        "Monthly Income Replacer",
-                      ]}
-                      handleSelection={handleButtonStage41DisabilityInsurance}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Disability insurance can be structured as a single capital lump sum or monthly income replacer. Which type of disability insurance do you currently have, or are you considering?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Single Capital Lump Sum",
+                      "Monthly Income Replacer",
+                    ]}
+                    handleSelection={handleButtonStage41DisabilityInsurance}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "It's important to note that the coverage you can take may be limited. Are you aware of any limitations on your disability insurance coverage?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No, I'm not aware", "I'm not sure."]}
-                      handleSelection={handleButtonStage41DisabilityCoverage}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "It's important to note that the coverage you can take may be limited. Are you aware of any limitations on your disability insurance coverage?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No, I'm not aware", "I'm not sure."]}
+                    handleSelection={handleButtonStage41DisabilityCoverage}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "I recommend reviewing your current disability insurance policy to understand any limitations it may have. Checking details like maximum benefit amounts, coverage duration, and specific conditions that are excluded will help ensure you have adequate protection. Please get back to me once you've reviewed your policy."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage41DisabilityCoverage}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "I recommend reviewing your current disability insurance policy to understand any limitations it may have. Checking details like maximum benefit amounts, coverage duration, and specific conditions that are excluded will help ensure you have adequate protection. Please get back to me once you've reviewed your policy."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage41DisabilityCoverage}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Do you have contingent liability insurance to cover unexpected liabilities that may arise?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No", "I'm not sure."]}
-                      handleSelection={handleButtonStage41ContingentInsurance}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Do you have contingent liability insurance to cover unexpected liabilities that may arise?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No", "I'm not sure."]}
+                    handleSelection={handleButtonStage41ContingentInsurance}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "I recommend considering contingent liability insurance as it can protect you against unexpected financial obligations. It’s especially useful if you've provided personal guarantees or securities for business obligations. Please think about whether this might be a valuable addition to your insurance portfolio and let me know if you have any questions or need assistance with this."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage41ContingentInsurance}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "I recommend considering contingent liability insurance as it can protect you against unexpected financial obligations. It’s especially useful if you've provided personal guarantees or securities for business obligations. Please think about whether this might be a valuable addition to your insurance portfolio and let me know if you have any questions or need assistance with this."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage41ContingentInsurance}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "If you own a business, have you considered buy and sell insurance to protect your business partners and family?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Yes",
-                        "No, I don't have a business",
-                        "No, I haven't considered it",
-                        "Unsure",
-                      ]}
-                      handleSelection={handleButtonStage42BuyAndSell}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "If you own a business, have you considered buy and sell insurance to protect your business partners and family?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Yes",
+                      "No, I don't have a business",
+                      "No, I haven't considered it",
+                      "Unsure",
+                    ]}
+                    handleSelection={handleButtonStage42BuyAndSell}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Buy and sell insurance is designed to ensure that, in the event of your death or disability, your business can continue to operate smoothly. It provides funds to your business partners to buy out your share, protecting both your family’s financial interests and the business’s continuity. It might be worth exploring this option to safeguard your business and your loved ones. Please review your current situation and get back to me if you have any questions or need further assistance."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage42BuyAndSell}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Buy and sell insurance is designed to ensure that, in the event of your death or disability, your business can continue to operate smoothly. It provides funds to your business partners to buy out your share, protecting both your family’s financial interests and the business’s continuity. It might be worth exploring this option to safeguard your business and your loved ones. Please review your current situation and get back to me if you have any questions or need further assistance."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage42BuyAndSell}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "For business owners, key person insurance can help the business survive the loss of a crucial employee. Do you have this in place?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No", "Unsure"]}
-                      handleSelection={handleButtonStage43BusinessOwner}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "For business owners, key person insurance can help the business survive the loss of a crucial employee. Do you have this in place?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No", "Unsure"]}
+                    handleSelection={handleButtonStage43BusinessOwner}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Key person insurance provides financial support to your business if a key employee, whose expertise and skills are critical to the company's success, passes away or becomes disabled. It can help cover the cost of finding and training a replacement, as well as mitigate potential financial losses. If you think this could benefit your business, consider discussing it further with our financial adviser to ensure your business is protected."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage43BusinessOwner}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Key person insurance provides financial support to your business if a key employee, whose expertise and skills are critical to the company's success, passes away or becomes disabled. It can help cover the cost of finding and training a replacement, as well as mitigate potential financial losses. If you think this could benefit your business, consider discussing it further with our financial adviser to ensure your business is protected."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage43BusinessOwner}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Do you have any other types of insurance not already covered? Please provide details about the type of coverage and the insurance provider."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                      ]}
-                      handleSelection={handleButtonStage44InsuranceConvered}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Do you have any other types of insurance not already covered? Please provide details about the type of coverage and the insurance provider."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                    ]}
+                    handleSelection={handleButtonStage44InsuranceConvered}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Have you reviewed your insurance policies recently to ensure they align with your current needs and circumstances?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    {/* <button
+            {message.content.includes(
+              "Have you reviewed your insurance policies recently to ensure they align with your current needs and circumstances?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  {/* <button
                       onClick={() =>
                         handleButtonStage45ReviewedInsurance("Upload Document at End of Chat")
                       }
@@ -9015,1991 +9087,1985 @@ async function analyzeEstatePlanningMessage(message: string) {
                     >
                       Upload Document at End of Chat
                     </button> */}
-                    <SelectableButtonGroup
-                      options={["Yes, specify detail", "No, let’s move on"]}
-                      handleSelection={handleButtonStage45ReviewedInsurance}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "No problem. Whenever you're ready to provide the details of your insurance policies"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage45ReviewedInsurance}
-                    />
-                  </div>
-                </>
-              )}
-              {message.content.includes(
-                "No problem. Whenever you're ready to provide the details about any other type of insurance you have, just let me know."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage44InsuranceConvered}
-                    />
-                  </div>
-                </>
-              )}
-              {message.content.includes(
-                "No problem. Whenever you're ready to provide the details of your vehicle insurance provider"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage40VehicleInsured}
-                    />
-                  </div>
-                </>
-              )}
-              {message.content.includes(
-                "No problem. Whenever you're ready to provide the details of your insurance provider"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage39HoldingsInsured}
-                    />
-                  </div>
-                </>
-              )}
-              {message.content.includes(
-                "No problem. Whenever you're ready to provide the details of your health insurance policies"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage38HealthInsurance}
-                    />
-                  </div>
-                </>
-              )}
-              {message.content.includes(
-                "No problem. Whenever you're ready to provide the details of your life insurance policies"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage37LifeInsurance}
-                    />
-                  </div>
-                </>
-              )}
-              {message.content.includes(
-                "No problem. Whenever you're ready to provide the details of your significant changes expected in your liabilities"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage36SignificantChanges}
-                    />
-                  </div>
-                </>
-              )}
-              {message.content.includes(
-                "No problem. Whenever you're ready to provide the details of your strategy"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage35Strategy}
-                    />
-                  </div>
-                </>
-              )}
-              {message.content.includes(
-                "No problem. Whenever you're ready to provide the details of your outstanding debt"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage34OutstandingDebt}
-                    />
-                  </div>
-                </>
-              )}
-              {message.content.includes(
-                "No problem. Whenever you're ready to provide the details of your vehicle loan"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage33VehicleLoan}
-                    />
-                  </div>
-                </>
-              )}
-              {message.content.includes(
-                "No problem. Whenever you're ready to provide the details of your credit card debt"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage32CreditCardDebt}
-                    />
-                  </div>
-                </>
-              )}
-              {message.content.includes(
-                "No problem. Whenever you're ready to provide the details of your current personal loan"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage31PersonalLoan}
-                    />
-                  </div>
-                </>
-              )}
-              {message.content.includes(
-                "No problem. Whenever you're ready to provide the details of your outstanding mortgage loan"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage30Mortgage}
-                    />
-                  </div>
-                </>
-              )}
-              {message.content.includes(
-                "No problem. Whenever you're ready to provide the details of your legal entities"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage29LegalEntities}
-                    />
-                  </div>
-                </>
-              )}
-              {message.content.includes(
-                "No problem. Whenever you're ready to provide the details of your intellectual property rights"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage28Intellectual}
-                    />
-                  </div>
-                </>
-              )}
-              {message.content.includes(
-                "No problem. Whenever you're ready to provide the details of your significant assets"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage27SignificantAssets}
-                    />
-                  </div>
-                </>
-              )}
-              {message.content.includes(
-                "No problem. Whenever you're ready to provide the details of your business interest"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage26BusinessInterest}
-                    />
-                  </div>
-                </>
-              )}
-              {message.content.includes(
-                "No problem. Whenever you're ready to provide the details of your cash savings or deposits in bank accounts"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage25Cash}
-                    />
-                  </div>
-                </>
-              )}
-              {message.content.includes(
-                "No problem. Whenever you're ready to provide the details of your investment portfolio"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage25Portfolio}
-                    />
-                  </div>
-                </>
-              )}
-              {message.content.includes(
-                "No problem. Whenever you're ready to provide the details of your household"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage24Household}
-                    />
-                  </div>
-                </>
-              )}
-              {message.content.includes(
-                "No problem. Whenever you're ready to provide the details of your valuable possessions, just let me know."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage23Jewelry}
-                    />
-                  </div>
-                </>
-              )}
-              {message.content.includes(
-                "No problem. Whenever you're ready to provide the details of your vehicle, just let me know."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage22Vehicle}
-                    />
-                  </div>
-                </>
-              )}
-              {message.content.includes(
-                "No problem. Whenever you're ready to provide the details of the farm, just let me know."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage22Farm}
-                    />
-                  </div>
-                </>
-              )}
-              {message.content.includes(
-                "Thank you for discussing insurance policies with me. Let’s proceed to the next part of your estate planning. Shall we continue?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage46Continue}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Understanding your investment holdings helps us assess your overall financial position and develop strategies to maximise the value of your estate. Please provide as much detail as possible for each of the following questions"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Do you currently hold any stocks or equities in your
-                    investment portfolio? If yes, please specify the name of the
-                    stocks, the number of shares held, and the current market
-                    value of each stock 🔐💼
-                    <br />
-                  </div>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                      ]}
-                      handleSelection={handleButtonStage47InvestmentHolding}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "No problem. Whenever you're ready to provide the details of your stocks or equities"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage47InvestmentHolding}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Are you invested in any bonds or fixed-income securities? If so, please provide details about the types of bonds (government, corporate, municipal), the face value of each bond, the interest rate, and the maturity date."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                      ]}
-                      handleSelection={handleButtonStage48FixedIncome}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "No problem. Whenever you're ready, please provide the types of bonds you are interested in."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage48FixedIncome}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Do you have investments in mutual funds? If yes, please specify the names of the funds, the fund managers, the investment objectives, and the current value of your holdings in each fund."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                      ]}
-                      handleSelection={handleButtonStage48MutualFunds}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "No problem. Whenever you're ready to provide the details of your investments in mutual funds."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage48MutualFunds}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Are you contributing to a retirement fund such as retirement annuity fund, employer sponsored pension fund or provident fund? Please provide details about the type of retirement account, the current balance, and any investment options available within the account."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                      ]}
-                      handleSelection={handleButtonStage49RetirementFunds}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "No problem. Whenever you're ready to provide the details of your type of retirement account."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage49RetirementFunds}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Do you own any investment properties or real estate holdings? If yes, please specify the properties, their current market value, any rental income generated, and any outstanding mortgages or loans against the properties."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                      ]}
-                      handleSelection={handleButtonStage50EstateHoldings}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "No problem. Whenever you're ready to provide the details of your investment properties or real estate holdings"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage50EstateHoldings}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Are you invested in any other asset classes such as commodities, alternative investments, or cryptocurrencies? If so, please provide details about the specific investments and their current value."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                      ]}
-                      handleSelection={handleButtonStage51AssetClasses}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "No problem. Whenever you're ready to provide the details of your asset classes."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage51AssetClasses}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Have you defined your investment goals and risk tolerance to guide your investment decisions effectively?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No", "Unsure"]}
-                      handleSelection={handleButtonStage52InvestmentGoals}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Understanding your investment goals and risk tolerance is essential for making informed decisions that align with your financial objectives and comfort with risk. Consider identifying your short-term and long-term goals, such as saving for retirement, purchasing a home, or funding education. Additionally, assess your risk tolerance by considering how much risk you're willing to take and how you react to market fluctuations. If you need assistance, our financial adviser can help you define these parameters and create a tailored investment strategy."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage52InvestmentGoals}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Are there any specific changes or adjustments you're considering making to your investment portfolio in the near future?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No", "Unsure"]}
-                      handleSelection={handleButtonStage53SpecificChanges}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "It's always a good idea to periodically review your investment portfolio to ensure it aligns with your financial goals and risk tolerance. If you're not currently considering any changes, it might be helpful to schedule a regular review with a financial adviser to stay informed about potential opportunities or necessary adjustments based on market conditions and your evolving financial situation."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage53SpecificChanges}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Great! Next, we’ll discuss estate duty. Shall we continue?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage54Final}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "The tax on the total value of your estate if you were to pass away today with your current will or distribution wishes in place. Understanding this helps us ensure your estate plan minimises taxes and maximises what is passed on to your heirs. Ready to get started?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage55EstateDuty}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Do you have a current will in place?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage56CurrentWill}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Creating a will is an important step in securing your assets and ensuring your wishes are followed. We can start drafting your will right here by answering a few questions about your estate and preferences."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage57ImportantStep}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "When was the last time you reviewed your will? It’s a good idea to keep it up to date with any changes in your life."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Will is up to date",
-                        "Will needs to be reviewed & updated",
-                      ]}
-                      handleSelection={handleButtonStage57ReviewedWill}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Let's go over the details of your current will. How are your assets distributed according to your current will? Here are some specific questions to help clarify this:"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage57ImportantStep("Continue")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Do you bequeath your estate to your spouse?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Yes, my entire estate",
-                        "Yes, a significant portion of my estate",
-                        "No, estate divided among other beneficiaries",
-                        "No, spouse receives only a specific portion",
-                      ]}
-                      handleSelection={handleButtonStage58EstateSpouse}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "What happens to the residue (remainder) of your estate after all debts, expenses, taxes, and specific bequests (gifts of particular assets) are settled? Is it bequeathed to your spouse?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage59Residue}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Do you bequeath any portion of your estate to the Trustees of any specific trust?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage60Bequeath}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Does your will include a plan for setting up a trust after you pass away?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage61PassAway}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Do you have a farm or any specific property bequeathed to a trust?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage62Bequeathed}
-                    />
-                  </div>
-                </>
-              )}
-              {message.content.includes(
-                "the market value less 30% is included as the value of the farm for estate duty purposes."
-              ) && (
-                <>
-                  <div className="flex items-start space-x-4 mt-2 ml-11">
-                    {/* Image on the left */}
-                    <Image
-                      src="/images/usefulTip.png" // Path to your image
-                      alt="Useful tip"
-                      width={500} // Adjust width
-                      height={300} // Adjust height
-                      className="rounded-md" // Adds rounded corners (5px)
-                    />
-                  </div>
-
-                  <div className="space-x-2 ml-16 mt-2 mb-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Please provide details of the trust.
-                  </div>
-                </>
-              )}
-
-              {maritalStatus === "Married" &&
-                message.content.includes(
-                  "Upon your death, if massing takes place (combining assets from both spouses' estates), how should the assets be managed? For instance, if the surviving spouse's contribution is more valuable than the benefit received, should the difference be considered a loan to the specific beneficiary?"
-                ) && (
-                  <>
-                    <CustomButtonGroup
-                      options={[
-                        "Yes, the difference should be considered a loan to the specific beneficiary",
-                        "No, the difference should be considered a gift and not a loan",
-                        "The difference should be treated as a loan with interest payable by the beneficiary",
-                        "The difference should be adjusted through other assets or cash to balance the value",
-                        "A family trust should manage the difference to ensure equitable distribution",
-                        "The surviving spouse should decide on how to manage the difference based on circumstance",
-                        "The difference should be documented but forgiven upon the death of the surviving spouse",
-                        "The estate should sell specific assets to cover the difference and distribute proceeds accordingly",
-                        "A clause should be added to the will to allow for flexibility in handling the difference",
-                        "The difference should be split among all beneficiaries to evenly distribute the value",
-                      ]}
-                      handleSelection={handleButtonStage63AssetsManaged}
-                    />
-                  </>
-                )}
-
-              {message.content.includes(
-                "Certain third parties may be responsible for estate duty based on the assets they receive. Do you have any specific instructions or details about third-party liability for estate duty in your current will?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Yes, I have it in my current will",
-                        "No, I have not included specific instructions",
-                      ]}
-                      handleSelection={handleButtonStage64ThirdParties}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "USEFUL TIP: If your spouse were to pass away immediately after you, there are specific estate duty implications and/or arrangements you would need to consider? All the more reason to get in touch with our Financial Advisors. This will be noted and added to the report supplied to you at the end of this chat."
-              ) && (
-                <>
-                  <div className="flex items-start space-x-4 mt-2 ml-11">
-                    {/* Image on the left */}
-                    <Image
-                      src="/images/investment.png" // Path to your image
-                      alt="Useful tip"
-                      width={500} // Adjust width
-                      height={300} // Adjust height
-                      className="rounded-md" // Adds rounded corners (5px)
-                    />
-                  </div>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Thank you for providing all these details. {userName}. This
-                    helps us understand the estate duty implications of your
-                    current will.
-                  </div>
-                  <br />
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Next, we’ll look at the executor’s fees. Shall we continue?
-                  </div>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={
-                        handleButtonStage66EstateDutyCurrentWillFinal
-                      }
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "No problem. Whenever you're ready to provide the details, just let me know."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage65CurrentWill}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Understood. It's crucial to consider this aspect carefully. Would you like to discuss potential options for addressing third-party liability in your estate plan?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage65PotentialOption}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Excellent! There are several strategies we can explore to address third-party liability in your estate plan. One option is to include specific provisions in your will outlining how estate duty should be handled for third parties. We can also consider setting up trusts or other structures to manage these liabilities effectively. Would you like to explore these options further?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage65Stages}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Great, one of our financial advisers will be in touch in this regard."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    <strong style={{ marginLeft: "-5px" }}>
-                      💡 USEFUL TIP
-                    </strong>
-                    :
-                    <br />
-                    If your spouse were to pass away immediately after you,
-                    there are specific estate duty implications and/or
-                    arrangements you would need to consider? All the more reason
-                    to get in touch with our Financial Advisors. This will be
-                    noted and added to the report supplied to you at the end of
-                    this chat.
-                  </div>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Thank you for providing all these details. This helps us
-                    understand the estate duty implications of your current
-                    will. Please share your current will. 🔐💼
-                  </div>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Next, we’ll look at the executor’s fees. Shall we continue?
-                  </div>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={
-                        handleButtonStage66EstateDutyCurrentWillFinal
-                      }
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Great! Next, we’ll look at the executor’s fees. Shall we continue?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={
-                        handleButtonStage66EstateDutyCurrentWillFinal
-                      }
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Now, let's discuss the fees that will be charged for the administration of your estate. The executor's fees can be a significant part of the costs, so it's important to understand how these are calculated."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    💰 The maximum fee that can be charged for executor’s fees
-                    is 3.5%, plus VAT (15%), which totals 4.03%. You can leave
-                    instructions in your will to stipulate what percentage you
-                    wish to set for the executor’s fees.
-                    <br />
-                    <br />
-                    <strong style={{ marginLeft: "-1px" }}>
-                      💡 USEFUL TIP
-                    </strong>
-                    :
-                    <br />
-                    👪 Family members are also entitled to executor’s fees. The
-                    advantage of family members as executors is that they may be
-                    open to waive or negotiate lower compensation.
-                  </div>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                  Remember, no executor’s fees are payable on proceeds from policies with a beneficiary nomination, as these are paid directly to the nominated beneficiary by the insurance company. Do you have any such policies?
-                  </div>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes, specify", "No"]}
-                      handleSelection={handleButtonStage68Payable}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Remember, no executor’s fees are payable on proceeds from policies with a beneficiary nomination, as these are paid directly to the nominated beneficiary by the insurance company. Do you have any such policies?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes, specify", "No"]}
-                      handleSelection={handleButtonStage68Payable}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Now, we can move on to the next part of your estate planning. Ready to continue?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage69ExecutorFinal}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Now, let's talk about the liquidity position of your estate. This helps us understand if there are enough liquid assets available to cover estate costs without having to sell off assets. Ready to proceed?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage70Liquidity}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Liquidity is essential to cover estate costs without having to sell assets. Are you aware of any sources of liquidity in your estate, such as cash reserves or liquid investments?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Yes, specify",
-                        "No, I have no significant sourced of liquidity",
-                        "Unsure, will need assistance",
-                      ]}
-                      handleSelection={handleButtonStage71LiquidityEssential}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Great! Based on the information you've provided earlier, we can review your existing financial assets and investments to assess their liquidity. We will include this information in the report shared at the end of this conversation."
-              ) && (
-                <>
-                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                If there's a shortfall, there are a few options. The executor may ask heirs to contribute cash to prevent asset sales. Are you open to this option?
+                  <SelectableButtonGroup
+                    options={["Yes, specify detail", "No, let’s move on"]}
+                    handleSelection={handleButtonStage45ReviewedInsurance}
+                  />
                 </div>
-                <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Yes, with considerations",
-                        "No, assets should be sold to cover shortfall",
-                        "I need more information before deciding",
-                      ]}
-                      handleSelection={handleButtonStage72Shortfall}
-                    />
-                  </div>
-                </>
-              )}
+              </>
+            )}
 
-              {message.content.includes(
-                "If there's a shortfall, there are a few options. The executor may ask heirs to contribute cash to prevent asset sales. Are you open to this option?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Yes, with considerations",
-                        "No, assets should be sold to cover shortfall",
-                        "I need more information before deciding",
-                      ]}
-                      handleSelection={handleButtonStage72Shortfall}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Thank you for your openness to this option. When considering this approach, it's essential to assess the financial impact on each heir and ensure fairness in the distribution of responsibilities. Factors such as each heir's financial situation, willingness to contribute, and the impact on their inheritance should be carefully considered. Would you like guidance on how to navigate these considerations?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage73FinancialImpact}
-                    />
-                  </div>
-                </>
-              )}
-              {message.content.includes(
-                "Great! Our financial advisers at Old Mutual can help you and your heirs understand the financial implications and create a fair strategy. They can assist in evaluating each heir’s ability to contribute, ensure clear communication among all parties, and develop a plan that respects everyone's circumstances. We'll include this information in the report shared at the end of this conversation."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage73FinancialImpact}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Sure! In the event of a shortfall, the executor may explore various options to cover expenses without liquidating assets prematurely. These options could include negotiating payment terms with creditors, utilising existing insurance policies, or securing a loan against estate assets. Each option comes with its own set of considerations and implications. Would you like further details on these options to help you make an informed decision?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage74Shortfall}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Excellent! Here are some details on the potential options:"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    💬 Negotiating Payment Terms with Creditors:
-                    <br />
-                    This involves discussing with creditors to extend payment
-                    deadlines or set up a payment plan, allowing more time to
-                    manage the estate without immediate asset liquidation.
-                    <br />
-                    <br />
-                    🛡️ Utilizing Existing Insurance Policies:
-                    <br />
-                    Life insurance policies or other relevant insurance can
-                    provide liquidity to cover shortfalls. Reviewing existing
-                    policies can be a valuable step.
-                    <br />
-                    <br />
-                    💰 Securing a Loan Against Estate Assets:
-                    <br />
-                    This option involves taking a loan using estate assets as
-                    collateral, providing immediate funds to cover expenses
-                    while preserving the estate's value.
-                    <br />
-                    <br />
-                    Our financial advisers at Old Mutual can provide more
-                    in-depth information and help you evaluate these options
-                    based on your specific situation. We will include this
-                    information in the report shared at the end of this
-                    conversation.
-                  </div>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage74Shortfall}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Selling assets could impact your wishes for asset distribution and family business continuation. How do you feel about selling assets to cover a shortfall?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "I am open to selling assets",
-                        "I am against selling assets",
-                        "I need more information before deciding",
-                        "I’d like to explore alternative financing options",
-                      ]}
-                      handleSelection={handleButtonStage75SellingAsset}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Absolutely! When facing a shortfall, selling assets isn't the only option available. Alternative financing strategies, such as securing loans against estate assets, negotiating payment terms with creditors, or utilising existing insurance policies, can provide additional flexibility without compromising your long-term goals for asset distribution. Each option comes with its own set of considerations and implications, so it's essential to weigh them carefully. Our financial advisers can help you set this up."
-              ) && (
-                <>
-                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                  Borrowing funds is another option, but it could be costly and limit asset use if assets are used as security. Have you considered this option?
-                </div>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "I am open to borrowing funds",
-                        "I am against borrowing funds",
-                        "I need more information before deciding",
-                        "I’d like to explore alternative financing options",
-                      ]}
-                      handleSelection={handleButtonStage77BorrowingFunds}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "It's understandable to have reservations about selling assets, especially if it affects your long-term plans for asset distribution or business continuity. Selling assets can impact the legacy you wish to leave behind and may disrupt the stability of family businesses. However, it's essential to balance these concerns with the immediate need to cover a shortfall. Exploring alternative financing options or negotiating payment terms with creditors could help alleviate the need for asset liquidation. Would you like to explore these alternatives further?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage76Reservation}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Great! Here are some alternative options you might consider:"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    💬 Negotiating Payment Terms with Creditors:
-                    <br />
-                    This involves discussing with creditors to extend payment
-                    deadlines or set up a payment plan, allowing more time to
-                    manage the estate without immediate asset liquidation.
-                    <br />
-                    <br />
-                    🛡️ Utilizing Existing Insurance Policies:
-                    <br />
-                    Life insurance policies or other relevant insurance can
-                    provide liquidity to cover shortfalls. Reviewing existing
-                    policies can be a valuable step.
-                    <br />
-                    <br />
-                    💰 Securing a Loan Against Estate Assets:
-                    <br />
-                    This option involves taking a loan using estate assets as
-                    collateral, providing immediate funds to cover expenses
-                    while preserving the estate's value.
-                    <br />
-                    <br />
-                    Our financial advisers at Old Mutual can provide more
-                    in-depth information and help you evaluate these options
-                    based on your specific situation. We will include this
-                    information in the report shared at the end of this
-                    conversation.
-                  </div>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                  Borrowing funds is another option, but it could be costly and limit asset use if assets are used as security. Have you considered this option?
-                </div>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "I am open to borrowing funds",
-                        "I am against borrowing funds",
-                        "I need more information before deciding",
-                        "I’d like to explore alternative financing options",
-                      ]}
-                      handleSelection={handleButtonStage77BorrowingFunds}
-                    />
-                  </div>
-                  
-                </>
-              )}
-
-              {message.content.includes(
-                "Borrowing funds is another option, but it could be costly and limit asset use if assets are used as security. Have you considered this option?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "I am open to borrowing funds",
-                        "I am against borrowing funds",
-                        "I need more information before deciding",
-                        "I’d like to explore alternative financing options",
-                      ]}
-                      handleSelection={handleButtonStage77BorrowingFunds}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Absolutely, it's essential to fully understand the implications before making a decision. Borrowing funds can indeed be costly, especially if assets are used as security, as it may limit their use and potentially increase financial risk. I can provide more detailed information on the costs involved, potential risks, and alternative financing options to help you make an informed decision. Would you like to explore these aspects further?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage77FinancialRisk}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Great! Here are some important aspects to consider:"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    💸 Costs Involved:
-                    <br />
-                    Borrowing funds often comes with interest rates and fees,
-                    which can add up over time. Understanding these costs is
-                    crucial to determine if this option is viable.
-                    <br />
-                    <br />
-                    ⚠️ Potential Risks:
-                    <br />
-                    Using assets as security means those assets could be at risk
-                    if repayments are not met. This could affect your long-term
-                    financial stability and estate plans.
-                    <br />
-                    <br />
-                    💡 Alternative Financing Options:
-                    <br />
-                    Options such as negotiating payment terms with creditors,
-                    utilizing insurance policies, or setting up payment plans
-                    might be more beneficial and less risky.
-                    <br />
-                    <br />
-                    Our financial advisers at Old Mutual can provide a thorough
-                    analysis and personalized advice to help you make the best
-                    decision. We will include this information in the report
-                    shared at the end of this conversation.
-                  </div>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Have you considered life assurance as a way to address any cash shortfall? Life assurance provides immediate cash without income tax or capital gains tax. How willing are you to go this route?
-                  </div>
-                   <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <LifeInsuranceSlider
-                      onProceed={handleButtonStage78LifeInsurance}
-                    />
-                  </div>
-                  
-                </>
-              )}
-
-              {message.content.includes(
-                "Exploring alternative financing options is a prudent approach to ensure you make the best decision for your estate. There are various strategies available, such as negotiating payment terms with creditors, utilising existing insurance policies, or seeking financial assistance from family members or business partners. Each option has its pros and cons, so it's essential to weigh them carefully. Would you like more information on these alternative financing options?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage77Alternative}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Great! Here are some alternative financing options to consider:"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    💬 Negotiating Payment Terms with Creditors:
-                    <br />
-                    You can often arrange for more favorable payment terms,
-                    reducing the immediate financial burden on your estate.
-                    <br />
-                    <br />
-                    🛡️ Utilizing Existing Insurance Policies:
-                    <br />
-                    Certain insurance policies may offer payouts that can cover
-                    the shortfall without the need to liquidate assets.
-                    <br />
-                    <br />
-                    🤝 Financial Assistance from Family or Business Partners:
-                    <br />
-                    If feasible, seeking help from family members or business
-                    partners can provide a flexible and low-cost solution.
-                    <br />
-                    <br />
-                    Our financial advisers at Old Mutual can provide a thorough
-                    analysis and personalized advice to help you make the best
-                    decision. We will include this information in the report
-                    shared at the end of this conversation.
-                  </div>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Have you considered life assurance as a way to address any cash shortfall? Life assurance provides immediate cash without income tax or capital gains tax. How willing are you to go this route?
-                  </div>
-                   <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <LifeInsuranceSlider
-                      onProceed={handleButtonStage78LifeInsurance}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Have you considered life assurance as a way to address any cash shortfall? Life assurance provides immediate cash without income tax or capital gains tax. How willing are you to go this route?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <LifeInsuranceSlider
-                      onProceed={handleButtonStage78LifeInsurance}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Thank you for discussing your estate's liquidity position. Let's discuss maintenance claims. Ready?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage79LiquidityEnd}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Let's discuss maintenance claims in terms of court orders. If you pass away while there are maintenance obligations towards children or a former spouse, they will have a maintenance claim against your estate. Are you aware of any existing maintenance obligations or court orders?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "I have court ordered maintenance obligations",
-                        "I have informal agreements, not court orders",
-                        "I don’t have any maintenance obligations",
-                        "I haven’t considered maintenance claims in relation to my estate planning",
-                      ]}
-                      handleSelection={handleButtonStage80Claims}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "It's crucial to consider these maintenance obligations in your estate planning to ensure they are adequately addressed. Court-ordered maintenance obligations typically take precedence and must be factored into your estate plan to avoid potential disputes or legal complications. Would you like assistance in incorporating these obligations into your estate plan? If so, please provide the details of the court order."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Upload Document at End of Chat",
-                        "Yes, specify detail",
-                        "No, let’s move on",
-                      ]}
-                      handleSelection={handleButtonStage81Obligations}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "No problem. Whenever you're ready, please provide the details about your life insurance policy."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage81Obligations}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "While informal agreements may not have the same legal standing as court orders, they are still important to consider in your estate planning. Even informal arrangements could result in maintenance claims against your estate if not addressed properly. Would you like guidance on how to formalise these agreements or ensure they are appropriately accounted for in your estate plan?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No", "Maybe"]}
-                      handleSelection={handleButtonStage81Agreements}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "We will include this information about life insurance policy in the report shared at the end of this conversation."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage81Agreements}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "It's essential to assess any potential maintenance claims in relation to your estate to avoid unexpected complications for your heirs. Even if you haven't formalised maintenance obligations through court orders or agreements, they may still arise based on legal obligations. Would you like assistance in evaluating and addressing any potential maintenance claims in your estate planning?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No", "Maybe"]}
-                      handleSelection={handleButtonStage81Complications}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "We'll include this information about life insurance policy in the report shared at the end of this conversation."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage81Complications}
-                    />
-                  </div>
-                </>
-              )}
-
-              
-              {message.content.includes(
-                "You are under 18 years old. We recommend you seek advice from a legal guardian or financial advisor"
-              ) && (
+            {message.content.includes(
+              "No problem. Whenever you're ready to provide the details of your insurance policies"
+            ) && (
+              <>
                 <div className="space-x-2 ml-14 -mt-4">
                   <br />
                   <SelectableButtonGroup
-                    options={["Proceed with Learning"]}
-                    handleSelection={handleButtonStageProceedLearning}
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage45ReviewedInsurance}
                   />
                 </div>
-              )}
-
-
-              {message.content.includes(
-                "Have you considered the cost of education and taken that into account regarding maintenance?"
-              ) && (
+              </>
+            )}
+            {message.content.includes(
+              "No problem. Whenever you're ready to provide the details about any other type of insurance you have, just let me know."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage44InsuranceConvered}
+                  />
+                </div>
+              </>
+            )}
+            {message.content.includes(
+              "No problem. Whenever you're ready to provide the details of your vehicle insurance provider"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage40VehicleInsured}
+                  />
+                </div>
+              </>
+            )}
+            {message.content.includes(
+              "No problem. Whenever you're ready to provide the details of your insurance provider"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage39HoldingsInsured}
+                  />
+                </div>
+              </>
+            )}
+            {message.content.includes(
+              "No problem. Whenever you're ready to provide the details of your health insurance policies"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage38HealthInsurance}
+                  />
+                </div>
+              </>
+            )}
+            {message.content.includes(
+              "No problem. Whenever you're ready to provide the details of your life insurance policies"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage37LifeInsurance}
+                  />
+                </div>
+              </>
+            )}
+            {message.content.includes(
+              "No problem. Whenever you're ready to provide the details of your significant changes expected in your liabilities"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage36SignificantChanges}
+                  />
+                </div>
+              </>
+            )}
+            {message.content.includes(
+              "No problem. Whenever you're ready to provide the details of your strategy"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage35Strategy}
+                  />
+                </div>
+              </>
+            )}
+            {message.content.includes(
+              "No problem. Whenever you're ready to provide the details of your outstanding debt"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage34OutstandingDebt}
+                  />
+                </div>
+              </>
+            )}
+            {message.content.includes(
+              "No problem. Whenever you're ready to provide the details of your vehicle loan"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage33VehicleLoan}
+                  />
+                </div>
+              </>
+            )}
+            {message.content.includes(
+              "No problem. Whenever you're ready to provide the details of your credit card debt"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage32CreditCardDebt}
+                  />
+                </div>
+              </>
+            )}
+            {message.content.includes(
+              "No problem. Whenever you're ready to provide the details of your current personal loan"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage31PersonalLoan}
+                  />
+                </div>
+              </>
+            )}
+            {message.content.includes(
+              "No problem. Whenever you're ready to provide the details of your outstanding mortgage loan"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage30Mortgage}
+                  />
+                </div>
+              </>
+            )}
+            {message.content.includes(
+              "No problem. Whenever you're ready to provide the details of your legal entities"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage29LegalEntities}
+                  />
+                </div>
+              </>
+            )}
+            {message.content.includes(
+              "No problem. Whenever you're ready to provide the details of your intellectual property rights"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage28Intellectual}
+                  />
+                </div>
+              </>
+            )}
+            {message.content.includes(
+              "No problem. Whenever you're ready to provide the details of your significant assets"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage27SignificantAssets}
+                  />
+                </div>
+              </>
+            )}
+            {message.content.includes(
+              "No problem. Whenever you're ready to provide the details of your business interest"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage26BusinessInterest}
+                  />
+                </div>
+              </>
+            )}
+            {message.content.includes(
+              "No problem. Whenever you're ready to provide the details of your cash savings or deposits in bank accounts"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage25Cash}
+                  />
+                </div>
+              </>
+            )}
+            {message.content.includes(
+              "No problem. Whenever you're ready to provide the details of your investment portfolio"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage25Portfolio}
+                  />
+                </div>
+              </>
+            )}
+            {message.content.includes(
+              "No problem. Whenever you're ready to provide the details of your household"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage24Household}
+                  />
+                </div>
+              </>
+            )}
+            {message.content.includes(
+              "No problem. Whenever you're ready to provide the details of your valuable possessions, just let me know."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage23Jewelry}
+                  />
+                </div>
+              </>
+            )}
+            {message.content.includes(
+              "No problem. Whenever you're ready to provide the details of your vehicle, just let me know."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage22Vehicle}
+                  />
+                </div>
+              </>
+            )}
+            {message.content.includes(
+              "No problem. Whenever you're ready to provide the details of the farm, just let me know."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage22Farm}
+                  />
+                </div>
+              </>
+            )}
+            {message.content.includes(
+              "Thank you for discussing insurance policies with me. Let’s proceed to the next part of your estate planning. Shall we continue?"
+            ) && (
+              <>
                 <div className="space-x-2 ml-14 -mt-4">
                   <br />
                   <SelectableButtonGroup
                     options={["Yes", "No"]}
-                    handleSelection={handleButtonStage82LifeInsurancev1}
+                    handleSelection={handleButtonStage46Continue}
                   />
                 </div>
-              )}
+              </>
+            )}
 
-              {message.content.includes(
-                "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?"
+            {message.content.includes(
+              "Understanding your investment holdings helps us assess your overall financial position and develop strategies to maximise the value of your estate. Please provide as much detail as possible for each of the following questions"
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Do you currently hold any stocks or equities in your
+                  investment portfolio? If yes, please specify the name of the
+                  stocks, the number of shares held, and the current market
+                  value of each stock 🔐💼
+                  <br />
+                </div>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                    ]}
+                    handleSelection={handleButtonStage47InvestmentHolding}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "No problem. Whenever you're ready to provide the details of your stocks or equities"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage47InvestmentHolding}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Are you invested in any bonds or fixed-income securities? If so, please provide details about the types of bonds (government, corporate, municipal), the face value of each bond, the interest rate, and the maturity date."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                    ]}
+                    handleSelection={handleButtonStage48FixedIncome}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "No problem. Whenever you're ready, please provide the types of bonds you are interested in."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage48FixedIncome}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Do you have investments in mutual funds? If yes, please specify the names of the funds, the fund managers, the investment objectives, and the current value of your holdings in each fund."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                    ]}
+                    handleSelection={handleButtonStage48MutualFunds}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "No problem. Whenever you're ready to provide the details of your investments in mutual funds."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage48MutualFunds}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Are you contributing to a retirement fund such as retirement annuity fund, employer sponsored pension fund or provident fund? Please provide details about the type of retirement account, the current balance, and any investment options available within the account."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                    ]}
+                    handleSelection={handleButtonStage49RetirementFunds}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "No problem. Whenever you're ready to provide the details of your type of retirement account."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage49RetirementFunds}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Do you own any investment properties or real estate holdings? If yes, please specify the properties, their current market value, any rental income generated, and any outstanding mortgages or loans against the properties."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                    ]}
+                    handleSelection={handleButtonStage50EstateHoldings}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "No problem. Whenever you're ready to provide the details of your investment properties or real estate holdings"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage50EstateHoldings}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Are you invested in any other asset classes such as commodities, alternative investments, or cryptocurrencies? If so, please provide details about the specific investments and their current value."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                    ]}
+                    handleSelection={handleButtonStage51AssetClasses}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "No problem. Whenever you're ready to provide the details of your asset classes."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage51AssetClasses}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Have you defined your investment goals and risk tolerance to guide your investment decisions effectively?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No", "Unsure"]}
+                    handleSelection={handleButtonStage52InvestmentGoals}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Understanding your investment goals and risk tolerance is essential for making informed decisions that align with your financial objectives and comfort with risk. Consider identifying your short-term and long-term goals, such as saving for retirement, purchasing a home, or funding education. Additionally, assess your risk tolerance by considering how much risk you're willing to take and how you react to market fluctuations. If you need assistance, our financial adviser can help you define these parameters and create a tailored investment strategy."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage52InvestmentGoals}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Are there any specific changes or adjustments you're considering making to your investment portfolio in the near future?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No", "Unsure"]}
+                    handleSelection={handleButtonStage53SpecificChanges}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "It's always a good idea to periodically review your investment portfolio to ensure it aligns with your financial goals and risk tolerance. If you're not currently considering any changes, it might be helpful to schedule a regular review with a financial adviser to stay informed about potential opportunities or necessary adjustments based on market conditions and your evolving financial situation."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage53SpecificChanges}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Great! Next, we’ll discuss estate duty. Shall we continue?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage54Final}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "The tax on the total value of your estate if you were to pass away today with your current will or distribution wishes in place. Understanding this helps us ensure your estate plan minimises taxes and maximises what is passed on to your heirs. Ready to get started?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage55EstateDuty}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Do you have a current will in place?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage56CurrentWill}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Creating a will is an important step in securing your assets and ensuring your wishes are followed. We can start drafting your will right here by answering a few questions about your estate and preferences."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage57ImportantStep}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "When was the last time you reviewed your will? It’s a good idea to keep it up to date with any changes in your life."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Will is up to date",
+                      "Will needs to be reviewed & updated",
+                    ]}
+                    handleSelection={handleButtonStage57ReviewedWill}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Let's go over the details of your current will. How are your assets distributed according to your current will? Here are some specific questions to help clarify this:"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <button
+                    onClick={() => handleButtonStage57ImportantStep("Continue")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                  >
+                    Continue
+                  </button>
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Do you bequeath your estate to your spouse?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Yes, my entire estate",
+                      "Yes, a significant portion of my estate",
+                      "No, estate divided among other beneficiaries",
+                      "No, spouse receives only a specific portion",
+                    ]}
+                    handleSelection={handleButtonStage58EstateSpouse}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "What happens to the residue (remainder) of your estate after all debts, expenses, taxes, and specific bequests (gifts of particular assets) are settled? Is it bequeathed to your spouse?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage59Residue}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Do you bequeath any portion of your estate to the Trustees of any specific trust?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage60Bequeath}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Does your will include a plan for setting up a trust after you pass away?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage61PassAway}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Do you have a farm or any specific property bequeathed to a trust?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage62Bequeathed}
+                  />
+                </div>
+              </>
+            )}
+            {message.content.includes(
+              "the market value less 30% is included as the value of the farm for estate duty purposes."
+            ) && (
+              <>
+                <div className="flex items-start space-x-4 mt-2 ml-11">
+                  {/* Image on the left */}
+                  <Image
+                    src="/images/usefulTip.png" // Path to your image
+                    alt="Useful tip"
+                    width={500} // Adjust width
+                    height={300} // Adjust height
+                    className="rounded-md" // Adds rounded corners (5px)
+                  />
+                </div>
+
+                <div className="space-x-2 ml-16 mt-2 mb-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Please provide details of the trust.
+                </div>
+              </>
+            )}
+
+            {maritalStatus === "Married" &&
+              message.content.includes(
+                "Upon your death, if massing takes place (combining assets from both spouses' estates), how should the assets be managed? For instance, if the surviving spouse's contribution is more valuable than the benefit received, should the difference be considered a loan to the specific beneficiary?"
               ) && (
                 <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No", "Unsure"]}
-                      handleSelection={handleButtonStage82LifeInsurance}
-                    />
-                  </div>
+                  <CustomButtonGroup
+                    options={[
+                      "Yes, the difference should be considered a loan to the specific beneficiary",
+                      "No, the difference should be considered a gift and not a loan",
+                      "The difference should be treated as a loan with interest payable by the beneficiary",
+                      "The difference should be adjusted through other assets or cash to balance the value",
+                      "A family trust should manage the difference to ensure equitable distribution",
+                      "The surviving spouse should decide on how to manage the difference based on circumstance",
+                      "The difference should be documented but forgiven upon the death of the surviving spouse",
+                      "The estate should sell specific assets to cover the difference and distribute proceeds accordingly",
+                      "A clause should be added to the will to allow for flexibility in handling the difference",
+                      "The difference should be split among all beneficiaries to evenly distribute the value",
+                    ]}
+                    handleSelection={handleButtonStage63AssetsManaged}
+                  />
                 </>
               )}
 
-              {message.content.includes(
-                "That's a proactive approach to ensuring adequate provision for maintenance obligations. Have you already taken steps to set up such a policy, or would you like assistance in exploring this option further?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "I have set up a policy",
-                        "I need assistance in setting up a policy",
-                      ]}
-                      handleSelection={handleButtonStage83Proactive}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Certain third parties may be responsible for estate duty based on the assets they receive. Do you have any specific instructions or details about third-party liability for estate duty in your current will?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Yes, I have it in my current will",
+                      "No, I have not included specific instructions",
+                    ]}
+                    handleSelection={handleButtonStage64ThirdParties}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "We will include information about assistance with setting up a policy in the report that will be shared at the end of this conversation."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage83Proactive}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "USEFUL TIP: If your spouse were to pass away immediately after you, there are specific estate duty implications and/or arrangements you would need to consider? All the more reason to get in touch with our Financial Advisors. This will be noted and added to the report supplied to you at the end of this chat."
+            ) && (
+              <>
+                <div className="flex items-start space-x-4 mt-2 ml-11">
+                  {/* Image on the left */}
+                  <Image
+                    src="/images/investment.png" // Path to your image
+                    alt="Useful tip"
+                    width={500} // Adjust width
+                    height={300} // Adjust height
+                    className="rounded-md" // Adds rounded corners (5px)
+                  />
+                </div>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Thank you for providing all these details. {userName}. This
+                  helps us understand the estate duty implications of your
+                  current will.
+                </div>
+                <br />
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Next, we’ll look at the executor’s fees. Shall we continue?
+                </div>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={
+                      handleButtonStage66EstateDutyCurrentWillFinal
+                    }
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "It's an important consideration to ensure that your loved ones are provided for in the event of your passing. If you'd like, we can discuss the benefits and implications of setting up a life insurance policy payable to a testamentary trust to cover maintenance obligations. Would you like more information on this option?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage83Passing}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "No problem. Whenever you're ready to provide the details, just let me know."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage65CurrentWill}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Setting up a life insurance policy payable to a testamentary trust can ensure that maintenance obligations are met without burdening your estate. This approach provides a reliable income stream for your beneficiaries. Our financial advisers at Old Mutual can provide detailed guidance and help you explore this option further."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage83Passing}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Understood. It's crucial to consider this aspect carefully. Would you like to discuss potential options for addressing third-party liability in your estate plan?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage65PotentialOption}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Next, let's talk about maintenance for the surviving spouse. If you don't make provision for maintenance for the surviving spouse, they can institute a claim against your estate in terms of the Maintenance of Surviving Spouse’s Act. Are you considering provisions for your surviving spouse?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "I have provisions in place",
-                        "I want to make provisions in my estate planning",
-                        "I don’t want to make provisions in my estate planning",
-                        " I need more information before deciding",
-                      ]}
-                      handleSelection={handleButtonStage84Provision}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Excellent! There are several strategies we can explore to address third-party liability in your estate plan. One option is to include specific provisions in your will outlining how estate duty should be handled for third parties. We can also consider setting up trusts or other structures to manage these liabilities effectively. Would you like to explore these options further?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage65Stages}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "It's great that you've already made provisions for your surviving spouse. Would you like to review your existing provisions to ensure they align with your current goals and circumstances?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage84ExistingProvision}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Great, one of our financial advisers will be in touch in this regard."
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <strong style={{ marginLeft: "-5px" }}>💡 USEFUL TIP</strong>
+                  :
+                  <br />
+                  If your spouse were to pass away immediately after you, there
+                  are specific estate duty implications and/or arrangements you
+                  would need to consider? All the more reason to get in touch
+                  with our Financial Advisors. This will be noted and added to
+                  the report supplied to you at the end of this chat.
+                </div>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Thank you for providing all these details. This helps us
+                  understand the estate duty implications of your current will.
+                  Please share your current will. 🔐💼
+                </div>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Next, we’ll look at the executor’s fees. Shall we continue?
+                </div>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={
+                      handleButtonStage66EstateDutyCurrentWillFinal
+                    }
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Reviewing your existing provisions can ensure they are still appropriate and effective given your current situation and goals. We will include this information in the report shared at the end of this conversation."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage84ExistingProvision}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Great! Next, we’ll look at the executor’s fees. Shall we continue?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={
+                      handleButtonStage66EstateDutyCurrentWillFinal
+                    }
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Making provisions for your surviving spouse ensures their financial security after you're gone. We can discuss various options for including these provisions in your estate plan. Would you like more information on this?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage84OptionProvision}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Now, let's discuss the fees that will be charged for the administration of your estate. The executor's fees can be a significant part of the costs, so it's important to understand how these are calculated."
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  💰 The maximum fee that can be charged for executor’s fees is
+                  3.5%, plus VAT (15%), which totals 4.03%. You can leave
+                  instructions in your will to stipulate what percentage you
+                  wish to set for the executor’s fees.
+                  <br />
+                  <br />
+                  <strong style={{ marginLeft: "-1px" }}>💡 USEFUL TIP</strong>
+                  :
+                  <br />
+                  👪 Family members are also entitled to executor’s fees. The
+                  advantage of family members as executors is that they may be
+                  open to waive or negotiate lower compensation.
+                </div>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Remember, no executor’s fees are payable on proceeds from
+                  policies with a beneficiary nomination, as these are paid
+                  directly to the nominated beneficiary by the insurance
+                  company. Do you have any such policies?
+                </div>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes, specify", "No"]}
+                    handleSelection={handleButtonStage68Payable}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Providing for your surviving spouse can be done through various means, such as setting up a trust, designating life insurance benefits, or specifying direct bequests in your will. Our financial advisers at Old Mutual can guide you through these options to find the best solution for your needs. We will include this information in the report shared at the end of this conversation."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage84OptionProvision}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Remember, no executor’s fees are payable on proceeds from policies with a beneficiary nomination, as these are paid directly to the nominated beneficiary by the insurance company. Do you have any such policies?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes, specify", "No"]}
+                    handleSelection={handleButtonStage68Payable}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Sure, understanding the implications and options for provisions for your surviving spouse is crucial. Would you like more information on how this can be incorporated into your estate planning?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage84CrucialProvision}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Now, we can move on to the next part of your estate planning. Ready to continue?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage69ExecutorFinal}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Incorporating provisions for your surviving spouse can be an essential part of a comprehensive estate plan. Understanding the legal and financial implications will help you make an informed decision. Our financial advisers at Old Mutual can provide you with the necessary information and advice. We will include this information in the report shared at the end of this conversation."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage84CrucialProvision}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Now, let's talk about the liquidity position of your estate. This helps us understand if there are enough liquid assets available to cover estate costs without having to sell off assets. Ready to proceed?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage70Liquidity}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Factors considered by the court when assessing the claim include the duration of the marriage, the spouse's age and earning capacity, and the size of your assets. Have you thought about these factors in your estate planning?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <CustomButtonGroup
-                      options={[
-                        "Yes, I have considered them and have factored them into my estate planning",
-                        "I am aware of these factors but haven’t considered them in my estate planning",
-                        "No, I haven’t thought about these factors yet",
-                        "I need more information before I can respond",
-                      ]}
-                      handleSelection={handleButtonStage85FactorsProvision}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Liquidity is essential to cover estate costs without having to sell assets. Are you aware of any sources of liquidity in your estate, such as cash reserves or liquid investments?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Yes, specify",
+                      "No, I have no significant sourced of liquidity",
+                      "Unsure, will need assistance",
+                    ]}
+                    handleSelection={handleButtonStage71LiquidityEssential}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "It's excellent that you've already considered these factors in your estate planning. Would you like to discuss how they can further inform your decisions and ensure your plan aligns with your goals?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage85GoalsProvision}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Great! Based on the information you've provided earlier, we can review your existing financial assets and investments to assess their liquidity. We will include this information in the report shared at the end of this conversation."
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  If there's a shortfall, there are a few options. The executor
+                  may ask heirs to contribute cash to prevent asset sales. Are
+                  you open to this option?
+                </div>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Yes, with considerations",
+                      "No, assets should be sold to cover shortfall",
+                      "I need more information before deciding",
+                    ]}
+                    handleSelection={handleButtonStage72Shortfall}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Great! When these factors are considered, it helps ensure that your estate plan is tailored to meet your specific circumstances. For example, longer marriages or significant disparities in earning capacity might necessitate larger or longer-term maintenance provisions. Keeping your plan flexible and periodically reviewing it can help accommodate any changes in your situation. Would you like to delve deeper into any particular area?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage85GoalsProvision}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "If there's a shortfall, there are a few options. The executor may ask heirs to contribute cash to prevent asset sales. Are you open to this option?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Yes, with considerations",
+                      "No, assets should be sold to cover shortfall",
+                      "I need more information before deciding",
+                    ]}
+                    handleSelection={handleButtonStage72Shortfall}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Understanding these factors is essential for effective estate planning. Would you like assistance in incorporating them into your estate plan to ensure it reflects your wishes and circumstances?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={
-                        handleButtonStage85UnderstandingProvision
-                      }
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Thank you for your openness to this option. When considering this approach, it's essential to assess the financial impact on each heir and ensure fairness in the distribution of responsibilities. Factors such as each heir's financial situation, willingness to contribute, and the impact on their inheritance should be carefully considered. Would you like guidance on how to navigate these considerations?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage73FinancialImpact}
+                  />
+                </div>
+              </>
+            )}
+            {message.content.includes(
+              "Great! Our financial advisers at Old Mutual can help you and your heirs understand the financial implications and create a fair strategy. They can assist in evaluating each heir’s ability to contribute, ensure clear communication among all parties, and develop a plan that respects everyone's circumstances. We'll include this information in the report shared at the end of this conversation."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage73FinancialImpact}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Excellent! Incorporating these factors into your estate plan ensures a fair and well-thought-out approach to maintenance and asset distribution. For instance, ensuring that your plan addresses the financial needs of a surviving spouse based on their age and earning capacity can provide long-term security. We will include this information in the report shared at the end of this conversation."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={
-                        handleButtonStage85UnderstandingProvision
-                      }
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Sure! In the event of a shortfall, the executor may explore various options to cover expenses without liquidating assets prematurely. These options could include negotiating payment terms with creditors, utilising existing insurance policies, or securing a loan against estate assets. Each option comes with its own set of considerations and implications. Would you like further details on these options to help you make an informed decision?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage74Shortfall}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "No worries, considering these factors can help you create a more comprehensive estate plan. Would you like assistance in understanding how they may impact your estate planning decisions?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={
-                        handleButtonStage85ComprehensiveProvision
-                      }
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Excellent! Here are some details on the potential options:"
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  💬 Negotiating Payment Terms with Creditors:
+                  <br />
+                  This involves discussing with creditors to extend payment
+                  deadlines or set up a payment plan, allowing more time to
+                  manage the estate without immediate asset liquidation.
+                  <br />
+                  <br />
+                  🛡️ Utilizing Existing Insurance Policies:
+                  <br />
+                  Life insurance policies or other relevant insurance can
+                  provide liquidity to cover shortfalls. Reviewing existing
+                  policies can be a valuable step.
+                  <br />
+                  <br />
+                  💰 Securing a Loan Against Estate Assets:
+                  <br />
+                  This option involves taking a loan using estate assets as
+                  collateral, providing immediate funds to cover expenses while
+                  preserving the estate's value.
+                  <br />
+                  <br />
+                  Our financial advisers at Old Mutual can provide more in-depth
+                  information and help you evaluate these options based on your
+                  specific situation. We will include this information in the
+                  report shared at the end of this conversation.
+                </div>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage74Shortfall}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Wonderful! Understanding how these factors impact your estate planning can help you make more informed decisions. For example, considering the spouse's earning capacity can guide how much and how long maintenance should be provided, and knowing the size of your assets helps in deciding the distribution method. We will include this information in the report shared at the end of this conversation."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={
-                        handleButtonStage85ComprehensiveProvision
-                      }
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Selling assets could impact your wishes for asset distribution and family business continuation. How do you feel about selling assets to cover a shortfall?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "I am open to selling assets",
+                      "I am against selling assets",
+                      "I need more information before deciding",
+                      "I’d like to explore alternative financing options",
+                    ]}
+                    handleSelection={handleButtonStage75SellingAsset}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Sure, understanding these factors is crucial for effective estate planning. Would you like more information on how they can influence your estate planning decisions before you respond?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage85EffectiveProvision}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Absolutely! When facing a shortfall, selling assets isn't the only option available. Alternative financing strategies, such as securing loans against estate assets, negotiating payment terms with creditors, or utilising existing insurance policies, can provide additional flexibility without compromising your long-term goals for asset distribution. Each option comes with its own set of considerations and implications, so it's essential to weigh them carefully. Our financial advisers can help you set this up."
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Borrowing funds is another option, but it could be costly and
+                  limit asset use if assets are used as security. Have you
+                  considered this option?
+                </div>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "I am open to borrowing funds",
+                      "I am against borrowing funds",
+                      "I need more information before deciding",
+                      "I’d like to explore alternative financing options",
+                    ]}
+                    handleSelection={handleButtonStage77BorrowingFunds}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Perfect! Knowing how these factors influence your estate planning can help ensure your plan is both fair and effective. For instance, a longer marriage might lead to more substantial maintenance claims, and a larger estate might require more detailed planning to minimize tax implications. We will include this information in the report shared at the end of this conversation."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage85EffectiveProvision}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "It's understandable to have reservations about selling assets, especially if it affects your long-term plans for asset distribution or business continuity. Selling assets can impact the legacy you wish to leave behind and may disrupt the stability of family businesses. However, it's essential to balance these concerns with the immediate need to cover a shortfall. Exploring alternative financing options or negotiating payment terms with creditors could help alleviate the need for asset liquidation. Would you like to explore these alternatives further?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage76Reservation}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "You can make provision for maintenance through an insurance policy where your surviving spouse is the nominated beneficiary or stipulate in the will that the proceeds will be paid to a testamentary trust for the spouse's benefit. What are your preferences regarding this?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <CustomButtonGroup
-                      options={[
-                        "Insurance policy with my spouse as the nominated beneficiary",
-                        "Testamentary trust for spouse outlines in my will",
-                        "I’m open to either option",
-                        "I’m not sure, I need more information of each option",
-                        "I’d like to explore other options",
-                      ]}
-                      handleSelection={handleButtonStage85MaintenanceProvision}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Great! Here are some alternative options you might consider:"
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  💬 Negotiating Payment Terms with Creditors:
+                  <br />
+                  This involves discussing with creditors to extend payment
+                  deadlines or set up a payment plan, allowing more time to
+                  manage the estate without immediate asset liquidation.
+                  <br />
+                  <br />
+                  🛡️ Utilizing Existing Insurance Policies:
+                  <br />
+                  Life insurance policies or other relevant insurance can
+                  provide liquidity to cover shortfalls. Reviewing existing
+                  policies can be a valuable step.
+                  <br />
+                  <br />
+                  💰 Securing a Loan Against Estate Assets:
+                  <br />
+                  This option involves taking a loan using estate assets as
+                  collateral, providing immediate funds to cover expenses while
+                  preserving the estate's value.
+                  <br />
+                  <br />
+                  Our financial advisers at Old Mutual can provide more in-depth
+                  information and help you evaluate these options based on your
+                  specific situation. We will include this information in the
+                  report shared at the end of this conversation.
+                </div>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Borrowing funds is another option, but it could be costly and
+                  limit asset use if assets are used as security. Have you
+                  considered this option?
+                </div>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "I am open to borrowing funds",
+                      "I am against borrowing funds",
+                      "I need more information before deciding",
+                      "I’d like to explore alternative financing options",
+                    ]}
+                    handleSelection={handleButtonStage77BorrowingFunds}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Both options have their advantages. With an insurance policy, the benefit is usually paid out quickly and directly to your spouse, providing immediate financial support. On the other hand, setting up a testamentary trust in your will offers more control over how the funds are managed and distributed, ensuring long-term financial security for your spouse and potential tax benefits. We can discuss the specifics of each option further and tailor the solution to best meet your needs. Would you like to explore these options in more detail?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage85BenefitProvision}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Borrowing funds is another option, but it could be costly and limit asset use if assets are used as security. Have you considered this option?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "I am open to borrowing funds",
+                      "I am against borrowing funds",
+                      "I need more information before deciding",
+                      "I’d like to explore alternative financing options",
+                    ]}
+                    handleSelection={handleButtonStage77BorrowingFunds}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Great! Here’s a brief overview of each option:"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    <b>🛡️ Insurance Policy:</b>
-                    <br />
-                    Provides immediate liquidity to your spouse upon your
-                    passing, typically without the need for probate. This can be
-                    beneficial for addressing urgent financial needs.
-                    <br />
-                    <br />
-                    <b style={{ marginLeft: "-1px" }}>🏦 Testamentary Trust:</b>
-                    <br />
-                    Allows for greater control over the distribution of assets,
-                    potentially offering ongoing support and protection for your
-                    spouse. It can also provide tax benefits and help manage the
-                    funds according to your wishes.
-                  </div>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage85BenefitProvision}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Absolutely, it's essential to fully understand the implications before making a decision. Borrowing funds can indeed be costly, especially if assets are used as security, as it may limit their use and potentially increase financial risk. I can provide more detailed information on the costs involved, potential risks, and alternative financing options to help you make an informed decision. Would you like to explore these aspects further?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage77FinancialRisk}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Absolutely! Let's delve deeper into both options. An insurance policy with your spouse as the nominated beneficiary provides immediate liquidity and financial support to your spouse upon your passing. However, a testamentary trust outlined in your will can offer ongoing financial security, asset protection, and control over how the funds are used and distributed. We can discuss the benefits, considerations, and implications of each option to help you make an informed decision. How does that sound?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage86DeeperProvision}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Great! Here are some important aspects to consider:"
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  💸 Costs Involved:
+                  <br />
+                  Borrowing funds often comes with interest rates and fees,
+                  which can add up over time. Understanding these costs is
+                  crucial to determine if this option is viable.
+                  <br />
+                  <br />
+                  ⚠️ Potential Risks:
+                  <br />
+                  Using assets as security means those assets could be at risk
+                  if repayments are not met. This could affect your long-term
+                  financial stability and estate plans.
+                  <br />
+                  <br />
+                  💡 Alternative Financing Options:
+                  <br />
+                  Options such as negotiating payment terms with creditors,
+                  utilizing insurance policies, or setting up payment plans
+                  might be more beneficial and less risky.
+                  <br />
+                  <br />
+                  Our financial advisers at Old Mutual can provide a thorough
+                  analysis and personalized advice to help you make the best
+                  decision. We will include this information in the report
+                  shared at the end of this conversation.
+                </div>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Have you considered life assurance as a way to address any
+                  cash shortfall? Life assurance provides immediate cash without
+                  income tax or capital gains tax. How willing are you to go
+                  this route?
+                </div>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <LifeInsuranceSlider
+                    onProceed={handleButtonStage78LifeInsurance}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Certainly! Besides the options mentioned, there are alternative ways to provision for maintenance, such as setting up annuities, creating specific bequests in your will, or establishing a family trust. Each option has its unique advantages and considerations. We can explore these alternatives further and tailor a solution that aligns with your estate planning goals. Would you like to discuss these options in more detail?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />+
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage86AnnuitiesProvision}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Exploring alternative financing options is a prudent approach to ensure you make the best decision for your estate. There are various strategies available, such as negotiating payment terms with creditors, utilising existing insurance policies, or seeking financial assistance from family members or business partners. Each option has its pros and cons, so it's essential to weigh them carefully. Would you like more information on these alternative financing options?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage77Alternative}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Certainly! Besides insurance policies and testamentary trusts, you might consider options such as:"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    <br />
-                    💰 Annuities:
-                    <br />
-                    Providing a regular income stream to your spouse for a
-                    specified period or for their lifetime.
-                    <br />
-                    <br />
-                    🏡 Specific Bequests:
-                    <br />
-                    Leaving particular assets or sums of money directly to your
-                    spouse in your will.
-                    <br />
-                    <br />
-                    👪 Family Trusts:
-                    <br />
-                    Setting up a family trust to manage and distribute assets
-                    according to your wishes, providing flexibility and
-                    potential tax benefits.
-                  </div>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage86AnnuitiesProvision}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Great! Here are some alternative financing options to consider:"
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  💬 Negotiating Payment Terms with Creditors:
+                  <br />
+                  You can often arrange for more favorable payment terms,
+                  reducing the immediate financial burden on your estate.
+                  <br />
+                  <br />
+                  🛡️ Utilizing Existing Insurance Policies:
+                  <br />
+                  Certain insurance policies may offer payouts that can cover
+                  the shortfall without the need to liquidate assets.
+                  <br />
+                  <br />
+                  🤝 Financial Assistance from Family or Business Partners:
+                  <br />
+                  If feasible, seeking help from family members or business
+                  partners can provide a flexible and low-cost solution.
+                  <br />
+                  <br />
+                  Our financial advisers at Old Mutual can provide a thorough
+                  analysis and personalized advice to help you make the best
+                  decision. We will include this information in the report
+                  shared at the end of this conversation.
+                </div>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Have you considered life assurance as a way to address any
+                  cash shortfall? Life assurance provides immediate cash without
+                  income tax or capital gains tax. How willing are you to go
+                  this route?
+                </div>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <LifeInsuranceSlider
+                    onProceed={handleButtonStage78LifeInsurance}
+                  />
+                </div>
+              </>
+            )}
 
-              {/* {message.content.includes("Do your dependents require any income per month for maintenance?") && (
+            {message.content.includes(
+              "Have you considered life assurance as a way to address any cash shortfall? Life assurance provides immediate cash without income tax or capital gains tax. How willing are you to go this route?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <LifeInsuranceSlider
+                    onProceed={handleButtonStage78LifeInsurance}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Thank you for discussing your estate's liquidity position. Let's discuss maintenance claims. Ready?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage79LiquidityEnd}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Let's discuss maintenance claims in terms of court orders. If you pass away while there are maintenance obligations towards children or a former spouse, they will have a maintenance claim against your estate. Are you aware of any existing maintenance obligations or court orders?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "I have court ordered maintenance obligations",
+                      "I have informal agreements, not court orders",
+                      "I don’t have any maintenance obligations",
+                      "I haven’t considered maintenance claims in relation to my estate planning",
+                    ]}
+                    handleSelection={handleButtonStage80Claims}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "It's crucial to consider these maintenance obligations in your estate planning to ensure they are adequately addressed. Court-ordered maintenance obligations typically take precedence and must be factored into your estate plan to avoid potential disputes or legal complications. Would you like assistance in incorporating these obligations into your estate plan? If so, please provide the details of the court order."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Upload Document at End of Chat",
+                      "Yes, specify detail",
+                      "No, let’s move on",
+                    ]}
+                    handleSelection={handleButtonStage81Obligations}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "No problem. Whenever you're ready, please provide the details about your life insurance policy."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage81Obligations}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "While informal agreements may not have the same legal standing as court orders, they are still important to consider in your estate planning. Even informal arrangements could result in maintenance claims against your estate if not addressed properly. Would you like guidance on how to formalise these agreements or ensure they are appropriately accounted for in your estate plan?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No", "Maybe"]}
+                    handleSelection={handleButtonStage81Agreements}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "We will include this information about life insurance policy in the report shared at the end of this conversation."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage81Agreements}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "It's essential to assess any potential maintenance claims in relation to your estate to avoid unexpected complications for your heirs. Even if you haven't formalised maintenance obligations through court orders or agreements, they may still arise based on legal obligations. Would you like assistance in evaluating and addressing any potential maintenance claims in your estate planning?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No", "Maybe"]}
+                    handleSelection={handleButtonStage81Complications}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "We'll include this information about life insurance policy in the report shared at the end of this conversation."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage81Complications}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "You are under 18 years old. We recommend you seek advice from a legal guardian or financial advisor"
+            ) && (
+              <div className="space-x-2 ml-14 -mt-4">
+                <br />
+                <SelectableButtonGroup
+                  options={["Proceed with Learning"]}
+                  handleSelection={handleButtonStageProceedLearning}
+                />
+              </div>
+            )}
+
+            {message.content.includes(
+              "Have you considered the cost of education and taken that into account regarding maintenance?"
+            ) && (
+              <div className="space-x-2 ml-14 -mt-4">
+                <br />
+                <SelectableButtonGroup
+                  options={["Yes", "No"]}
+                  handleSelection={handleButtonStage82LifeInsurancev1}
+                />
+              </div>
+            )}
+
+            {message.content.includes(
+              "To ensure that the amount required for maintenance is available, you can take out a life insurance policy payable to a testamentary trust for their benefit. Have you considered this option?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No", "Unsure"]}
+                    handleSelection={handleButtonStage82LifeInsurance}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "That's a proactive approach to ensuring adequate provision for maintenance obligations. Have you already taken steps to set up such a policy, or would you like assistance in exploring this option further?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "I have set up a policy",
+                      "I need assistance in setting up a policy",
+                    ]}
+                    handleSelection={handleButtonStage83Proactive}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "We will include information about assistance with setting up a policy in the report that will be shared at the end of this conversation."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage83Proactive}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "It's an important consideration to ensure that your loved ones are provided for in the event of your passing. If you'd like, we can discuss the benefits and implications of setting up a life insurance policy payable to a testamentary trust to cover maintenance obligations. Would you like more information on this option?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage83Passing}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Setting up a life insurance policy payable to a testamentary trust can ensure that maintenance obligations are met without burdening your estate. This approach provides a reliable income stream for your beneficiaries. Our financial advisers at Old Mutual can provide detailed guidance and help you explore this option further."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage83Passing}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Next, let's talk about maintenance for the surviving spouse. If you don't make provision for maintenance for the surviving spouse, they can institute a claim against your estate in terms of the Maintenance of Surviving Spouse’s Act. Are you considering provisions for your surviving spouse?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "I have provisions in place",
+                      "I want to make provisions in my estate planning",
+                      "I don’t want to make provisions in my estate planning",
+                      " I need more information before deciding",
+                    ]}
+                    handleSelection={handleButtonStage84Provision}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "It's great that you've already made provisions for your surviving spouse. Would you like to review your existing provisions to ensure they align with your current goals and circumstances?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage84ExistingProvision}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Reviewing your existing provisions can ensure they are still appropriate and effective given your current situation and goals. We will include this information in the report shared at the end of this conversation."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage84ExistingProvision}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Making provisions for your surviving spouse ensures their financial security after you're gone. We can discuss various options for including these provisions in your estate plan. Would you like more information on this?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage84OptionProvision}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Providing for your surviving spouse can be done through various means, such as setting up a trust, designating life insurance benefits, or specifying direct bequests in your will. Our financial advisers at Old Mutual can guide you through these options to find the best solution for your needs. We will include this information in the report shared at the end of this conversation."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage84OptionProvision}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Sure, understanding the implications and options for provisions for your surviving spouse is crucial. Would you like more information on how this can be incorporated into your estate planning?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage84CrucialProvision}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Incorporating provisions for your surviving spouse can be an essential part of a comprehensive estate plan. Understanding the legal and financial implications will help you make an informed decision. Our financial advisers at Old Mutual can provide you with the necessary information and advice. We will include this information in the report shared at the end of this conversation."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage84CrucialProvision}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Factors considered by the court when assessing the claim include the duration of the marriage, the spouse's age and earning capacity, and the size of your assets. Have you thought about these factors in your estate planning?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <CustomButtonGroup
+                    options={[
+                      "Yes, I have considered them and have factored them into my estate planning",
+                      "I am aware of these factors but haven’t considered them in my estate planning",
+                      "No, I haven’t thought about these factors yet",
+                      "I need more information before I can respond",
+                    ]}
+                    handleSelection={handleButtonStage85FactorsProvision}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "It's excellent that you've already considered these factors in your estate planning. Would you like to discuss how they can further inform your decisions and ensure your plan aligns with your goals?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage85GoalsProvision}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Great! When these factors are considered, it helps ensure that your estate plan is tailored to meet your specific circumstances. For example, longer marriages or significant disparities in earning capacity might necessitate larger or longer-term maintenance provisions. Keeping your plan flexible and periodically reviewing it can help accommodate any changes in your situation. Would you like to delve deeper into any particular area?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage85GoalsProvision}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Understanding these factors is essential for effective estate planning. Would you like assistance in incorporating them into your estate plan to ensure it reflects your wishes and circumstances?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage85UnderstandingProvision}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Excellent! Incorporating these factors into your estate plan ensures a fair and well-thought-out approach to maintenance and asset distribution. For instance, ensuring that your plan addresses the financial needs of a surviving spouse based on their age and earning capacity can provide long-term security. We will include this information in the report shared at the end of this conversation."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage85UnderstandingProvision}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "No worries, considering these factors can help you create a more comprehensive estate plan. Would you like assistance in understanding how they may impact your estate planning decisions?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage85ComprehensiveProvision}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Wonderful! Understanding how these factors impact your estate planning can help you make more informed decisions. For example, considering the spouse's earning capacity can guide how much and how long maintenance should be provided, and knowing the size of your assets helps in deciding the distribution method. We will include this information in the report shared at the end of this conversation."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage85ComprehensiveProvision}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Sure, understanding these factors is crucial for effective estate planning. Would you like more information on how they can influence your estate planning decisions before you respond?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage85EffectiveProvision}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Perfect! Knowing how these factors influence your estate planning can help ensure your plan is both fair and effective. For instance, a longer marriage might lead to more substantial maintenance claims, and a larger estate might require more detailed planning to minimize tax implications. We will include this information in the report shared at the end of this conversation."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage85EffectiveProvision}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "You can make provision for maintenance through an insurance policy where your surviving spouse is the nominated beneficiary or stipulate in the will that the proceeds will be paid to a testamentary trust for the spouse's benefit. What are your preferences regarding this?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <CustomButtonGroup
+                    options={[
+                      "Insurance policy with my spouse as the nominated beneficiary",
+                      "Testamentary trust for spouse outlines in my will",
+                      "I’m open to either option",
+                      "I’m not sure, I need more information of each option",
+                      "I’d like to explore other options",
+                    ]}
+                    handleSelection={handleButtonStage85MaintenanceProvision}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Both options have their advantages. With an insurance policy, the benefit is usually paid out quickly and directly to your spouse, providing immediate financial support. On the other hand, setting up a testamentary trust in your will offers more control over how the funds are managed and distributed, ensuring long-term financial security for your spouse and potential tax benefits. We can discuss the specifics of each option further and tailor the solution to best meet your needs. Would you like to explore these options in more detail?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage85BenefitProvision}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Great! Here’s a brief overview of each option:"
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <b>🛡️ Insurance Policy:</b>
+                  <br />
+                  Provides immediate liquidity to your spouse upon your passing,
+                  typically without the need for probate. This can be beneficial
+                  for addressing urgent financial needs.
+                  <br />
+                  <br />
+                  <b style={{ marginLeft: "-1px" }}>🏦 Testamentary Trust:</b>
+                  <br />
+                  Allows for greater control over the distribution of assets,
+                  potentially offering ongoing support and protection for your
+                  spouse. It can also provide tax benefits and help manage the
+                  funds according to your wishes.
+                </div>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage85BenefitProvision}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Absolutely! Let's delve deeper into both options. An insurance policy with your spouse as the nominated beneficiary provides immediate liquidity and financial support to your spouse upon your passing. However, a testamentary trust outlined in your will can offer ongoing financial security, asset protection, and control over how the funds are used and distributed. We can discuss the benefits, considerations, and implications of each option to help you make an informed decision. How does that sound?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage86DeeperProvision}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Certainly! Besides the options mentioned, there are alternative ways to provision for maintenance, such as setting up annuities, creating specific bequests in your will, or establishing a family trust. Each option has its unique advantages and considerations. We can explore these alternatives further and tailor a solution that aligns with your estate planning goals. Would you like to discuss these options in more detail?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />+
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage86AnnuitiesProvision}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Certainly! Besides insurance policies and testamentary trusts, you might consider options such as:"
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <br />
+                  💰 Annuities:
+                  <br />
+                  Providing a regular income stream to your spouse for a
+                  specified period or for their lifetime.
+                  <br />
+                  <br />
+                  🏡 Specific Bequests:
+                  <br />
+                  Leaving particular assets or sums of money directly to your
+                  spouse in your will.
+                  <br />
+                  <br />
+                  👪 Family Trusts:
+                  <br />
+                  Setting up a family trust to manage and distribute assets
+                  according to your wishes, providing flexibility and potential
+                  tax benefits.
+                </div>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage86AnnuitiesProvision}
+                  />
+                </div>
+              </>
+            )}
+
+            {/* {message.content.includes("Do your dependents require any income per month for maintenance?") && (
                 <>  
                   <div className="space-x-2 ml-14">
                     <br/><button
@@ -11023,761 +11089,757 @@ async function analyzeEstatePlanningMessage(message: string) {
                 </>
               )} */}
 
-              {message.content.includes(
-                "It's important to provide for the shortfall in household income after your death. Have you assessed the capital available to your spouse/family/dependents from which to generate an income?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "I have capital available to generate an income for my dependents",
-                        "I have capital but unsure if it will generate enough income",
-                        "I haven’t thought of this aspect of financial planning yet",
-                        "I need more information to determine this",
-                      ]}
-                      handleSelection={handleButtonStage87ShortFall}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "It's important to provide for the shortfall in household income after your death. Have you assessed the capital available to your spouse/family/dependents from which to generate an income?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "I have capital available to generate an income for my dependents",
+                      "I have capital but unsure if it will generate enough income",
+                      "I haven’t thought of this aspect of financial planning yet",
+                      "I need more information to determine this",
+                    ]}
+                    handleSelection={handleButtonStage87ShortFall}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "It's essential to ensure that the capital you have can generate sufficient income to support your dependents after your passing. We can work together to assess your current financial situation, projected expenses, and income needs to determine if any adjustments or additional planning are necessary to bridge any potential income shortfalls. Would you like to review your financial situation in more detail?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage87Capital}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "It's essential to ensure that the capital you have can generate sufficient income to support your dependents after your passing. We can work together to assess your current financial situation, projected expenses, and income needs to determine if any adjustments or additional planning are necessary to bridge any potential income shortfalls. Would you like to review your financial situation in more detail?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage87Capital}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "We will include this information about your financial situation and any necessary adjustments in the report shared at the end of this conversation."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage87Capital}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "We will include this information about your financial situation and any necessary adjustments in the report shared at the end of this conversation."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage87Capital}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Planning for the financial well-being of your dependents is a crucial aspect of estate planning. We can assist you in evaluating your current financial situation, projected expenses, and income needs to ensure that your loved ones are adequately provided for in the event of your passing. Would you like to explore this aspect of financial planning further?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage87Capital}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Planning for the financial well-being of your dependents is a crucial aspect of estate planning. We can assist you in evaluating your current financial situation, projected expenses, and income needs to ensure that your loved ones are adequately provided for in the event of your passing. Would you like to explore this aspect of financial planning further?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage87Capital}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "We'll include this financial planning information in the report shared at the end of this conversation."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage87Planning}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "We'll include this financial planning information in the report shared at the end of this conversation."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage87Planning}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Understanding the capital available to your dependents and its potential to generate income is essential for effective estate planning. We can help you gather the necessary information and provide guidance to evaluate your current financial situation, projected expenses, and income needs. Together, we can determine the most suitable strategies to ensure financial security for your loved ones. Would you like assistance in assessing your financial situation?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage87Dependents}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Understanding the capital available to your dependents and its potential to generate income is essential for effective estate planning. We can help you gather the necessary information and provide guidance to evaluate your current financial situation, projected expenses, and income needs. Together, we can determine the most suitable strategies to ensure financial security for your loved ones. Would you like assistance in assessing your financial situation?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage87Dependents}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "We will include this information about your financial situation and strategies in the report shared at the end of this conversation."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage87Dependents}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "We will include this information about your financial situation and strategies in the report shared at the end of this conversation."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage87Dependents}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Additional life insurance can provide the capital required for the income needs of dependents. Do you have any life insurance that is linked to a purpose, i.e. Mortgage / bond life cover etc?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes, specify details", "No, let's move on"]}
-                      handleSelection={handleButtonStage88Additionalv1}
-                    />
-                  </div>
-                </>
-              )}
-              {message.content.includes(
-                "Have you considered obtaining additional life insurance for providing capital required for income needs of dependents?"
-              ) && (
-                <>
-                  <div className="space-y-2 ml-11 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "My current life insurance coverage is sufficient",
-                        "I’m currently reviewing my options for additional life insurance",
-                        "No, I haven’t considered obtaining additional life insurance",
-                        "I’m unsure if additional life insurance is necessary given my current financial situation",
-                      ]}
-                      handleSelection={handleButtonStage88Additional}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Additional life insurance can provide the capital required for the income needs of dependents. Do you have any life insurance that is linked to a purpose, i.e. Mortgage / bond life cover etc?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes, specify details", "No, let's move on"]}
+                    handleSelection={handleButtonStage88Additionalv1}
+                  />
+                </div>
+              </>
+            )}
+            {message.content.includes(
+              "Have you considered obtaining additional life insurance for providing capital required for income needs of dependents?"
+            ) && (
+              <>
+                <div className="space-y-2 ml-11 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "My current life insurance coverage is sufficient",
+                      "I’m currently reviewing my options for additional life insurance",
+                      "No, I haven’t considered obtaining additional life insurance",
+                      "I’m unsure if additional life insurance is necessary given my current financial situation",
+                    ]}
+                    handleSelection={handleButtonStage88Additional}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "It's prudent to periodically review your life insurance coverage to ensure that it aligns with your current financial situation and the needs of your dependents. We can assist you in evaluating your insurance needs and exploring suitable options for additional coverage based on your evolving circumstances. Would you like guidance in assessing your life insurance needs and exploring available options?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage88Coverage}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "It's prudent to periodically review your life insurance coverage to ensure that it aligns with your current financial situation and the needs of your dependents. We can assist you in evaluating your insurance needs and exploring suitable options for additional coverage based on your evolving circumstances. Would you like guidance in assessing your life insurance needs and exploring available options?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage88Coverage}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "We will include this information about your life insurance needs and options in the report shared at the end of this conversation."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage88Coverage}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "We will include this information about your life insurance needs and options in the report shared at the end of this conversation."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage88Coverage}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Life insurance can play a vital role in providing financial security for your dependents in the event of your passing. If you haven't considered obtaining additional coverage, it may be worthwhile to explore your options and ensure that your loved ones are adequately protected. We can help you evaluate your insurance needs and identify suitable coverage options. Would you like assistance in exploring the benefits of additional life insurance?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage88LifeInsurance}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Life insurance can play a vital role in providing financial security for your dependents in the event of your passing. If you haven't considered obtaining additional coverage, it may be worthwhile to explore your options and ensure that your loved ones are adequately protected. We can help you evaluate your insurance needs and identify suitable coverage options. Would you like assistance in exploring the benefits of additional life insurance?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage88LifeInsurance}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "We will include this information about your life insurance needs and coverage options in the report shared at the end of this conversation."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage88LifeInsurance}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "We will include this information about your life insurance needs and coverage options in the report shared at the end of this conversation."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage88LifeInsurance}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Understanding the necessity of additional life insurance coverage requires a thorough assessment of your current financial situation and the future needs of your dependents. We can assist you in evaluating your financial circumstances and determining whether additional coverage is warranted based on your specific situation. Would you like to review your financial situation and assess the potential benefits of additional life insurance?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage88Assessment}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Understanding the necessity of additional life insurance coverage requires a thorough assessment of your current financial situation and the future needs of your dependents. We can assist you in evaluating your financial circumstances and determining whether additional coverage is warranted based on your specific situation. Would you like to review your financial situation and assess the potential benefits of additional life insurance?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage88Assessment}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "We will include this information about your financial situation and potential life insurance needs in the report shared at the end of this conversation."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage88Assessment}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "We will include this information about your financial situation and potential life insurance needs in the report shared at the end of this conversation."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage88Assessment}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Excellent! Now, let's continue with your estate planning. Ready?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage89Final}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Excellent! Now, let's continue with your estate planning. Ready?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage89Final}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Now, let's discuss funeral cover. Funeral cover provides liquidity to your beneficiaries within a short time frame after submitting a claim. Have you considered obtaining funeral cover?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Yes, I have funeral cover in place",
-                        "No, I haven’t considered obtaining funeral cover",
-                        "I need more information before deciding",
-                      ]}
-                      handleSelection={handleButtonStage90FuneralCover}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Now, let's discuss funeral cover. Funeral cover provides liquidity to your beneficiaries within a short time frame after submitting a claim. Have you considered obtaining funeral cover?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Yes, I have funeral cover in place",
+                      "No, I haven’t considered obtaining funeral cover",
+                      "I need more information before deciding",
+                    ]}
+                    handleSelection={handleButtonStage90FuneralCover}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "It's recommended to nominate a beneficiary on the funeral cover to ensure prompt payment to your beneficiaries. Have you nominated a beneficiary on your funeral cover policy?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No", "Wasn’t aware this was an option"]}
-                      handleSelection={handleButtonStage90NominateFuneralCover}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "It's recommended to nominate a beneficiary on the funeral cover to ensure prompt payment to your beneficiaries. Have you nominated a beneficiary on your funeral cover policy?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No", "Wasn’t aware this was an option"]}
+                    handleSelection={handleButtonStage90NominateFuneralCover}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Nominating a beneficiary on your funeral cover policy ensures that the benefit is paid directly to the intended recipient without delays. It's a simple step that can provide peace of mind to your loved ones during a difficult time. Would you like assistance in nominating a beneficiary on your funeral cover policy?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={
-                        handleButtonStage90BeneficiaryFuneralCover
-                      }
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Nominating a beneficiary on your funeral cover policy ensures that the benefit is paid directly to the intended recipient without delays. It's a simple step that can provide peace of mind to your loved ones during a difficult time. Would you like assistance in nominating a beneficiary on your funeral cover policy?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage90BeneficiaryFuneralCover}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "We will include this information about nominating a beneficiary on your funeral cover policy in the report shared at the end of this conversation."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={
-                        handleButtonStage90BeneficiaryFuneralCover
-                      }
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "We will include this information about nominating a beneficiary on your funeral cover policy in the report shared at the end of this conversation."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage90BeneficiaryFuneralCover}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Funeral cover can offer peace of mind by providing financial assistance to your loved ones during a challenging time. If you haven't considered obtaining funeral cover, it may be worth exploring to ensure that your family is financially prepared to cover funeral expenses. We can help you understand the benefits of funeral cover and assist you in finding a suitable policy that meets your needs. Would you like more information on the benefits of funeral cover and how it can benefit your family?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={
-                        handleButtonStage90AssistanceFuneralCover
-                      }
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Funeral cover can offer peace of mind by providing financial assistance to your loved ones during a challenging time. If you haven't considered obtaining funeral cover, it may be worth exploring to ensure that your family is financially prepared to cover funeral expenses. We can help you understand the benefits of funeral cover and assist you in finding a suitable policy that meets your needs. Would you like more information on the benefits of funeral cover and how it can benefit your family?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage90AssistanceFuneralCover}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Here’s an outline of the benefits of funeral cover:"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    <br />
-                    💸 <b>Immediate Financial Support:</b>
-                    <br />
-                    Funeral cover provides immediate funds to cover funeral
-                    expenses, reducing the financial burden on your family
-                    during a difficult time.
-                    <br />
-                    <br />
-                    🧘 <b>Peace of Mind:</b>
-                    <br />
-                    Knowing that funeral expenses are covered offers peace of
-                    mind for you and your loved ones, ensuring that financial
-                    concerns don’t add to the stress of planning a funeral.
-                    <br />
-                    <br />
-                    🏥 <b>Comprehensive Coverage:</b>
-                    <br />
-                    Funeral cover often includes a range of services, such as
-                    transportation, burial or cremation, and related expenses,
-                    ensuring that all aspects of the funeral are taken care of.
-                    <br />
-                    <br />
-                    💼 <b>Avoiding Financial Strain:</b>
-                    <br />
-                    By having a dedicated policy for funeral expenses, you
-                    prevent your family from having to dip into savings or take
-                    out loans to cover costs, helping them avoid unnecessary
-                    financial strain.
-                    <br />
-                    <br />
-                    📜 <b>Flexibility in Planning:</b>
-                    <br />
-                    Many funeral cover policies offer flexibility in terms of
-                    benefits and services, allowing you to tailor the policy to
-                    meet your specific wishes and needs.
-                    <br />
-                    <br />⚡ <b>Ease of Access:</b>
-                    <br />
-                    Funeral cover typically provides a quick payout, ensuring
-                    that funds are available when needed without lengthy
-                    administrative delays.
-                    <br />
-                    <br />
-                    📈 <b>Protection Against Rising Costs:</b>
-                    <br />
-                    With a funeral cover policy, you lock in a level of coverage
-                    at today's rates, helping to protect against future
-                    increases in funeral costs.
-                    <br />
-                    <br />
-                    Would you like more details on how funeral cover can be
-                    tailored to your specific needs or assistance in finding a
-                    suitable policy?
-                  </div>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                  Thank you for discussing insurance policies with me. Let’s proceed to the next part of your estate planning. Shall we continue?
-                  </div>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage46Continue}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Here’s an outline of the benefits of funeral cover:"
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <br />
+                  💸 <b>Immediate Financial Support:</b>
+                  <br />
+                  Funeral cover provides immediate funds to cover funeral
+                  expenses, reducing the financial burden on your family during
+                  a difficult time.
+                  <br />
+                  <br />
+                  🧘 <b>Peace of Mind:</b>
+                  <br />
+                  Knowing that funeral expenses are covered offers peace of mind
+                  for you and your loved ones, ensuring that financial concerns
+                  don’t add to the stress of planning a funeral.
+                  <br />
+                  <br />
+                  🏥 <b>Comprehensive Coverage:</b>
+                  <br />
+                  Funeral cover often includes a range of services, such as
+                  transportation, burial or cremation, and related expenses,
+                  ensuring that all aspects of the funeral are taken care of.
+                  <br />
+                  <br />
+                  💼 <b>Avoiding Financial Strain:</b>
+                  <br />
+                  By having a dedicated policy for funeral expenses, you prevent
+                  your family from having to dip into savings or take out loans
+                  to cover costs, helping them avoid unnecessary financial
+                  strain.
+                  <br />
+                  <br />
+                  📜 <b>Flexibility in Planning:</b>
+                  <br />
+                  Many funeral cover policies offer flexibility in terms of
+                  benefits and services, allowing you to tailor the policy to
+                  meet your specific wishes and needs.
+                  <br />
+                  <br />⚡ <b>Ease of Access:</b>
+                  <br />
+                  Funeral cover typically provides a quick payout, ensuring that
+                  funds are available when needed without lengthy administrative
+                  delays.
+                  <br />
+                  <br />
+                  📈 <b>Protection Against Rising Costs:</b>
+                  <br />
+                  With a funeral cover policy, you lock in a level of coverage
+                  at today's rates, helping to protect against future increases
+                  in funeral costs.
+                  <br />
+                  <br />
+                  Would you like more details on how funeral cover can be
+                  tailored to your specific needs or assistance in finding a
+                  suitable policy?
+                </div>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Thank you for discussing insurance policies with me. Let’s
+                  proceed to the next part of your estate planning. Shall we
+                  continue?
+                </div>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage46Continue}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "We will include details on tailoring funeral cover to your needs or finding a suitable policy in the report shared at the end of this conversation."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage90ImmediateFuneralCover}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "We will include details on tailoring funeral cover to your needs or finding a suitable policy in the report shared at the end of this conversation."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage90ImmediateFuneralCover}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Understanding the specifics of funeral cover and its benefits can help you make an informed decision about whether it's the right choice for you. We're here to provide you with all the information you need to assess the value of funeral cover and its relevance to your financial planning. Is there any specific information you'd like to know about funeral cover to help you make a decision?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes, I have a question", "No"]}
-                      handleSelection={handleButtonStage90specificsFuneralCover}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Understanding the specifics of funeral cover and its benefits can help you make an informed decision about whether it's the right choice for you. We're here to provide you with all the information you need to assess the value of funeral cover and its relevance to your financial planning. Is there any specific information you'd like to know about funeral cover to help you make a decision?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes, I have a question", "No"]}
+                    handleSelection={handleButtonStage90specificsFuneralCover}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Next, let's talk about trusts. A trust is is a legal arrangement where one person (the trustee) holds and manages assets on behalf of another person or group (the beneficiaries). The person who created the trust is called the settlor. The trustee is responsible for managing the trust according to the terms set by the settlor, ensuring the assets benefit the beneficiaries. Are you familiar with trusts?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No", "Tell me more"]}
-                      handleSelection={handleButtonStage91Trust}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Next, let's talk about trusts. A trust is is a legal arrangement where one person (the trustee) holds and manages assets on behalf of another person or group (the beneficiaries). The person who created the trust is called the settlor. The trustee is responsible for managing the trust according to the terms set by the settlor, ensuring the assets benefit the beneficiaries. Are you familiar with trusts?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No", "Tell me more"]}
+                    handleSelection={handleButtonStage91Trust}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Trusts are an integral part of estate planning and can offer various benefits such as asset protection, tax efficiency, and control over asset distribution. They involve a legal arrangement where a trustee holds and manages assets for the benefit of beneficiaries. Trusts can be useful for preserving wealth, providing for loved ones, and ensuring your wishes are carried out. Would you like to explore how trusts can be tailored to meet your specific needs?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage91Integral}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Trusts are an integral part of estate planning and can offer various benefits such as asset protection, tax efficiency, and control over asset distribution. They involve a legal arrangement where a trustee holds and manages assets for the benefit of beneficiaries. Trusts can be useful for preserving wealth, providing for loved ones, and ensuring your wishes are carried out. Would you like to explore how trusts can be tailored to meet your specific needs?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage91Integral}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "We will include information on how trusts can be tailored to your specific needs in the report shared at the end of this conversation."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage91Integral}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "We will include information on how trusts can be tailored to your specific needs in the report shared at the end of this conversation."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage91Integral}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "There are two types of trusts: inter vivos trusts and testamentary trusts. Inter vivos trusts are established during your lifetime, while testamentary trusts are created in your will and come into effect after your death. Have you considered setting up a trust?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <CustomButtonGroup
-                      options={[
-                        "Yes, I have considered setting up a trust",
-                        "No, I haven’t thought about setting up a trust yet",
-                        "I’m currently exploring the possibility of setting up a trust",
-                        "I’m not sure if setting up a trust is necessary for me",
-                        "I have some knowledge about trusts but need more information",
-                        "I have specific concerns or questions about setting up a trust",
-                      ]}
-                      handleSelection={handleButtonStage92Vivos}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "There are two types of trusts: inter vivos trusts and testamentary trusts. Inter vivos trusts are established during your lifetime, while testamentary trusts are created in your will and come into effect after your death. Have you considered setting up a trust?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <CustomButtonGroup
+                    options={[
+                      "Yes, I have considered setting up a trust",
+                      "No, I haven’t thought about setting up a trust yet",
+                      "I’m currently exploring the possibility of setting up a trust",
+                      "I’m not sure if setting up a trust is necessary for me",
+                      "I have some knowledge about trusts but need more information",
+                      "I have specific concerns or questions about setting up a trust",
+                    ]}
+                    handleSelection={handleButtonStage92Vivos}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Setting up a trust can be a valuable component of your estate plan, providing various benefits such as asset protection, wealth preservation, and efficient distribution of assets to beneficiaries. Would you like more information on how trusts can benefit your specific situation?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage92Setting}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Setting up a trust can be a valuable component of your estate plan, providing various benefits such as asset protection, wealth preservation, and efficient distribution of assets to beneficiaries. Would you like more information on how trusts can benefit your specific situation?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage92Setting}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Exploring the possibility of setting up a trust is a proactive step in your estate planning journey. Trusts offer numerous advantages, including privacy, control over asset distribution, and tax efficiency. If you have any questions or need guidance on this process, feel free to ask."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage92Setting}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Exploring the possibility of setting up a trust is a proactive step in your estate planning journey. Trusts offer numerous advantages, including privacy, control over asset distribution, and tax efficiency. If you have any questions or need guidance on this process, feel free to ask."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage92Setting}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "It's understandable to have reservations or uncertainty about setting up a trust. Trusts can be customised to suit your unique needs and goals, offering flexibility and protection for your assets. If you're unsure about whether a trust is right for you, we can discuss your concerns and explore alternative options."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage92Setting}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "It's understandable to have reservations or uncertainty about setting up a trust. Trusts can be customised to suit your unique needs and goals, offering flexibility and protection for your assets. If you're unsure about whether a trust is right for you, we can discuss your concerns and explore alternative options."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage92Setting}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Having some knowledge about trusts is a great starting point. However, it's essential to have a clear understanding of how trusts work and how they can benefit your estate planning strategy. If you need more information or have specific questions, feel free to ask, and I'll be happy to assist you."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage92Setting}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Having some knowledge about trusts is a great starting point. However, it's essential to have a clear understanding of how trusts work and how they can benefit your estate planning strategy. If you need more information or have specific questions, feel free to ask, and I'll be happy to assist you."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage92Setting}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Addressing specific concerns or questions about setting up a trust is crucial for making informed decisions about your estate plan. Whether you're unsure about the process, concerned about potential implications, or have questions about trust administration, I'm here to provide guidance and support. Feel free to share your concerns, and we can discuss them further."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage92Setting}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Addressing specific concerns or questions about setting up a trust is crucial for making informed decisions about your estate plan. Whether you're unsure about the process, concerned about potential implications, or have questions about trust administration, I'm here to provide guidance and support. Feel free to share your concerns, and we can discuss them further."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage92Setting}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Trusts can be beneficial for various reasons. They can protect your estate against insolvency, safeguard assets in the event of divorce, and peg growth in your estate. Are any of these reasons relevant to your estate planning?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <CustomButtonGroup
-                      options={[
-                        "Yes, protecting my estate against insolvency is a priority for me",
-                        "I’m concerned about safeguarding assets in case of divorce",
-                        "Pegging growth in my estate sounds like a beneficial strategy",
-                        "All of these reasons are relevant to my estate planning",
-                        "None of these reasons are currently a priority for me",
-                      ]}
-                      handleSelection={handleButtonStage93Beneficial}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Trusts can be beneficial for various reasons. They can protect your estate against insolvency, safeguard assets in the event of divorce, and peg growth in your estate. Are any of these reasons relevant to your estate planning?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <CustomButtonGroup
+                    options={[
+                      "Yes, protecting my estate against insolvency is a priority for me",
+                      "I’m concerned about safeguarding assets in case of divorce",
+                      "Pegging growth in my estate sounds like a beneficial strategy",
+                      "All of these reasons are relevant to my estate planning",
+                      "None of these reasons are currently a priority for me",
+                    ]}
+                    handleSelection={handleButtonStage93Beneficial}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Additionally, transferring assets to a trust can save on executor's fees and exclude assets from your estate for estate duty purposes. Have you thought about these advantages in relation to your estate planning?"
-              ) && (
-                <>
-                  <div className="space-y-2 ml-11 -mt-4 ">
-                    <br />
-                    <CustomButtonGroup
-                      options={[
-                        "Yes, saving on executor’s fees is an important consideration for me",
-                        "Excluding assets from my estate for estate duty purposes is a key factor in my planning",
-                        "I’m interested in exploring how transferring assets to a trust could benefit me",
-                        "I haven’t considered these advantages before, but they sound appealing",
-                        "I’m not sure how significant these advantages before would be for my estate planning",
-                        "I need more information to understand how these advantages would apply to my situation",
-                        "I’m primarily focused on other aspects of my estate planning right now",
-                      ]}
-                      handleSelection={handleButtonStage94Executor}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Additionally, transferring assets to a trust can save on executor's fees and exclude assets from your estate for estate duty purposes. Have you thought about these advantages in relation to your estate planning?"
+            ) && (
+              <>
+                <div className="space-y-2 ml-11 -mt-4 ">
+                  <br />
+                  <CustomButtonGroup
+                    options={[
+                      "Yes, saving on executor’s fees is an important consideration for me",
+                      "Excluding assets from my estate for estate duty purposes is a key factor in my planning",
+                      "I’m interested in exploring how transferring assets to a trust could benefit me",
+                      "I haven’t considered these advantages before, but they sound appealing",
+                      "I’m not sure how significant these advantages before would be for my estate planning",
+                      "I need more information to understand how these advantages would apply to my situation",
+                      "I’m primarily focused on other aspects of my estate planning right now",
+                    ]}
+                    handleSelection={handleButtonStage94Executor}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Exploring how transferring assets to a trust could benefit you is a wise decision in estate planning. It offers various advantages, such as reducing executor's fees and estate duty obligations, as well as providing asset protection and efficient distribution to beneficiaries. If you're interested in learning more about these benefits and how they apply to your specific situation, I am here to provide further information and guidance."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage94Executor}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Exploring how transferring assets to a trust could benefit you is a wise decision in estate planning. It offers various advantages, such as reducing executor's fees and estate duty obligations, as well as providing asset protection and efficient distribution to beneficiaries. If you're interested in learning more about these benefits and how they apply to your specific situation, I am here to provide further information and guidance."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage94Executor}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Understanding the significance of advantages like saving on executor's fees and excluding assets from your estate for estate duty purposes is essential in crafting an effective estate plan. These benefits can have a significant impact on preserving your wealth and ensuring efficient asset distribution. If you're uncertain about their significance or how they apply to your estate planning, I can provide more details and clarify any questions you may have."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage94Executor}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Understanding the significance of advantages like saving on executor's fees and excluding assets from your estate for estate duty purposes is essential in crafting an effective estate plan. These benefits can have a significant impact on preserving your wealth and ensuring efficient asset distribution. If you're uncertain about their significance or how they apply to your estate planning, I can provide more details and clarify any questions you may have."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage94Executor}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Exploring how transferring assets to a trust could benefit you is a wise decision in estate planning. It offers various advantages, such as reducing executor's fees and estate duty obligations, as well as providing asset protection and efficient distribution to beneficiaries. If you're interested in learning more about these benefits and how they apply to your specific situation, I'm here to provide further information and guidance."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage94Executor}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Exploring how transferring assets to a trust could benefit you is a wise decision in estate planning. It offers various advantages, such as reducing executor's fees and estate duty obligations, as well as providing asset protection and efficient distribution to beneficiaries. If you're interested in learning more about these benefits and how they apply to your specific situation, I'm here to provide further information and guidance."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage94Executor}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "It's understandable to need more information to fully grasp how the advantages of transferring assets to a trust would apply to your situation. These advantages, such as saving on executor's fees and estate duty obligations, can vary depending on individual circumstances. If you require further clarification or personalised insights into how these benefits would impact your estate planning, I'm here to assist you and provide the information you need."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage94Executor}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "It's understandable to need more information to fully grasp how the advantages of transferring assets to a trust would apply to your situation. These advantages, such as saving on executor's fees and estate duty obligations, can vary depending on individual circumstances. If you require further clarification or personalised insights into how these benefits would impact your estate planning, I'm here to assist you and provide the information you need."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage94Executor}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Addressing specific concerns or questions about setting up a trust is crucial for making informed decisions about your estate plans. Whether you're unsure about the process, concerned about potential implications, or have questions about trust administration, I'm here to provide guidance and support. Feel free to share your concerns, and we can discuss them further."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage94Executor}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Addressing specific concerns or questions about setting up a trust is crucial for making informed decisions about your estate plans. Whether you're unsure about the process, concerned about potential implications, or have questions about trust administration, I'm here to provide guidance and support. Feel free to share your concerns, and we can discuss them further."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage94Executor}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Donation of assets to a trust. This can remove assets from your estate and allow further growth within the trust and not increasing the value of your personal estate. Are you considering donating assets to a trust?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Yes, I’m interested in exploring this option",
-                        "I’m not sure if donating assets to a trust aligns with my estate planning goals",
-                        "I need more information before deciding",
-                        "I’m not comfortable with the idea of donating assets to a trust",
-                      ]}
-                      handleSelection={handleButtonStage95Donation}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Donation of assets to a trust. This can remove assets from your estate and allow further growth within the trust and not increasing the value of your personal estate. Are you considering donating assets to a trust?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Yes, I’m interested in exploring this option",
+                      "I’m not sure if donating assets to a trust aligns with my estate planning goals",
+                      "I need more information before deciding",
+                      "I’m not comfortable with the idea of donating assets to a trust",
+                    ]}
+                    handleSelection={handleButtonStage95Donation}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Understanding how donating assets to a trust aligns with your estate planning goals is crucial for making informed decisions. Donating assets to a trust can offer various benefits, including asset protection, estate tax reduction, and efficient wealth transfer. However, it's essential to ensure that this strategy aligns with your overall estate planning objectives. If you're unsure about its compatibility with your goals, I can provide more information and help you evaluate whether it's the right choice for your estate plan."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage95Donation}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Understanding how donating assets to a trust aligns with your estate planning goals is crucial for making informed decisions. Donating assets to a trust can offer various benefits, including asset protection, estate tax reduction, and efficient wealth transfer. However, it's essential to ensure that this strategy aligns with your overall estate planning objectives. If you're unsure about its compatibility with your goals, I can provide more information and help you evaluate whether it's the right choice for your estate plan."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage95Donation}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Gathering more information before deciding on donating assets to a trust is a prudent approach. This strategy involves transferring assets to a trust, which can have implications for asset protection, tax planning, and wealth preservation. If you require additional details about how this option works, its potential benefits, and any considerations specific to your situation, I'm here to provide the necessary information and support your decision-making process."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage95Donation}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Gathering more information before deciding on donating assets to a trust is a prudent approach. This strategy involves transferring assets to a trust, which can have implications for asset protection, tax planning, and wealth preservation. If you require additional details about how this option works, its potential benefits, and any considerations specific to your situation, I'm here to provide the necessary information and support your decision-making process."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage95Donation}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "It's important to note that while this strategy can reduce estate duty, there may be tax implications. Are you aware of the potential donations tax liability?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No", "Tell me more"]}
-                      handleSelection={handleButtonStage96Strategy}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "It's important to note that while this strategy can reduce estate duty, there may be tax implications. Are you aware of the potential donations tax liability?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No", "Tell me more"]}
+                    handleSelection={handleButtonStage96Strategy}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Your information will be reviewed by an Old Mutual financial adviser, and you can expect to hear back soon with your estate plan."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Have a great day, and we’re looking forward to helping you
-                    secure your future!
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Your information will be reviewed by an Old Mutual financial adviser, and you can expect to hear back soon with your estate plan."
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Have a great day, and we’re looking forward to helping you
+                  secure your future!
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Hello and welcome to Moneyversity’s Estate Planning Consultant"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 -mb-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    I'm here to help you navigate the estate planning process
-                    with ease 🛠️. Together, we’ll ensure your assets and wishes
-                    are well-documented and protected 🛡️. Ready to get started
-                    on this important journey? 🚀
-                  </div>
-                  <div className="space-x-2 ml-14">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Absolutely", "Tell me more", "Not now"]}
-                      handleSelection={handleButtonStage0}
-                    />
-                  </div>
-                </>
-              )}
+            {/* {message.content.includes(
+              "Hello and welcome to Moneyversity’s Estate Planning Consultant"
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 -mb-2 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  I'm here to help you navigate the estate planning process with
+                  ease 🛠️. Together, we’ll ensure your assets and wishes are
+                  well-documented and protected 🛡️. Ready to get started on this
+                  important journey? 🚀
+                </div>
+                <div className="space-x-2 ml-14">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Absolutely", "Tell me more", "Not now"]}
+                    handleSelection={handleButtonStage0}
+                  />
+                </div>
+              </>
+            )} */}
 
-              {message.content.includes(
-                "No problem at all. If you ever have questions or decide to start your estate planning, I’m here to help. Have a great day!"
-              ) && (
-                <>
-                  {/* <div className="space-x-2 ml-14 -mt-4">
+            {message.content.includes(
+              "No problem at all. If you ever have questions or decide to start your estate planning, I’m here to help. Have a great day!"
+            ) && (
+              <>
+                {/* <div className="space-x-2 ml-14 -mt-4">
                     <br />
                     <button
                       onClick={() => handleButtonStage0("Let's chat again!")}
@@ -11786,79 +11848,149 @@ async function analyzeEstatePlanningMessage(message: string) {
                       Let's chat again!
                     </button>
                   </div> */}
-                </>
-              )}
+              </>
+            )}
 
-              {message.content.includes(
-                "I know estate planning can be daunting"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Let’s get to know each other a bit better. What is your
-                    name?
-                  </div>
-                </>
-              )}
-
-              {message.content.includes("When were you born?") && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    <Calendar onDateSelect={handleDateSelection} isFormSubmitted={isFormSubmitted} />
-                  </div>
-                  <br/><br/><br/>
-                </>
-              )}
-
-              {message.content.includes(
-                "Let’s talk about your family life quickly. Are you married or single?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-4">
-                    <SelectableButtonGroup
-                      options={["Married", "Single"]}
-                      handleSelection={handleButtonStage2}
-                    />
-                  </div>
-                  <br/>
-                  <br/>
-                </>
-              )}
-
-              {message.content.includes(
-                "Great! Are you currently single, divorced, or widowed?"
-              ) && (
-                <div className="space-x-2 ml-16 -mt-4">
-                  <br />
-                  <button
-                    onClick={() => handleButtonStage3Single("Single")}
-                    className="px-2 py-2 mb-1 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                  >
-                    Single
-                  </button>
-                  <button
-                    onClick={() => handleButtonStage3Single("Divorced")}
-                    className="px-2 py-2 mb-1 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                  >
-                    Divorced
-                  </button>
-                  <button
-                    onClick={() => handleButtonStage3Single("Widowed")}
-                    className="px-2 py-2 rounded-md mb-1 border border-[#8DC63F] text-[#8DC63F]"
-                  >
-                    Widowed
-                  </button>
+            {message.content.includes(
+              "I know estate planning can be daunting"
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Let’s get to know each other a bit better. What is your name?
                 </div>
-              )}
+              </>
+            )}
 
-              {message.content.includes(
-                "Excellent. Are you married in or out of community of property? If married out of community of property, is it with or without the accrual system?"
-              ) && (
-                <div className="space-x-2 ml-16 -mt-4">
+            {message.content.includes("When were you born?") && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <Calendar
+                    onDateSelect={handleDateSelection}
+                    isFormSubmitted={isFormSubmitted}
+                  />
+                </div>
+                <br />
+                <br />
+                <br />
+              </>
+            )}
+
+            {message.content.includes(
+              "Let’s talk about your family life quickly. Are you married or single?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-4">
+                  <SelectableButtonGroup
+                    options={["Married", "Single"]}
+                    handleSelection={handleButtonStage2}
+                  />
+                </div>
+                <br />
+                <br />
+              </>
+            )}
+
+            {message.content.includes(
+              "Great! Are you currently single, divorced, or widowed?"
+            ) && (
+              <div className="space-x-2 ml-16 -mt-4">
+                <br />
+                <button
+                  onClick={() => handleButtonStage3Single("Single")}
+                  className="px-2 py-2 mb-1 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                >
+                  Single
+                </button>
+                <button
+                  onClick={() => handleButtonStage3Single("Divorced")}
+                  className="px-2 py-2 mb-1 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                >
+                  Divorced
+                </button>
+                <button
+                  onClick={() => handleButtonStage3Single("Widowed")}
+                  className="px-2 py-2 rounded-md mb-1 border border-[#8DC63F] text-[#8DC63F]"
+                >
+                  Widowed
+                </button>
+              </div>
+            )}
+
+            {message.content.includes(
+              "Excellent. Are you married in or out of community of property? If married out of community of property, is it with or without the accrual system?"
+            ) && (
+              <div className="space-x-2 ml-16 -mt-4">
+                <br />
+                <SelectableButtonGroup
+                  options={[
+                    "In Community of Property",
+                    "Out of Community of Property with Accrual",
+                    "Out of Community of Property without Accrual",
+                    "I can't remember",
+                    "What is Accrual?",
+                  ]}
+                  handleSelection={handleButtonStage3}
+                />
+              </div>
+            )}
+
+            {message.content.includes(
+              "Excellent. In order to calculate the accrual, we need to know the specifics of your antenuptial contract (ANC). We will ask for your antenuptial contract at the end of this chat."
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Do you currently have a will in place?
+                </div>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage4}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "No worries! Here’s a brief description of each type to help you remember:"
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <b>👫⚖️ In Community of Property:</b>
+                  <br />
+                  All assets and debts are shared equally between spouses.
+                  <br />
+                  <br />
+                  <b style={{ marginLeft: "-1px" }}>
+                    📈🏠 Out of Community of Property with Accrual:
+                  </b>
+                  <br />
+                  Each spouse retains separate ownership of their assets, but
+                  they share the growth in value of their estates during the
+                  marriage
+                  <br />
+                  <br />
+                  <b style={{ marginLeft: "-1px" }}>
+                    🏡❌ Out of Community of Property without Accrual:
+                  </b>
+                  <br />
+                  Each spouse retains separate ownership of their assets, and
+                  there is no sharing of assets or growth in value. <br />
+                  If you are married out of community of property, you would
+                  have consulted with an attorney (or notary) and signed
+                  documents (antenuptial contract) before your wedding 📝💍.
+                  <br />
+                  <br />
+                  Please check your marital contract or consult with your spouse
+                  to confirm ✅
+                </div>
+                <div className="space-x-2 ml-14 -mt-4">
                   <br />
                   <SelectableButtonGroup
                     options={[
                       "In Community of Property",
                       "Out of Community of Property with Accrual",
+                      "Out of Community of Property without Accrual",
                       "Out of Community of Property without Accrual",
                       "I can't remember",
                       "What is Accrual?",
@@ -11866,945 +11998,864 @@ async function analyzeEstatePlanningMessage(message: string) {
                     handleSelection={handleButtonStage3}
                   />
                 </div>
-              )}
+              </>
+            )}
 
-              {message.content.includes(
-                "Excellent. In order to calculate the accrual, we need to know the specifics of your antenuptial contract (ANC). We will ask for your antenuptial contract at the end of this chat."
-              ) && (
-                <>
+            {message.content.includes(
+              "Accrual is a concept in marriage where the growth in wealth during the marriage is shared between spouses. When a couple marries under the accrual system, each spouse keeps the assets they had before the marriage. However, any increase in their respective estates during the marriage is shared equally when the marriage ends, either through divorce or death."
+            ) && (
+              <>
                 <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                Do you currently have a will in place?
+                  For example, if one spouse's estate grows significantly while
+                  the other’s does not 📈💼, the spouse with the smaller growth
+                  may be entitled to a portion of the increase in the other’s
+                  estate 💰. This ensures fairness and protects both parties
+                  🤝🛡️.
+                  <br />
                 </div>
-                 <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage4}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "No worries! Here’s a brief description of each type to help you remember:"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    <b>👫⚖️ In Community of Property:</b>
-                    <br />
-                    All assets and debts are shared equally between spouses.
-                    <br />
-                    <br />
-                    <b style={{ marginLeft: "-1px" }}>
-                      📈🏠 Out of Community of Property with Accrual:
-                    </b>
-                    <br />
-                    Each spouse retains separate ownership of their assets, but
-                    they share the growth in value of their estates during the
-                    marriage
-                    <br />
-                    <br />
-                    <b style={{ marginLeft: "-1px" }}>
-                      🏡❌ Out of Community of Property without Accrual:
-                    </b>
-                    <br />
-                    Each spouse retains separate ownership of their assets, and
-                    there is no sharing of assets or growth in value. <br />
-                    If you are married out of community of property, you would
-                    have consulted with an attorney (or notary) and signed
-                    documents (antenuptial contract) before your wedding 📝💍.
-                    <br />
-                    <br />
-                    Please check your marital contract or consult with your
-                    spouse to confirm ✅
-                  </div>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "In Community of Property",
-                        "Out of Community of Property with Accrual",
-                        "Out of Community of Property without Accrual",
-                        "Out of Community of Property without Accrual",
-                        "I can't remember",
-                        "What is Accrual?",
-                      ]}
-                      handleSelection={handleButtonStage3}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Accrual is a concept in marriage where the growth in wealth during the marriage is shared between spouses. When a couple marries under the accrual system, each spouse keeps the assets they had before the marriage. However, any increase in their respective estates during the marriage is shared equally when the marriage ends, either through divorce or death."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    For example, if one spouse's estate grows significantly
-                    while the other’s does not 📈💼, the spouse with the smaller
-                    growth may be entitled to a portion of the increase in the
-                    other’s estate 💰. This ensures fairness and protects both
-                    parties 🤝🛡️.
-                    <br />
-                  </div>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "In Community of Property",
-                        "Out of Community of Property with Accrual",
-                        "Out of Community of Property without Accrual",
-                        "Out of Community of Property without Accrual",
-                        "I can't remember",
-                        "What is Accrual?",
-                      ]}
-                      handleSelection={handleButtonStage3}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Do you currently have a will in place?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage4}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Creating a will is an important step in securing your assets and ensuring your wishes are followed. We can start drafting your will right here by answering a few questions about your estate and preferences a little later in the chat."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                  Do you currently have a trust in place?
-                  </div>
-                 <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage6}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "When was the last time you reviewed your will? It’s a good idea to keep it up-to-date with any changes in your life"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Will is up to date",
-                        "Will needs to be reviewed & updated",
-                      ]}
-                      handleSelection={handleButtonStage5}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Do you currently have a trust in place"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage6}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes("Do you have any dependents?") && (
-                <div className="flex flex-col space-y-2 mt-2 ml-9">
-                  <label className="text-white">
-                    Please select your dependents:
-                  </label>
-                  {Object.entries(checkboxes).map(([key, value]) => {
-                    // Convert camelCase to separate words
-                    const labelText = key
-                      .replace(/([A-Z])/g, " $1") // Add space before capital letters
-                      .replace(/^./, (str) => str.toUpperCase()); // Capitalize the first letter
-
-                    return (
-                      <div
-                        key={key}
-                        className={`${
-                          value ? "bg-[#8DC63F]" : ""
-                        } flex items-center ps-4 border border-[#8DC63F] rounded mt-2 text-white`}
-                      >
-                        <CustomCheckBox
-                          id={key}
-                          name="dependents"
-                          className="w-4 h-4 rounded"
-                          value={key.charAt(0).toUpperCase() + key.slice(1)}
-                          checked={value}
-                          onChange={handleCheckboxChange}
-                        />
-                        <label
-                          htmlFor={key}
-                          className="w-full py-4 ms-2 text-sm font-medium text-white"
-                        >
-                          {labelText}
-                        </label>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-
-              {message.content.includes(
-                "Is there anything else you’d like to add about your personal particulars or any questions you have at this stage?"
-              ) && (
                 <div className="space-x-2 ml-14 -mt-4">
                   <br />
                   <SelectableButtonGroup
-                    options={["Yes, I have a question", "No, let’s move on"]}
-                    handleSelection={handleButtonStage7}
+                    options={[
+                      "In Community of Property",
+                      "Out of Community of Property with Accrual",
+                      "Out of Community of Property without Accrual",
+                      "Out of Community of Property without Accrual",
+                      "I can't remember",
+                      "What is Accrual?",
+                    ]}
+                    handleSelection={handleButtonStage3}
                   />
                 </div>
-              )}
+              </>
+            )}
 
-              {message.content.includes(
-                "Donations tax is a tax imposed on the transfer of assets to a trust or to any person (for example individuals, company or trust that is a SA tax resident) without receiving adequate consideration in return. It's important to understand that while transferring assets to a trust can help reduce estate duty, it may trigger donations tax liabilities. The amount of donations tax payable depends on several factors, including the value of the assets transferred, any available exemptions or deductions, and the relationship between the donor and the recipient. The donations tax threshold is R100 000 per year."
-              ) && (
-                <>
+            {message.content.includes(
+              "Do you currently have a will in place?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
                   <br />
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    📜 If you'd like to learn more about donations tax and its
-                    implications for your estate planning, I can provide further
-                    details to help you make informed decisions.
-                  </div>
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage4}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Creating a will is an important step in securing your assets and ensuring your wishes are followed. We can start drafting your will right here by answering a few questions about your estate and preferences a little later in the chat."
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Do you currently have a trust in place?
+                </div>
+                <div className="space-x-2 ml-14 -mt-4">
                   <br />
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage97Donation}
-                    />
-                  </div>
-                </>
-              )}
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage6}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Next, let's talk about selling assets to the trust. This can be a strategic way to remove assets from your estate. However, it’s important to note that a loan account is not automaticaaly created unless there’s a difference between the sale price and the value of the asset. Have you considered selling assets to the trust in this way?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <CustomButtonGroup
-                      options={[
-                        "Yes, I’m interested in exploring this option",
-                        "I’m not sure if selling assets to a trust aligns with my estate planning goals",
-                        "I need more information before deciding",
-                        "I’m not comfortable with the idea of selling assets to a trust",
-                      ]}
-                      handleSelection={handleButtonStage98Assets}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Selling assets to a trust can help minimize estate duty and protect your assets. However, remember that if the sale price matches the asset's value, a loan account won't be created. Additionally, capital gains tax and transfer duty may apply if the asset is a capital asset like property. We can discuss how this option fits with your estate planning goals."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage98Assets}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "It's crucial to align your estate planning strategies with your goals. Selling assets to a trust can offer benefits, such as reducing estate duty, but it also comes with implications like capital gains tax and transfer duty. If you're unsure whether this strategy is right for you, we can discuss it further to ensure it aligns with your specific needs and circumstances."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage98Assets}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Understanding the full implications of selling assets to a trust is key. While it can offer estate planning benefits, it's important to consider the potential tax implications, like capital gains tax and transfer duty. If you need more information on how this works and its impact on your estate planning, I’m here to provide the necessary details."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage98Assets}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Selling assets to the trust might reduce estate duty, but a sale agreement should be in place if a loan account is to be created. Are you familiar with the terms and conditions of such agreements?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Yes, I am familiar",
-                        "I have some understanding but need more clarity",
-                        "I need assistance in understanding the terms and conditions",
-                        "I prefer not to engage in agreements that involve selling assets to a trust",
-                      ]}
-                      handleSelection={handleButtonStage99Selling}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Sale agreements can be complex, especially when transferring assets to a trust. These agreements detail the sale transaction and the loan terms, if applicable. If you need help understanding these terms and conditions, or have questions about how they apply to your situation, I’m here to provide guidance and support."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage99Selling}
-                    />
-                  </div>
-                </>
-              )}
-              {message.content.includes(
-                "It’s great that you have some understanding of sale and loan agreements. These agreements outline the sale terms and the loan's repayment terms if a loan account is created. If you need more clarity or have questions about specific aspects of these agreements, feel free to ask. I’m here to help provide additional information and support your understanding."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage99Selling}
-                    />
-                  </div>
-                </>
-              )}
-              {message.content.includes(
-                "Lastly, let's discuss the costs and tax consequences of transferring assets to a trust. This may include capital gains tax, transfer duty (for immovable property), and possible donations tax. Have you taken these factors into account?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Yes, I am familiar",
-                        "I have some understanding but need more clarity",
-                        "I need more information before deciding",
-                        "I’m not comfortable with the potential costs & tax implications at this time",
-                      ]}
-                      handleSelection={handleButtonStage99Selling}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Selling assets to a trust can be a strategic way to transfer assets out of your estate, potentially reducing estate duty and protecting your wealth. However, it’s important to consider the potential tax implications, such as capital gains tax and transfer duty, and whether a loan account will actually be created. If you’re interested in exploring this option further, we can dive into the specifics and see how it aligns with your overall estate planning goals."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage99Final}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "It's good to hear that you have some understanding of the costs and tax consequences associated with transferring assets to a trust. These factors can indeed be complex, and it's important to have a clear understanding to make informed decisions. If you need more clarity on any specific aspects of these costs and tax implications or if you have any questions about how they may impact your estate planning, feel free to ask. I'm here to provide additional information and support your understanding."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage99Final}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Understanding the costs and tax implications of transferring assets to a trust is crucial for making informed decisions in your estate planning. If you need more information before deciding, I'm here to help. We can discuss these factors in more detail, clarify any questions you may have, and ensure that you have a comprehensive understanding of how they may affect your estate plan. Feel free to ask any questions or raise any concerns you may have."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage99Final}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Now, let's explore the concept of an investment trust. This structure allows for annual donations to the trust, reducing your estate over time. Are you interested in setting up an investment trust?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={[
-                        "Yes, I’m interested",
-                        "I’m not sure if an investment trust aligns with my estate planning goals",
-                        "I prefer to explore other options",
-                        "I need more information before deciding",
-                      ]}
-                      handleSelection={handleButtonStage100Investment}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Setting up an investment trust can be a strategic way to manage your assets and reduce your estate over time. It allows for annual donations to the trust, which can have various benefits for your estate planning. If you're interested in exploring this option further, we can discuss the specifics of how an investment trust could align with your estate planning goals and tailor a plan to suit your needs."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage100Investment}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "It's understandable to have questions about whether an investment trust aligns with your estate planning goals. An investment trust can offer unique advantages, but it's essential to ensure that it fits your specific needs and objectives. If you're uncertain, we can delve deeper into how an investment trust works and explore whether it's the right option for you."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage100Investment}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Exploring different options is an important part of estate planning, and it's essential to find the approach that best suits your needs and objectives. If you prefer to explore other options besides setting up an investment trust, we can discuss alternative strategies and find the solution that aligns most closely with your estate planning goals."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage100Investment}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Making an informed decision about whether to set up an investment trust requires a clear understanding of how it works and how it may impact your estate planning goals. If you need more information before deciding, feel free to ask any questions you may have. We can discuss the specifics of an investment trust, its benefits, and how it may fit into your overall estate plan."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={handleButtonStage100Investment}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "An investment trust can provide flexibility for the trust beneficiaries to receive income and borrow funds. Does this align with your estate planning goals?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes", "No", "Tell me more"]}
-                      handleSelection={
-                        handleButtonStage101InvestmentFlexibility
-                      }
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "If an investment trust doesn't align with your estate planning goals, we can explore other options that may better suit your needs. Estate planning is a personalised process, and it's essential to find strategies that align closely with your objectives and preferences. Let's discuss alternative approaches to ensure your estate plan reflects your wishes and priorities."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={
-                        handleButtonStage101InvestmentFlexibility
-                      }
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "An investment trust offers flexibility for beneficiaries to receive income and borrow funds, providing potential advantages for estate planning. With an investment trust, you can structure distributions in a way that aligns with your goals and preferences. If you're interested in learning more about how an investment trust could benefit your estate plan, I can provide further details on how it works and its potential advantages."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Continue"]}
-                      handleSelection={
-                        handleButtonStage101InvestmentFlexibility
-                      }
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Thanks! Do you have anything you’d like to add or any questions that I can help you with today?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes, I have a question", "No"]}
-                      handleSelection={
-                        handleButtonStage101InvestmentFlexibility
-                      }
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "We’ve now gathered all the relevant information to help create your estate plan. As one of the final steps, please upload the documents below. <br/><br/>These will be securely stored and only shared with the financial adviser who will assist you in finalising your estate plan."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage101FinalUpload(
-                          "Upload Your Antenuptual Contract (ANC)"
-                        )
-                      }
-                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Upload Your Antenuptual Contract (ANC)
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonStage101FinalUpload(
-                          "Upload Your Current Will"
-                        )
-                      }
-                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Upload Your Current Will
-                    </button>
-
-                    <button
-                      onClick={() =>
-                        handleButtonStage101FinalUpload(
-                          "Upload Your Trust Details"
-                        )
-                      }
-                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Upload Your Trust Details
-                    </button>
-
-                    <button
-                      onClick={() =>
-                        handleButtonStage101FinalUpload(
-                          "Upload Your Court Ordered Maintenance Obligations"
-                        )
-                      }
-                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Upload Your Court Ordered Maintenance Obligations
-                    </button>
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage101FinalUpload(
-                          "Upload Your Antenuptual Contract (ANC)"
-                        )
-                      }
-                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Upload Your Antenuptual Contract (ANC)
-                    </button>
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage101FinalUpload(
-                          "Upload Your Power of Attorney Details"
-                        )
-                      }
-                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Upload Your Power of Attorney Details
-                    </button>
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage101FinalUpload(
-                          "Upload Your Living Will"
-                        )
-                      }
-                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Upload Your Living Will
-                    </button>
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage101FinalUpload(
-                          "Upload Real Estate Property Detail"
-                        )
-                      }
-                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Upload Real Estate Property Detail
-                    </button>
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage101FinalUpload(
-                          "Upload Your Farm Property Details"
-                        )
-                      }
-                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Upload Your Farm Property Details
-                    </button>
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage101FinalUpload(
-                          "Upload Your Vehicle/s Details (cars, boats and motorcycles etc.)"
-                        )
-                      }
-                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Upload Your Vehicle/s Details (cars, boats and motorcycles
-                      etc.)
-                    </button>
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage101FinalUpload(
-                          "Upload Your Valuable Possessions Details (artwork and jewellery etc.)"
-                        )
-                      }
-                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Upload Your Valuable Possessions Details (artwork and
-                      jewellery etc.)
-                    </button>
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage101FinalUpload(
-                          "Upload Your Household Contents Value Details"
-                        )
-                      }
-                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Upload Your Household Contents Value Details
-                    </button>
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage101FinalUpload(
-                          "Upload Your Investment Portfolio Details"
-                        )
-                      }
-                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Upload Your Investment Portfolio Details
-                    </button>
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage101FinalUpload(
-                          "Upload Your Businesses Interests or Ownership Stake Details"
-                        )
-                      }
-                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Upload Your Businesses Interests or Ownership Stake
-                      Details
-                    </button>
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage101FinalUpload(
-                          "Upload Your Intellectual Property Details"
-                        )
-                      }
-                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Upload Your Intellectual Property Details
-                    </button>
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage101FinalUpload(
-                          "Upload Your Trust Asset Details"
-                        )
-                      }
-                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Upload Your Trust Asset Details
-                    </button>
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage101FinalUpload(
-                          "Upload Your Mortgage Loan Details"
-                        )
-                      }
-                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Upload Your Mortgage Loan Details
-                    </button>
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage101FinalUpload(
-                          "Upload Your Personal Loan Details"
-                        )
-                      }
-                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Upload Your Personal Loan Details
-                    </button>
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage101FinalUpload(
-                          "Upload Vehicle Loan Details"
-                        )
-                      }
-                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Upload Vehicle Loan Details
-                    </button>
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage101FinalUpload(
-                          "Upload Life Insurance Details"
-                        )
-                      }
-                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Upload Life Insurance Details
-                    </button>
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage101FinalUpload(
-                          "Upload Your Health Insurance Policy Details"
-                        )
-                      }
-                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Upload Your Health Insurance Policy Details
-                    </button>
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage101FinalUpload(
-                          "Upload Your Property Insurance Policy Detail"
-                        )
-                      }
-                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Upload Your Property Insurance Policy Detail
-                    </button>
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage101FinalUpload(
-                          "Upload Your Vehicle Insurance Policy Details"
-                        )
-                      }
-                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Upload Your Vehicle Insurance Policy Details
-                    </button>
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage101FinalUpload(
-                          "Upload Funeral Cover Policy Details"
-                        )
-                      }
-                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Upload Funeral Cover Policy Details
-                    </button>
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage101FinalUpload(
-                          "Upload Your Investment Bond Details"
-                        )
-                      }
-                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Upload Your Investment Bond Details
-                    </button>
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage101FinalUpload(
-                          "Upload Your Mutual Fund Details"
-                        )
-                      }
-                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Upload Your Mutual Fund Details
-                    </button>
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage101FinalUpload(
-                          "Upload Your Retirement Fund Details"
-                        )
-                      }
-                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Upload Your Retirement Fund Details
-                    </button>
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage101FinalUpload(
-                          "Upload Your Court Ordered Maintenance Obligations"
-                        )
-                      }
-                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Upload Your Court Ordered Maintenance Obligations
-                    </button>
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage101FinalUpload("Continue")
-                      }
-                      className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Thank you for uploading your documents!"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-1 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Now before we wrap up, could you please share your email
-                    address with us? This will be used by an Old Mutual
-                    financial adviser who will contact you directly regarding
-                    your estate plan and provide any necessary guidance.
-                  </div>
+            {message.content.includes(
+              "When was the last time you reviewed your will? It’s a good idea to keep it up-to-date with any changes in your life"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
                   <br />
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Please enter your email address.
-                  </div>
-                </>
-              )}
+                  <SelectableButtonGroup
+                    options={[
+                      "Will is up to date",
+                      "Will needs to be reviewed & updated",
+                    ]}
+                    handleSelection={handleButtonStage5}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "A report has been generated containing all the results from this chat. You can download a copy below."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-1 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    This report along with your documents will be shared with an
-                    Old Mutual financial adviser who will use this information
-                    to finalise your estate plan.
-                  </div>
+            {message.content.includes(
+              "Do you currently have a trust in place"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
                   <br />
-                  <div className="space-x-2 ml-16 my-2">
-                    <button
-                      onClick={() =>
-                        handleButtonStageDownloadReport("Download Report")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage6}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes("Do you have any dependents?") && (
+              <div className="flex flex-col space-y-2 mt-2 ml-9">
+                <label className="text-white">
+                  Please select your dependents:
+                </label>
+                {Object.entries(checkboxes).map(([key, value]) => {
+                  // Convert camelCase to separate words
+                  const labelText = key
+                    .replace(/([A-Z])/g, " $1") // Add space before capital letters
+                    .replace(/^./, (str) => str.toUpperCase()); // Capitalize the first letter
+
+                  return (
+                    <div
+                      key={key}
+                      className={`${
+                        value ? "bg-[#8DC63F]" : ""
+                      } flex items-center ps-4 border border-[#8DC63F] rounded mt-2 text-white`}
                     >
-                      Download Report
-                    </button>
-                  </div>
-                </>
-              )}
+                      <CustomCheckBox
+                        id={key}
+                        name="dependents"
+                        className="w-4 h-4 rounded"
+                        value={key.charAt(0).toUpperCase() + key.slice(1)}
+                        checked={value}
+                        onChange={handleCheckboxChange}
+                      />
+                      <label
+                        htmlFor={key}
+                        className="w-full py-4 ms-2 text-sm font-medium text-white"
+                      >
+                        {labelText}
+                      </label>
+                    </div>
+                  );
+                })}
+              </div>
+            )}
 
-              {message.content.includes(
-                "Thanks for sharing your thoughts,"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 my-1">
-                    <SelectableButtonGroup
-                      options={["Yes, I have a question", "No"]}
-                      handleSelection={handleButtonStage20Final}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Is there anything else you’d like to add about your personal particulars or any questions you have at this stage?"
+            ) && (
+              <div className="space-x-2 ml-14 -mt-4">
+                <br />
+                <SelectableButtonGroup
+                  options={["Yes, I have a question", "No, let’s move on"]}
+                  handleSelection={handleButtonStage7}
+                />
+              </div>
+            )}
 
-              {message.content.includes(
-                "The success of your estate plan relies on accurate information about your assets, liabilities, and clear communication of your wishes. How confident are you in the accuracy of the details you’ve provided so far? And would you be open to regularly reviewing and updating your estate plan to reflect any changes?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 my-1">
-                    <SelectableButtonGroup
-                      options={["Yes", "No"]}
-                      handleSelection={handleButtonStage20}
-                    />
-                  </div>
-                </>
-              )}
+            {message.content.includes(
+              "Donations tax is a tax imposed on the transfer of assets to a trust or to any person (for example individuals, company or trust that is a SA tax resident) without receiving adequate consideration in return. It's important to understand that while transferring assets to a trust can help reduce estate duty, it may trigger donations tax liabilities. The amount of donations tax payable depends on several factors, including the value of the assets transferred, any available exemptions or deductions, and the relationship between the donor and the recipient. The donations tax threshold is R100 000 per year."
+            ) && (
+              <>
+                <br />
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  📜 If you'd like to learn more about donations tax and its
+                  implications for your estate planning, I can provide further
+                  details to help you make informed decisions.
+                </div>
+                <br />
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage97Donation}
+                  />
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "Reducing taxes and expenses payable upon your death can help maximise the value passed on to your heirs. How high a priority is it for you to minimise these costs?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 -mt-1">
-                    <TaxesSlider onProceed={handleButtonStage20Payable} />
-                  </div>
-                  {/* <button
+            {message.content.includes(
+              "Next, let's talk about selling assets to the trust. This can be a strategic way to remove assets from your estate. However, it’s important to note that a loan account is not automaticaaly created unless there’s a difference between the sale price and the value of the asset. Have you considered selling assets to the trust in this way?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <CustomButtonGroup
+                    options={[
+                      "Yes, I’m interested in exploring this option",
+                      "I’m not sure if selling assets to a trust aligns with my estate planning goals",
+                      "I need more information before deciding",
+                      "I’m not comfortable with the idea of selling assets to a trust",
+                    ]}
+                    handleSelection={handleButtonStage98Assets}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Selling assets to a trust can help minimize estate duty and protect your assets. However, remember that if the sale price matches the asset's value, a loan account won't be created. Additionally, capital gains tax and transfer duty may apply if the asset is a capital asset like property. We can discuss how this option fits with your estate planning goals."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage98Assets}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "It's crucial to align your estate planning strategies with your goals. Selling assets to a trust can offer benefits, such as reducing estate duty, but it also comes with implications like capital gains tax and transfer duty. If you're unsure whether this strategy is right for you, we can discuss it further to ensure it aligns with your specific needs and circumstances."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage98Assets}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Understanding the full implications of selling assets to a trust is key. While it can offer estate planning benefits, it's important to consider the potential tax implications, like capital gains tax and transfer duty. If you need more information on how this works and its impact on your estate planning, I’m here to provide the necessary details."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage98Assets}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Selling assets to the trust might reduce estate duty, but a sale agreement should be in place if a loan account is to be created. Are you familiar with the terms and conditions of such agreements?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Yes, I am familiar",
+                      "I have some understanding but need more clarity",
+                      "I need assistance in understanding the terms and conditions",
+                      "I prefer not to engage in agreements that involve selling assets to a trust",
+                    ]}
+                    handleSelection={handleButtonStage99Selling}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Sale agreements can be complex, especially when transferring assets to a trust. These agreements detail the sale transaction and the loan terms, if applicable. If you need help understanding these terms and conditions, or have questions about how they apply to your situation, I’m here to provide guidance and support."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage99Selling}
+                  />
+                </div>
+              </>
+            )}
+            {message.content.includes(
+              "It’s great that you have some understanding of sale and loan agreements. These agreements outline the sale terms and the loan's repayment terms if a loan account is created. If you need more clarity or have questions about specific aspects of these agreements, feel free to ask. I’m here to help provide additional information and support your understanding."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage99Selling}
+                  />
+                </div>
+              </>
+            )}
+            {message.content.includes(
+              "Lastly, let's discuss the costs and tax consequences of transferring assets to a trust. This may include capital gains tax, transfer duty (for immovable property), and possible donations tax. Have you taken these factors into account?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Yes, I am familiar",
+                      "I have some understanding but need more clarity",
+                      "I need more information before deciding",
+                      "I’m not comfortable with the potential costs & tax implications at this time",
+                    ]}
+                    handleSelection={handleButtonStage99Selling}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Selling assets to a trust can be a strategic way to transfer assets out of your estate, potentially reducing estate duty and protecting your wealth. However, it’s important to consider the potential tax implications, such as capital gains tax and transfer duty, and whether a loan account will actually be created. If you’re interested in exploring this option further, we can dive into the specifics and see how it aligns with your overall estate planning goals."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage99Final}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "It's good to hear that you have some understanding of the costs and tax consequences associated with transferring assets to a trust. These factors can indeed be complex, and it's important to have a clear understanding to make informed decisions. If you need more clarity on any specific aspects of these costs and tax implications or if you have any questions about how they may impact your estate planning, feel free to ask. I'm here to provide additional information and support your understanding."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage99Final}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Understanding the costs and tax implications of transferring assets to a trust is crucial for making informed decisions in your estate planning. If you need more information before deciding, I'm here to help. We can discuss these factors in more detail, clarify any questions you may have, and ensure that you have a comprehensive understanding of how they may affect your estate plan. Feel free to ask any questions or raise any concerns you may have."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage99Final}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Now, let's explore the concept of an investment trust. This structure allows for annual donations to the trust, reducing your estate over time. Are you interested in setting up an investment trust?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={[
+                      "Yes, I’m interested",
+                      "I’m not sure if an investment trust aligns with my estate planning goals",
+                      "I prefer to explore other options",
+                      "I need more information before deciding",
+                    ]}
+                    handleSelection={handleButtonStage100Investment}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Setting up an investment trust can be a strategic way to manage your assets and reduce your estate over time. It allows for annual donations to the trust, which can have various benefits for your estate planning. If you're interested in exploring this option further, we can discuss the specifics of how an investment trust could align with your estate planning goals and tailor a plan to suit your needs."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage100Investment}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "It's understandable to have questions about whether an investment trust aligns with your estate planning goals. An investment trust can offer unique advantages, but it's essential to ensure that it fits your specific needs and objectives. If you're uncertain, we can delve deeper into how an investment trust works and explore whether it's the right option for you."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage100Investment}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Exploring different options is an important part of estate planning, and it's essential to find the approach that best suits your needs and objectives. If you prefer to explore other options besides setting up an investment trust, we can discuss alternative strategies and find the solution that aligns most closely with your estate planning goals."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage100Investment}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Making an informed decision about whether to set up an investment trust requires a clear understanding of how it works and how it may impact your estate planning goals. If you need more information before deciding, feel free to ask any questions you may have. We can discuss the specifics of an investment trust, its benefits, and how it may fit into your overall estate plan."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage100Investment}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "An investment trust can provide flexibility for the trust beneficiaries to receive income and borrow funds. Does this align with your estate planning goals?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes", "No", "Tell me more"]}
+                    handleSelection={handleButtonStage101InvestmentFlexibility}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "If an investment trust doesn't align with your estate planning goals, we can explore other options that may better suit your needs. Estate planning is a personalised process, and it's essential to find strategies that align closely with your objectives and preferences. Let's discuss alternative approaches to ensure your estate plan reflects your wishes and priorities."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage101InvestmentFlexibility}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "An investment trust offers flexibility for beneficiaries to receive income and borrow funds, providing potential advantages for estate planning. With an investment trust, you can structure distributions in a way that aligns with your goals and preferences. If you're interested in learning more about how an investment trust could benefit your estate plan, I can provide further details on how it works and its potential advantages."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Continue"]}
+                    handleSelection={handleButtonStage101InvestmentFlexibility}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Thanks! Do you have anything you’d like to add or any questions that I can help you with today?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes, I have a question", "No"]}
+                    handleSelection={handleButtonStage101InvestmentFlexibility}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "We’ve now gathered all the relevant information to help create your estate plan. As one of the final steps, please upload the documents below. <br/><br/>These will be securely stored and only shared with the financial adviser who will assist you in finalising your estate plan."
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleButtonStage101FinalUpload(
+                        "Upload Your Antenuptual Contract (ANC)"
+                      )
+                    }
+                    className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Upload Your Antenuptual Contract (ANC)
+                  </button>
+                  <button
+                    onClick={() =>
+                      handleButtonStage101FinalUpload(
+                        "Upload Your Current Will"
+                      )
+                    }
+                    className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Upload Your Current Will
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      handleButtonStage101FinalUpload(
+                        "Upload Your Trust Details"
+                      )
+                    }
+                    className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Upload Your Trust Details
+                  </button>
+
+                  <button
+                    onClick={() =>
+                      handleButtonStage101FinalUpload(
+                        "Upload Your Court Ordered Maintenance Obligations"
+                      )
+                    }
+                    className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Upload Your Court Ordered Maintenance Obligations
+                  </button>
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleButtonStage101FinalUpload(
+                        "Upload Your Antenuptual Contract (ANC)"
+                      )
+                    }
+                    className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Upload Your Antenuptual Contract (ANC)
+                  </button>
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleButtonStage101FinalUpload(
+                        "Upload Your Power of Attorney Details"
+                      )
+                    }
+                    className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Upload Your Power of Attorney Details
+                  </button>
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleButtonStage101FinalUpload("Upload Your Living Will")
+                    }
+                    className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Upload Your Living Will
+                  </button>
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleButtonStage101FinalUpload(
+                        "Upload Real Estate Property Detail"
+                      )
+                    }
+                    className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Upload Real Estate Property Detail
+                  </button>
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleButtonStage101FinalUpload(
+                        "Upload Your Farm Property Details"
+                      )
+                    }
+                    className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Upload Your Farm Property Details
+                  </button>
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleButtonStage101FinalUpload(
+                        "Upload Your Vehicle/s Details (cars, boats and motorcycles etc.)"
+                      )
+                    }
+                    className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Upload Your Vehicle/s Details (cars, boats and motorcycles
+                    etc.)
+                  </button>
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleButtonStage101FinalUpload(
+                        "Upload Your Valuable Possessions Details (artwork and jewellery etc.)"
+                      )
+                    }
+                    className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Upload Your Valuable Possessions Details (artwork and
+                    jewellery etc.)
+                  </button>
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleButtonStage101FinalUpload(
+                        "Upload Your Household Contents Value Details"
+                      )
+                    }
+                    className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Upload Your Household Contents Value Details
+                  </button>
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleButtonStage101FinalUpload(
+                        "Upload Your Investment Portfolio Details"
+                      )
+                    }
+                    className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Upload Your Investment Portfolio Details
+                  </button>
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleButtonStage101FinalUpload(
+                        "Upload Your Businesses Interests or Ownership Stake Details"
+                      )
+                    }
+                    className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Upload Your Businesses Interests or Ownership Stake Details
+                  </button>
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleButtonStage101FinalUpload(
+                        "Upload Your Intellectual Property Details"
+                      )
+                    }
+                    className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Upload Your Intellectual Property Details
+                  </button>
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleButtonStage101FinalUpload(
+                        "Upload Your Trust Asset Details"
+                      )
+                    }
+                    className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Upload Your Trust Asset Details
+                  </button>
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleButtonStage101FinalUpload(
+                        "Upload Your Mortgage Loan Details"
+                      )
+                    }
+                    className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Upload Your Mortgage Loan Details
+                  </button>
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleButtonStage101FinalUpload(
+                        "Upload Your Personal Loan Details"
+                      )
+                    }
+                    className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Upload Your Personal Loan Details
+                  </button>
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleButtonStage101FinalUpload(
+                        "Upload Vehicle Loan Details"
+                      )
+                    }
+                    className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Upload Vehicle Loan Details
+                  </button>
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleButtonStage101FinalUpload(
+                        "Upload Life Insurance Details"
+                      )
+                    }
+                    className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Upload Life Insurance Details
+                  </button>
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleButtonStage101FinalUpload(
+                        "Upload Your Health Insurance Policy Details"
+                      )
+                    }
+                    className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Upload Your Health Insurance Policy Details
+                  </button>
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleButtonStage101FinalUpload(
+                        "Upload Your Property Insurance Policy Detail"
+                      )
+                    }
+                    className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Upload Your Property Insurance Policy Detail
+                  </button>
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleButtonStage101FinalUpload(
+                        "Upload Your Vehicle Insurance Policy Details"
+                      )
+                    }
+                    className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Upload Your Vehicle Insurance Policy Details
+                  </button>
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleButtonStage101FinalUpload(
+                        "Upload Funeral Cover Policy Details"
+                      )
+                    }
+                    className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Upload Funeral Cover Policy Details
+                  </button>
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleButtonStage101FinalUpload(
+                        "Upload Your Investment Bond Details"
+                      )
+                    }
+                    className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Upload Your Investment Bond Details
+                  </button>
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleButtonStage101FinalUpload(
+                        "Upload Your Mutual Fund Details"
+                      )
+                    }
+                    className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Upload Your Mutual Fund Details
+                  </button>
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleButtonStage101FinalUpload(
+                        "Upload Your Retirement Fund Details"
+                      )
+                    }
+                    className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Upload Your Retirement Fund Details
+                  </button>
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleButtonStage101FinalUpload(
+                        "Upload Your Court Ordered Maintenance Obligations"
+                      )
+                    }
+                    className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Upload Your Court Ordered Maintenance Obligations
+                  </button>
+                  <br />
+                  <button
+                    onClick={() => handleButtonStage101FinalUpload("Continue")}
+                    className="px-2 py-2 mb-2 rounded-md border border-[#8DC63F] text-[#8DC63F]"
+                  >
+                    Continue
+                  </button>
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Thank you for uploading your documents!"
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-1 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Now before we wrap up, could you please share your email
+                  address with us? This will be used by an Old Mutual financial
+                  adviser who will contact you directly regarding your estate
+                  plan and provide any necessary guidance.
+                </div>
+                <br />
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Please enter your email address.
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "A report has been generated containing all the results from this chat. You can download a copy below."
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-1 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  This report along with your documents will be shared with an
+                  Old Mutual financial adviser who will use this information to
+                  finalise your estate plan.
+                </div>
+                <br />
+                <div className="space-x-2 ml-16 my-2">
+                  <button
+                    onClick={() =>
+                      handleButtonStageDownloadReport("Download Report")
+                    }
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                  >
+                    Download Report
+                  </button>
+                </div>
+              </>
+            )}
+
+            {message.content.includes("Thanks for sharing your thoughts,") && (
+              <>
+                <div className="space-x-2 ml-16 my-1">
+                  <SelectableButtonGroup
+                    options={["Yes, I have a question", "No"]}
+                    handleSelection={handleButtonStage20Final}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "The success of your estate plan relies on accurate information about your assets, liabilities, and clear communication of your wishes. How confident are you in the accuracy of the details you’ve provided so far? And would you be open to regularly reviewing and updating your estate plan to reflect any changes?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 my-1">
+                  <SelectableButtonGroup
+                    options={["Yes", "No"]}
+                    handleSelection={handleButtonStage20}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Reducing taxes and expenses payable upon your death can help maximise the value passed on to your heirs. How high a priority is it for you to minimise these costs?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 -mt-1">
+                  <TaxesSlider onProceed={handleButtonStage20Payable} />
+                </div>
+                {/* <button
                     onClick={() => handleButtonStage20Payable("Low")}
                     className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                   >
@@ -12822,517 +12873,509 @@ async function analyzeEstatePlanningMessage(message: string) {
                   >
                     High
                   </button> */}
-                </>
-              )}
+              </>
+            )}
 
-              {(message.content.includes(
-                "While these templates and checklists can help you get started, there are times when seeking professional"
-              ) ||
-                message.content.includes("Checklist is downloaded")) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    🏦 <b>Complex Estates:</b>
-                    <br />
-                    If you have a large or complex estate, a lawyer can help
-                    navigate intricate legal requirements and tax implications.
-                    <br />
-                    <br />
-                    ⚖️ <b>Disputes:</b>
-                    <br />
-                    If you anticipate family disputes or have a blended family,
-                    legal advice can ensure your wishes are clear and
-                    enforceable.
-                    <br />
-                    <br />
-                    💼 <b>Business Interests:</b>
-                    <br />
-                    If you own a business, a lawyer can assist in ensuring its
-                    continuity and proper transfer of ownership.
-                    <br />
-                    <br />
-                    📜 <b>Changing Laws:</b>
-                    <br />
-                    Estate laws can change. A legal professional can keep your
-                    plan up-to-date with the latest regulations.
-                    <br />
-                    <br />
-                    *Old Mutual has a dedicated team of legal advisers that can
-                    assist, free of charge when consulting via financial
-                    adviser.
-                  </div>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <button
-                      onClick={() => handleButtonStage15("Continue")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Continue
-                    </button>
-                    {/* <button
-                      onClick={() =>
-                        handleButtonStage14Contact(
-                          "Get in touch with an Old Mutual Financial Advisor"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Get in touch with an Old Mutual Financial Advisor
-                    </button> */}
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Great! Let’s move on to the next section where we’ll discuss your objectives for estate planning. Ready?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <button
-                      onClick={() => handleButtonStage15v2("Yes, I'm ready")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, I'm ready
-                    </button>
-                    {/* <button
-                      onClick={() =>
-                        handleButtonStage14Contact(
-                          "Get in touch with an Old Mutual Financial Advisor"
-                        )
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Get in touch with an Old Mutual Financial Advisor
-                    </button> */}
-                  </div>
-                </>
-              )}
-
-              {faqStage && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    ❓ What is estate planning?
-                    <br />
-                    Estate planning is the process of arranging for the
-                    management and disposal of a person’s estate during their
-                    life and after death. It involves creating documents like
-                    wills, trusts, and powers of attorney. 📝💼
-                    <br />
-                    <br />
-                    ❓ Why is having a will important?
-                    <br />
-                    A will ensures your assets are distributed according to your
-                    wishes, names guardians for minor children, and can help
-                    reduce estate taxes and legal fees. 📜👨‍👩‍👧‍👦
-                    <br />
-                    <br />
-                    ❓ What happens if I die without a will?
-                    <br />
-                    If you die intestate (without a will), your estate will be
-                    distributed according to South Africa’s Intestate Succession
-                    Act, which may not align with your wishes. ⚖️❗
-                    <br />
-                    <br />
-                    ❓ Can I change my will after it’s been created?
-                    <br />
-                    Yes, you can update your will as often as you like. It’s
-                    recommended to review and update it after major life events,
-                    such as marriage, divorce, or the birth of a child. 🔄💍👶
-                    <br />
-                    <br />
-                    ❓ What is a trust and why would I need one?
-                    <br />
-                    A trust is a legal arrangement where a trustee manages
-                    assets on behalf of beneficiaries. Trusts can help manage
-                    assets, reduce estate taxes, and provide for beneficiaries
-                    according to your wishes. 🏦🔐
-                    <br />
-                    <br />
-                    ❓ When should I seek legal advice for estate planning?
-                    <br />
-                    It’s advisable to seek legal advice if you have a large or
-                    complex estate, anticipate family disputes, own a business,
-                    or need to stay updated with changing laws. 🧑‍⚖️💡
-                    <br />
-                    <br />
-                    Do you have any other questions or need further information?
-                    I’m here to help! 🤝💬
-                  </div>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <button
-                      onClick={() =>
-                        handleButtonStage14("Yes, I have a question")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, I have a question
-                    </button>
-                    <button
-                      onClick={() => handleButtonStage14("No, let’s move on")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No, let’s move on
-                    </button>
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Is there anything else you’d like to know about estate planning or any questions you have at this stage?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-14 -mt-4">
-                    <br />
-                    <SelectableButtonGroup
-                      options={["Yes, I have a question", "No, let’s move on"]}
-                      handleSelection={handleButtonStage12}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "It’s important to understand the legal requirements and considerations specific to South Africa:"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Here are some important acts and considerations:
-                  </div>
-                  <div className="space-x-2 ml-16 mt-4 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    <b className="block mb-2">Wills Act 7 of 1953 📝</b>
-                    The Wills Act governs the creation and execution of wills.
-                    Your will must be in writing, signed by you, and witnessed
-                    by two people who are not beneficiaries.
-                    <br />
-                    <br />
-                    <b style={{ marginLeft: "-1px" }} className="block mb-2">
-                      Estate Duty Act 45 of 1955 💼
-                    </b>
-                    This Act imposes estate duty (a form of tax) on the estate
-                    of a deceased person. The first R3.5 million of an estate is
-                    exempt from estate duty.
-                    <br />
-                    <br />
-                    <b style={{ marginLeft: "-1px" }} className="block mb-2">
-                      Intestate Succession Act 81 of 1987 📋
-                    </b>
-                    If you die without a will, the Intestate Succession Act
-                    determines how your estate will be distributed. This may not
-                    align with your wishes, so having a will is crucial.
-                    <br />
-                    <br />
-                    <b style={{ marginLeft: "-1px" }} className="block mb-2">
-                      Marital Property Regimes 💍
-                    </b>
-                    Your marital status can affect your estate planning. South
-                    Africa recognises different marital property regimes, such
-                    as community of property, antenuptial contract (ANC), and
-                    ANC with accrual. It’s important to consider how these will
-                    impact your estate.
-                    <br />
-                    <br />
-                    <b style={{ marginLeft: "-1px" }} className="block mb-2">
-                      Master of the High Court 🏛️
-                    </b>
-                    The Master of the High Court oversees the administration of
-                    deceased estates. Executors of estates must be appointed and
-                    approved by the Master.
-                    <br />
-                    <br />
-                    Understanding these components and local laws can help
-                    ensure that your estate plan is comprehensive and legally
-                    sound. 📚✅
-                    <br />
-                  </div>
+            {(message.content.includes(
+              "While these templates and checklists can help you get started, there are times when seeking professional"
+            ) ||
+              message.content.includes("Checklist is downloaded")) && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  🏦 <b>Complex Estates:</b>
                   <br />
-                  <div className="space-x-2 ml-16 mt-4 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    <br />
-                    In South Africa, there are various types of marriages:
-                    <br />
-                    <br />
-                    <b style={{ marginLeft: "-1px" }} className="block mb-2">
-                      Civil Marriage 📜
-                    </b>
-                    A formal marriage registered with Home Affairs, governed by
-                    the Marriage Act, 1961. (This is the most common and
-                    traditional form as we know it). Can be in or out of
-                    community of property (with or without the accrual).
-                    <ul className="list-disc list-inside">
-                      <li>
-                        Must be conducted by a marriage officer authorised by
-                        Home Affairs.
-                      </li>
-                      <li>
-                        Both parties must be at least 18 years old (or 16 with
-                        parental consent).
-                      </li>
-                      <li>
-                        Requires submission of documents such as identity
-                        documents and proof of dissolution of previous
-                        marriages, if applicable.
-                      </li>
-                    </ul>
-                    <br />
-                    <b style={{ marginLeft: "-1px" }} className="block mb-2">
-                      Customary Marriage 🎎
-                    </b>
-                    A marriage conducted according to indigenous/black South
-                    African customs, recognised under the Recognition of
-                    Customary Marriages Act, 1998. The default property regime
-                    is in community of property, but parties can decide on out
-                    of community of property.
-                    <ul className="list-disc list-inside">
-                      <li>
-                        Must adhere to the customs of the community to which the
-                        parties belong.
-                      </li>
-                      <li>
-                        Typically involves rituals and ceremonies traditional to
-                        the community.
-                      </li>
-                      <li>
-                        Must be registered with the Department of Home Affairs
-                        to be legally recognised.
-                      </li>
-                    </ul>
-                    <br />
-                    <b style={{ marginLeft: "-1px" }} className="block mb-2">
-                      Religious Marriage
-                    </b>
-                    A marriage conducted according to religious rites but not
-                    necessarily registered with Home Affairs.
-                    <ul className="list-disc list-inside">
-                      <li>
-                        Varies depending on the religion (e.g., temple wedding).
-                      </li>
-                      <li>
-                        Should be registered with the Department of Home Affairs
-                        to gain legal status.
-                      </li>
-                      <li>Not all religious marriages are recognised.</li>
-                    </ul>
-                    <br />
-                    <b style={{ marginLeft: "-1px" }} className="block mb-2">
-                      Civil Union 🏳️‍🌈
-                    </b>
-                    Recognised under the Civil Union Act, 2006, and can be
-                    entered into by same-sex or opposite-sex couples. Carries
-                    the same legal standing as persons married in terms of the
-                    Marriage Act.
-                    <ul className="list-disc list-inside">
-                      <li>
-                        Must be performed by a registered civil union officer.
-                      </li>
-                      <li>
-                        Parties can choose between a marriage-like relationship
-                        or a domestic partnership.
-                      </li>
-                    </ul>
-                    <br />
-                    <b style={{ marginLeft: "-1px" }} className="block mb-2">
-                      Co-habitation 🏡
-                    </b>
-                    Not legally recognised as marriage. There is no such thing
-                    as a common-law marriage in South African law. Simply living
-                    together does not create a legal marriage-like status.
-                    <ul className="list-disc list-inside">
-                      <li>
-                        A marriage that is not recognised under civil law is not
-                        considered a legal marriage in South Africa, with a few
-                        exceptions.
-                      </li>
-                      <li>
-                        This can have implications on your estate plan as you
-                        can be considered single/unmarried if your marriage is
-                        not registered with Home Affairs.
-                      </li>
-                    </ul>
-                  </div>
-                  <div className="space-x-2 ml-16 mt-4 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Do you have any questions at this stage?
-                  </div>
-                  <div className="space-x-2 ml-16 mt-4">
-                    <SelectableButtonGroup
-                      options={["Yes, I have a question.", "No, let’s move on"]}
-                      handleSelection={handleButtonStage13v2v1}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Estate duty is a tax that has an impact on your estate. Do you want to explore estate duty further?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-4">
-                    <SelectableButtonGroup
-                      options={["Yes", "No, let’s move on"]}
-                      handleSelection={handleButtonStage13EstateDuty}
-                    />
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "This tax is levied on the total value of a deceased person’s estate. The conditions include:"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    <b>Threshold</b> 💰
-                    <br />
-                    There is a basic threshold (exemption limit) below which no
-                    estate duty is payable. In South Africa, as of 2024, this is
-                    R3.5 million. Meaning, only estates or portions of an estate
-                    that exceed R3.5 million are estate dutiable.
-                    <br />
-                    <br />
-                    <b style={{ marginLeft: "-1px" }}>Rates</b> 📊
-                    <br />
-                    The estate duty rate is generally 20% on the value above the
-                    threshold. For amounts exceeding R30 million, a higher rate
-                    of 25% applies.
-                    <br />
-                    <br />
-                    <em>
-                      <b style={{ marginLeft: "-8px" }}>Example 1</b>: Peter’s
-                      estate is worth R5 million. His estate will be liable for
-                      estate duty as follows:
-                      <br />
-                      R5m - R3.5m = R1.5m
-                      <br />
-                      R1.5m x 20% = R300,000 payable.
-                      <br />
-                      <br />
-                      <b style={{ marginLeft: "-1px" }}>Example 2</b>: Peter’s
-                      estate is worth R50 million. His estate will be liable for
-                      estate duty as follows:
-                      <br />
-                      20% x R30m
-                      <br />
-                      25% x (R50m - R30m)
-                    </em>
-                    <br />
-                    <br />
-                    <b style={{ marginLeft: "-1px" }}>Deductions</b> 📝
-                    <br />
-                    Certain deductions can be applied, such as liabilities and
-                    bequests to charities.
-                    <br />
-                    <br />
-                    <b style={{ marginLeft: "-1px" }}>
-                      Farm Property Exemption
-                    </b>{" "}
-                    🚜
-                    <br />
-                    Farm valuation exemption for estate duty provides for a
-                    deduction of up to R30 million on the value of farm property
-                    from the estate duty calculation. The R30 million of the
-                    value of qualifying farm property is not subject to estate
-                    duty.
-                    <br />
-                    <em style={{ marginLeft: "-2px" }}>
-                      Example: If a farm is valued at R50 million and qualifies
-                      for the full exemption, only R20 million would be subject
-                      to estate duty, potentially reducing the estate duty
-                      payable.
-                    </em>
-                    <br />
-                    <br />
-                  </div>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Do you have any questions regarding estate duty at this
-                    stage?
-                  </div>
-                  <div className="space-x-2 ml-16 mt-4">
-                      <SelectableButtonGroup
-                      options={["Yes, I have a question", "No, let’s move on"]}
-                      handleSelection={handleButtonStage13v2}
-                    />
-                    
-                  </div>
-                </>
-              )}
-
-              {message.content.includes(
-                "Property is a common asset that is bequeathed in estate plans. Farms in particular have specific bequeathing conditions. Do you want to explore these conditions further?"
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-4">
-                    <SelectableButtonGroup
-                      options={["Yes", "No, does not apply to me"]}
-                      handleSelection={(option: any) =>
-                        handleButtonStage13v3(option)
+                  If you have a large or complex estate, a lawyer can help
+                  navigate intricate legal requirements and tax implications.
+                  <br />
+                  <br />
+                  ⚖️ <b>Disputes:</b>
+                  <br />
+                  If you anticipate family disputes or have a blended family,
+                  legal advice can ensure your wishes are clear and enforceable.
+                  <br />
+                  <br />
+                  💼 <b>Business Interests:</b>
+                  <br />
+                  If you own a business, a lawyer can assist in ensuring its
+                  continuity and proper transfer of ownership.
+                  <br />
+                  <br />
+                  📜 <b>Changing Laws:</b>
+                  <br />
+                  Estate laws can change. A legal professional can keep your
+                  plan up-to-date with the latest regulations.
+                  <br />
+                  <br />
+                  *Old Mutual has a dedicated team of legal advisers that can
+                  assist, free of charge when consulting via financial adviser.
+                </div>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <button
+                    onClick={() => handleButtonStage15("Continue")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                  >
+                    Continue
+                  </button>
+                  {/* <button
+                      onClick={() =>
+                        handleButtonStage14Contact(
+                          "Get in touch with an Old Mutual Financial Advisor"
+                        )
                       }
-                    />
-                  </div>
-                </>
-              )}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Get in touch with an Old Mutual Financial Advisor
+                    </button> */}
+                </div>
+              </>
+            )}
 
-              {message.content.includes(
-                "A farm may only be sold to one person or entity and as such, the offer to purchase cannot be made by more than one person. An exception to this would be if a couple is married in community of property as South African law views their estate as one."
-              ) && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    As with the case of agricultural land being bequeathed to
-                    multiple heirs, the consent of the Minister may be requested
-                    in order to grant permission for the sale of agricultural
-                    land to more than one person. This consent must be sought
-                    prior to the agreement of sale being concluded and therefore
-                    an offer to purchase by multiple purchasers can only be made
-                    after the owner has received the Minister's consent. 🌾
-                    <br />
-                    <br />
-                    Some title deeds (of farms) may include conditions about who
-                    can inherit the farm or whether the land can be sold or
-                    subdivided. This would be an instance of:
-                    <br />
-                    <br />
-                    <b style={{ marginLeft: "-1px" }}>Fideicommissum</b>🔹
-                    <br />
-                    A legal arrangement where the owner of an asset leaves it to
-                    someone with the condition that, after their death, the
-                    asset will be passed on to another person or group.
-                    <br />
-                    <em style={{ marginLeft: "-1px" }}>
-                      For example, you might leave your farm to your children
-                      with the condition that, after their death, it will go to
-                      your grandchildren. 📋
-                    </em>
-                    <br />
-                    <br />
-                    <b style={{ marginLeft: "-1px" }}>Usufruct</b>🔹
-                    <br />
-                    Gives someone the right to use and benefit from an asset
-                    (like living in a house 🏠 or earning income from a property
-                    💰) without owning it.
-                    <br />
-                    The person with usufruct has control over the asset for a
-                    certain period, but they can't sell or permanently alter it.
-                    <br />
-                    <em style={{ marginLeft: "-1px" }}>
-                      For instance, if you have usufruct over a property, you
-                      can live in it or rent it out, but you can't sell the
-                      property. 💡
-                    </em>
-                  </div>
-                  <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    Do you have any questions regarding bequeathing a farm at
-                    this stage?
-                  </div>
-                  <div className="space-x-2 ml-16 mt-3">
-                    <SelectableButtonGroup
-                      options={["Yes, I have a question", "No, let’s move on"]}
-                      handleSelection={(option: any) =>
-                        handleButtonStage13(option)
+            {message.content.includes(
+              "Great! Let’s move on to the next section where we’ll discuss your objectives for estate planning. Ready?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <button
+                    onClick={() => handleButtonStage15v2("Yes, I'm ready")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                  >
+                    Yes, I'm ready
+                  </button>
+                  {/* <button
+                      onClick={() =>
+                        handleButtonStage14Contact(
+                          "Get in touch with an Old Mutual Financial Advisor"
+                        )
                       }
-                    />
-                    
-                  </div>
-                </>
-              )}
+                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                    >
+                      Get in touch with an Old Mutual Financial Advisor
+                    </button> */}
+                </div>
+              </>
+            )}
 
-              {/* {educationInformation && (
+            {faqStage && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  ❓ What is estate planning?
+                  <br />
+                  Estate planning is the process of arranging for the management
+                  and disposal of a person’s estate during their life and after
+                  death. It involves creating documents like wills, trusts, and
+                  powers of attorney. 📝💼
+                  <br />
+                  <br />
+                  ❓ Why is having a will important?
+                  <br />
+                  A will ensures your assets are distributed according to your
+                  wishes, names guardians for minor children, and can help
+                  reduce estate taxes and legal fees. 📜👨‍👩‍👧‍👦
+                  <br />
+                  <br />
+                  ❓ What happens if I die without a will?
+                  <br />
+                  If you die intestate (without a will), your estate will be
+                  distributed according to South Africa’s Intestate Succession
+                  Act, which may not align with your wishes. ⚖️❗
+                  <br />
+                  <br />
+                  ❓ Can I change my will after it’s been created?
+                  <br />
+                  Yes, you can update your will as often as you like. It’s
+                  recommended to review and update it after major life events,
+                  such as marriage, divorce, or the birth of a child. 🔄💍👶
+                  <br />
+                  <br />
+                  ❓ What is a trust and why would I need one?
+                  <br />
+                  A trust is a legal arrangement where a trustee manages assets
+                  on behalf of beneficiaries. Trusts can help manage assets,
+                  reduce estate taxes, and provide for beneficiaries according
+                  to your wishes. 🏦🔐
+                  <br />
+                  <br />
+                  ❓ When should I seek legal advice for estate planning?
+                  <br />
+                  It’s advisable to seek legal advice if you have a large or
+                  complex estate, anticipate family disputes, own a business, or
+                  need to stay updated with changing laws. 🧑‍⚖️💡
+                  <br />
+                  <br />
+                  Do you have any other questions or need further information?
+                  I’m here to help! 🤝💬
+                </div>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <button
+                    onClick={() =>
+                      handleButtonStage14("Yes, I have a question")
+                    }
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                  >
+                    Yes, I have a question
+                  </button>
+                  <button
+                    onClick={() => handleButtonStage14("No, let’s move on")}
+                    className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                  >
+                    No, let’s move on
+                  </button>
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Is there anything else you’d like to know about estate planning or any questions you have at this stage?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-14 -mt-4">
+                  <br />
+                  <SelectableButtonGroup
+                    options={["Yes, I have a question", "No, let’s move on"]}
+                    handleSelection={handleButtonStage12}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "It’s important to understand the legal requirements and considerations specific to South Africa:"
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Here are some important acts and considerations:
+                </div>
+                <div className="space-x-2 ml-16 mt-4 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <b className="block mb-2">Wills Act 7 of 1953 📝</b>
+                  The Wills Act governs the creation and execution of wills.
+                  Your will must be in writing, signed by you, and witnessed by
+                  two people who are not beneficiaries.
+                  <br />
+                  <br />
+                  <b style={{ marginLeft: "-1px" }} className="block mb-2">
+                    Estate Duty Act 45 of 1955 💼
+                  </b>
+                  This Act imposes estate duty (a form of tax) on the estate of
+                  a deceased person. The first R3.5 million of an estate is
+                  exempt from estate duty.
+                  <br />
+                  <br />
+                  <b style={{ marginLeft: "-1px" }} className="block mb-2">
+                    Intestate Succession Act 81 of 1987 📋
+                  </b>
+                  If you die without a will, the Intestate Succession Act
+                  determines how your estate will be distributed. This may not
+                  align with your wishes, so having a will is crucial.
+                  <br />
+                  <br />
+                  <b style={{ marginLeft: "-1px" }} className="block mb-2">
+                    Marital Property Regimes 💍
+                  </b>
+                  Your marital status can affect your estate planning. South
+                  Africa recognises different marital property regimes, such as
+                  community of property, antenuptial contract (ANC), and ANC
+                  with accrual. It’s important to consider how these will impact
+                  your estate.
+                  <br />
+                  <br />
+                  <b style={{ marginLeft: "-1px" }} className="block mb-2">
+                    Master of the High Court 🏛️
+                  </b>
+                  The Master of the High Court oversees the administration of
+                  deceased estates. Executors of estates must be appointed and
+                  approved by the Master.
+                  <br />
+                  <br />
+                  Understanding these components and local laws can help ensure
+                  that your estate plan is comprehensive and legally sound. 📚✅
+                  <br />
+                </div>
+                <br />
+                <div className="space-x-2 ml-16 mt-4 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <br />
+                  In South Africa, there are various types of marriages:
+                  <br />
+                  <br />
+                  <b style={{ marginLeft: "-1px" }} className="block mb-2">
+                    Civil Marriage 📜
+                  </b>
+                  A formal marriage registered with Home Affairs, governed by
+                  the Marriage Act, 1961. (This is the most common and
+                  traditional form as we know it). Can be in or out of community
+                  of property (with or without the accrual).
+                  <ul className="list-disc list-inside">
+                    <li>
+                      Must be conducted by a marriage officer authorised by Home
+                      Affairs.
+                    </li>
+                    <li>
+                      Both parties must be at least 18 years old (or 16 with
+                      parental consent).
+                    </li>
+                    <li>
+                      Requires submission of documents such as identity
+                      documents and proof of dissolution of previous marriages,
+                      if applicable.
+                    </li>
+                  </ul>
+                  <br />
+                  <b style={{ marginLeft: "-1px" }} className="block mb-2">
+                    Customary Marriage 🎎
+                  </b>
+                  A marriage conducted according to indigenous/black South
+                  African customs, recognised under the Recognition of Customary
+                  Marriages Act, 1998. The default property regime is in
+                  community of property, but parties can decide on out of
+                  community of property.
+                  <ul className="list-disc list-inside">
+                    <li>
+                      Must adhere to the customs of the community to which the
+                      parties belong.
+                    </li>
+                    <li>
+                      Typically involves rituals and ceremonies traditional to
+                      the community.
+                    </li>
+                    <li>
+                      Must be registered with the Department of Home Affairs to
+                      be legally recognised.
+                    </li>
+                  </ul>
+                  <br />
+                  <b style={{ marginLeft: "-1px" }} className="block mb-2">
+                    Religious Marriage
+                  </b>
+                  A marriage conducted according to religious rites but not
+                  necessarily registered with Home Affairs.
+                  <ul className="list-disc list-inside">
+                    <li>
+                      Varies depending on the religion (e.g., temple wedding).
+                    </li>
+                    <li>
+                      Should be registered with the Department of Home Affairs
+                      to gain legal status.
+                    </li>
+                    <li>Not all religious marriages are recognised.</li>
+                  </ul>
+                  <br />
+                  <b style={{ marginLeft: "-1px" }} className="block mb-2">
+                    Civil Union 🏳️‍🌈
+                  </b>
+                  Recognised under the Civil Union Act, 2006, and can be entered
+                  into by same-sex or opposite-sex couples. Carries the same
+                  legal standing as persons married in terms of the Marriage
+                  Act.
+                  <ul className="list-disc list-inside">
+                    <li>
+                      Must be performed by a registered civil union officer.
+                    </li>
+                    <li>
+                      Parties can choose between a marriage-like relationship or
+                      a domestic partnership.
+                    </li>
+                  </ul>
+                  <br />
+                  <b style={{ marginLeft: "-1px" }} className="block mb-2">
+                    Co-habitation 🏡
+                  </b>
+                  Not legally recognised as marriage. There is no such thing as
+                  a common-law marriage in South African law. Simply living
+                  together does not create a legal marriage-like status.
+                  <ul className="list-disc list-inside">
+                    <li>
+                      A marriage that is not recognised under civil law is not
+                      considered a legal marriage in South Africa, with a few
+                      exceptions.
+                    </li>
+                    <li>
+                      This can have implications on your estate plan as you can
+                      be considered single/unmarried if your marriage is not
+                      registered with Home Affairs.
+                    </li>
+                  </ul>
+                </div>
+                <div className="space-x-2 ml-16 mt-4 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Do you have any questions at this stage?
+                </div>
+                <div className="space-x-2 ml-16 mt-4">
+                  <SelectableButtonGroup
+                    options={["Yes, I have a question.", "No, let’s move on"]}
+                    handleSelection={handleButtonStage13v2v1}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Estate duty is a tax that has an impact on your estate. Do you want to explore estate duty further?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-4">
+                  <SelectableButtonGroup
+                    options={["Yes", "No, let’s move on"]}
+                    handleSelection={handleButtonStage13EstateDuty}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "This tax is levied on the total value of a deceased person’s estate. The conditions include:"
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  <b>Threshold</b> 💰
+                  <br />
+                  There is a basic threshold (exemption limit) below which no
+                  estate duty is payable. In South Africa, as of 2024, this is
+                  R3.5 million. Meaning, only estates or portions of an estate
+                  that exceed R3.5 million are estate dutiable.
+                  <br />
+                  <br />
+                  <b style={{ marginLeft: "-1px" }}>Rates</b> 📊
+                  <br />
+                  The estate duty rate is generally 20% on the value above the
+                  threshold. For amounts exceeding R30 million, a higher rate of
+                  25% applies.
+                  <br />
+                  <br />
+                  <em>
+                    <b style={{ marginLeft: "-8px" }}>Example 1</b>: Peter’s
+                    estate is worth R5 million. His estate will be liable for
+                    estate duty as follows:
+                    <br />
+                    R5m - R3.5m = R1.5m
+                    <br />
+                    R1.5m x 20% = R300,000 payable.
+                    <br />
+                    <br />
+                    <b style={{ marginLeft: "-1px" }}>Example 2</b>: Peter’s
+                    estate is worth R50 million. His estate will be liable for
+                    estate duty as follows:
+                    <br />
+                    20% x R30m
+                    <br />
+                    25% x (R50m - R30m)
+                  </em>
+                  <br />
+                  <br />
+                  <b style={{ marginLeft: "-1px" }}>Deductions</b> 📝
+                  <br />
+                  Certain deductions can be applied, such as liabilities and
+                  bequests to charities.
+                  <br />
+                  <br />
+                  <b style={{ marginLeft: "-1px" }}>
+                    Farm Property Exemption
+                  </b>{" "}
+                  🚜
+                  <br />
+                  Farm valuation exemption for estate duty provides for a
+                  deduction of up to R30 million on the value of farm property
+                  from the estate duty calculation. The R30 million of the value
+                  of qualifying farm property is not subject to estate duty.
+                  <br />
+                  <em style={{ marginLeft: "-2px" }}>
+                    Example: If a farm is valued at R50 million and qualifies
+                    for the full exemption, only R20 million would be subject to
+                    estate duty, potentially reducing the estate duty payable.
+                  </em>
+                  <br />
+                  <br />
+                </div>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Do you have any questions regarding estate duty at this stage?
+                </div>
+                <div className="space-x-2 ml-16 mt-4">
+                  <SelectableButtonGroup
+                    options={["Yes, I have a question", "No, let’s move on"]}
+                    handleSelection={handleButtonStage13v2}
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Property is a common asset that is bequeathed in estate plans. Farms in particular have specific bequeathing conditions. Do you want to explore these conditions further?"
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-4">
+                  <SelectableButtonGroup
+                    options={["Yes", "No, does not apply to me"]}
+                    handleSelection={(option: any) =>
+                      handleButtonStage13v3(option)
+                    }
+                  />
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "A farm may only be sold to one person or entity and as such, the offer to purchase cannot be made by more than one person. An exception to this would be if a couple is married in community of property as South African law views their estate as one."
+            ) && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  As with the case of agricultural land being bequeathed to
+                  multiple heirs, the consent of the Minister may be requested
+                  in order to grant permission for the sale of agricultural land
+                  to more than one person. This consent must be sought prior to
+                  the agreement of sale being concluded and therefore an offer
+                  to purchase by multiple purchasers can only be made after the
+                  owner has received the Minister's consent. 🌾
+                  <br />
+                  <br />
+                  Some title deeds (of farms) may include conditions about who
+                  can inherit the farm or whether the land can be sold or
+                  subdivided. This would be an instance of:
+                  <br />
+                  <br />
+                  <b style={{ marginLeft: "-1px" }}>Fideicommissum</b>🔹
+                  <br />
+                  A legal arrangement where the owner of an asset leaves it to
+                  someone with the condition that, after their death, the asset
+                  will be passed on to another person or group.
+                  <br />
+                  <em style={{ marginLeft: "-1px" }}>
+                    For example, you might leave your farm to your children with
+                    the condition that, after their death, it will go to your
+                    grandchildren. 📋
+                  </em>
+                  <br />
+                  <br />
+                  <b style={{ marginLeft: "-1px" }}>Usufruct</b>🔹
+                  <br />
+                  Gives someone the right to use and benefit from an asset (like
+                  living in a house 🏠 or earning income from a property 💰)
+                  without owning it.
+                  <br />
+                  The person with usufruct has control over the asset for a
+                  certain period, but they can't sell or permanently alter it.
+                  <br />
+                  <em style={{ marginLeft: "-1px" }}>
+                    For instance, if you have usufruct over a property, you can
+                    live in it or rent it out, but you can't sell the property.
+                    💡
+                  </em>
+                </div>
+                <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  Do you have any questions regarding bequeathing a farm at this
+                  stage?
+                </div>
+                <div className="space-x-2 ml-16 mt-3">
+                  <SelectableButtonGroup
+                    options={["Yes, I have a question", "No, let’s move on"]}
+                    handleSelection={(option: any) =>
+                      handleButtonStage13(option)
+                    }
+                  />
+                </div>
+              </>
+            )}
+
+            {/* {educationInformation && (
                 <>
                  
                   <div className="space-x-2 ml-16 mt-4">
@@ -13447,443 +13490,437 @@ async function analyzeEstatePlanningMessage(message: string) {
                 </>
               )} */}
 
-              {educationInformation && (
-                <>
-                  <div className="space-x-2 ml-16 mt-2 -mb-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                    📜 Wills
-                    <br />
-                    🔐 Trusts
-                    <br />
-                    🖋️ Power of Attorney
-                    <br />
-                    🏥 Living Will
-                    <br />
-                    🧑‍💼 Beneficiaries
-                    <br />
-                    📑 Beneficiary Designation Forms
-                    <br />
-                    ⚖️ Executor
-                    <br />
-                    🛡️ Guardian
-                    <br />
-                    <br />
-                    Would you like a detailed explanation of all or some of
-                    these terms?
-                  </div>
-                  <div className="space-x-2 ml-14 mt-2">
-                    {terms.map((term) => (
-                      <>
-                        <br /> {/* Adjust margin as needed */}
-                        <label
-                          key={term}
-                          htmlFor={term}
-                          className={`flex items-center space-x-2 px-4 py-2 w-[400px] -my-2 rounded-md border cursor-pointer ${
-                            selectedTerms.includes(term)
-                              ? "bg-[#8DC63F] text-white border-transparent"
-                              : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
-                          } w-full sm:w-[400px]`}
-                        >
-                          <input
-                            type="checkbox"
-                            id={term}
-                            onChange={handleCheckboxChangeTerms}
-                            name={term}
-                            value={term}
-                            checked={selectedTerms.includes(term)}
-                            className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
-                          />
-                          &nbsp;&nbsp;&nbsp;{term}
-                        </label>
-                      </>
-                    ))}
-
-                    <button
-                      onClick={handleProceed}
-                      className={`mt-4 px-4 py-2 rounded-md border border-[#8DC63F] ${
-                        detailedProceed
-                          ? "bg-[#8DC63F] text-white"
-                          : "text-[#8DC63F]"
-                      }`}
-                    >
-                      Proceed
-                    </button>
-                  </div>
-                  <br/>
-                  <br/>
-                </>
-              )}
-
-              {message.content.includes(
-                "Here are the definition of key terms:"
-              ) && (
-                <>
-                  {selectedTerms.length > 0 && (
+            {educationInformation && (
+              <>
+                <div className="space-x-2 ml-16 mt-2 -mb-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                  📜 Wills
+                  <br />
+                  🔐 Trusts
+                  <br />
+                  🖋️ Power of Attorney
+                  <br />
+                  🏥 Living Will
+                  <br />
+                  🧑‍💼 Beneficiaries
+                  <br />
+                  📑 Beneficiary Designation Forms
+                  <br />
+                  ⚖️ Executor
+                  <br />
+                  🛡️ Guardian
+                  <br />
+                  <br />
+                  Would you like a detailed explanation of all or some of these
+                  terms?
+                </div>
+                <div className="space-x-2 ml-14 mt-2">
+                  {terms.map((term) => (
                     <>
-                      <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                        {/* If 'All Key Terms' is selected, show all definitions */}
-                        {selectedTerms.includes("All Key Terms") ? (
-                          <>
-                            {/* Show all terms at once */}
-                            📜 Wills
-                            <br />
-                            A will is a legal document that says how you want
-                            your belongings, money, and assets to be divided
-                            after you pass away. It also names someone to carry
-                            out your wishes (an executor) and can appoint
-                            guardians for your children.
-                            <br />
-                            <br />
-                            🔐 Trusts
-                            <br />
-                            A trust is a legal arrangement where you (the
-                            founder/settlor) place assets, like money or
-                            property, into a separate entity managed by a person
-                            (the trustee) for the benefit of someone else (the
-                            beneficiary). The trustee manages these assets
-                            according to your instructions, often to provide for
-                            beneficiaries over time, such as children or loved
-                            ones. A trust can be set up in your will and will
-                            come into existence when you pass away, or it can be
-                            set up while you are alive.
-                            <br />
-                            <br />
-                            🖋️ Power of Attorney
-                            <br />
-                            A power of attorney is a legal document that allows
-                            you to give someone else the authority to make
-                            decisions for you. It could be about financial
-                            matters, health care, or other personal affairs,
-                            especially if you’re unable to handle them yourself.
-                            <br />
-                            <br />
-                            🏥 Living Will
-                            <br />
-                            A living will is a document where you write down
-                            your wishes about medical care if you’re unable to
-                            communicate. It’s about what kind of treatments you
-                            do or don’t want if you’re seriously ill or injured
-                            and can’t speak for yourself.
-                            <br />
-                            <br />
-                            💼 Beneficiaries
-                            <br />
-                            Beneficiaries are the people you choose to receive
-                            your money, assets, or other benefits when you pass
-                            away. They are named in your insurance policies or
-                            retirement benefit forms.
-                            <br />
-                            <br />
-                            📑 Beneficiary Designation Forms
-                            <br />
-                            For assets like retirement accounts, life insurance,
-                            or certain bank accounts, you may need to fill out a
-                            form naming who gets those assets after you pass
-                            away. These forms typically override what’s written
-                            in a will or trust.
-                            <br />
-                            <br />
-                            ⚖️ xecutor
-                            <br />
-                            The person named in your will who is responsible for
-                            carrying out your wishes after you pass away,
-                            including paying debts and distributing assets to
-                            beneficiaries.
-                            <br />
-                            <br />
-                            🛡️ Guardian
-                            <br />
-                            If you have minor children, you can name a guardian
-                            in your will. This person will be responsible for
-                            taking care of your children if something happens to
-                            you.
-                            <br />
-                            <br />
-                          </>
-                        ) : (
-                          <>
-                            {/* Show individual terms if 'All Key Terms' is not selected */}
-                            {selectedTerms.includes("Wills") && (
-                              <>
-                                📜 Wills
-                                <br />
-                                A will is a legal document that says how you
-                                want your belongings, money, and assets to be
-                                divided after you pass away. It also names
-                                someone to carry out your wishes (an executor)
-                                and can appoint guardians for your children.
-                                <br />
-                                <br />
-                              </>
-                            )}
-
-                            {selectedTerms.includes("Trusts") && (
-                              <>
-                                🔐 Trusts
-                                <br />
-                                A trust is a legal arrangement where you (the
-                                founder/settlor) place assets, like money or
-                                property, into a separate entity managed by a
-                                person (the trustee) for the benefit of someone
-                                else (the beneficiary). The trustee manages
-                                these assets according to your instructions,
-                                often to provide for beneficiaries over time,
-                                such as children or loved ones. A trust can be
-                                set up in your will and will come into existence
-                                when you pass away, or it can be set up while
-                                you are alive.
-                                <br />
-                                <br />
-                              </>
-                            )}
-
-                            {selectedTerms.includes("Power of Attorney") && (
-                              <>
-                                🖋️ Power of Attorney
-                                <br />
-                                A power of attorney is a legal document that
-                                allows you to give someone else the authority to
-                                make decisions for you. It could be about
-                                financial matters, health care, or other
-                                personal affairs, especially if you’re unable to
-                                handle them yourself.
-                                <br />
-                                <br />
-                              </>
-                            )}
-
-                            {selectedTerms.includes("Living Will") && (
-                              <>
-                                🏥 Living Will
-                                <br />
-                                A living will is a document where you write down
-                                your wishes about medical care if you’re unable
-                                to communicate. It’s about what kind of
-                                treatments you do or don’t want if you’re
-                                seriously ill or injured and can’t speak for
-                                yourself.
-                                <br />
-                                <br />
-                              </>
-                            )}
-
-                            {selectedTerms.includes("Beneficiaries") && (
-                              <>
-                                💼 Beneficiaries
-                                <br />
-                                Beneficiaries are the people you choose to
-                                receive your money, assets, or other benefits
-                                when you pass away. They are named in your
-                                insurance policies or retirement benefit forms.
-                                <br />
-                                <br />
-                              </>
-                            )}
-
-                            {selectedTerms.includes(
-                              "Beneficiary Designation Forms"
-                            ) && (
-                              <>
-                                📑 Beneficiary Designation Forms
-                                <br />
-                                For assets like retirement accounts, life
-                                insurance, or certain bank accounts, you may
-                                need to fill out a form naming who gets those
-                                assets after you pass away. These forms
-                                typically override what’s written in a will or
-                                trust.
-                                <br />
-                                <br />
-                              </>
-                            )}
-
-                            {selectedTerms.includes("Executor") && (
-                              <>
-                                ⚖️ Executor
-                                <br />
-                                The person named in your will who is responsible
-                                for carrying out your wishes after you pass
-                                away, including paying debts and distributing
-                                assets to beneficiaries.
-                                <br />
-                                <br />
-                              </>
-                            )}
-
-                            {selectedTerms.includes("Guardian") && (
-                              <>
-                                🛡️ Guardian
-                                <br />
-                                If you have minor children, you can name a
-                                guardian in your will. This person will be
-                                responsible for taking care of your children if
-                                something happens to you.
-                                <br />
-                                <br />
-                              </>
-                            )}
-                          </>
-                        )}
-                      </div>
+                      <br /> {/* Adjust margin as needed */}
+                      <label
+                        key={term}
+                        htmlFor={term}
+                        className={`flex items-center space-x-2 px-4 py-2 w-[400px] -my-2 rounded-md border cursor-pointer ${
+                          selectedTerms.includes(term)
+                            ? "bg-[#8DC63F] text-white border-transparent"
+                            : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
+                        } w-full sm:w-[400px]`}
+                      >
+                        <input
+                          type="checkbox"
+                          id={term}
+                          onChange={handleCheckboxChangeTerms}
+                          name={term}
+                          value={term}
+                          checked={selectedTerms.includes(term)}
+                          className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
+                        />
+                        &nbsp;&nbsp;&nbsp;{term}
+                      </label>
                     </>
-                  )}
+                  ))}
 
-                  <div className="space-x-2 ml-16 mt-4">
-                    <button
-                      onClick={() => handleButtonStage12("Proceed")}
-                      className={`px-4 py-2 mb-1 rounded-md border border-[#8DC63F] ${
-                        stage12Proceed === "Proceed"
-                          ? "bg-[#8DC63F] text-white"
-                          : "text-[#8DC63F]"
-                      }`}
-                    >
-                      Proceed
-                    </button>
-                  </div>
-                </>
-              )}
+                  <button
+                    onClick={handleProceed}
+                    className={`mt-4 px-4 py-2 rounded-md border border-[#8DC63F] ${
+                      detailedProceed
+                        ? "bg-[#8DC63F] text-white"
+                        : "text-[#8DC63F]"
+                    }`}
+                  >
+                    Proceed
+                  </button>
+                </div>
+                <br />
+                <br />
+              </>
+            )}
 
-              {message.content.includes(
-                "Here are the potential outcomes of each scenario:"
-              ) && (
-                <>
-                  {selectedScenario.length > 0 && (
-                    <>
-                      <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                        {selectedScenario.includes("All Scenarios") ? (
-                          <>
-                            <b>Scenario 1: Setting Up a Trust</b>
-                            <br />
-                            Imagine you set up a trust to manage your assets.
-                            The trust could be used to provide for your
-                            children’s education and care until they reach
-                            adulthood. This can protect the assets from being
-                            mismanaged or spent too quickly. Additionally,
-                            trusts can offer tax benefits and ensure a smoother
-                            transfer of assets to your beneficiaries.
-                            <br /> <br />
-                            <b style={{ marginLeft: "-1px" }}>
-                              Scenario 2: Dying Intestate (Without a Will)
-                            </b>
-                            <br />
-                            Suppose you pass away without a will. According to
-                            South Africa’s Intestate Succession Act, your estate
-                            will be distributed to your surviving spouse and
-                            children, or other relatives if you have no spouse
-                            or children. This may not align with your personal
-                            wishes and could lead to disputes among family
-                            members.
-                            <br /> <br />
-                            <b style={{ marginLeft: "-1px" }}>
-                              Scenario 3: Appointing a Power of Attorney
-                            </b>
-                            <br />
-                            Consider appointing a trusted person as your power
-                            of attorney. This individual can manage your
-                            financial and legal affairs if you become
-                            incapacitated. For example, they could pay your
-                            bills, manage your investments, or make medical
-                            decisions on your behalf. This ensures that your
-                            affairs are handled according to your wishes, even
-                            if you’re unable to communicate them.
-                            <br /> <br />
-                            <b style={{ marginLeft: "-1px" }}>
-                              Scenario 4: Tax Implications of Estate Planning
-                              Decisions
-                            </b>
-                            <br />
-                            Imagine you decide to gift a portion of your assets
-                            to your children during your lifetime. While this
-                            can reduce the size of your taxable estate, it’s
-                            important to consider any potential gift taxes and
-                            how it might impact your overall estate plan.
-                            Consulting with a tax adviser can help you
-                            understand the best strategies for minimising tax
-                            liabilities while achieving your estate planning
-                            goals.
-                            <br />
-                          </>
-                        ) : (
-                          <>
-                            {selectedScenario.includes("Scenario 1") && (
-                              <>
-                                <b>Scenario 1: Setting Up a Trust</b>
-                                <br />
-                                Imagine you set up a trust to manage your
-                                assets. The trust could be used to provide for
-                                your children’s education and care until they
-                                reach adulthood. This can protect the assets
-                                from being mismanaged or spent too quickly.
-                                Additionally, trusts can offer tax benefits and
-                                ensure a smoother transfer of assets to your
-                                beneficiaries.
-                                <br />
-                                <br />
-                              </>
-                            )}
+            {message.content.includes(
+              "Here are the definition of key terms:"
+            ) && (
+              <>
+                {selectedTerms.length > 0 && (
+                  <>
+                    <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                      {/* If 'All Key Terms' is selected, show all definitions */}
+                      {selectedTerms.includes("All Key Terms") ? (
+                        <>
+                          {/* Show all terms at once */}
+                          📜 Wills
+                          <br />
+                          A will is a legal document that says how you want your
+                          belongings, money, and assets to be divided after you
+                          pass away. It also names someone to carry out your
+                          wishes (an executor) and can appoint guardians for
+                          your children.
+                          <br />
+                          <br />
+                          🔐 Trusts
+                          <br />
+                          A trust is a legal arrangement where you (the
+                          founder/settlor) place assets, like money or property,
+                          into a separate entity managed by a person (the
+                          trustee) for the benefit of someone else (the
+                          beneficiary). The trustee manages these assets
+                          according to your instructions, often to provide for
+                          beneficiaries over time, such as children or loved
+                          ones. A trust can be set up in your will and will come
+                          into existence when you pass away, or it can be set up
+                          while you are alive.
+                          <br />
+                          <br />
+                          🖋️ Power of Attorney
+                          <br />
+                          A power of attorney is a legal document that allows
+                          you to give someone else the authority to make
+                          decisions for you. It could be about financial
+                          matters, health care, or other personal affairs,
+                          especially if you’re unable to handle them yourself.
+                          <br />
+                          <br />
+                          🏥 Living Will
+                          <br />
+                          A living will is a document where you write down your
+                          wishes about medical care if you’re unable to
+                          communicate. It’s about what kind of treatments you do
+                          or don’t want if you’re seriously ill or injured and
+                          can’t speak for yourself.
+                          <br />
+                          <br />
+                          💼 Beneficiaries
+                          <br />
+                          Beneficiaries are the people you choose to receive
+                          your money, assets, or other benefits when you pass
+                          away. They are named in your insurance policies or
+                          retirement benefit forms.
+                          <br />
+                          <br />
+                          📑 Beneficiary Designation Forms
+                          <br />
+                          For assets like retirement accounts, life insurance,
+                          or certain bank accounts, you may need to fill out a
+                          form naming who gets those assets after you pass away.
+                          These forms typically override what’s written in a
+                          will or trust.
+                          <br />
+                          <br />
+                          ⚖️ xecutor
+                          <br />
+                          The person named in your will who is responsible for
+                          carrying out your wishes after you pass away,
+                          including paying debts and distributing assets to
+                          beneficiaries.
+                          <br />
+                          <br />
+                          🛡️ Guardian
+                          <br />
+                          If you have minor children, you can name a guardian in
+                          your will. This person will be responsible for taking
+                          care of your children if something happens to you.
+                          <br />
+                          <br />
+                        </>
+                      ) : (
+                        <>
+                          {/* Show individual terms if 'All Key Terms' is not selected */}
+                          {selectedTerms.includes("Wills") && (
+                            <>
+                              📜 Wills
+                              <br />
+                              A will is a legal document that says how you want
+                              your belongings, money, and assets to be divided
+                              after you pass away. It also names someone to
+                              carry out your wishes (an executor) and can
+                              appoint guardians for your children.
+                              <br />
+                              <br />
+                            </>
+                          )}
 
-                            {selectedScenario.includes("Scenario 2") && (
-                              <>
-                                <b>
-                                  Scenario 2: Dying Intestate (Without a Will)
-                                </b>
-                                <br />
-                                Suppose you pass away without a will. According
-                                to South Africa’s Intestate Succession Act, your
-                                estate will be distributed to your surviving
-                                spouse and children, or other relatives if you
-                                have no spouse or children. This may not align
-                                with your personal wishes and could lead to
-                                disputes among family members.
-                                <br />
-                                <br />
-                              </>
-                            )}
+                          {selectedTerms.includes("Trusts") && (
+                            <>
+                              🔐 Trusts
+                              <br />
+                              A trust is a legal arrangement where you (the
+                              founder/settlor) place assets, like money or
+                              property, into a separate entity managed by a
+                              person (the trustee) for the benefit of someone
+                              else (the beneficiary). The trustee manages these
+                              assets according to your instructions, often to
+                              provide for beneficiaries over time, such as
+                              children or loved ones. A trust can be set up in
+                              your will and will come into existence when you
+                              pass away, or it can be set up while you are
+                              alive.
+                              <br />
+                              <br />
+                            </>
+                          )}
 
-                            {selectedScenario.includes("Scenario 3") && (
-                              <>
-                                <b>
-                                  Scenario 3: Appointing a Power of Attorney
-                                </b>
-                                <br />
-                                Consider appointing a trusted person as your
-                                power of attorney. This individual can manage
-                                your financial and legal affairs if you become
-                                incapacitated. For example, they could pay your
-                                bills, manage your investments, or make medical
-                                decisions on your behalf. This ensures that your
-                                affairs are handled according to your wishes,
-                                even if you’re unable to communicate them.
-                                <br />
-                                <br />
-                              </>
-                            )}
+                          {selectedTerms.includes("Power of Attorney") && (
+                            <>
+                              🖋️ Power of Attorney
+                              <br />
+                              A power of attorney is a legal document that
+                              allows you to give someone else the authority to
+                              make decisions for you. It could be about
+                              financial matters, health care, or other personal
+                              affairs, especially if you’re unable to handle
+                              them yourself.
+                              <br />
+                              <br />
+                            </>
+                          )}
 
-                            {selectedScenario.includes("Scenario 4") && (
-                              <>
-                                <b>
-                                  Scenario 4: Tax Implications of Estate
-                                  Planning Decisions
-                                </b>
-                                <br />
-                                Imagine you decide to gift a portion of your
-                                assets to your children during your lifetime.
-                                While this can reduce the size of your taxable
-                                estate, it’s important to consider any potential
-                                gift taxes and how it might impact your overall
-                                estate plan. Consulting with a tax adviser can
-                                help you understand the best strategies for
-                                minimising tax liabilities while achieving your
-                                estate planning goals.
-                                <br />
-                                <br />
-                              </>
-                            )}
-                            
-                          </>
-                        )}
-                      </div>
-<br /><br /><br /><br />
-                      {/* <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                          {selectedTerms.includes("Living Will") && (
+                            <>
+                              🏥 Living Will
+                              <br />
+                              A living will is a document where you write down
+                              your wishes about medical care if you’re unable to
+                              communicate. It’s about what kind of treatments
+                              you do or don’t want if you’re seriously ill or
+                              injured and can’t speak for yourself.
+                              <br />
+                              <br />
+                            </>
+                          )}
+
+                          {selectedTerms.includes("Beneficiaries") && (
+                            <>
+                              💼 Beneficiaries
+                              <br />
+                              Beneficiaries are the people you choose to receive
+                              your money, assets, or other benefits when you
+                              pass away. They are named in your insurance
+                              policies or retirement benefit forms.
+                              <br />
+                              <br />
+                            </>
+                          )}
+
+                          {selectedTerms.includes(
+                            "Beneficiary Designation Forms"
+                          ) && (
+                            <>
+                              📑 Beneficiary Designation Forms
+                              <br />
+                              For assets like retirement accounts, life
+                              insurance, or certain bank accounts, you may need
+                              to fill out a form naming who gets those assets
+                              after you pass away. These forms typically
+                              override what’s written in a will or trust.
+                              <br />
+                              <br />
+                            </>
+                          )}
+
+                          {selectedTerms.includes("Executor") && (
+                            <>
+                              ⚖️ Executor
+                              <br />
+                              The person named in your will who is responsible
+                              for carrying out your wishes after you pass away,
+                              including paying debts and distributing assets to
+                              beneficiaries.
+                              <br />
+                              <br />
+                            </>
+                          )}
+
+                          {selectedTerms.includes("Guardian") && (
+                            <>
+                              🛡️ Guardian
+                              <br />
+                              If you have minor children, you can name a
+                              guardian in your will. This person will be
+                              responsible for taking care of your children if
+                              something happens to you.
+                              <br />
+                              <br />
+                            </>
+                          )}
+                        </>
+                      )}
+                    </div>
+                  </>
+                )}
+
+                <div className="space-x-2 ml-16 mt-4">
+                  <button
+                    onClick={() => handleButtonStage12("Proceed")}
+                    className={`px-4 py-2 mb-1 rounded-md border border-[#8DC63F] ${
+                      stage12Proceed === "Proceed"
+                        ? "bg-[#8DC63F] text-white"
+                        : "text-[#8DC63F]"
+                    }`}
+                  >
+                    Proceed
+                  </button>
+                </div>
+              </>
+            )}
+
+            {message.content.includes(
+              "Here are the potential outcomes of each scenario:"
+            ) && (
+              <>
+                {selectedScenario.length > 0 && (
+                  <>
+                    <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                      {selectedScenario.includes("All Scenarios") ? (
+                        <>
+                          <b>Scenario 1: Setting Up a Trust</b>
+                          <br />
+                          Imagine you set up a trust to manage your assets. The
+                          trust could be used to provide for your children’s
+                          education and care until they reach adulthood. This
+                          can protect the assets from being mismanaged or spent
+                          too quickly. Additionally, trusts can offer tax
+                          benefits and ensure a smoother transfer of assets to
+                          your beneficiaries.
+                          <br /> <br />
+                          <b style={{ marginLeft: "-1px" }}>
+                            Scenario 2: Dying Intestate (Without a Will)
+                          </b>
+                          <br />
+                          Suppose you pass away without a will. According to
+                          South Africa’s Intestate Succession Act, your estate
+                          will be distributed to your surviving spouse and
+                          children, or other relatives if you have no spouse or
+                          children. This may not align with your personal wishes
+                          and could lead to disputes among family members.
+                          <br /> <br />
+                          <b style={{ marginLeft: "-1px" }}>
+                            Scenario 3: Appointing a Power of Attorney
+                          </b>
+                          <br />
+                          Consider appointing a trusted person as your power of
+                          attorney. This individual can manage your financial
+                          and legal affairs if you become incapacitated. For
+                          example, they could pay your bills, manage your
+                          investments, or make medical decisions on your behalf.
+                          This ensures that your affairs are handled according
+                          to your wishes, even if you’re unable to communicate
+                          them.
+                          <br /> <br />
+                          <b style={{ marginLeft: "-1px" }}>
+                            Scenario 4: Tax Implications of Estate Planning
+                            Decisions
+                          </b>
+                          <br />
+                          Imagine you decide to gift a portion of your assets to
+                          your children during your lifetime. While this can
+                          reduce the size of your taxable estate, it’s important
+                          to consider any potential gift taxes and how it might
+                          impact your overall estate plan. Consulting with a tax
+                          adviser can help you understand the best strategies
+                          for minimising tax liabilities while achieving your
+                          estate planning goals.
+                          <br />
+                        </>
+                      ) : (
+                        <>
+                          {selectedScenario.includes("Scenario 1") && (
+                            <>
+                              <b>Scenario 1: Setting Up a Trust</b>
+                              <br />
+                              Imagine you set up a trust to manage your assets.
+                              The trust could be used to provide for your
+                              children’s education and care until they reach
+                              adulthood. This can protect the assets from being
+                              mismanaged or spent too quickly. Additionally,
+                              trusts can offer tax benefits and ensure a
+                              smoother transfer of assets to your beneficiaries.
+                              <br />
+                              <br />
+                            </>
+                          )}
+
+                          {selectedScenario.includes("Scenario 2") && (
+                            <>
+                              <b>
+                                Scenario 2: Dying Intestate (Without a Will)
+                              </b>
+                              <br />
+                              Suppose you pass away without a will. According to
+                              South Africa’s Intestate Succession Act, your
+                              estate will be distributed to your surviving
+                              spouse and children, or other relatives if you
+                              have no spouse or children. This may not align
+                              with your personal wishes and could lead to
+                              disputes among family members.
+                              <br />
+                              <br />
+                            </>
+                          )}
+
+                          {selectedScenario.includes("Scenario 3") && (
+                            <>
+                              <b>Scenario 3: Appointing a Power of Attorney</b>
+                              <br />
+                              Consider appointing a trusted person as your power
+                              of attorney. This individual can manage your
+                              financial and legal affairs if you become
+                              incapacitated. For example, they could pay your
+                              bills, manage your investments, or make medical
+                              decisions on your behalf. This ensures that your
+                              affairs are handled according to your wishes, even
+                              if you’re unable to communicate them.
+                              <br />
+                              <br />
+                            </>
+                          )}
+
+                          {selectedScenario.includes("Scenario 4") && (
+                            <>
+                              <b>
+                                Scenario 4: Tax Implications of Estate Planning
+                                Decisions
+                              </b>
+                              <br />
+                              Imagine you decide to gift a portion of your
+                              assets to your children during your lifetime.
+                              While this can reduce the size of your taxable
+                              estate, it’s important to consider any potential
+                              gift taxes and how it might impact your overall
+                              estate plan. Consulting with a tax adviser can
+                              help you understand the best strategies for
+                              minimising tax liabilities while achieving your
+                              estate planning goals.
+                              <br />
+                              <br />
+                            </>
+                          )}
+                        </>
+                      )}
+                    </div>
+                    <br />
+                    <br />
+                    <br />
+                    <br />
+                    {/* <div className="space-x-2 ml-16 mt-2 bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
                         Now that we’ve explored these scenarios, do you have any
                         questions or need further information? I’m here to help!
                       </div>
@@ -13898,12 +13935,12 @@ async function analyzeEstatePlanningMessage(message: string) {
                           handleSelection={handleButtonStage13Component}
                         />
                       </div> */}
-                    </>
-                  )}
-                </>
-              )}
+                  </>
+                )}
+              </>
+            )}
 
-              {/* {askingConsent && (
+            {/* {askingConsent && (
                 <div className="space-x-2 ml-16 mt-4">
                   <button
                     onClick={() => handleButtonFunFact("Yes, I consent")}
@@ -13920,244 +13957,237 @@ async function analyzeEstatePlanningMessage(message: string) {
                 </div>
               )} */}
 
-              {imageFilename && (
-                <div className="relative">
-                  {loading && (
-                    <>
-                      <br />
-                      <br />
-                      <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 text-white text-xl">
-                        Loading image...
-                      </div>
-                    </>
-                  )}
-                  <img
-                    src={getImageUrl(imageFilename)}
-                    alt="Embedded"
-                    className="w-[270px] h-[210px] rounded-lg mt-2"
-                    onLoad={handleImageLoad}
-                    onError={handleImageError}
-                    style={{ display: loading ? "none" : "block" }}
-                  />
+            {imageFilename && (
+              <div className="relative">
+                {loading && (
+                  <>
+                    <br />
+                    <br />
+                    <div className="absolute top-0 left-0 w-full h-full flex items-center justify-center bg-black bg-opacity-50 text-white text-xl">
+                      Loading image...
+                    </div>
+                  </>
+                )}
+                <img
+                  src={getImageUrl(imageFilename)}
+                  alt="Embedded"
+                  className="w-[270px] h-[210px] rounded-lg mt-2"
+                  onLoad={handleImageLoad}
+                  onError={handleImageError}
+                  style={{ display: loading ? "none" : "block" }}
+                />
+              </div>
+            )}
+            <br />
+            {privacy && (
+              <>
+                <div className="space-y-4 mt-4">
+                  <h2 className="font-bold text-lg">
+                    Our data privacy practices ensure that your personal
+                    information is handled with the utmost care and security.
+                    Here are the key points:
+                  </h2>
+                  <ul className="list-disc list-inside space-y-2">
+                    <li>
+                      <strong>Data Collection:</strong> We collect only the
+                      necessary information required to assist you with your
+                      estate planning.
+                    </li>
+                    <li>
+                      <strong>Data Storage:</strong> Your data is stored
+                      securely using encryption and other security measures to
+                      prevent unauthorized access.
+                    </li>
+                    <li>
+                      <strong>Data Usage:</strong> Your information is used
+                      solely for the purpose of creating and managing your
+                      estate plan. We do not share your data with third parties
+                      without your explicit consent.
+                    </li>
+                    <li>
+                      <strong>Data Access:</strong> You have the right to
+                      access, modify, or delete your information at any time.
+                    </li>
+                    <li>
+                      <strong>Data Retention:</strong> We retain your
+                      information only for as long as necessary to provide our
+                      services and comply with legal obligations.
+                    </li>
+                    <li>
+                      <strong>Privacy Policy:</strong> For detailed information,
+                      you can read our full privacy policy{" "}
+                      <a
+                        href="https://moneyveristylms.vercel.app/privacy"
+                        className=" text-[#8DC63F] underline"
+                      >
+                        here
+                      </a>
+                      .
+                    </li>
+                  </ul>
+                  <p>
+                    Would you like to proceed with consenting to data collection
+                    and storage?
+                  </p>
                 </div>
-              )}
-              <br />
-              {privacy && (
-                <>
-                  <div className="space-y-4 mt-4">
-                    <h2 className="font-bold text-lg">
-                      Our data privacy practices ensure that your personal
-                      information is handled with the utmost care and security.
-                      Here are the key points:
-                    </h2>
-                    <ul className="list-disc list-inside space-y-2">
-                      <li>
-                        <strong>Data Collection:</strong> We collect only the
-                        necessary information required to assist you with your
-                        estate planning.
-                      </li>
-                      <li>
-                        <strong>Data Storage:</strong> Your data is stored
-                        securely using encryption and other security measures to
-                        prevent unauthorized access.
-                      </li>
-                      <li>
-                        <strong>Data Usage:</strong> Your information is used
-                        solely for the purpose of creating and managing your
-                        estate plan. We do not share your data with third
-                        parties without your explicit consent.
-                      </li>
-                      <li>
-                        <strong>Data Access:</strong> You have the right to
-                        access, modify, or delete your information at any time.
-                      </li>
-                      <li>
-                        <strong>Data Retention:</strong> We retain your
-                        information only for as long as necessary to provide our
-                        services and comply with legal obligations.
-                      </li>
-                      <li>
-                        <strong>Privacy Policy:</strong> For detailed
-                        information, you can read our full privacy policy{" "}
-                        <a
-                          href="https://moneyveristylms.vercel.app/privacy"
-                          className=" text-[#8DC63F] underline"
-                        >
-                          here
-                        </a>
-                        .
-                      </li>
-                    </ul>
-                    <p>
-                      Would you like to proceed with consenting to data
-                      collection and storage?
-                    </p>
-                  </div>
-                  <div className="space-x-2 ml-16 mt-4">
-                    <button
-                      onClick={() => handleButtonPrivacy("Yes, I consent")}
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      Yes, I consent
-                    </button>
-                    <button
-                      onClick={() =>
-                        handleButtonPrivacy("No, I do not consent")
-                      }
-                      className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
-                    >
-                      No, I don not consent
-                    </button>
-                  </div>
-                </>
-              )}
-
-              {videoUrl && (
-                <iframe
-                  width="560"
-                  height="315"
-                  src={videoUrl}
-                  title="Video"
-                  frameBorder="0"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                ></iframe>
-              )}
-              {imageFilename || videoUrl ? (
-                <>
-                  <div className="flex flex-col space-y-2 mt-2">
-                    <p className="bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                      Are you ready to explore some potential outcomes of
-                      different estate planning choices 🌐?
-                    </p>
-                  </div>
-                  <div className="space-x-2 ml-16 mt-4">
-                    <SelectableButtonGroup
-                      options={["Yes, I’m ready to move on", "Skip"]}
-                      handleSelection={(option: any) =>
-                        handleButtonStage13v1(option)
-                      }
-                    />
-                   
-                  </div>
-                </>
-              ) : null}
-
-              {video && (
                 <div className="space-x-2 ml-16 mt-4">
                   <button
-                    onClick={() => handleButtonClick("Yes, I want to watch")}
+                    onClick={() => handleButtonPrivacy("Yes, I consent")}
                     className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                   >
-                    Yes, I want to watch
+                    Yes, I consent
                   </button>
                   <button
-                    onClick={() =>
-                      handleButtonClick("No, I don't want to watch")
-                    }
+                    onClick={() => handleButtonPrivacy("No, I do not consent")}
                     className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
                   >
-                    No, I don't want to watch
+                    No, I don not consent
                   </button>
                 </div>
-              )}
+              </>
+            )}
 
-              {uploadDocumentANC && (
-                <div className="flex space-x-2 mt-2">
-                  <button
-                    className="bg-[#8DC63F] text-white rounded-lg py-2 px-4"
-                    style={{ borderRadius: "10px" }}
-                  >
-                    Upload Document at End of Chat
-                  </button>
-                  <button
-                    className="border border-[#8DC63F] text-[#8DC63F] rounded-lg py-2 px-4 bg-transparent"
-                    style={{ borderRadius: "10px" }}
-                    onClick={() => handleButtonFunFact("No, let’s move on")}
-                  >
-                    No, let’s move on
-                  </button>
-                </div>
-              )}
-
-              {isMajorAsset && (
+            {videoUrl && (
+              <iframe
+                width="560"
+                height="315"
+                src={videoUrl}
+                title="Video"
+                frameBorder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                allowFullScreen
+              ></iframe>
+            )}
+            {imageFilename || videoUrl ? (
+              <>
                 <div className="flex flex-col space-y-2 mt-2">
-                  <label className="text-white">(Select all that apply)</label>
-                  {Object.entries(checkboxesAsset).map(([key, value]) => (
-                    <div
-                      key={key}
-                      className={`${
-                        value ? "bg-[#8DC63F]" : ""
-                      } flex items-center ps-4 border border-[#8DC63F] rounded mt-2 text-white`}
-                    >
-                      <CustomCheckBox
-                        id={key}
-                        name="dependents"
-                        className="w-4 h-4 rounded"
-                        value={key.charAt(0).toUpperCase() + key.slice(1)}
-                        checked={value}
-                        onChange={handleCheckboxChangeAsset}
-                      />
-                      <label
-                        htmlFor={key}
-                        className="w-full py-4 ms-2 text-sm font-medium text-white"
-                      >
-                        {formatLabel(key)}
-                      </label>
-                    </div>
-                  ))}
+                  <p className="bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    Are you ready to explore some potential outcomes of
+                    different estate planning choices 🌐?
+                  </p>
                 </div>
-              )}
-              {funFact && (
-                <>
-                  <div className="flex flex-col space-y-2 mt-2">
-                    <p className="bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                      <span className="bg-[#2f2f2f] text-white rounded-lg py-2 inline-block font-semibold">
-                        Fun Fact
-                      </span>
-                      <br />
-                      Modern wills often include digital assets 📱 like social
-                      media accounts, digital currencies 🌐💰, and online
-                      business interests, reflecting our increasingly digital
-                      lives.
-                    </p>
-                    <img
-                      src="https://i.ibb.co/MDvDj7Y/your-image.jpg"
-                      alt="Fun Fact Image"
-                      className="w-[270px] h-[210px] rounded-lg mt-2"
+                <div className="space-x-2 ml-16 mt-4">
+                  <SelectableButtonGroup
+                    options={["Yes, I’m ready to move on", "Skip"]}
+                    handleSelection={(option: any) =>
+                      handleButtonStage13v1(option)
+                    }
+                  />
+                </div>
+              </>
+            ) : null}
+
+            {video && (
+              <div className="space-x-2 ml-16 mt-4">
+                <button
+                  onClick={() => handleButtonClick("Yes, I want to watch")}
+                  className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                >
+                  Yes, I want to watch
+                </button>
+                <button
+                  onClick={() => handleButtonClick("No, I don't want to watch")}
+                  className="px-2 py-2 rounded-md border border-[#8DC63F] mb-1 text-[#8DC63F]"
+                >
+                  No, I don't want to watch
+                </button>
+              </div>
+            )}
+
+            {uploadDocumentANC && (
+              <div className="flex space-x-2 mt-2">
+                <button
+                  className="bg-[#8DC63F] text-white rounded-lg py-2 px-4"
+                  style={{ borderRadius: "10px" }}
+                >
+                  Upload Document at End of Chat
+                </button>
+                <button
+                  className="border border-[#8DC63F] text-[#8DC63F] rounded-lg py-2 px-4 bg-transparent"
+                  style={{ borderRadius: "10px" }}
+                  onClick={() => handleButtonFunFact("No, let’s move on")}
+                >
+                  No, let’s move on
+                </button>
+              </div>
+            )}
+
+            {isMajorAsset && (
+              <div className="flex flex-col space-y-2 mt-2">
+                <label className="text-white">(Select all that apply)</label>
+                {Object.entries(checkboxesAsset).map(([key, value]) => (
+                  <div
+                    key={key}
+                    className={`${
+                      value ? "bg-[#8DC63F]" : ""
+                    } flex items-center ps-4 border border-[#8DC63F] rounded mt-2 text-white`}
+                  >
+                    <CustomCheckBox
+                      id={key}
+                      name="dependents"
+                      className="w-4 h-4 rounded"
+                      value={key.charAt(0).toUpperCase() + key.slice(1)}
+                      checked={value}
+                      onChange={handleCheckboxChangeAsset}
                     />
+                    <label
+                      htmlFor={key}
+                      className="w-full py-4 ms-2 text-sm font-medium text-white"
+                    >
+                      {formatLabel(key)}
+                    </label>
                   </div>
-                  <div className="flex flex-col space-y-2 mt-2">
-                    <p className="bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                      Pretty neat, right? Now, lets get back to securing your
-                      future! 😊
-                    </p>
+                ))}
+              </div>
+            )}
+            {funFact && (
+              <>
+                <div className="flex flex-col space-y-2 mt-2">
+                  <p className="bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    <span className="bg-[#2f2f2f] text-white rounded-lg py-2 inline-block font-semibold">
+                      Fun Fact
+                    </span>
+                    <br />
+                    Modern wills often include digital assets 📱 like social
+                    media accounts, digital currencies 🌐💰, and online business
+                    interests, reflecting our increasingly digital lives.
+                  </p>
+                  <img
+                    src="https://i.ibb.co/MDvDj7Y/your-image.jpg"
+                    alt="Fun Fact Image"
+                    className="w-[270px] h-[210px] rounded-lg mt-2"
+                  />
+                </div>
+                <div className="flex flex-col space-y-2 mt-2">
+                  <p className="bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    Pretty neat, right? Now, lets get back to securing your
+                    future! 😊
+                  </p>
+                </div>
+                <div className="flex flex-col space-y-2 mt-2">
+                  <p className="bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
+                    Please list the assets and people or organisations you want
+                    to leave them to. If you'd rather not type it all out, you
+                    can upload a document instead
+                  </p>
+                  <div className="flex space-x-2 mt-2">
+                    <button
+                      className="bg-[#8DC63F] text-white rounded-lg py-2 px-4"
+                      style={{ borderRadius: "10px" }}
+                    >
+                      Upload Document at End of Chat
+                    </button>
+                    <button
+                      className="border border-[#8DC63F] text-[#8DC63F] rounded-lg py-2 px-4 bg-transparent"
+                      style={{ borderRadius: "10px" }}
+                    >
+                      No, let’s move on
+                    </button>
                   </div>
-                  <div className="flex flex-col space-y-2 mt-2">
-                    <p className="bg-[#2f2f2f] text-white rounded-lg py-2 px-4 inline-block">
-                      Please list the assets and people or organisations you
-                      want to leave them to. If you'd rather not type it all
-                      out, you can upload a document instead
-                    </p>
-                    <div className="flex space-x-2 mt-2">
-                      <button
-                        className="bg-[#8DC63F] text-white rounded-lg py-2 px-4"
-                        style={{ borderRadius: "10px" }}
-                      >
-                        Upload Document at End of Chat
-                      </button>
-                      <button
-                        className="border border-[#8DC63F] text-[#8DC63F] rounded-lg py-2 px-4 bg-transparent"
-                        style={{ borderRadius: "10px" }}
-                      >
-                        No, let’s move on
-                      </button>
-                    </div>
-                  </div>
-                </>
-              )}
-            </div>
-        
+                </div>
+              </>
+            )}
+          </div>
         </div>
       );
     });
@@ -14173,153 +14203,125 @@ async function analyzeEstatePlanningMessage(message: string) {
   return (
     <div className="fixed inset-0 bg-[#212121] flex flex-col">
       <div className="fixed inset-0">
-        <div className="fixed inset-0 flex items-end w-full md:w-3/4 lg:w-3/4 xl:w-3/4 mx-auto">
+       <div className="ml-8 fixed inset-0 flex items-end w-full md:w-4/5 lg:w-4/5 xl:w-4/5 mx-auto">
+
+
+
           <div className="bg-[#212121] shadow-md rounded-lg w-full h-full">
             {/* Header Section */}
             <div className="p-4 text-white rounded-t-lg items-center mt-12">
-              <div className="flex justify-center -mt-12 space-x-4">
+              {/* <div className="flex justify-center -mt-12 space-x-4">
                 <div className="text-lg font-semibold text-center text-4xl">
                   <p className="text-center text-2xl font-bold">
                     Welcome to the Estate Planning Assistant
                   </p>
                 </div>
 
-                {/* SVG Icon */}
-              </div>
+                
+              </div> */}
 
               {/* Button Section */}
-              <div className="flex justify-center mt-4 space-x-4">
-                <button
-                  className="bg-[#009677] text-white px-4 py-2 rounded-md"
-                  onClick={handleModalToggle}
-                >
-                  FAQs
-                </button>
-                <button
-                  className="bg-[#009677] text-white px-4 py-2 rounded-md"
-                  onClick={handleAdvisorModalToggle}
-                >
-                  Contact a Financial Adviser
-                </button>
-                <button
-                  className="bg-[#009677] text-white px-4 py-2 rounded-md"
-                  onClick={() => {
-                    // Only open the Estate Planning tab if it's not already open
-                    if (!isEstatePlanningTabOpen) {
-                      setEstatePlanningTabOpenv1(true);
-                      setEstatePlanningTabOpen(true);
-                      setStartTab(true);
-                    }
-                    // Set the focus to the Estate Planning tab
-                    setActiveTab("estatePlanning");
-                    if(isStartTab==false){
-                    handleButtonStage0("Absolutely");}
-                  }}
-                >
-                  Learn About Estate Planning
-                </button>
-              </div>
+              
 
+             {/* Buttons centered at the top */}
               {isStartTab ? (
-  <div className="tab-wrapper">
-    <div className="tab-container">
-      {/* Estate Plan Tab */}
-      <div
-        className={`chrome-tab ${!isEstatePlanningTabOpen ? "active" : ""}`}
-        onClick={() => setEstatePlanningTabOpen(false)}
-      >
-        Estate Plan
-      </div>
+          <div className="flex justify-center items-center mt-4 space-x-4">
+            {/* Plan My Estate Button */}
+            <button
+              className={`border-2 px-6 py-2 rounded-md font-medium ${
+                !isEstatePlanningTabOpen
+                  ? "bg-[#009677] text-white"
+                  : "bg-transparent text-[#009677]"
+              } border-[#009677]`}
+              onClick={() => setEstatePlanningTabOpen(false)}
+            >
+              Plan My Estate
+            </button>
+            
 
-      {/* Estate Planning Tab */}
-      {isEstatePlanningTabOpenv1 && (
-        <div
-          className={`chrome-tab ${isEstatePlanningTabOpen ? "active" : ""}`}
-          onClick={() => setEstatePlanningTabOpen(true)}
-        >
-          Learn About Estate Planning
-          {/* Close Icon */}
-          {/* <span
-            className="close-icon"
-            onClick={() => setEstatePlanningTabOpenv1(false)}
-          >
-            ✖
-          </span> */}
-        </div>
-      )}
-    </div>
-  </div>
-) : (
-  <></>
-
-)}
-
+            {/* Learn About Estate Planning Button */}
+            <button
+              className={`border-2 px-6 py-2 rounded-md font-medium ${
+                isEstatePlanningTabOpen
+                  ? "bg-[#009677] text-white"
+                  : "bg-transparent text-[#009677]"
+              } border-[#009677]`}
+              onClick={() => setEstatePlanningTabOpen(true)}
+            >
+              Learn About Estate Planning
+            </button>
+          </div>
+          ) : null}
+         
 
               {/* Modal Popup */}
               {isModalOpen && (
-  <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
-    <div className="bg-[#2f2f2f] text-white rounded-lg w-[90%] max-w-5xl p-8">
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-3xl font-bold leading-tight">
-          Estate Planning FAQs
-        </h2>
-        <button
-          className="text-white text-2xl hover:text-gray-300"
-          onClick={handleModalToggle}
-        >
-          ✖
-        </button>
-      </div>
-      <p className="mb-6 text-base leading-relaxed">
-        Here are some frequently asked questions about estate planning in South Africa:
-      </p>
+                <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+                  <div className="bg-[#2f2f2f] text-white rounded-lg w-[90%] max-w-5xl p-8">
+                    <div className="flex justify-between items-center mb-6">
+                      <h2 className="text-3xl font-bold leading-tight">
+                        Estate Planning FAQs
+                      </h2>
+                      <button
+                        className="text-white text-2xl hover:text-gray-300"
+                        onClick={handleModalToggle}
+                      >
+                        ✖
+                      </button>
+                    </div>
+                    <p className="mb-6 text-base leading-relaxed">
+                      Here are some frequently asked questions about estate
+                      planning in South Africa:
+                    </p>
 
-      {/* Scrollable FAQ Content with custom scrollbar and right padding */}
-      <div className="space-y-4 text-sm leading-relaxed max-h-[60vh] overflow-y-auto pr-9 scrollbar-thin scrollbar-thumb-[#8DC63F] scrollbar-track-[#2f2f2f]">
-        {[
-          {
-            question: "What is estate planning? 🧾",
-            answer:
-              "Estate planning is the process of arranging for the management and disposal of a person’s estate during their life and after death. It involves creating documents like wills, trusts, and powers of attorney.",
-          },
-          {
-            question: "Why is having a will important? 📄",
-            answer:
-              "A will ensures your assets are distributed according to your wishes, names guardians for minor children, and can help reduce estate taxes and legal fees.",
-          },
-          {
-            question: "What happens if I die without a will? ⚖️",
-            answer:
-              "If you die intestate (without a will), your estate will be distributed according to South Africa’s Intestate Succession Act, which may not align with your wishes.",
-          },
-          {
-            question: "Can I change my will after it’s been created? 💼",
-            answer:
-              "Yes, you can update your will as often as you like. It’s recommended to review and update it after major life events, such as marriage, divorce, or the birth of a child.",
-          },
-          {
-            question: "What is a trust and why would I need one? 🔒",
-            answer:
-              "A trust is a legal arrangement where a trustee manages assets on behalf of beneficiaries. Trusts can help manage assets, reduce estate taxes, and provide for beneficiaries according to your wishes.",
-          },
-          {
-            question: "When should I seek legal advice for estate planning? 🏛️",
-            answer:
-              "It’s advisable to seek legal advice if you have a large or complex estate, anticipate family disputes, own a business, or need to stay updated with changing laws.",
-          },
-        ].map((faq, index) => (
-          <div key={index}>
-            <p className="font-semibold text-lg">
-              {`${index + 1}. ${faq.question}`}
-            </p>
-            <p>{faq.answer}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  </div>
-)}
-
+                    {/* Scrollable FAQ Content with custom scrollbar and right padding */}
+                    <div className="space-y-4 text-sm leading-relaxed max-h-[60vh] overflow-y-auto pr-9 scrollbar-thin scrollbar-thumb-[#8DC63F] scrollbar-track-[#2f2f2f]">
+                      {[
+                        {
+                          question: "What is estate planning? 🧾",
+                          answer:
+                            "Estate planning is the process of arranging for the management and disposal of a person’s estate during their life and after death. It involves creating documents like wills, trusts, and powers of attorney.",
+                        },
+                        {
+                          question: "Why is having a will important? 📄",
+                          answer:
+                            "A will ensures your assets are distributed according to your wishes, names guardians for minor children, and can help reduce estate taxes and legal fees.",
+                        },
+                        {
+                          question: "What happens if I die without a will? ⚖️",
+                          answer:
+                            "If you die intestate (without a will), your estate will be distributed according to South Africa’s Intestate Succession Act, which may not align with your wishes.",
+                        },
+                        {
+                          question:
+                            "Can I change my will after it’s been created? 💼",
+                          answer:
+                            "Yes, you can update your will as often as you like. It’s recommended to review and update it after major life events, such as marriage, divorce, or the birth of a child.",
+                        },
+                        {
+                          question:
+                            "What is a trust and why would I need one? 🔒",
+                          answer:
+                            "A trust is a legal arrangement where a trustee manages assets on behalf of beneficiaries. Trusts can help manage assets, reduce estate taxes, and provide for beneficiaries according to your wishes.",
+                        },
+                        {
+                          question:
+                            "When should I seek legal advice for estate planning? 🏛️",
+                          answer:
+                            "It’s advisable to seek legal advice if you have a large or complex estate, anticipate family disputes, own a business, or need to stay updated with changing laws.",
+                        },
+                      ].map((faq, index) => (
+                        <div key={index}>
+                          <p className="font-semibold text-lg">
+                            {`${index + 1}. ${faq.question}`}
+                          </p>
+                          <p>{faq.answer}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              )}
 
               {/* Modal Popup for Financial Advisor */}
               {/* Modal Popup for Financial Advisor */}
@@ -14387,15 +14389,23 @@ async function analyzeEstatePlanningMessage(message: string) {
                 </div>
               )}
             </div>
+            <div className="app-container">
+              {!isEstatePlanningTabOpen && (
+            <ProgressSidebar currentStage={currentChatStage} />
+              )}
+          
             <div
               id="chat-container"
-               
               className="flex flex-col h-screen" // This ensures the layout takes up the entire screen height
             >
               <div
                 id="chatbox"
                 className="flex-grow p-4 overflow-y-auto"
-               ref={activeTab === "originalChat" ? originalChatRef : estatePlanningChatRef}
+                ref={
+                  activeTab === "originalChat"
+                    ? originalChatRef
+                    : estatePlanningChatRef
+                }
               >
                 {renderMessages() || <div className="italic">typing...</div>}
               </div>
@@ -14403,17 +14413,17 @@ async function analyzeEstatePlanningMessage(message: string) {
                 className="w-full rounded-3xl"
                 style={{ marginBottom: isStartTab ? "0px" : "-35px" }}
                 onSubmit={async (e) => {
-                   e.preventDefault();
+                  e.preventDefault();
                   if (isEstatePlanningTabOpen == true) {
                     // e.preventDefault();
                     // handleSubmit(e);
                     // setIsThinking(true);
-                     if (isResponse.current == "1") {
-                      console.log("dataProvided1", "isresponse 1")
+                    if (isResponse.current == "1") {
+                      console.log("dataProvided1", "isresponse 1");
                       //
                       analyzeEstatePlanningMessage(inputStr);
                       // handleSubmit(e);
-                    } 
+                    }
                     console.log("dataProvided", "Second 1");
                   } else {
                     console.log("dataProvided", "Original 1");
@@ -14729,7 +14739,7 @@ async function analyzeEstatePlanningMessage(message: string) {
                     ) {
                       e.preventDefault();
                       saveDateOfBirth(inputStr);
-                     
+
                       setInputStr("");
                       setIsFormSubmitted(true);
                     } else if (
@@ -15865,20 +15875,20 @@ async function analyzeEstatePlanningMessage(message: string) {
 
                         // Now submit the form with the potentially modified inputStr
                         e.preventDefault();
-                      handleSubmit(e);
+                        handleSubmit(e);
 
                         // Clear other related states or handle post-submission logic
                         setAllCheckboxesFalse();
                       } else {
-                         e.preventDefault();
-                      handleSubmit(e); // Let the AI respond freely if no conditions are met
+                        e.preventDefault();
+                        handleSubmit(e); // Let the AI respond freely if no conditions are met
                       }
                     }
                     setInputStr("");
                   }
                 }}
               >
-                <div className="p-4 flex items-center justify-between rounded bg-[#303134]" >
+                <div className="p-4 flex items-center justify-between rounded bg-[#303134]">
                   {isThinking ? (
                     // Show the dots when the AI is "thinking"
                     <div className="dots-container w-full flex justify-center items-center">
@@ -15914,11 +15924,38 @@ async function analyzeEstatePlanningMessage(message: string) {
                 </div>
               </form>
             </div>
+            </div>
             {/* {loading && (
               <p className="text-white">
                 Loading... Retrying {retryCount}/{MAX_RETRIES}
               </p>
             )} */}
+             <div className="button-container">
+    <div className="flex flex-col space-y-4">
+      <button className="bg-[#009677] text-white px-4 py-2 rounded-md buttonData" onClick={handleModalToggle}>
+        FAQs
+      </button>
+      <button className="bg-[#009677] text-white px-4 py-2 rounded-md buttonData" onClick={handleAdvisorModalToggle}>
+        Contact a Financial Adviser
+      </button>
+      <button
+        className="bg-[#009677] text-white px-4 py-2 rounded-md buttonData"
+        onClick={() => {
+          if (!isEstatePlanningTabOpen) {
+            setEstatePlanningTabOpenv1(true);
+            setEstatePlanningTabOpen(true);
+            setStartTab(true);
+          }
+          setActiveTab("estatePlanning");
+          if (isStartTab == false) {
+            handleButtonStage0("Absolutely");
+          }
+        }}
+      >
+        Learn About Estate Planning
+      </button>
+    </div>
+  </div>
           </div>
         </div>
       </div>
@@ -15942,6 +15979,9 @@ async function analyzeEstatePlanningMessage(message: string) {
           />
         </svg>
       </button> */}
+      
+      
     </div>
+   
   );
 }
