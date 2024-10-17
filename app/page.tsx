@@ -66,6 +66,19 @@ const stages = [
   "Final Details",
 ];
 
+const tooltipData = {
+  "Establish a Trust": "Protects your assets and ensures they are distributed according to your wishes.",
+  "Set Up Insurance Policies": "Provides financial security in case of unforeseen events.",
+  "Legal Agreements": "Formalises arrangements to manage and protect your business interests.",
+  "Buy-Sell Agreement": "Ensures smooth transition and fair value if a business partner exits.",
+  "Contingent Liability Insurance": "Covers potential business liabilities.",
+  "Diversified Investment Strategy": "Spreads risk across different investments.",
+  "Business Succession Planning": "A business strategy companies use to pass leadership roles down to another employee or group of employees.",
+  "Debt Repayment Plan": "A plan for paying off debts over time, typically by making regular, manageable payments to reduce the total amount owed.",
+  "Asset Protection Planning": "Safeguards your personal and business assets from risks.",
+  "Separation of Personal & Business Finances": "Keeps your personal and business finances distinct to avoid complications."
+};
+
 export default function Chat() {
   const { messages, input, handleInputChange, handleSubmit, setMessages } =
     useChat();
@@ -98,7 +111,7 @@ export default function Chat() {
     "Scenario 4",
     "All Scenarios",
   ];
-
+  const [openTooltip, setOpenTooltip] = useState(null);
   const [selectedStrategies, setSelectedStrategies] = useState<string[]>([]);
   const strategies = [
     "Establish a Trust",
@@ -199,6 +212,16 @@ export default function Chat() {
       Math.min(prevStage + 1, stages.length - 1)
     );
   };
+
+
+  const toggleTooltip = (strategy : any) => {
+    if (openTooltip === strategy) {
+      setOpenTooltip(null); // Close the tooltip if it's already open
+    } else {
+      setOpenTooltip(strategy); // Open the selected tooltip
+    }
+  };
+
 
   useEffect(() => {
     const connectToMongo = async () => {
@@ -8049,32 +8072,90 @@ const handleButtonStage00 = (message: any) => {
             ) && (
               <>
                 <div className="space-x-2 ml-14 -mt-8">
-                  <br />
-                  {strategies.map((strategy) => (
-                    <>
-                      <br /> {/* Adjust margin as needed */}
-                      <label
-                        key={strategy}
-                        htmlFor={strategy}
-                        className={`flex items-center space-x-2 px-4 py-2 w-[400px] -my-2 rounded-md border cursor-pointer ${
-                          selectedStrategies.includes(strategy)
-                            ? "bg-[#8DC63F] text-white border-transparent"
-                            : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
-                        }`}
-                      >
-                        <input
-                          type="checkbox"
-                          id={strategy}
-                          onChange={handleCheckboxChangeStrategies}
-                          name={strategy}
-                          value={strategy}
-                          checked={selectedStrategies.includes(strategy)}
-                          className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
-                        />
-                        <span className="flex-1 leading-tight">{strategy}</span>
-                      </label>
-                    </>
-                  ))}
+                  <br /><br />
+          {strategies.map((strategy) => (
+  <div 
+    key={strategy} 
+    style={{
+      position: 'relative', 
+      marginBottom: '16px',
+      display: 'flex',
+      flexDirection: 'column',
+      width: '400px' // Keep the width consistent
+    }}
+  >
+    <label
+      htmlFor={strategy}
+      className={`flex items-center space-x-2 px-4 py-2 w-full rounded-md border cursor-pointer ${
+        selectedStrategies.includes(strategy)
+          ? "bg-[#8DC63F] text-white border-transparent"
+          : "border-[#8DC63F] text-[#8DC63F] bg-transparent"
+      }`}
+    >
+      <input
+        type="checkbox"
+        id={strategy}
+        onChange={handleCheckboxChangeStrategies}
+        name={strategy}
+        value={strategy}
+        checked={selectedStrategies.includes(strategy)}
+        className="custom-checkbox h-6 w-6 rounded-sm focus:ring-0"
+      />
+      <span className="flex-1 leading-tight">{strategy}</span>
+    </label>
+
+    {/* Tooltip icon (placed outside the label but styled to appear inside) */}
+    {strategy !== "Other" && strategy !== "Tell Me More About Each Option" && (
+      <span
+        onClick={(e) => {
+          e.stopPropagation(); // Prevent the checkbox from being activated
+          toggleTooltip(strategy);
+        }}
+        className="ml-auto cursor-pointer tooltip-icon"
+        style={{
+          position: 'absolute',
+          right: '10px', // Position it on the right inside the label area
+          top: '50%',
+          transform: 'translateY(-50%)', // Center vertically
+          cursor: 'pointer',
+        }}
+      >
+        <Image
+          src="/images/toolTip.png"
+          alt="Tooltip Icon"
+          width={20}
+          height={20}
+        />
+      </span>
+    )}
+
+    {/* Tooltip box will appear below the button */}
+    {openTooltip === strategy && (
+      <div 
+        style={{
+          marginTop: '8px',
+          backgroundColor: '#2D3748',
+          color: 'white',
+          padding: '8px',
+          width: '400px',
+          borderRadius: '8px',
+          maxWidth: '400px',
+          zIndex: 999,
+          boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
+          position: 'absolute',
+          top: '-21%',
+          left: '420px', // Align it to the right of the button
+          textAlign: 'center' // Center the text inside the tooltip
+        }}
+      >
+        {/* Tooltip content */}
+        {tooltipData[strategy]}
+      </div>
+    )}
+  </div>
+))}
+
+
                   <br />
                   <SelectableButtonGroup
                     options={["Proceed"]}
@@ -14210,15 +14291,15 @@ const handleButtonStage00 = (message: any) => {
           <div className="bg-[#212121] shadow-md rounded-lg w-full h-full">
             {/* Header Section */}
             <div className="p-4 text-white rounded-t-lg items-center mt-12">
-              {/* <div className="flex justify-center -mt-12 space-x-4">
+              <div className="flex justify-center -mt-12 space-x-4">
                 <div className="text-lg font-semibold text-center text-4xl">
                   <p className="text-center text-2xl font-bold">
-                    Welcome to the Estate Planning Assistant
+                    Welcome to GIA (Guidance for Inheritance and Assets)
                   </p>
                 </div>
 
                 
-              </div> */}
+              </div>
 
               {/* Button Section */}
               
