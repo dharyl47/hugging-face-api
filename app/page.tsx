@@ -647,10 +647,12 @@ const handleButtonStage00 = (message: any) => {
     }
     if (message == "Absolutely") {
       response = "I know estate planning can be daunting, so I’m here to make it as easy as possible for you to find a tailored estate plan that suits your needs. To begin, I need to gather some basic information. This will help tailor the estate planning process to your unique situation.";
+      setCurrentChatStage(1);
     }
 
     if (message == "Tell me more") {
       response = "I know estate planning can be daunting, so I’m here to make it as easy as possible for you to find a tailored estate plan that suits your needs. To begin, I need to gather some basic information. This will help tailor the estate planning process to your unique situation.";
+       setCurrentChatStage(1);
     }
     if (message == "Not now") {
       response =
@@ -961,7 +963,8 @@ const handleButtonStage00 = (message: any) => {
       //  response = "Now that I have some basic information about you, let’s create a customised estate planning process tailored to your needs";
       response =
         "Now that I have some basic information about you, let’s create a customised estate planning process tailored to your needs!";
-    }
+         setCurrentChatStage(2);
+      }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     // const userMessage: Message = {
@@ -1294,7 +1297,8 @@ const handleButtonStage00 = (message: any) => {
     if (message == "No, let’s move on") {
       response =
         "Now that I have some basic information about you, let’s create a customised estate planning process tailored to your needs";
-    }
+        setCurrentChatStage(2);
+      }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     const userMessage: Message = {
@@ -1324,7 +1328,8 @@ const handleButtonStage00 = (message: any) => {
     if (message == "Yes") {
       response =
         "Now that I have some basic information about you, let’s create a customised estate planning process tailored to your needs!";
-    }
+      setCurrentChatStage(2);
+      }
     // Append the user message first (this simulates the user's selection being displayed on the right side)
     const userMessage: Message = {
       id: Date.now().toString(), // Unique ID
@@ -1349,26 +1354,31 @@ const handleButtonStage00 = (message: any) => {
     let downloadUrl: string | undefined = ""; // Initialize as an empty string
 
     if (message === "Download Will Template") {
+      setCurrentChatStage(2);
       response = "Templates are downloaded";
       updateField = { "templatesDownloaded.will": true };
       downloadUrl = "/downloadables/SingleWillTemplate.docx";
     }
     if (message === "Download Trust Template") {
+      setCurrentChatStage(2);
       response = "Templates are downloaded";
       updateField = { "templatesDownloaded.trust": true };
       downloadUrl = "/downloadables/TrustTemplate.docx";
     }
     if (message === "Download Power of Attorney Template") {
+      setCurrentChatStage(2);
       response = "Templates are downloaded";
       updateField = { "templatesDownloaded.powerOfAttorney": true };
       downloadUrl = "/downloadables/PowerOfAttorney.docx";
     }
     if (message === "Download Living Will Template") {
+      setCurrentChatStage(2);
       response = "Templates are downloaded";
       updateField = { "templatesDownloaded.livingWill": true };
       downloadUrl = "/downloadables/LivingWill.doc";
     }
     if (message === "Download All Templates") {
+      setCurrentChatStage(2);
       response = "Templates are downloaded";
       updateField = {
         "templatesDownloaded.will": true,
@@ -1380,6 +1390,7 @@ const handleButtonStage00 = (message: any) => {
       downloadUrl = "/downloadables/All_Templates.zip"; // You'd need to define how to handle downloading all files.
     }
     if (message === "Skip") {
+      setCurrentChatStage(3);
       response =
         "Now that we’ve covered your personal details, let’s talk about your objectives for estate planning. Understanding your goals will help us create a plan that fits your needs perfectly. Ready to dive in?";
     }
@@ -1525,10 +1536,12 @@ const handleButtonStage00 = (message: any) => {
     let response = "";
 
     if (message == "Continue") {
+      setCurrentChatStage(3);
       response =
         "Now that we’ve covered your personal details, let’s talk about your objectives for estate planning. Understanding your goals will help us create a plan that fits your needs perfectly. Ready to dive in?";
     }
     if (message == "Yes, I'm ready") {
+      setCurrentChatStage(3);
       response =
         "Now that we’ve covered your personal details, let’s talk about your objectives for estate planning. Understanding your goals will help us create a plan that fits your needs perfectly. Ready to dive in?";
     }
@@ -1971,8 +1984,10 @@ const handleButtonStage00 = (message: any) => {
         "Let’s dive into the details of what you own to ensure we have a comprehensive understanding of your estate. Your assets play a crucial role in your estate plan."
       );
       isResponse.current = "1";
+      setCurrentChatStage(4);
     }
     if (message == "No") {
+      setCurrentChatStage(4);
       response =
         "Let’s dive into the details of what you own to ensure we have a comprehensive understanding of your estate. Your assets play a crucial role in your estate plan.";
     }
@@ -2506,10 +2521,12 @@ const handleButtonStage00 = (message: any) => {
   const handleButtonStage29LegalEntities = async (message: any) => {
     let response = "";
     if (message == "Continue") {
+      setCurrentChatStage(4);
       response =
         "Do you have any outstanding mortgage loans? If yes, please specify the outstanding balance and the property/assets mortgaged.";
     }
     if (message == "Upload Document at End of Chat") {
+      setCurrentChatStage(4);
       response =
         "Do you have any outstanding mortgage loans? If yes, please specify the outstanding balance and the property/assets mortgaged.";
       await saveUserProfile({
@@ -2523,6 +2540,7 @@ const handleButtonStage00 = (message: any) => {
         "Great! Please provide the above mentioned details of your legal entities";
     }
     if (message == "No, let’s move on") {
+      setCurrentChatStage(4);
       response =
         "Do you have any outstanding mortgage loans? If yes, please specify the outstanding balance and the property/assets mortgaged.";
     }
@@ -2800,10 +2818,12 @@ const handleButtonStage00 = (message: any) => {
   const handleButtonStage36SignificantChanges = async (message: any) => {
     let response = "";
     if (message == "Continue") {
+      setCurrentChatStage(5);
       response =
         "Do you currently have any life insurance policies in place? If yes, please specify the type of policy, the coverage amount, the beneficiaries, and any additional riders or features.";
     }
     if (message == "Upload Document at End of Chat") {
+      setCurrentChatStage(5);
       response =
         "Do you currently have any life insurance policies in place? If yes, please specify the type of policy, the coverage amount, the beneficiaries, and any additional riders or features.";
       await saveUserProfile({
@@ -2817,6 +2837,7 @@ const handleButtonStage00 = (message: any) => {
         "Great! Please provide the above mentioned details of your significant changes expected in your liabilities";
     }
     if (message == "No, let’s move on") {
+      setCurrentChatStage(5);
       response =
         "Do you currently have any life insurance policies in place? If yes, please specify the type of policy, the coverage amount, the beneficiaries, and any additional riders or features.";
     }
@@ -3332,11 +3353,13 @@ const handleButtonStage00 = (message: any) => {
   const handleButtonStage46Continue = (message: any) => {
     let response = "";
     if (message == "Yes") {
+      setCurrentChatStage(5);
       response =
         "Understanding your investment holdings helps us assess your overall financial position and develop strategies to maximise the value of your estate. Please provide as much detail as possible for each of the following questions.";
     }
 
     if (message == "No") {
+      setCurrentChatStage(5);
       response =
         "Sure, I’m here to help. What additional information or questions do you have?";
       setNextResponse(
@@ -3631,9 +3654,11 @@ const handleButtonStage00 = (message: any) => {
     let response = "";
     if (message == "Continue") {
       response = "Great! Next, we’ll discuss estate duty. Shall we continue?";
+      setCurrentChatStage(6);
     }
     if (message == "Yes") {
       response = "Great! Next, we’ll discuss estate duty. Shall we continue?";
+      setCurrentChatStage(6);
     }
     if (message == "No") {
       response =
@@ -4121,10 +4146,12 @@ const handleButtonStage00 = (message: any) => {
     let response = "";
 
     if (message == "Yes") {
+      setCurrentChatStage(6);
       response =
         "Now, let's discuss the fees that will be charged for the administration of your estate. The executor's fees can be a significant part of the costs, so it's important to understand how these are calculated.";
     }
     if (message == "No") {
+      setCurrentChatStage(6);
       response =
         "Sure, I’m here to help. What additional information or questions do you have?";
       setNextResponse(
@@ -4213,11 +4240,13 @@ const handleButtonStage00 = (message: any) => {
     let response = "";
 
     if (message == "Yes") {
+      setCurrentChatStage(7);
       response =
         "Now, let's talk about the liquidity position of your estate. This helps us understand if there are enough liquid assets available to cover estate costs without having to sell off assets. Ready to proceed?";
     }
 
     if (message == "No") {
+      setCurrentChatStage(7);
       response =
         "Sure, I’m here to help. What additional information or questions do you have?";
       setNextResponse(
@@ -4626,10 +4655,12 @@ const handleButtonStage00 = (message: any) => {
   const handleButtonStage79LiquidityEnd = (message: any) => {
     let response = "";
     if (message == "Yes") {
+      setCurrentChatStage(8);
       response =
         "Let's discuss maintenance claims in terms of court orders. If you pass away while there are maintenance obligations towards children or a former spouse, they will have a maintenance claim against your estate. Are you aware of any existing maintenance obligations or court orders?";
     }
     if (message == "No") {
+      setCurrentChatStage(8);
       response =
         "Sure, I’m here to help. What additional information or questions do you have?";
       setNextResponse(
@@ -4875,6 +4906,7 @@ const handleButtonStage00 = (message: any) => {
         response =
           "Next, let's talk about maintenance for the surviving spouse. If you don't make provision for maintenance for the surviving spouse, they can institute a claim against your estate in terms of the Maintenance of Surviving Spouse’s Act. Are you considering provisions for your surviving spouse?";
       } else {
+        setCurrentChatStage(9);
         response =
           "Do your dependents require any income per month for maintenance?";
       }
@@ -4884,6 +4916,7 @@ const handleButtonStage00 = (message: any) => {
         response =
           "Next, let's talk about maintenance for the surviving spouse. If you don't make provision for maintenance for the surviving spouse, they can institute a claim against your estate in terms of the Maintenance of Surviving Spouse’s Act. Are you considering provisions for your surviving spouse?";
       } else {
+        setCurrentChatStage(9);
         response =
           "Do your dependents require any income per month for maintenance?";
       }
@@ -4920,6 +4953,7 @@ const handleButtonStage00 = (message: any) => {
       } else {
         response =
           "Do your dependents require any income per month for maintenance?";
+          setCurrentChatStage(9);
       }
     }
     if (message == "Continue") {
@@ -4929,6 +4963,7 @@ const handleButtonStage00 = (message: any) => {
       } else {
         response =
           "Do your dependents require any income per month for maintenance?";
+          setCurrentChatStage(9);
       }
     }
     if (message == "Yes") {
@@ -5272,10 +5307,12 @@ const handleButtonStage00 = (message: any) => {
     ) {
       response =
         "Do your dependents require any income per month for maintenance?";
+        setCurrentChatStage(9);
     }
     if (message == "Testamentary trust for spouse outlines in my will") {
       response =
         "Do your dependents require any income per month for maintenance?";
+        setCurrentChatStage(9);
     }
     if (message == "I’m open to either option") {
       response =
@@ -5316,10 +5353,12 @@ const handleButtonStage00 = (message: any) => {
     if (message == "No") {
       response =
         "Do your dependents require any income per month for maintenance?";
+        setCurrentChatStage(9);
     }
     if (message == "Continue") {
       response =
         "Do your dependents require any income per month for maintenance?";
+        setCurrentChatStage(9);
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -5348,10 +5387,12 @@ const handleButtonStage00 = (message: any) => {
     if (message == "No") {
       response =
         "Do your dependents require any income per month for maintenance?";
+        setCurrentChatStage(9);
     }
     if (message == "Continue") {
       response =
         "Do your dependents require any income per month for maintenance?";
+        setCurrentChatStage(9);
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -5381,10 +5422,12 @@ const handleButtonStage00 = (message: any) => {
     if (message == "No") {
       response =
         "Do your dependents require any income per month for maintenance?";
+        setCurrentChatStage(9);
     }
     if (message == "Continue") {
       response =
         "Do your dependents require any income per month for maintenance?";
+        setCurrentChatStage(9);
     }
 
     // Append the user message first (this simulates the user's selection being displayed on the right side)
@@ -5722,10 +5765,12 @@ const handleButtonStage00 = (message: any) => {
   const handleButtonStage89Final = (message: any) => {
     let response = "";
     if (message == "Yes") {
+      setCurrentChatStage(10);
       response =
         "Next, let's talk about trusts. A trust is is a legal arrangement where one person (the trustee) holds and manages assets on behalf of another person or group (the beneficiaries). The person who created the trust is called the settlor. The trustee is responsible for managing the trust according to the terms set by the settlor, ensuring the assets benefit the beneficiaries. Are you familiar with trusts?";
     }
     if (message == "No") {
+        setCurrentChatStage(10);
       response = "Absolutely! I'm here to assist. What would you like to ask?";
       setNextResponse(
         "Next, let's talk about trusts. A trust is is a legal arrangement where one person (the trustee) holds and manages assets on behalf of another person or group (the beneficiaries). The person who created the trust is called the settlor. The trustee is responsible for managing the trust according to the terms set by the settlor, ensuring the assets benefit the beneficiaries. Are you familiar with trusts?"
@@ -6410,6 +6455,7 @@ const handleButtonStage00 = (message: any) => {
   const handleButtonStage99Final = (message: any) => {
     let response = "";
     if (message == "Continue") {
+        setCurrentChatStage(10);
       response =
         "Now, let's explore the concept of an investment trust. This structure allows for annual donations to the trust, reducing your estate over time. Are you interested in setting up an investment trust?";
     }
@@ -6429,6 +6475,7 @@ const handleButtonStage00 = (message: any) => {
       message ==
       "I’m not comfortable with the potential costs & tax implications at this time"
     ) {
+        setCurrentChatStage(10);
       response =
         "Now, let's explore the concept of an investment trust. This structure allows for annual donations to the trust, reducing your estate over time. Are you interested in setting up an investment trust?";
     }
@@ -6498,10 +6545,12 @@ const handleButtonStage00 = (message: any) => {
   const handleButtonStage101InvestmentFlexibility = (message: any) => {
     let response = "";
     if (message == "Continue") {
+        setCurrentChatStage(11);
       response =
         "We’ve now gathered all the relevant information to help create your estate plan. As one of the final steps, please upload the documents below. <br/><br/>These will be securely stored and only shared with the financial adviser who will assist you in finalising your estate plan.";
     }
     if (message == "Yes") {
+        setCurrentChatStage(11);
       response =
         "We’ve now gathered all the relevant information to help create your estate plan. As one of the final steps, please upload the documents below. <br/><br/>These will be securely stored and only shared with the financial adviser who will assist you in finalising your estate plan.";
     }
@@ -14685,6 +14734,7 @@ const handleButtonStage00 = (message: any) => {
                       handleAddAIResponse(
                         "Do you have any outstanding mortgage loans? If yes, please specify the outstanding balance and the property/assets mortgaged."
                       );
+                      setCurrentChatStage(4);
                     } else if (
                       messageData.current.includes(
                         "Do you have any outstanding mortgage loans? If yes, please specify the outstanding balance and the property/assets mortgaged."
@@ -14784,6 +14834,7 @@ const handleButtonStage00 = (message: any) => {
                       handleAddAIResponse(
                         "Do you currently have any life insurance policies in place? If yes, please specify the type of policy, the coverage amount, the beneficiaries, and any additional riders or features."
                       );
+                      setCurrentChatStage(5);
                     } else if (
                       messageData.current.includes(
                         "Great! Please provide the above mentioned details of your vehicle with their estimated values."
@@ -14906,6 +14957,7 @@ const handleButtonStage00 = (message: any) => {
                       handleAddAIResponse(
                         "Great! Next, we’ll discuss estate duty. Shall we continue?"
                       );
+                      setCurrentChatStage(6);
                     }
 
                     //ASSET
@@ -15074,6 +15126,7 @@ const handleButtonStage00 = (message: any) => {
                       handleAddAIResponse(
                         "Do you have any outstanding mortgage loans? If yes, please specify the outstanding balance and the property/assets mortgaged."
                       );
+                      setCurrentChatStage(4);
                     } else if (
                       messageData.current.includes(
                         "No problem. Whenever you're ready to provide the details of your legal entities"
@@ -15083,6 +15136,7 @@ const handleButtonStage00 = (message: any) => {
                       handleAddAIResponse(
                         "Do you have any outstanding mortgage loans? If yes, please specify the outstanding balance and the property/assets mortgaged."
                       );
+                      setCurrentChatStage(4);
                     } else if (
                       messageData.current.includes(
                         "Great! Please provide the above mentioned details of your outstanding mortgage loan"
@@ -15221,6 +15275,7 @@ const handleButtonStage00 = (message: any) => {
                       handleAddAIResponse(
                         "Do you currently have any life insurance policies in place? If yes, please specify the type of policy, the coverage amount, the beneficiaries, and any additional riders or features."
                       );
+                      setCurrentChatStage(5);
                     } else if (
                       messageData.current.includes(
                         "No problem. Whenever you're ready to provide the details of your significant changes expected in your liabilities"
@@ -15230,6 +15285,7 @@ const handleButtonStage00 = (message: any) => {
                       handleAddAIResponse(
                         "Do you currently have any life insurance policies in place? If yes, please specify the type of policy, the coverage amount, the beneficiaries, and any additional riders or features."
                       );
+                      setCurrentChatStage(5);
                     } else if (
                       messageData.current.includes(
                         "Great! Please provide the above mentioned details of your life insurance policies"
